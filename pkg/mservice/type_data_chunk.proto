@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package mservice;
+
+import "type_common.proto";
+import "google/protobuf/timestamp.proto";
+
+enum DataChunkType {
+    // Due to first enum value has to be zero in proto3
+    DATA_CHUNK_RESERVED = 0;
+    DATA_CHUNK_UNSPECIFIED = 10;
+    DATA_CHUNK_SCAN_RESULT = 20;
+}
+
+message DataChunk {
+    DataChunkType type = 10;
+    UUID uuid = 20;
+    oneof optional_timestamp {
+        google.protobuf.Timestamp ts = 30;
+    }
+    // Max available for transfer data volume would be 2^64
+    uint64 offset = 40;
+    // It is sufficient to have uint32 for len because bytes are no longer than 2^32
+    uint32 len = 50;
+    // May contain any arbitrary sequence of bytes no longer than 2^32
+    bytes bytes = 60;
+}

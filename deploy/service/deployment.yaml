@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mservice-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mservice-service
+  template:
+    metadata:
+      labels:
+        app: mservice-service
+    spec:
+      containers:
+        - name: service
+          image: sunsingerus/mservice-service:dev
+          env:
+            - name: PROXY_ADDRESS_FORWARDING
+              value: "true"
+          ports:
+            - name: grpc
+              containerPort: 10000
+#          readinessProbe:
+#            httpGet:
+#              path: /auth/realms/master
+#              port: 8080

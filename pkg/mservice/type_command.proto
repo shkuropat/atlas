@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package mservice;
+
+import "type_common.proto";
+
+enum CommandType {
+    // Due to first enum value has to be zero in proto3
+    ACTION_TYPE_RESERVED = 0;
+    ACTION_TYPE_UNSPECIFIED = 10;
+    ACTION_PING = 20;
+    ACTION_CONFIG = 30;
+    ACTION_METRICS = 40;
+    ACTION_SCAN_SCHEDULE = 50;
+    ACTION_SCAN_REQUEST = 60;
+}
+
+message Command {
+    CommandType type = 10;
+    UUID uuid = 20;
+}
+

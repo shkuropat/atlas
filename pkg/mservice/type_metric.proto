@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package mservice;
+
+import "type_common.proto";
+import "google/protobuf/timestamp.proto";
+
+enum MetricType {
+    METRIC_TYPE_RESERVED = 0;
+    METRIC_TYPE_UNSPECIFIED = 10;
+    METRIC_TYPE_CPU = 20;
+}
+
+message Metric {
+    oneof what {
+        MetricType type = 10;
+        string name = 20;
+    }
+    oneof optional_timestamp {
+        google.protobuf.Timestamp ts = 30;
+    }
+    oneof one_value {
+        string string_value = 40;
+        double double_value = 50;
+        int32  int32_value  = 60;
+        uint32 uint32_value = 70;
+        int64  int64_value  = 80;
+        uint64 uint64_value = 90;
+        bytes  bytes_value  = 100;
+    }
+}
+
+enum MetricsType {
+    // Due to first enum value has to be zero in proto3
+    METRICS_TYPE_RESERVED = 0;
+    METRICS_TYPE_UNSPECIFIED = 10;
+}
+
+message Metrics {
+    MetricsType type = 10;
+    UUID uuid = 20;
+    oneof optional_timestamp {
+        google.protobuf.Timestamp ts = 30;
+    }
+    repeated Metric metrics = 40;
+}
+
