@@ -71,7 +71,7 @@ type mservice struct {
 }
 
 var (
-	waitTransieverStarted chan bool
+	waitTransieverStarted  chan bool
 	maxIncomingOutstanding int32 = 100
 	incomingQueue          chan *pb.Command
 	maxOutgoingOutstanding int32 = 100
@@ -207,7 +207,7 @@ func Run() {
 	}()
 
 	log.Infof("wait for transiever started")
-	<- waitTransieverStarted
+	<-waitTransieverStarted
 	go func() {
 		for i := 0; i < 5; i++ {
 			command := &pb.Command{
