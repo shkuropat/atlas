@@ -46,7 +46,7 @@ var (
 	serverHostOverride string
 )
 
-func runMServiceEndpoint(client pb.MServiceControlPlaneClient) {
+func runMServiceControlPlaneClient(client pb.MServiceControlPlaneClient) {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -118,6 +118,46 @@ func runMServiceEndpoint(client pb.MServiceControlPlaneClient) {
 	<-waitc
 }
 
+func sendFile(client pb.MServiceControlPlaneClient) {
+	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	rpcData, err := client.Data(ctx)
+	if err != nil {
+		log.Fatalf("client.Data() failed %v", err)
+		os.Exit(1)
+	}
+	defer rpcData.CloseSend()
+
+	log.Infof("rpcData()")
+	log.Infof("sleep")
+	time.Sleep(5 * time.Second)
+	log.Infof("continue")
+
+	for i := 0; i < 5; i++ {
+		command := pb.NewDataChunk(
+			[]byte(fmt.Sprintf("data piece %d", i)),
+		)
+		log.Infof("before Send()")
+
+		err := rpcData.Send(command)
+		if err == io.EOF {
+			log.Infof("Send() received EOF, return from func")
+			return
+		}
+		if err != nil {
+			log.Fatalf("failed to Send() %v", err)
+			os.Exit(1)
+		}
+		log.Infof("after Send()")
+
+		log.Infof("before Send() sleep")
+		time.Sleep(3 * time.Second)
+		log.Infof("after Send() sleep")
+	}
+}
+
 func init() {
 	flag.BoolVar(&versionRequest, "version", false, "Display version and exit")
 	flag.StringVar(&configFile, "config", "", "Path to config file.")
@@ -172,12 +212,13 @@ func Run() {
 	log.Infof("Dial() to %s", serviceAddress)
 	conn, err := grpc.Dial(serviceAddress, opts...)
 	if err != nil {
-		log.Fatalf("fila to dial %v", err)
+		log.Fatalf("fail to dial %v", err)
 		os.Exit(1)
 	}
 	defer conn.Close()
 
 	client := pb.NewMServiceControlPlaneClient(conn)
 
-	runMServiceEndpoint(client)
+	sendFile(client)
+	runMServiceControlPlaneClient(client)
 }

@@ -144,7 +144,26 @@ func (s *mserviceEndpoint) Commands(stream pb.MServiceControlPlane_CommandsServe
 
 func (s *mserviceEndpoint) Data(stream pb.MServiceControlPlane_DataServer) error {
 	log.Info("Data() called")
-	return nil
+	defer log.Info("Data() exited")
+
+	for {
+		dataChunk, err := stream.Recv()
+		if err == nil {
+			// All went well
+			log.Infof("Recv() got msg")
+			fmt.Printf("%s\n", string(dataChunk.Bytes))
+		} else if err == io.EOF {
+			// Correct EOF
+			log.Infof("Recv() get EOF")
+
+			return nil
+		} else {
+			// Stream broken
+			log.Infof("Recv() got err: %v", err)
+
+			return nil
+		}
+	}
 }
 
 func (s *mserviceEndpoint) Metrics(stream pb.MServiceControlPlane_MetricsServer) error {
