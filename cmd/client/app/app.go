@@ -21,6 +21,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/testdata"
 	"io"
+	"strconv"
 	"time"
 
 	"os"
@@ -45,12 +46,12 @@ var (
 	serverHostOverride string
 )
 
-func runMServiceEndpoint(client pb.MServiceClient) {
+func runMServiceEndpoint(client pb.MServiceControlPlaneClient) {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	rpcControl, err := client.Control(ctx)
+	rpcControl, err := client.Commands(ctx)
 	if err != nil {
 		log.Fatalf("client.Control() failed %v", err)
 		os.Exit(1)
@@ -86,12 +87,16 @@ func runMServiceEndpoint(client pb.MServiceClient) {
 	log.Infof("continue")
 
 	for i := 0; i < 5; i++ {
-		command := &pb.Command{
-			Type: pb.CommandType(i),
-			Uuid: &pb.UUID{
-				StringValue: fmt.Sprintf("from client=%d", i),
-			},
-		}
+		command := pb.NewCommand(
+			pb.CommandType_COMMAND_ECHO_REPLY,
+			"",
+			0,
+			"21-43-65-"+strconv.Itoa(i),
+			"",
+			0,
+			0,
+			"desc",
+		)
 		log.Infof("before Send()")
 
 		err := rpcControl.Send(command)
@@ -172,7 +177,7 @@ func Run() {
 	}
 	defer conn.Close()
 
-	client := pb.NewMServiceClient(conn)
+	client := pb.NewMServiceControlPlaneClient(conn)
 
 	runMServiceEndpoint(client)
 }

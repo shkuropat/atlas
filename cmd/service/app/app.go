@@ -16,18 +16,23 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	log "github.com/golang/glog"
-	pb "github.com/sunsingerus/mservice/pkg/mservice"
-	"github.com/sunsingerus/mservice/pkg/version"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
 	"io"
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/testdata"
+
+	log "github.com/golang/glog"
+
+	pb "github.com/sunsingerus/mservice/pkg/mservice"
+
+	"github.com/sunsingerus/mservice/pkg/version"
 )
 
 // CLI parameter variables
@@ -66,8 +71,8 @@ func init() {
 	flag.Parse()
 }
 
-type mservice struct {
-	pb.UnimplementedMServiceServer
+type mserviceEndpoint struct {
+	pb.UnimplementedMServiceControlPlaneServer
 }
 
 var (
@@ -78,9 +83,11 @@ var (
 	outgoingQueue          chan *pb.Command
 )
 
-func (s *mservice) Control(stream pb.MService_ControlServer) error {
-	log.Info("Control() called")
+func (s *mserviceEndpoint) Commands(stream pb.MServiceControlPlane_CommandsServer) error {
+	log.Info("Commands() called")
+
 	close(waitTransieverStarted)
+
 	waitIncoming := make(chan bool)
 	go func() {
 		for {
@@ -135,18 +142,19 @@ func (s *mservice) Control(stream pb.MService_ControlServer) error {
 	return nil
 }
 
-func (s *mservice) Data(stream pb.MService_DataServer) error {
+func (s *mserviceEndpoint) Data(stream pb.MServiceControlPlane_DataServer) error {
 	log.Info("Data() called")
 	return nil
 }
 
-func (s *mservice) Metrics(stream pb.MService_MetricsServer) error {
+func (s *mserviceEndpoint) Metrics(stream pb.MServiceControlPlane_MetricsServer) error {
 	log.Info("Metrics() called")
 	return nil
 }
 
 // Run is an entry point of the application
 func Run() {
+
 	if versionRequest {
 		fmt.Printf("%s\n", version.Version)
 		os.Exit(0)
@@ -197,7 +205,7 @@ func Run() {
 
 	grpcServer := grpc.NewServer(opts...)
 
-	pb.RegisterMServiceServer(grpcServer, &mservice{})
+	pb.RegisterMServiceControlPlaneServer(grpcServer, &mserviceEndpoint{})
 
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
@@ -208,14 +216,19 @@ func Run() {
 
 	log.Infof("wait for transiever started")
 	<-waitTransieverStarted
+
 	go func() {
 		for i := 0; i < 5; i++ {
-			command := &pb.Command{
-				Type: pb.CommandType(i),
-				Uuid: &pb.UUID{
-					StringValue: fmt.Sprintf("from server=%d", i),
-				},
-			}
+			command := pb.NewCommand(
+				pb.CommandType_COMMAND_ECHO_REQUEST,
+				"",
+				0,
+				"12-34-56-"+strconv.Itoa(i),
+				"",
+				0,
+				0,
+				"desc",
+			)
 			log.Infof("before Transmit")
 			outgoingQueue <- command
 			log.Infof("after Transmit")

@@ -32,7 +32,7 @@ echo "Clean previously generated files:"
 rm -f "${PROTO_ROOT}"/*.pb.go
 
 echo "Compile .proto files"
-# --go_out requires list of plugings to be used
+# --go_out requires list of plugins to be used
 "${PROTOC}" -I "${PROTO_ROOT}" --go_out=plugins=grpc:"${PROTO_ROOT}" "${PROTO_ROOT}"/*.proto
 
 #protoc -I "${SRC_ROOT}" --go_out="${SRC_ROOT}" ./mservice.proto

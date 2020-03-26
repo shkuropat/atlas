@@ -6,11 +6,11 @@ import "type_command.proto";
 import "type_data_chunk.proto";
 import "type_metric.proto";
 
-service MService {
+service MServiceControlPlane {
 	// Bi-directional Commands stream
 	//
 	// Commands are sent from service to client and from client to server
-	rpc Control (stream Command) returns (stream Command) {}
+	rpc Commands (stream Command) returns (stream Command) {}
 
 	// Bi-directional Data stream
 	//
