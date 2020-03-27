@@ -16,17 +16,15 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"io"
-	"net"
-	"os"
-	"os/signal"
-	"strconv"
-	"syscall"
-	"time"
-
+	controller "github.com/sunsingerus/mservice/pkg/controller_service"
+	"github.com/sunsingerus/mservice/pkg/transiever_service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/testdata"
+	"net"
+	"os"
+	"os/signal"
+	"syscall"
 
 	log "github.com/golang/glog"
 
@@ -69,106 +67,6 @@ func init() {
 	flag.IntVar(&port, "port", 10000, "The server port")
 
 	flag.Parse()
-}
-
-type mserviceEndpoint struct {
-	pb.UnimplementedMServiceControlPlaneServer
-}
-
-var (
-	waitTransieverStarted  chan bool
-	maxIncomingOutstanding int32 = 100
-	incomingQueue          chan *pb.Command
-	maxOutgoingOutstanding int32 = 100
-	outgoingQueue          chan *pb.Command
-)
-
-func (s *mserviceEndpoint) Commands(stream pb.MServiceControlPlane_CommandsServer) error {
-	log.Info("Commands() called")
-
-	close(waitTransieverStarted)
-
-	waitIncoming := make(chan bool)
-	go func() {
-		for {
-			msg, err := stream.Recv()
-			if err == nil {
-				// All went well
-				log.Infof("Recv() got msg")
-				incomingQueue <- msg
-			} else if err == io.EOF {
-				// Correct EOF
-				log.Infof("Recv() get EOF")
-
-				close(waitIncoming)
-				return
-			} else {
-				// Stream broken
-				log.Infof("Recv() got err: %v", err)
-
-				close(waitIncoming)
-				return
-			}
-
-		}
-	}()
-
-	waitOutgoing := make(chan bool)
-	go func() {
-		for {
-			command := <-outgoingQueue
-			log.Infof("got command to send")
-			err := stream.Send(command)
-			if err == nil {
-				// All went well
-				log.Infof("Send() ok")
-			} else if err == io.EOF {
-				log.Infof("Send() got EOF")
-
-				close(waitOutgoing)
-				return
-			} else {
-				log.Fatalf("Send() got err: %v", err)
-
-				close(waitOutgoing)
-				return
-			}
-		}
-	}()
-
-	<-waitIncoming
-	<-waitOutgoing
-
-	return nil
-}
-
-func (s *mserviceEndpoint) Data(stream pb.MServiceControlPlane_DataServer) error {
-	log.Info("Data() called")
-	defer log.Info("Data() exited")
-
-	for {
-		dataChunk, err := stream.Recv()
-		if err == nil {
-			// All went well
-			log.Infof("Recv() got msg")
-			fmt.Printf("%s\n", string(dataChunk.Bytes))
-		} else if err == io.EOF {
-			// Correct EOF
-			log.Infof("Recv() get EOF")
-
-			return nil
-		} else {
-			// Stream broken
-			log.Infof("Recv() got err: %v", err)
-
-			return nil
-		}
-	}
-}
-
-func (s *mserviceEndpoint) Metrics(stream pb.MServiceControlPlane_MetricsServer) error {
-	log.Info("Metrics() called")
-	return nil
 }
 
 // Run is an entry point of the application
@@ -218,14 +116,10 @@ func Run() {
 		log.Infof("enabling TLS with cert=%s key=%s", certFile, keyFile)
 	}
 
-	incomingQueue = make(chan *pb.Command, maxIncomingOutstanding)
-	outgoingQueue = make(chan *pb.Command, maxOutgoingOutstanding)
-	waitTransieverStarted = make(chan bool)
+	transiever_service.Init()
 
 	grpcServer := grpc.NewServer(opts...)
-
-	pb.RegisterMServiceControlPlaneServer(grpcServer, &mserviceEndpoint{})
-
+	pb.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneEndpoint{})
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
 			log.Fatalf("failed to Serve() %v", err)
@@ -234,36 +128,10 @@ func Run() {
 	}()
 
 	log.Infof("wait for transiever started")
-	<-waitTransieverStarted
 
-	go func() {
-		for i := 0; i < 5; i++ {
-			command := pb.NewCommand(
-				pb.CommandType_COMMAND_ECHO_REQUEST,
-				"",
-				0,
-				"12-34-56-"+strconv.Itoa(i),
-				"",
-				0,
-				0,
-				"desc",
-			)
-			log.Infof("before Transmit")
-			outgoingQueue <- command
-			log.Infof("after Transmit")
-
-			log.Infof("before Transmit sleep")
-			time.Sleep(3 * time.Second)
-			log.Infof("after Transmit sleep")
-		}
-	}()
-
-	go func() {
-		for {
-			cmd := <-incomingQueue
-			log.Infof("Got cmd %v", cmd)
-		}
-	}()
+	transiever_service.WaitTransieverStarted()
+	go controller.DispatchEchoRequest(transiever_service.GetOutgoingQueue())
+	go controller.HandleIncomingCommands(transiever_service.GetIncomingQueue())
 
 	<-ctx.Done()
 }
