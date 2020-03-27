@@ -13,6 +13,9 @@ ADD . .
 RUN GO111MODULE=on go mod tidy
 RUN GO111MODULE=on go mod vendor
 
+# Before start build process, we need to ensure go test is OK
+RUN ./dev/run_test.sh
+
 # Build operator binary with explicitly specified output
 RUN OUTPUT_BIN=/tmp/service ./dev/go_build_service.sh
 
