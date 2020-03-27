@@ -53,7 +53,7 @@ func RunMServiceControlPlaneClient(client pb.MServiceControlPlaneClient) {
 			if err != nil {
 				log.Fatalf("failed to rpcControl.Recv() %v", err)
 			}
-			log.Info("Control() - got message %v", msg)
+			log.Infof("Control() - got message %v", msg)
 
 			log.Infof("before Recv() sleep")
 			time.Sleep(time.Second)
