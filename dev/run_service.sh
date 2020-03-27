@@ -8,13 +8,13 @@ CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "${CUR_DIR}/go_build_config.sh"
 LOG_DIR="${CUR_DIR}/log"
 
-EXECUTABLE_BINARY="${EXECUTABLE_BINARY:-$CLIENT_BIN}"
+EXECUTABLE_BINARY="${EXECUTABLE_BINARY:-$SERVICE_BIN}"
 
 if [[ $1 == "nobuild" ]]; then
     echo "Build step skipped, starting old binary"
 else
     echo -n "Building ${EXECUTABLE_BINARY}, please wait..."
-    if "${CUR_DIR}/go_build_client.sh"; then
+    if "${CUR_DIR}/go_build_service.sh"; then
         echo "Successfully built ${EXECUTABLE_BINARY}."
     else
         echo "Unable to build ${EXECUTABLE_BINARY}. Abort."
@@ -30,8 +30,8 @@ fi
     echo "Starting ${EXECUTABLE_BINARY}..."
 
     mkdir -p "${LOG_DIR}"
-    rm -f "${LOG_DIR}"/clickhouse-operator.*.log.*
     "${EXECUTABLE_BINARY}" \
+    	-config="${SRC_ROOT}/config/config-dev.yaml" \
     	-alsologtostderr=true \
     	-log_dir=log \
     	-v=1
@@ -47,10 +47,9 @@ if [[ $2 == "noclean" ]]; then
     echo "Clean step skipped"
 else
     # And clean binary after run. It'll be rebuilt next time
-    "${CUR_DIR}/go_build_client_clean.sh"
+    "${CUR_DIR}/go_build_service_clean.sh"
 fi
-
-#    echo "======================"
-#    echo "=== Logs available ==="
-#    echo "======================"
-#    ls "${LOG_DIR}"/*
+    echo "======================"
+    echo "=== Logs available ==="
+    echo "======================"
+    ls "${LOG_DIR}"/*
