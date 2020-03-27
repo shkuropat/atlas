@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: service
-          image: sunsingerus/mservice-service:dev
+          image: sunsingerus/mservice-service:latest
+          imagePullPolicy: Always
           env:
             - name: PROXY_ADDRESS_FORWARDING
               value: "true"
