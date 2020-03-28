@@ -10,10 +10,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package controller_service
+package controller_client
 
 import "testing"
 
-func TestControllerService(t *testing.T) {
-	t.Logf("controller_service")
+func TestControllerClient(t *testing.T) {
+	t.Logf("controller_client")
 }

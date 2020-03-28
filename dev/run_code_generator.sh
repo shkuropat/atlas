@@ -26,13 +26,27 @@ else
     exit 1
 fi
 
-PROTO_ROOT="${PKG_ROOT}/mservice"
+PROTO_ROOT="${PKG_ROOT}/api"
 
-echo "Clean previously generated files:"
-rm -f "${PROTO_ROOT}"/*.pb.go
+function generate_from_proto() {
+    FOLDER="${1}"
 
-echo "Compile .proto files"
-# --go_out requires list of plugins to be used
-"${PROTOC}" -I "${PROTO_ROOT}" --go_out=plugins=grpc:"${PROTO_ROOT}" "${PROTO_ROOT}"/*.proto
+    if [[ -z "${FOLDER}" ]]; then
+        echo "need to specify folder where to look for .proto files to generate code from "
+        exit 1
+    fi
 
-#protoc -I "${SRC_ROOT}" --go_out="${SRC_ROOT}" ./mservice.proto
+    echo "Generate code from .proto files in ${FOLDER}"
+
+    echo "Clean previously generated files"
+    rm -f "${FOLDER}"/*.pb.go
+
+    echo "Compile .proto files"
+    # --go_out requires list of plugins to be used
+    "${PROTOC}" -I "${FOLDER}" --go_out=plugins=grpc:"${FOLDER}" "${FOLDER}"/*.proto
+
+    #protoc -I "${SRC_ROOT}" --go_out="${SRC_ROOT}" ./mservice.proto
+}
+
+generate_from_proto "${PROTO_ROOT}"/mservice
+generate_from_proto "${PROTO_ROOT}"/health

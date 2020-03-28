@@ -16,8 +16,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	controller "github.com/sunsingerus/mservice/pkg/controller_service"
-	"github.com/sunsingerus/mservice/pkg/transiever_service"
+	controller "github.com/sunsingerus/mservice/pkg/controller/service"
+	"github.com/sunsingerus/mservice/pkg/transiever/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/testdata"
@@ -28,7 +28,7 @@ import (
 
 	log "github.com/golang/glog"
 
-	pb "github.com/sunsingerus/mservice/pkg/mservice"
+	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
 
 	"github.com/sunsingerus/mservice/pkg/version"
 )

@@ -21,8 +21,8 @@ import (
 	"google.golang.org/grpc/testdata"
 	"os"
 
-	pb "github.com/sunsingerus/mservice/pkg/mservice"
-	"github.com/sunsingerus/mservice/pkg/transiever_client"
+	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
+	"github.com/sunsingerus/mservice/pkg/transiever/client"
 	"github.com/sunsingerus/mservice/pkg/version"
 )
 

@@ -10,10 +10,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package transiever_client
+package mservice
 
 import "testing"
 
-func TestTransieverClient(t *testing.T) {
-	t.Logf("transiever_client")
+func TestMService(t *testing.T) {
+	t.Logf("mservice")
 }

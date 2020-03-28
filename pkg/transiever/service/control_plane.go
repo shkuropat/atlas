@@ -18,7 +18,7 @@ import (
 
 	log "github.com/golang/glog"
 
-	pb "github.com/sunsingerus/mservice/pkg/mservice"
+	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
 )
 
 var (
