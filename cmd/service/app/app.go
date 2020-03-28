@@ -17,6 +17,7 @@ import (
 	"flag"
 	"fmt"
 	controller "github.com/sunsingerus/mservice/pkg/controller/service"
+	"github.com/sunsingerus/mservice/pkg/transiever/health"
 	"github.com/sunsingerus/mservice/pkg/transiever/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -28,8 +29,8 @@ import (
 
 	log "github.com/golang/glog"
 
-	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
-
+	pbHealth "github.com/sunsingerus/mservice/pkg/api/health"
+	pbMService "github.com/sunsingerus/mservice/pkg/api/mservice"
 	"github.com/sunsingerus/mservice/pkg/version"
 )
 
@@ -119,7 +120,9 @@ func Run() {
 	transiever_service.Init()
 
 	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneEndpoint{})
+	pbMService.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneEndpoint{})
+	pbHealth.RegisterHealthServer(grpcServer, &transiever_health.HealthEndpoint{})
+
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
 			log.Fatalf("failed to Serve() %v", err)
