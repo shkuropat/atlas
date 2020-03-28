@@ -14,7 +14,6 @@ package transiever_client
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -97,42 +96,25 @@ func RunMServiceControlPlaneClient(client pb.MServiceControlPlaneClient) {
 	<-waitc
 }
 
-func SendFile(client pb.MServiceControlPlaneClient) {
+func StreamDataChunks(client pb.MServiceControlPlaneClient, r io.Reader) (n int64, err error) {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	log.Infof("rpcData()")
 	rpcData, err := client.Data(ctx)
 	if err != nil {
 		log.Fatalf("client.Data() failed %v", err)
 		os.Exit(1)
 	}
 	defer rpcData.CloseSend()
-
-	log.Infof("rpcData()")
-	log.Infof("sleep")
-	time.Sleep(5 * time.Second)
-	log.Infof("continue")
-
-	for i := 0; i < 5; i++ {
-		command := pb.NewDataChunk(
-			[]byte(fmt.Sprintf("data piece %d", i)),
-		)
-		log.Infof("before Send()")
-
-		err := rpcData.Send(command)
-		if err == io.EOF {
-			log.Infof("Send() received EOF, return from func")
-			return
-		}
-		if err != nil {
-			log.Fatalf("failed to Send() %v", err)
-			os.Exit(1)
-		}
-		log.Infof("after Send()")
-
-		log.Infof("before Send() sleep")
-		time.Sleep(3 * time.Second)
-		log.Infof("after Send() sleep")
-	}
+	dataChunkStream, err := pb.OpenDataChunkStream(
+		rpcData,
+		uint32(pb.DataChunkType_DATA_CHUNK_DATA),
+		"",
+		0,
+		"123",
+		"desc",
+	)
+	return dataChunkStream.ReadFrom(r)
 }

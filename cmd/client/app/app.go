@@ -16,6 +16,7 @@ import (
 	"flag"
 	"fmt"
 	log "github.com/golang/glog"
+	"github.com/sunsingerus/mservice/pkg/controller/client"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/testdata"
@@ -40,6 +41,9 @@ var (
 	tls                bool
 	caFile             string
 	serverHostOverride string
+
+	filename  string
+	readStdin bool
 )
 
 func init() {
@@ -49,6 +53,8 @@ func init() {
 	flag.BoolVar(&tls, "tls", false, "Connection uses TLS if true, else plain TCP")
 	flag.StringVar(&caFile, "ca-file", "", "The file containing the CA root cert file")
 	flag.StringVar(&serverHostOverride, "server-host-override", "x.test.youtube.com", "The server name use to verify the hostname returned by TLS handshake")
+	flag.StringVar(&filename, "filename", "", "File to send")
+	flag.BoolVar(&readStdin, "read-stdin", false, "read data from STDIN")
 
 	flag.Parse()
 }
@@ -103,6 +109,11 @@ func Run() {
 
 	client := pb.NewMServiceControlPlaneClient(conn)
 
-	transiever_client.SendFile(client)
+	if filename != "" {
+		controller_client.SendFile(client, filename)
+	}
+	if readStdin {
+		controller_client.SendStdin(client)
+	}
 	transiever_client.RunMServiceControlPlaneClient(client)
 }

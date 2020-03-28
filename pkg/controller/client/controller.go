@@ -11,3 +11,44 @@
 // limitations under the License.
 
 package controller_client
+
+import (
+	log "github.com/golang/glog"
+	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
+	"github.com/sunsingerus/mservice/pkg/transiever/client"
+	"io/ioutil"
+	"os"
+)
+
+type FileGetter struct {
+	filename string
+}
+
+func NewFileGetter(filename string) *FileGetter {
+	return &FileGetter{
+		filename: filename,
+	}
+}
+
+func (f *FileGetter) Get() ([]byte, bool) {
+	data, _ := ioutil.ReadFile(f.filename)
+	return data, true
+}
+
+func SendFile(client pb.MServiceControlPlaneClient, filename string) {
+	if _, err := os.Stat(filename); err == nil {
+		log.Infof("Has file %s", filename)
+		if f, err := os.Open(filename); err == nil {
+			log.Infof("START send file %s", filename)
+			n, err := transiever_client.StreamDataChunks(client, f)
+			log.Infof("DONE send file %s size %d err %v", filename, n, err)
+		} else {
+			log.Infof("ERROR open file %s", filename)
+		}
+	}
+}
+
+func SendStdin(client pb.MServiceControlPlaneClient) {
+	n, err := transiever_client.StreamDataChunks(client, os.Stdin)
+	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
+}
