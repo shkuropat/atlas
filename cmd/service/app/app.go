@@ -132,7 +132,6 @@ func Run() {
 
 	log.Infof("wait for transiever started")
 
-	transiever_service.WaitTransieverStarted()
 	go controller.DispatchEchoRequest(transiever_service.GetOutgoingQueue())
 	go controller.HandleIncomingCommands(transiever_service.GetIncomingQueue())
 

@@ -12,15 +12,6 @@
 
 package mservice
 
-import (
-	log "github.com/golang/glog"
-	"io"
-)
-
-type DataChunkGetter interface {
-	Get() (data []byte, last bool)
-}
-
 func NewDataChunk(data []byte, last bool) *DataChunk {
 	chunk := &DataChunk{
 		Header: NewHeader(
@@ -41,111 +32,6 @@ func NewDataChunk(data []byte, last bool) *DataChunk {
 	}
 
 	return chunk
-}
-
-type DataChunkStream struct {
-	client         MServiceControlPlane_DataClient
-	_type          uint32
-	name           string
-	version        uint32
-	uuid_reference string
-	description    string
-}
-
-// Inspired by file.OpenFile()
-func OpenDataChunkStream(
-	client MServiceControlPlane_DataClient,
-	_type uint32,
-	name string,
-	version uint32,
-	uuid_reference string,
-	description string,
-) (*DataChunkStream, error) {
-	return &DataChunkStream{
-		client:         client,
-		_type:          _type,
-		name:           name,
-		version:        version,
-		uuid_reference: uuid_reference,
-		description:    description,
-	}, nil
-}
-
-// Implements io.Writer
-//
-// Write writes len(p) bytes from p to the underlying data stream.
-// It returns the number of bytes written from p (0 <= n <= len(p))
-// and any error encountered that caused the write to stop early.
-// Write must return a non-nil error if it returns n < len(p).
-// Write must not modify the slice data, even temporarily.
-//
-// Implementations must not retain p.
-func (s *DataChunkStream) Write(p []byte) (n int, err error) {
-	n = len(p)
-	log.Infof("before Send()")
-	dataChunk := NewDataChunk(p, false)
-	err = s.client.Send(dataChunk)
-	if err == io.EOF {
-		log.Infof("Send() received EOF, return from func")
-		n = 0
-	}
-	if err != nil {
-		log.Fatalf("failed to Send() %v", err)
-		n = 0
-	}
-	log.Infof("after Send()")
-	return
-}
-
-// Implements io.Closer
-//
-// Closer is the interface that wraps the basic Close method.
-//
-// The behavior of Close after the first call is undefined.
-// Specific implementations may document their own behavior.
-func (s *DataChunkStream) Close() error {
-	dataChunk := NewDataChunk(nil, true)
-	err := s.client.Send(dataChunk)
-	if err == io.EOF {
-		log.Infof("Send() received EOF, return from func")
-	}
-	if err != nil {
-		log.Fatalf("failed to Send() %v", err)
-	}
-	log.Infof("after Send()")
-	return err
-}
-
-// Implements io.ReaderFrom
-//
-// ReaderFrom is the interface that wraps the ReadFrom method.
-//
-// ReadFrom reads data from r until EOF or error.
-// The return value n is the number of bytes read.
-// Any error except io.EOF encountered during the read is also returned.
-//
-// The Copy function uses ReaderFrom if available.
-func (s *DataChunkStream) ReadFrom(r io.Reader) (n int64, err error) {
-	n = 0
-	p := make([]byte, 1024)
-	for {
-		read, readErr := r.Read(p)
-		n += int64(read)
-		if read > 0 {
-			_, writeErr := s.Write(p[:read])
-			if writeErr != nil {
-				err = writeErr
-				return
-			}
-		}
-		if readErr == io.EOF {
-			readErr = nil
-			return
-		}
-		if readErr != nil {
-			return
-		}
-	}
 }
 
 func (dc *DataChunk) SetLen(len uint64) {

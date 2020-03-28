@@ -42,8 +42,8 @@ var (
 	caFile             string
 	serverHostOverride string
 
-	filename  string
-	readStdin bool
+	readFilename string
+	readStdin    bool
 )
 
 func init() {
@@ -53,8 +53,8 @@ func init() {
 	flag.BoolVar(&tls, "tls", false, "Connection uses TLS if true, else plain TCP")
 	flag.StringVar(&caFile, "ca-file", "", "The file containing the CA root cert file")
 	flag.StringVar(&serverHostOverride, "server-host-override", "x.test.youtube.com", "The server name use to verify the hostname returned by TLS handshake")
-	flag.StringVar(&filename, "filename", "", "File to send")
-	flag.BoolVar(&readStdin, "read-stdin", false, "read data from STDIN")
+	flag.StringVar(&readFilename, "read-filename", "", "Read file and send it")
+	flag.BoolVar(&readStdin, "read-stdin", false, "Read data from STDIN and send it")
 
 	flag.Parse()
 }
@@ -109,8 +109,8 @@ func Run() {
 
 	client := pb.NewMServiceControlPlaneClient(conn)
 
-	if filename != "" {
-		controller_client.SendFile(client, filename)
+	if readFilename != "" {
+		controller_client.SendFile(client, readFilename)
 	}
 	if readStdin {
 		controller_client.SendStdin(client)

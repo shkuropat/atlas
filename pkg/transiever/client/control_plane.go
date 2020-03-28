@@ -96,7 +96,7 @@ func RunMServiceControlPlaneClient(client pb.MServiceControlPlaneClient) {
 	<-waitc
 }
 
-func StreamDataChunks(client pb.MServiceControlPlaneClient, r io.Reader) (n int64, err error) {
+func StreamDataChunks(client pb.MServiceControlPlaneClient, dataSource io.Reader) (n int64, err error) {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -116,5 +116,7 @@ func StreamDataChunks(client pb.MServiceControlPlaneClient, r io.Reader) (n int6
 		"123",
 		"desc",
 	)
-	return dataChunkStream.ReadFrom(r)
+	n, err = io.Copy(dataChunkStream, dataSource)
+	err = dataChunkStream.Close()
+	return n, err
 }

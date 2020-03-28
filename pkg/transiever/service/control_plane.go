@@ -22,7 +22,6 @@ import (
 )
 
 var (
-	waitTransieverStarted  chan bool
 	maxIncomingOutstanding int32 = 100
 	incomingQueue          chan *pb.Command
 	maxOutgoingOutstanding int32 = 100
@@ -32,11 +31,6 @@ var (
 func Init() {
 	incomingQueue = make(chan *pb.Command, maxIncomingOutstanding)
 	outgoingQueue = make(chan *pb.Command, maxOutgoingOutstanding)
-	waitTransieverStarted = make(chan bool)
-}
-
-func WaitTransieverStarted() {
-	<-waitTransieverStarted
 }
 
 func GetOutgoingQueue() chan *pb.Command {
@@ -53,8 +47,6 @@ type MServiceControlPlaneEndpoint struct {
 
 func (s *MServiceControlPlaneEndpoint) Commands(stream pb.MServiceControlPlane_CommandsServer) error {
 	log.Info("Commands() called")
-
-	close(waitTransieverStarted)
 
 	waitIncoming := make(chan bool)
 	go func() {
@@ -118,8 +110,8 @@ func (s *MServiceControlPlaneEndpoint) Data(stream pb.MServiceControlPlane_DataS
 		dataChunk, err := stream.Recv()
 		if err == nil {
 			// All went well
-			log.Infof("Recv() got msg")
-			fmt.Printf("%s\n", string(dataChunk.Bytes))
+			log.Infof("Recv() got msg len %d, last chunk %v", len(dataChunk.GetBytes()), dataChunk.GetLast())
+			fmt.Printf("%s\n", string(dataChunk.GetBytes()))
 		} else if err == io.EOF {
 			// Correct EOF
 			log.Infof("Recv() get EOF")
