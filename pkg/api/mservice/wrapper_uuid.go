@@ -12,6 +12,8 @@
 
 package mservice
 
+import "github.com/google/uuid"
+
 func NewUUID(uuid string) *UUID {
 	return &UUID{
 		StringValue: uuid,
@@ -20,4 +22,8 @@ func NewUUID(uuid string) *UUID {
 
 func (id *UUID) Set(uuid string) {
 	id.StringValue = uuid
+}
+
+func CreateNewUUID() string {
+	return uuid.New().String()
 }

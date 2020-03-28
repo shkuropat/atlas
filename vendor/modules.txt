@@ -6,6 +6,8 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
+# github.com/google/uuid v1.1.1
+github.com/google/uuid
 # golang.org/x/net v0.0.0-20191004110552-13f9640d40b9
 golang.org/x/net/http/httpguts
 golang.org/x/net/http2

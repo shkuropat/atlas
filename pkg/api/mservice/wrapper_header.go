@@ -12,7 +12,9 @@
 
 package mservice
 
-import "github.com/golang/protobuf/ptypes/timestamp"
+import (
+	"github.com/golang/protobuf/ptypes/timestamp"
+)
 
 func NewHeader(
 	_type uint32,
@@ -33,7 +35,9 @@ func NewHeader(
 		h.SetVersion(version)
 	}
 
-	if uuid != "" {
+	if uuid == "" {
+		h.SetUUID(CreateNewUUID())
+	} else {
 		h.SetUUID(uuid)
 	}
 
