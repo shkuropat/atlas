@@ -20,7 +20,7 @@ RUN ./dev/run_test.sh
 RUN OUTPUT_BIN=/tmp/service ./dev/go_build_service.sh
 
 # Build grpc-health-probe
-RUN GO111MODULE=off go get github.com/grpc-ecosystem/grpc-health-probe
+RUN CGO_ENABLED=0 GO111MODULE=off go get -a github.com/grpc-ecosystem/grpc-health-probe
 
 # === Image ===
 
