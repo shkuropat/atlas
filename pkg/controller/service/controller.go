@@ -13,39 +13,30 @@
 package controller_service
 
 import (
-	"strconv"
-	"time"
-
 	log "github.com/golang/glog"
 
 	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
 )
 
-func DispatchEchoRequest(outgoingQueue chan *pb.Command) {
-	for i := 0; i < 5; i++ {
-		command := pb.NewCommand(
-			pb.CommandType_COMMAND_ECHO_REQUEST,
-			"",
-			0,
-			"12-34-56-"+strconv.Itoa(i),
-			"",
-			0,
-			0,
-			"desc",
-		)
-		log.Infof("before Transmit")
-		outgoingQueue <- command
-		log.Infof("after Transmit")
+func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *pb.Command) {
+	log.Infof("Start IncomingCommandsHandler()")
+	defer log.Infof("Exit IncomingCommandsHandler()")
 
-		log.Infof("before Transmit sleep")
-		time.Sleep(3 * time.Second)
-		log.Infof("after Transmit sleep")
-	}
-}
-
-func HandleIncomingCommands(incomingQueue chan *pb.Command) {
 	for {
 		cmd := <-incomingQueue
 		log.Infof("Got cmd %v", cmd)
+		if cmd.GetType() == pb.CommandType_COMMAND_ECHO_REQUEST {
+			command := pb.NewCommand(
+				pb.CommandType_COMMAND_ECHO_REPLY,
+				"",
+				0,
+				pb.CreateNewUUID(),
+				"reference: "+cmd.GetHeader().GetUuid().StringValue,
+				0,
+				0,
+				"desc",
+			)
+			outgoingQueue <- command
+		}
 	}
 }

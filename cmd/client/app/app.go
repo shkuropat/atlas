@@ -13,17 +13,23 @@
 package app
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	log "github.com/golang/glog"
 	"github.com/sunsingerus/mservice/pkg/controller/client"
+	"github.com/sunsingerus/mservice/pkg/transiever/client"
+	"github.com/sunsingerus/mservice/pkg/transiever/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/testdata"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
-	"github.com/sunsingerus/mservice/pkg/transiever/client"
+	controller "github.com/sunsingerus/mservice/pkg/controller/client"
 	"github.com/sunsingerus/mservice/pkg/version"
 )
 
@@ -67,15 +73,15 @@ func Run() {
 	}
 
 	// Set OS signals and termination context
-	//	ctx, cancelFunc := context.WithCancel(context.Background())
-	//	stopChan := make(chan os.Signal, 2)
-	//	signal.Notify(stopChan, os.Interrupt, syscall.SIGTERM)
-	//	go func() {
-	//		<-stopChan
-	//		cancelFunc()
-	//		<-stopChan
-	//		os.Exit(1)
-	//	}()
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	stopChan := make(chan os.Signal, 2)
+	signal.Notify(stopChan, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-stopChan
+		cancelFunc()
+		<-stopChan
+		os.Exit(1)
+	}()
 
 	log.Infof("Starting client. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
 
@@ -109,11 +115,23 @@ func Run() {
 
 	client := pb.NewMServiceControlPlaneClient(conn)
 
+	transiever_client.Init()
+
+	go transiever_client.RunMServiceControlPlaneClient(client)
+	log.Infof("Wait...")
+	time.Sleep(5 * time.Second)
+	go controller.IncomingCommandsHandler(transiever_service.GetIncomingQueue(), transiever_service.GetOutgoingQueue())
+	log.Infof("Wait...")
+	time.Sleep(5 * time.Second)
+	go controller.SendEchoRequest(transiever_service.GetOutgoingQueue())
+
 	if readFilename != "" {
 		controller_client.SendFile(client, readFilename)
 	}
+
 	if readStdin {
 		controller_client.SendStdin(client)
 	}
-	transiever_client.RunMServiceControlPlaneClient(client)
+
+	<-ctx.Done()
 }

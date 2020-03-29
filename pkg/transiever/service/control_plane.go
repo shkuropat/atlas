@@ -14,6 +14,7 @@ package transiever_service
 
 import (
 	"fmt"
+	"github.com/sunsingerus/mservice/pkg/transiever"
 	"io"
 
 	log "github.com/golang/glog"
@@ -21,24 +22,16 @@ import (
 	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
 )
 
-var (
-	maxIncomingOutstanding int32 = 100
-	incomingQueue          chan *pb.Command
-	maxOutgoingOutstanding int32 = 100
-	outgoingQueue          chan *pb.Command
-)
-
 func Init() {
-	incomingQueue = make(chan *pb.Command, maxIncomingOutstanding)
-	outgoingQueue = make(chan *pb.Command, maxOutgoingOutstanding)
+	transiever.Init()
 }
 
 func GetOutgoingQueue() chan *pb.Command {
-	return outgoingQueue
+	return transiever.GetOutgoingQueue()
 }
 
 func GetIncomingQueue() chan *pb.Command {
-	return incomingQueue
+	return transiever.GetIncomingQueue()
 }
 
 type MServiceControlPlaneEndpoint struct {
@@ -47,58 +40,9 @@ type MServiceControlPlaneEndpoint struct {
 
 func (s *MServiceControlPlaneEndpoint) Commands(stream pb.MServiceControlPlane_CommandsServer) error {
 	log.Info("Commands() called")
+	defer log.Info("Commands() exited")
 
-	waitIncoming := make(chan bool)
-	go func() {
-		for {
-			msg, err := stream.Recv()
-			if err == nil {
-				// All went well
-				log.Infof("Recv() got msg")
-				incomingQueue <- msg
-			} else if err == io.EOF {
-				// Correct EOF
-				log.Infof("Recv() get EOF")
-
-				close(waitIncoming)
-				return
-			} else {
-				// Stream broken
-				log.Infof("Recv() got err: %v", err)
-
-				close(waitIncoming)
-				return
-			}
-
-		}
-	}()
-
-	waitOutgoing := make(chan bool)
-	go func() {
-		for {
-			command := <-outgoingQueue
-			log.Infof("got command to send")
-			err := stream.Send(command)
-			if err == nil {
-				// All went well
-				log.Infof("Send() ok")
-			} else if err == io.EOF {
-				log.Infof("Send() got EOF")
-
-				close(waitOutgoing)
-				return
-			} else {
-				log.Fatalf("Send() got err: %v", err)
-
-				close(waitOutgoing)
-				return
-			}
-		}
-	}()
-
-	<-waitIncoming
-	<-waitOutgoing
-
+	transiever.CommandsExchangeEndlessLoop(stream)
 	return nil
 }
 
@@ -108,18 +52,22 @@ func (s *MServiceControlPlaneEndpoint) Data(stream pb.MServiceControlPlane_DataS
 
 	for {
 		dataChunk, err := stream.Recv()
-		if err == nil {
-			// All went well
-			log.Infof("Recv() got msg len %d, last chunk %v", len(dataChunk.GetBytes()), dataChunk.GetLast())
+		if dataChunk != nil {
+			// We have data chunk received
+			log.Infof("Data.Recv() got msg len %d, last chunk %v", len(dataChunk.GetBytes()), dataChunk.GetLast())
 			fmt.Printf("%s\n", string(dataChunk.GetBytes()))
+		}
+
+		if err == nil {
+			// All went well, ready to receive more data
 		} else if err == io.EOF {
 			// Correct EOF
-			log.Infof("Recv() get EOF")
+			log.Infof("Data.Recv() get EOF")
 
 			return nil
 		} else {
 			// Stream broken
-			log.Infof("Recv() got err: %v", err)
+			log.Infof("Data.Recv() got err: %v", err)
 
 			return nil
 		}
@@ -128,5 +76,7 @@ func (s *MServiceControlPlaneEndpoint) Data(stream pb.MServiceControlPlane_DataS
 
 func (s *MServiceControlPlaneEndpoint) Metrics(stream pb.MServiceControlPlane_MetricsServer) error {
 	log.Info("Metrics() called")
+	defer log.Info("Metrics() exited")
+
 	return nil
 }

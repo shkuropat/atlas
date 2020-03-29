@@ -17,6 +17,16 @@ import (
 	"io"
 )
 
+// DataChunkStream is a handler to open stream of DataChunk's
+// Inspired by os.File handler and is expected to be used in the same context
+// OpenDataStream()
+// Write()
+// Close()
+// it implements the following interfaces:
+//	- io.Writer
+//	- io.Closer
+//	- io.WriterTo
+// and thus can be used in any functions, which operate these interfaces, such as io.Copy()
 type DataChunkStream struct {
 	client         MServiceControlPlane_DataClient
 	_type          uint32
@@ -26,7 +36,8 @@ type DataChunkStream struct {
 	description    string
 }
 
-// Inspired by file.OpenFile()
+// OpenDataChunkStream opens DataChunk's stream with specified parameters
+// Inspired by os.OpenFile()
 func OpenDataChunkStream(
 	client MServiceControlPlane_DataClient,
 	_type uint32,

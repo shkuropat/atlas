@@ -10,32 +10,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mservice
-
-func NewCommand(
-	_type CommandType,
-	name string,
-	version uint32,
-	uuid string,
-	uuid_reference string,
-	seconds int64,
-	nanos int32,
-	description string,
-) *Command {
-	return &Command{
-		Header: NewHeader(
-			uint32(_type),
-			name,
-			version,
-			uuid,
-			uuid_reference,
-			seconds,
-			nanos,
-			description,
-		),
-	}
-}
-
-func (m *Command) GetType() CommandType {
-	return CommandType(m.GetHeader().GetTypeName().GetType())
-}
+package transiever
