@@ -34,6 +34,7 @@ fi
     	-config="${SRC_ROOT}/config/config-dev.yaml" \
     	-alsologtostderr=true \
     	-log_dir=log \
+    	-tls \
     	-v=1
 #	-logtostderr=true \
 #	-stderrthreshold=FATAL \

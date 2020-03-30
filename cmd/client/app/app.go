@@ -22,6 +22,7 @@ import (
 	"github.com/sunsingerus/mservice/pkg/transiever/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/oauth"
 	"google.golang.org/grpc/testdata"
 	"os"
 	"os/signal"
@@ -31,6 +32,7 @@ import (
 	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
 	controller "github.com/sunsingerus/mservice/pkg/controller/client"
 	"github.com/sunsingerus/mservice/pkg/version"
+	"golang.org/x/oauth2"
 )
 
 // CLI parameter variables
@@ -102,7 +104,14 @@ func Run() {
 		log.Infof("enabling TLS with ca=%s", caFile)
 	} else {
 		opts = append(opts, grpc.WithInsecure())
+
 	}
+
+	// This code sets token once per connection
+	// It will be sent by gRPC on each call, without need to do it manually
+	perRPC := oauth.NewOauthAccess(fetchToken())
+	opts = append(opts, grpc.WithPerRPCCredentials(perRPC))
+
 
 	opts = append(opts, grpc.WithBlock())
 	log.Infof("Dial() to %s", serviceAddress)
@@ -136,4 +145,10 @@ func Run() {
 	}
 
 	<-ctx.Done()
+}
+
+func fetchToken() *oauth2.Token {
+	return &oauth2.Token{
+		AccessToken: "my-secret-token",
+	}
 }

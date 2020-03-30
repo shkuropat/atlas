@@ -16,7 +16,6 @@ import (
 	"context"
 	log "github.com/golang/glog"
 	"github.com/sunsingerus/mservice/pkg/transiever"
-	"google.golang.org/grpc/metadata"
 	"io"
 	"os"
 
@@ -40,9 +39,9 @@ func RunMServiceControlPlaneClient(client pb.MServiceControlPlaneClient) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	//this code sends JWT token from client to server:
-	md := metadata.Pairs("authorization", "my-secret-token")
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	//this code sends token per each RPC call:
+//	md := metadata.Pairs("authorization", "my-secret-token")
+//	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	rpcCommands, err := client.Commands(ctx)
 	if err != nil {
