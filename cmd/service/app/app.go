@@ -16,18 +16,21 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	log "github.com/golang/glog"
 	controller "github.com/sunsingerus/mservice/pkg/controller/service"
 	"github.com/sunsingerus/mservice/pkg/transiever/health"
 	"github.com/sunsingerus/mservice/pkg/transiever/service"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/testdata"
 	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
-
-	log "github.com/golang/glog"
 
 	pbHealth "github.com/sunsingerus/mservice/pkg/api/health"
 	pbMService "github.com/sunsingerus/mservice/pkg/api/mservice"
@@ -91,6 +94,8 @@ func Run() {
 
 	log.Infof("Starting service. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
 
+	transiever_service.Init()
+
 	log.Infof("Listening on %s", serviceAddress)
 	listener, err := net.Listen("tcp", serviceAddress)
 	if err != nil {
@@ -106,18 +111,39 @@ func Run() {
 		if keyFile == "" {
 			keyFile = testdata.Path("server1.key")
 		}
-		creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
+
+		// TransportCredentials can be created by two ways
+		// 1. Directly from files via NewServerTLSFromFile()
+		// 2. Or through intermediate Certificate
+
+		// Create TransportCredentials directly from files
+		transportCredentials, err := credentials.NewServerTLSFromFile(certFile, keyFile)
+		// Create TransportCredentials through intermediate Certificate
+		// needs "crypto/tls"
+		// cert, err := tls.LoadX509KeyPair(testdata.Path("server1.pem"), testdata.Path("server1.key"))
+		// transportCredentials := credentials.NewServerTLSFromCert(&cert)
+
 		if err != nil {
 			log.Fatalf("failed to generate credentials %v", err)
 			os.Exit(1)
 		}
 		opts = []grpc.ServerOption{
-			grpc.Creds(creds),
+			// Enable TLS transport for connections
+			grpc.Creds(transportCredentials),
 		}
+
 		log.Infof("enabling TLS with cert=%s key=%s", certFile, keyFile)
 	}
 
-	transiever_service.Init()
+	opts = append(opts, []grpc.ServerOption{
+		// Add an interceptor for all unary RPCs.
+		grpc.UnaryInterceptor(unaryInterceptor),
+
+		// Add an interceptor for all stream RPCs.
+		grpc.StreamInterceptor(streamInterceptor),
+	}...,
+	)
+
 
 	grpcServer := grpc.NewServer(opts...)
 	pbMService.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneEndpoint{})
@@ -133,4 +159,95 @@ func Run() {
 	go controller.IncomingCommandsHandler(transiever_service.GetIncomingQueue(), transiever_service.GetOutgoingQueue())
 
 	<-ctx.Done()
+}
+
+var (
+	errMissingMetadata = status.Errorf(codes.InvalidArgument, "No metadata provided")
+	errMissingToken    = status.Errorf(codes.Unauthenticated, "No authorization token provided")
+	errInvalidToken    = status.Errorf(codes.Unauthenticated, "Invalid token")
+)
+
+// In case of failed authorization, the interceptor blocks execution of the handler and returns an error.
+// type grpc.StreamServerInterceptor
+func streamInterceptor(
+	srv interface{},
+	ss grpc.ServerStream,
+	info *grpc.StreamServerInfo,
+	handler grpc.StreamHandler,
+) error {
+	log.Infof("streamInterceptor %s %b %b", info.FullMethod, info.IsClientStream, info.IsServerStream)
+
+	ctx := ss.Context()
+	if err := authorize(ctx); err != nil {
+		return err
+	}
+
+	// Continue execution of handler
+	return handler(srv, ss)
+}
+
+// In case of failed authorization, the interceptor blocks execution of the handler and returns an error.
+// type grpc.StreamClientInterceptor
+func unaryInterceptor(
+	ctx context.Context,
+	req interface{},
+	info *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler,
+) (interface{}, error) {
+	log.Infof("unaryInterceptor %s", info.FullMethod)
+
+	// Skip authorize when GetJWT is requested
+	//if info.FullMethod != "/proto.EventStoreService/GetJWT" {
+	//	if err := authorize(ctx); err != nil {
+	//		return nil, err
+	//	}
+	//}
+
+	if err := authorize(ctx); err != nil {
+		return nil, err
+	}
+
+	// Continue execution of handler
+	return handler(ctx, req)
+}
+
+// authorize ensures a valid token exists within a request's metadata and authorizes the token received from Metadata
+func authorize(ctx context.Context) error {
+	//this code sends JWT token from client to server:
+	//ctx := context.Background()
+	//md := metadata.Pairs("authorization", jwtToken)
+	//ctx = metadata.NewOutgoingContext(ctx, md)
+	// Calls RPC method CreateEvent using the stub client
+	//resp, err := client.CreateEvent(context.Background(), event)
+	return nil
+
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return errMissingMetadata
+	}
+
+	authMetadata, ok := md["authorization"]
+	if !ok {
+		return errMissingToken
+	}
+
+	token := strings.TrimPrefix(authMetadata[0], "Bearer ")
+	err := validateToken(token)
+	if err != nil {
+		return status.Errorf(codes.Unauthenticated, err.Error())
+	}
+
+	return nil
+}
+
+// valid validates the authorization.
+func validateToken(token string) error {
+	// Perform the token validation here. For the sake of this example, the code
+	// here forgoes any of the usual OAuth2 token validation and instead checks
+	// for a token matching an arbitrary string.
+	if token == "my-secret-token" {
+		return nil
+	} else {
+		return errInvalidToken
+	}
 }
