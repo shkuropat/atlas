@@ -213,14 +213,6 @@ func unaryInterceptor(
 
 // authorize ensures a valid token exists within a request's metadata and authorizes the token received from Metadata
 func authorize(ctx context.Context) error {
-	//this code sends JWT token from client to server:
-	//ctx := context.Background()
-	//md := metadata.Pairs("authorization", jwtToken)
-	//ctx = metadata.NewOutgoingContext(ctx, md)
-	// Calls RPC method CreateEvent using the stub client
-	//resp, err := client.CreateEvent(context.Background(), event)
-	return nil
-
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return errMissingMetadata
@@ -232,6 +224,7 @@ func authorize(ctx context.Context) error {
 	}
 
 	token := strings.TrimPrefix(authMetadata[0], "Bearer ")
+	log.Infof("Bearer %s", token)
 	err := validateToken(token)
 	if err != nil {
 		return status.Errorf(codes.Unauthenticated, err.Error())

@@ -117,6 +117,8 @@ func Run() {
 
 	transiever_client.Init()
 
+	log.Infof("About to cal RunMServiceControlPlaneClient()")
+	time.Sleep(5 * time.Second)
 	go transiever_client.RunMServiceControlPlaneClient(client)
 	log.Infof("Wait...")
 	time.Sleep(5 * time.Second)
