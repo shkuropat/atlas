@@ -21,9 +21,8 @@ import (
 	"github.com/sunsingerus/mservice/pkg/controller/client"
 	"github.com/sunsingerus/mservice/pkg/transiever/client"
 	"github.com/sunsingerus/mservice/pkg/transiever/service"
+	"github.com/sunsingerus/mservice/pkg/transport/client"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
 	"os"
 	"os/signal"
 	"syscall"
@@ -96,45 +95,8 @@ func Run() {
 
 	log.Infof("Starting client. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
 
-	//	<-ctx.Done()
-
-	var opts []grpc.DialOption
-
-	if tls {
-		if caFile == "" {
-			caFile = testdata.Path("ca.pem")
-		}
-		creds, err := credentials.NewClientTLSFromFile(caFile, serverHostOverride)
-		if err != nil {
-			log.Fatalf("failed to create TLS credentials %v", err)
-			os.Exit(1)
-		}
-		opts = append(opts, grpc.WithTransportCredentials(creds))
-		log.Infof("enabling TLS with ca=%s", caFile)
-	} else {
-		opts = append(opts, grpc.WithInsecure())
-
-	}
-
-	if auth {
-		log.Infof("OAuth2 requested")
-		if !tls {
-			log.Fatalf("Need TLS to be enabled")
-			os.Exit(1)
-		}
-
-		if oAuthOpts, err := client_auth.SetupOAuth(clientID, clientSecret, tokenURL); err == nil {
-			opts = append(opts, oAuthOpts...)
-		} else {
-			log.Fatalf("%s", err.Error())
-			os.Exit(1)
-		}
-	}
-
-	opts = append(opts, grpc.WithBlock())
-
 	log.Infof("Dial() to %s", serviceAddress)
-	conn, err := grpc.Dial(serviceAddress, opts...)
+	conn, err := grpc.Dial(serviceAddress, getDialOptions()...)
 	if err != nil {
 		log.Fatalf("fail to dial %v", err)
 		os.Exit(1)
@@ -165,4 +127,40 @@ func Run() {
 
 	log.Infof("Press Ctrl+C to exit...")
 	<-ctx.Done()
+}
+
+// getDialOptions  builds gRPC dial options from flags
+func getDialOptions() []grpc.DialOption {
+	var opts []grpc.DialOption
+
+	if tls {
+		log.Infof("TLS requested")
+		if transportOpts, err := client_transport.SetupTransport(caFile, serverHostOverride); err == nil {
+			opts = append(opts, transportOpts...)
+		} else {
+			log.Fatalf("%s", err.Error())
+			os.Exit(1)
+		}
+	} else {
+		opts = append(opts, grpc.WithInsecure())
+	}
+
+	if auth {
+		log.Infof("OAuth2 requested")
+		if !tls {
+			log.Fatalf("Need TLS to be enabled")
+			os.Exit(1)
+		}
+
+		if oAuthOpts, err := client_auth.SetupOAuth(clientID, clientSecret, tokenURL); err == nil {
+			opts = append(opts, oAuthOpts...)
+		} else {
+			log.Fatalf("%s", err.Error())
+			os.Exit(1)
+		}
+	}
+
+	opts = append(opts, grpc.WithBlock())
+
+	return opts
 }

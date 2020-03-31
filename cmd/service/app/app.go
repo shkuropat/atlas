@@ -21,9 +21,8 @@ import (
 	controller "github.com/sunsingerus/mservice/pkg/controller/service"
 	"github.com/sunsingerus/mservice/pkg/transiever/health"
 	"github.com/sunsingerus/mservice/pkg/transiever/service"
+	"github.com/sunsingerus/mservice/pkg/transport/service"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
 	"net"
 	"os"
 	"os/signal"
@@ -108,38 +107,34 @@ func Run() {
 		os.Exit(1)
 	}
 
+	grpcServer := grpc.NewServer(getGRPCServerOptions()...)
+	pbMService.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneEndpoint{})
+	pbHealth.RegisterHealthServer(grpcServer, &transiever_health.HealthEndpoint{})
+
+	go func() {
+		if err := grpcServer.Serve(listener); err != nil {
+			log.Fatalf("failed to Serve() %v", err)
+			os.Exit(1)
+		}
+	}()
+
+	go controller.IncomingCommandsHandler(transiever_service.GetIncomingQueue(), transiever_service.GetOutgoingQueue())
+
+	<-ctx.Done()
+}
+
+// getGRPCServerOptions builds gRPC server options from flags
+func getGRPCServerOptions() []grpc.ServerOption {
 	var opts []grpc.ServerOption
 	if tls {
 		log.Infof("TLS requested")
 
-		if tlsCertFile == "" {
-			tlsCertFile = testdata.Path("server1.pem")
-		}
-		if tlsKeyFile == "" {
-			tlsKeyFile = testdata.Path("server1.key")
-		}
-
-		// TransportCredentials can be created by two ways
-		// 1. Directly from files via NewServerTLSFromFile()
-		// 2. Or through intermediate Certificate
-
-		// Create TransportCredentials directly from files
-		transportCredentials, err := credentials.NewServerTLSFromFile(tlsCertFile, tlsKeyFile)
-		// Create TransportCredentials through intermediate Certificate
-		// needs "crypto/tls"
-		// cert, err := tls.LoadX509KeyPair(testdata.Path("server1.pem"), testdata.Path("server1.key"))
-		// transportCredentials := credentials.NewServerTLSFromCert(&cert)
-
-		if err != nil {
-			log.Fatalf("failed to generate credentials %v", err)
+		if transportOpts, err := service_transport.SetupTransport(tlsCertFile, tlsKeyFile); err == nil {
+			opts = append(opts, transportOpts...)
+		} else {
+			log.Fatalf("%s", err.Error())
 			os.Exit(1)
 		}
-		opts = []grpc.ServerOption{
-			// Enable TLS transport for connections
-			grpc.Creds(transportCredentials),
-		}
-
-		log.Infof("enabling TLS with cert=%s key=%s", tlsCertFile, tlsKeyFile)
 	}
 
 	if oauth {
@@ -157,18 +152,5 @@ func Run() {
 		}
 	}
 
-	grpcServer := grpc.NewServer(opts...)
-	pbMService.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneEndpoint{})
-	pbHealth.RegisterHealthServer(grpcServer, &transiever_health.HealthEndpoint{})
-
-	go func() {
-		if err := grpcServer.Serve(listener); err != nil {
-			log.Fatalf("failed to Serve() %v", err)
-			os.Exit(1)
-		}
-	}()
-
-	go controller.IncomingCommandsHandler(transiever_service.GetIncomingQueue(), transiever_service.GetOutgoingQueue())
-
-	<-ctx.Done()
+	return opts
 }
