@@ -17,12 +17,12 @@ import (
 	"flag"
 	"fmt"
 	log "github.com/golang/glog"
+	"github.com/sunsingerus/mservice/pkg/auth/client"
 	"github.com/sunsingerus/mservice/pkg/controller/client"
 	"github.com/sunsingerus/mservice/pkg/transiever/client"
 	"github.com/sunsingerus/mservice/pkg/transiever/service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/oauth"
 	"google.golang.org/grpc/testdata"
 	"os"
 	"os/signal"
@@ -32,7 +32,6 @@ import (
 	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
 	controller "github.com/sunsingerus/mservice/pkg/controller/client"
 	"github.com/sunsingerus/mservice/pkg/version"
-	"golang.org/x/oauth2"
 )
 
 // CLI parameter variables
@@ -52,6 +51,11 @@ var (
 
 	readFilename string
 	readStdin    bool
+
+	auth         bool
+	clientID     string
+	clientSecret string
+	tokenURL     string
 )
 
 func init() {
@@ -60,6 +64,11 @@ func init() {
 	flag.StringVar(&serviceAddress, "service-address", "localhost:10000", "The address of service to use in the format host:port, as localhost:10000")
 	flag.BoolVar(&tls, "tls", false, "Connection uses TLS if true, else plain TCP")
 	flag.StringVar(&caFile, "ca-file", "", "The file containing the CA root cert file")
+	flag.BoolVar(&auth, "oauth", false, "Whether to use OAuth2 for authentication")
+	flag.StringVar(&clientID, "client-id", "", "ClientID used for Identity server access")
+	flag.StringVar(&clientSecret, "client-secret", "", "ClientSecret used for Identity server access")
+	flag.StringVar(&tokenURL, "token-url", "", "URL of Identity server's token service")
+
 	flag.StringVar(&serverHostOverride, "server-host-override", "x.test.youtube.com", "The server name use to verify the hostname returned by TLS handshake")
 	flag.StringVar(&readFilename, "read-filename", "", "Read file and send it")
 	flag.BoolVar(&readStdin, "read-stdin", false, "Read data from STDIN and send it")
@@ -107,13 +116,23 @@ func Run() {
 
 	}
 
-	// This code sets token once per connection
-	// It will be sent by gRPC on each call, without need to do it manually
-	perRPC := oauth.NewOauthAccess(fetchToken())
-	opts = append(opts, grpc.WithPerRPCCredentials(perRPC))
+	if auth {
+		log.Infof("OAuth2 requested")
+		if !tls {
+			log.Fatalf("Need TLS to be enabled")
+			os.Exit(1)
+		}
 
+		if oAuthOpts, err := client_auth.SetupOAuth(clientID, clientSecret, tokenURL); err == nil {
+			opts = append(opts, oAuthOpts...)
+		} else {
+			log.Fatalf("%s", err.Error())
+			os.Exit(1)
+		}
+	}
 
 	opts = append(opts, grpc.WithBlock())
+
 	log.Infof("Dial() to %s", serviceAddress)
 	conn, err := grpc.Dial(serviceAddress, opts...)
 	if err != nil {
@@ -144,11 +163,6 @@ func Run() {
 		controller_client.SendStdin(client)
 	}
 
+	log.Infof("Press Ctrl+C to exit...")
 	<-ctx.Done()
-}
-
-func fetchToken() *oauth2.Token {
-	return &oauth2.Token{
-		AccessToken: "my-secret-token",
-	}
 }

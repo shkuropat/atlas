@@ -33,6 +33,13 @@ fi
     "${EXECUTABLE_BINARY}" \
     	-alsologtostderr=true \
     	-log_dir=log \
+	-tls \
+	-service-address="localhost:10000" \
+	-read-filename="${CUR_DIR}/example.txt" \
+	-oauth \
+	-client-id="client1" \
+	-client-secret="6d71e2dc-7f2d-4681-8c2b-571e7ede18f8" \
+	-token-url="http://localhost:8080/auth/realms/realm1/protocol/openid-connect/token" \
     	-v=1
 #	-logtostderr=true \
 #	-stderrthreshold=FATAL \

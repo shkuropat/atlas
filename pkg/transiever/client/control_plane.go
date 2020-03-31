@@ -40,8 +40,8 @@ func RunMServiceControlPlaneClient(client pb.MServiceControlPlaneClient) {
 	defer cancel()
 
 	//this code sends token per each RPC call:
-//	md := metadata.Pairs("authorization", "my-secret-token")
-//	ctx = metadata.NewOutgoingContext(ctx, md)
+	//	md := metadata.Pairs("authorization", "my-secret-token")
+	//	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	rpcCommands, err := client.Commands(ctx)
 	if err != nil {
@@ -74,7 +74,10 @@ func StreamDataChunks(client pb.MServiceControlPlaneClient, dataSource io.Reader
 		"123",
 		"desc",
 	)
-	n, err = io.Copy(dataChunkStream, dataSource)
-	err = dataChunkStream.Close()
-	return n, err
+	if err != nil {
+		log.Fatalf("OpenDataChunkStream() failed %v", err)
+		return 0, err
+	}
+	defer dataChunkStream.Close()
+	return io.Copy(dataChunkStream, dataSource)
 }

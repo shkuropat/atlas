@@ -1,5 +1,7 @@
 # cloud.google.com/go v0.26.0
 cloud.google.com/go/compute/metadata
+# github.com/dgrijalva/jwt-go v3.2.0+incompatible
+github.com/dgrijalva/jwt-go
 # github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 github.com/golang/glog
 # github.com/golang/protobuf v1.3.5
@@ -21,6 +23,7 @@ golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
 # golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
 golang.org/x/oauth2
+golang.org/x/oauth2/clientcredentials
 golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
