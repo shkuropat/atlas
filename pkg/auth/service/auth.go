@@ -42,15 +42,15 @@ func streamInterceptor(
 	info *grpc.StreamServerInfo,
 	handler grpc.StreamHandler,
 ) error {
-	log.Infof("streamInterceptor %s %s %s", info.FullMethod, info.IsClientStream, info.IsServerStream)
+	log.Infof("streamInterceptor %s %t %t", info.FullMethod, info.IsClientStream, info.IsServerStream)
 
 	ctx := ss.Context()
 	if err := authorize(ctx); err != nil {
-		log.Infof("AUTH FAILED streamInterceptor %s %s %s", info.FullMethod, info.IsClientStream, info.IsServerStream)
+		log.Infof("AUTH FAILED streamInterceptor %s %t %t", info.FullMethod, info.IsClientStream, info.IsServerStream)
 		return err
 	}
 
-	log.Infof("AUTH OK streamInterceptor %s %s %s", info.FullMethod, info.IsClientStream, info.IsServerStream)
+	log.Infof("AUTH OK streamInterceptor %s %t %t", info.FullMethod, info.IsClientStream, info.IsServerStream)
 
 	// Continue execution of handler
 	return handler(srv, ss)
