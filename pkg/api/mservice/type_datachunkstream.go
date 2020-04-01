@@ -19,13 +19,19 @@ import (
 )
 
 type DataChunkStream struct {
-	_type          uint32
-	name           string
-	metadata       *Metadata
-	version        uint32
-	uuid_reference string
-	description    string
-	offset         uint64
+	Typ            uint32
+	Name           string
+	Metadata       *Metadata
+	Version        uint32
+	UUID_reference string
+	Description    string
+	Offset         uint64
+}
+
+func (dcs *DataChunkStream) ensureMetadata() {
+	if dcs.Metadata == nil {
+		dcs.Metadata = new(Metadata)
+	}
 }
 
 // OutgoingDataChunkStream is a handler to open stream of DataChunk's
@@ -39,7 +45,7 @@ type DataChunkStream struct {
 //	- io.WriterTo
 // and thus can be used in any functions, which operate these interfaces, such as io.Copy()
 type OutgoingDataChunkStream struct {
-	client MServiceControlPlane_DataClient
+	Client MServiceControlPlane_DataClient
 	DataChunkStream
 }
 
@@ -55,14 +61,14 @@ func OpenOutgoingDataChunkStream(
 	description string,
 ) (*OutgoingDataChunkStream, error) {
 	return &OutgoingDataChunkStream{
-		client: client,
+		Client: client,
 		DataChunkStream: DataChunkStream{
-			_type:          _type,
-			name:           name,
-			metadata:       metadata,
-			version:        version,
-			uuid_reference: uuid_reference,
-			description:    description,
+			Typ:            _type,
+			Name:           name,
+			Metadata:       metadata,
+			Version:        version,
+			UUID_reference: uuid_reference,
+			Description:    description,
 		},
 	}, nil
 }
@@ -80,12 +86,12 @@ func (s *OutgoingDataChunkStream) Write(p []byte) (n int, err error) {
 	n = len(p)
 	log.Infof("before Send()")
 	var md *Metadata
-	if s.offset == 0 {
+	if s.Offset == 0 {
 		// First chunk in the stream, it may have some metadata
-		md = s.metadata
+		md = s.Metadata
 	}
-	dataChunk := NewDataChunk(md, &s.offset, false, p)
-	err = s.client.Send(dataChunk)
+	dataChunk := NewDataChunk(md, &s.Offset, false, p)
+	err = s.Client.Send(dataChunk)
 	if err == io.EOF {
 		log.Infof("Send() received EOF, return from func")
 		n = 0
@@ -95,7 +101,7 @@ func (s *OutgoingDataChunkStream) Write(p []byte) (n int, err error) {
 		n = 0
 	}
 
-	s.offset += uint64(n)
+	s.Offset += uint64(n)
 
 	log.Infof("after Send()")
 	return
@@ -109,7 +115,7 @@ func (s *OutgoingDataChunkStream) Write(p []byte) (n int, err error) {
 // Specific implementations may document their own behavior.
 func (s *OutgoingDataChunkStream) Close() error {
 	dataChunk := NewDataChunk(nil, nil, true, nil)
-	err := s.client.Send(dataChunk)
+	err := s.Client.Send(dataChunk)
 	if err == io.EOF {
 		log.Infof("Send() received EOF, return from func")
 	}
@@ -228,6 +234,10 @@ func (s *IncomingDataChunkStream) WriteTo(dst io.Writer) (n int64, err error) {
 			filename := "not specified"
 			if md := dataChunk.GetMetadata(); md != nil {
 				filename = md.GetFilename()
+				if filename != "" {
+					s.ensureMetadata()
+					s.Metadata.SetFilename(filename)
+				}
 			}
 			offset := "not specified"
 			if off, ok := dataChunk.GetOffsetWithAvailabilityReport(); ok {

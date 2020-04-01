@@ -38,11 +38,11 @@ type MServiceControlPlaneEndpoint struct {
 	pb.UnimplementedMServiceControlPlaneServer
 }
 
-func (s *MServiceControlPlaneEndpoint) Commands(stream pb.MServiceControlPlane_CommandsServer) error {
+func (s *MServiceControlPlaneEndpoint) Commands(server pb.MServiceControlPlane_CommandsServer) error {
 	log.Info("Commands() called")
 	defer log.Info("Commands() exited")
 
-	transiever.CommandsExchangeEndlessLoop(stream)
+	transiever.CommandsExchangeEndlessLoop(server)
 	return nil
 }
 
@@ -54,10 +54,11 @@ func (s *MServiceControlPlaneEndpoint) Data(server pb.MServiceControlPlane_DataS
 	defer stream.Close()
 	_, err := io.Copy(os.Stdout, stream)
 
+	log.Infof("Incoming filename: %s", stream.Metadata.GetFilename())
 	return err
 }
 
-func (s *MServiceControlPlaneEndpoint) Metrics(stream pb.MServiceControlPlane_MetricsServer) error {
+func (s *MServiceControlPlaneEndpoint) Metrics(server pb.MServiceControlPlane_MetricsServer) error {
 	log.Info("Metrics() called")
 	defer log.Info("Metrics() exited")
 
