@@ -55,7 +55,7 @@ func RunMServiceControlPlaneClient(client pb.MServiceControlPlaneClient) {
 }
 
 func StreamDataChunks(client pb.MServiceControlPlaneClient, dataSource io.Reader) (n int64, err error) {
-	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -65,7 +65,16 @@ func StreamDataChunks(client pb.MServiceControlPlaneClient, dataSource io.Reader
 		log.Fatalf("client.Data() failed %v", err)
 		os.Exit(1)
 	}
-	defer rpcData.CloseSend()
+	defer func() {
+		// This is hand-made flush() replacement for gRPC
+		// It is required in order to flush all outstanding data before
+		// context's cancel() is called, which simply discards all outstanding data.
+		// On receiving end, when cancel() is the first in the race, stream receives 'cancel' and (sometimes) no data
+		// instead of complete set of data and EOF
+		// See https://github.com/grpc/grpc-go/issues/1714 for more details
+		rpcData.CloseSend()
+		rpcData.Recv()
+	}()
 	dataChunkStream, err := pb.OpenDataChunkStream(
 		rpcData,
 		uint32(pb.DataChunkType_DATA_CHUNK_DATA),
