@@ -54,7 +54,7 @@ func RunMServiceControlPlaneClient(client pb.MServiceControlPlaneClient) {
 	transiever.CommandsExchangeEndlessLoop(rpcCommands)
 }
 
-func StreamDataChunks(client pb.MServiceControlPlaneClient, dataSource io.Reader) (n int64, err error) {
+func StreamDataChunks(client pb.MServiceControlPlaneClient, metadata *pb.Metadata, dataSource io.Reader) (n int64, err error) {
 	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -79,6 +79,7 @@ func StreamDataChunks(client pb.MServiceControlPlaneClient, dataSource io.Reader
 		rpcData,
 		uint32(pb.DataChunkType_DATA_CHUNK_DATA),
 		"",
+		metadata,
 		0,
 		"123",
 		"desc",

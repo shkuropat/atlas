@@ -31,9 +31,12 @@ type DataChunkStream struct {
 	client         MServiceControlPlane_DataClient
 	_type          uint32
 	name           string
+	metadata       *Metadata
 	version        uint32
 	uuid_reference string
 	description    string
+
+	offset uint64
 }
 
 // OpenDataChunkStream opens DataChunk's stream with specified parameters
@@ -42,6 +45,7 @@ func OpenDataChunkStream(
 	client MServiceControlPlane_DataClient,
 	_type uint32,
 	name string,
+	metadata *Metadata,
 	version uint32,
 	uuid_reference string,
 	description string,
@@ -50,6 +54,7 @@ func OpenDataChunkStream(
 		client:         client,
 		_type:          _type,
 		name:           name,
+		metadata:       metadata,
 		version:        version,
 		uuid_reference: uuid_reference,
 		description:    description,
@@ -68,7 +73,12 @@ func OpenDataChunkStream(
 func (s *DataChunkStream) Write(p []byte) (n int, err error) {
 	n = len(p)
 	log.Infof("before Send()")
-	dataChunk := NewDataChunk(p, false)
+	var md *Metadata
+	if s.offset == 0 {
+		// First chunk in the stream, it may have some metadata
+		md = s.metadata
+	}
+	dataChunk := NewDataChunk(md, &s.offset, false, p)
 	err = s.client.Send(dataChunk)
 	if err == io.EOF {
 		log.Infof("Send() received EOF, return from func")
@@ -78,6 +88,9 @@ func (s *DataChunkStream) Write(p []byte) (n int, err error) {
 		log.Fatalf("failed to Send() %v", err)
 		n = 0
 	}
+
+	s.offset += uint64(n)
+
 	log.Infof("after Send()")
 	return
 }
@@ -89,7 +102,7 @@ func (s *DataChunkStream) Write(p []byte) (n int, err error) {
 // The behavior of Close after the first call is undefined.
 // Specific implementations may document their own behavior.
 func (s *DataChunkStream) Close() error {
-	dataChunk := NewDataChunk(nil, true)
+	dataChunk := NewDataChunk(nil, nil, true, nil)
 	err := s.client.Send(dataChunk)
 	if err == io.EOF {
 		log.Infof("Send() received EOF, return from func")

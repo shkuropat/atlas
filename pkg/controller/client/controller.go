@@ -17,6 +17,7 @@ import (
 	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
 	"github.com/sunsingerus/mservice/pkg/transiever/client"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -33,14 +34,15 @@ func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, err
 	}
 
 	log.Infof("START send file %s", filename)
-	n, err := transiever_client.StreamDataChunks(client, f)
+	metadata := pb.NewMetadata(filepath.Base(filename))
+	n, err := transiever_client.StreamDataChunks(client, metadata, f)
 	log.Infof("DONE send file %s size %d err %v", filename, n, err)
 
 	return n, err
 }
 
 func SendStdin(client pb.MServiceControlPlaneClient) (int64, error) {
-	n, err := transiever_client.StreamDataChunks(client, os.Stdin)
+	n, err := transiever_client.StreamDataChunks(client, nil, os.Stdin)
 	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
 	return n, err
 }

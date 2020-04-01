@@ -3,6 +3,7 @@ syntax = "proto3";
 package mservice;
 
 import "type_header.proto";
+import "type_metadata.proto";
 
 enum DataChunkType {
     // Due to first enum value has to be zero in proto3
@@ -16,22 +17,27 @@ enum DataChunkType {
 message DataChunk {
     Header header = 100;
 
+    oneof metadata_optional {
+        // Metadata of the data
+        Metadata metadata = 200;
+    }
+
     oneof len_optional {
         // Len of the whole data
-        uint64 len = 200;
+        uint64 len = 300;
     }
 
     oneof offset_optional {
         // Offset of the current chunk in the whole data
-        uint64 offset = 300;
+        uint64 offset = 400;
     }
 
     oneof last_optional {
         // Last identifies last chunk of the data within one data transfer
-        bool last = 400;
+        bool last = 500;
     }
 
     // Bytes is the purpose of the whole data chunk type
     // May contain any arbitrary sequence of bytes no longer than 2^32
-    bytes bytes = 500;
+    bytes bytes = 600;
 }

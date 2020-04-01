@@ -12,7 +12,7 @@
 
 package mservice
 
-func NewDataChunk(data []byte, last bool) *DataChunk {
+func NewDataChunk(metadata *Metadata, offset *uint64, last bool, data []byte) *DataChunk {
 	chunk := &DataChunk{
 		Header: NewHeader(
 			uint32(DataChunkType_DATA_CHUNK_DATA),
@@ -26,6 +26,13 @@ func NewDataChunk(data []byte, last bool) *DataChunk {
 		),
 		Bytes: data,
 	}
+	if metadata != nil {
+		chunk.SetMetadata(metadata)
+	}
+
+	if offset != nil {
+		chunk.SetOffset(*offset)
+	}
 
 	if last {
 		chunk.SetLast(last)
@@ -34,11 +41,32 @@ func NewDataChunk(data []byte, last bool) *DataChunk {
 	return chunk
 }
 
+func (dc *DataChunk) ensureMetadata() {
+	if dc.MetadataOptional == nil {
+		dc.MetadataOptional = new(DataChunk_Metadata)
+		dc.MetadataOptional.(*DataChunk_Metadata).Metadata = new(Metadata)
+	}
+}
+
+func (dc *DataChunk) SetMetadata(metadata *Metadata) {
+	if dc.MetadataOptional == nil {
+		dc.MetadataOptional = new(DataChunk_Metadata)
+	}
+	dc.MetadataOptional.(*DataChunk_Metadata).Metadata = metadata
+}
+
 func (dc *DataChunk) SetLen(len uint64) {
 	if dc.LenOptional == nil {
 		dc.LenOptional = new(DataChunk_Len)
 		dc.LenOptional.(*DataChunk_Len).Len = len
 	}
+}
+
+func (m *DataChunk) GetOffsetWithTest() (uint64, bool) {
+	if x, ok := m.GetOffsetOptional().(*DataChunk_Offset); ok {
+		return x.Offset, true
+	}
+	return 0, false
 }
 
 func (dc *DataChunk) SetOffset(offset uint64) {

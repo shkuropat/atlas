@@ -54,7 +54,21 @@ func (s *MServiceControlPlaneEndpoint) Data(stream pb.MServiceControlPlane_DataS
 		dataChunk, err := stream.Recv()
 		if dataChunk != nil {
 			// We have data chunk received
-			log.Infof("Data.Recv() got msg len %d, last chunk %v", len(dataChunk.GetBytes()), dataChunk.GetLast())
+			filename := "not specified"
+			if md := dataChunk.GetMetadata(); md != nil {
+				filename = md.GetFilename()
+			}
+			offset := "not specified"
+			off, ok := dataChunk.GetOffsetWithTest()
+			if ok {
+				offset = fmt.Sprintf("%d", off)
+			}
+			log.Infof("Data.Recv() got msg filename %s, chunk len %d, chunk offset %s, last chunk %v",
+				filename,
+				len(dataChunk.GetBytes()),
+				offset,
+				dataChunk.GetLast(),
+			)
 			fmt.Printf("%s\n", string(dataChunk.GetBytes()))
 		}
 
