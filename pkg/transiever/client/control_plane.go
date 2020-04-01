@@ -75,7 +75,7 @@ func StreamDataChunks(client pb.MServiceControlPlaneClient, metadata *pb.Metadat
 		rpcData.CloseSend()
 		rpcData.Recv()
 	}()
-	dataChunkStream, err := pb.OpenDataChunkStream(
+	dataChunkStream, err := pb.OpenOutgoingDataChunkStream(
 		rpcData,
 		uint32(pb.DataChunkType_DATA_CHUNK_DATA),
 		"",
@@ -85,7 +85,7 @@ func StreamDataChunks(client pb.MServiceControlPlaneClient, metadata *pb.Metadat
 		"desc",
 	)
 	if err != nil {
-		log.Fatalf("OpenDataChunkStream() failed %v", err)
+		log.Fatalf("OpenOutgoingDataChunkStream() failed %v", err)
 		return 0, err
 	}
 	defer dataChunkStream.Close()

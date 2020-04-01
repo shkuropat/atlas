@@ -62,8 +62,8 @@ func (dc *DataChunk) SetLen(len uint64) {
 	}
 }
 
-func (m *DataChunk) GetOffsetWithTest() (uint64, bool) {
-	if x, ok := m.GetOffsetOptional().(*DataChunk_Offset); ok {
+func (dc *DataChunk) GetOffsetWithAvailabilityReport() (uint64, bool) {
+	if x, ok := dc.GetOffsetOptional().(*DataChunk_Offset); ok {
 		return x.Offset, true
 	}
 	return 0, false

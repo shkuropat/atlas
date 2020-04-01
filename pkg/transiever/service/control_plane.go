@@ -13,9 +13,9 @@
 package transiever_service
 
 import (
-	"fmt"
 	"github.com/sunsingerus/mservice/pkg/transiever"
 	"io"
+	"os"
 
 	log "github.com/golang/glog"
 
@@ -46,46 +46,15 @@ func (s *MServiceControlPlaneEndpoint) Commands(stream pb.MServiceControlPlane_C
 	return nil
 }
 
-func (s *MServiceControlPlaneEndpoint) Data(stream pb.MServiceControlPlane_DataServer) error {
+func (s *MServiceControlPlaneEndpoint) Data(server pb.MServiceControlPlane_DataServer) error {
 	log.Info("Data() called")
 	defer log.Info("Data() exited")
 
-	for {
-		dataChunk, err := stream.Recv()
-		if dataChunk != nil {
-			// We have data chunk received
-			filename := "not specified"
-			if md := dataChunk.GetMetadata(); md != nil {
-				filename = md.GetFilename()
-			}
-			offset := "not specified"
-			off, ok := dataChunk.GetOffsetWithTest()
-			if ok {
-				offset = fmt.Sprintf("%d", off)
-			}
-			log.Infof("Data.Recv() got msg filename %s, chunk len %d, chunk offset %s, last chunk %v",
-				filename,
-				len(dataChunk.GetBytes()),
-				offset,
-				dataChunk.GetLast(),
-			)
-			fmt.Printf("%s\n", string(dataChunk.GetBytes()))
-		}
+	stream, _ := pb.OpenIncomingDataChunkStream(server)
+	defer stream.Close()
+	_, err := io.Copy(os.Stdout, stream)
 
-		if err == nil {
-			// All went well, ready to receive more data
-		} else if err == io.EOF {
-			// Correct EOF
-			log.Infof("Data.Recv() get EOF")
-
-			return nil
-		} else {
-			// Stream broken
-			log.Infof("Data.Recv() got err: %v", err)
-
-			return nil
-		}
-	}
+	return err
 }
 
 func (s *MServiceControlPlaneEndpoint) Metrics(stream pb.MServiceControlPlane_MetricsServer) error {
