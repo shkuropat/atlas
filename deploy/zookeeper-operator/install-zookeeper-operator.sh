@@ -3,6 +3,7 @@
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "${CUR_DIR}/zookeeper-operator-common.sh"
 
+# OPERATOR_NAMESPACE is declared in common/configuration file. Check in there for default value
 
 echo "Install operator into ${OPERATOR_NAMESPACE} namespace"
 
