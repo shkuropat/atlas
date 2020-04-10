@@ -20,6 +20,9 @@ import (
 
 	"context"
 	cc "golang.org/x/oauth2/clientcredentials"
+
+	"github.com/coreos/go-oidc"
+
 )
 
 func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, error) {
@@ -69,4 +72,11 @@ func SetupOAuth(clientID, clientSecret, tokenURL string) ([]grpc.DialOption, err
 	}
 
 	return opts, nil
+}
+
+func qwe() {
+	_, err := oidc.NewProvider(context.Background(), "providerURI")
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -37,12 +37,14 @@ fi
 	-service-address="localhost:10000" \
 	-read-filename="${CUR_DIR}/example.txt" \
 	-oauth \
-	-client-id="client1" \
-	-client-secret="6d71e2dc-7f2d-4681-8c2b-571e7ede18f8" \
+	-client-id="21596c4c-0397-4199-9f99-4ac8afdbd601" \
+	-client-secret="a5747060-56bd-4824-825e-f052c6d4dd88" \
 	-token-url="http://localhost:8080/auth/realms/realm1/protocol/openid-connect/token" \
     	-v=1
 #	-logtostderr=true \
 #	-stderrthreshold=FATAL \
+#	-client-id="client1" \
+#	-client-secret="6d71e2dc-7f2d-4681-8c2b-571e7ede18f8" \
 
 # -log_dir=log Log files will be written to this directory instead of the default temporary directory
 # -alsologtostderr=true Logs are written to standard error as well as to files
