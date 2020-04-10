@@ -37,8 +37,8 @@ fi
 	-service-address="localhost:10000" \
 	-read-filename="${CUR_DIR}/example.txt" \
 	-oauth \
-	-client-id="21596c4c-0397-4199-9f99-4ac8afdbd601" \
-	-client-secret="a5747060-56bd-4824-825e-f052c6d4dd88" \
+	-client-id="98ea8297-de36-4296-a923-07caf5cb450a" \
+	-client-secret="6b4a1413-6563-4e5f-9722-d4acfc4f43dd" \
 	-token-url="http://localhost:8080/auth/realms/realm1/protocol/openid-connect/token" \
     	-v=1
 #	-logtostderr=true \

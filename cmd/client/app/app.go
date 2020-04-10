@@ -22,6 +22,7 @@ import (
 	"github.com/sunsingerus/mservice/pkg/transiever/client"
 	"github.com/sunsingerus/mservice/pkg/transiever/service"
 	"github.com/sunsingerus/mservice/pkg/transport/client"
+	"golang.org/x/oauth2/dcrp"
 	"google.golang.org/grpc"
 	"os"
 	"os/signal"
@@ -55,6 +56,10 @@ var (
 	clientID     string
 	clientSecret string
 	tokenURL     string
+
+	registerClient bool
+	registerClientURL string
+	initialAccessToken string
 )
 
 func init() {
@@ -72,6 +77,10 @@ func init() {
 	flag.StringVar(&readFilename, "read-filename", "", "Read file and send it")
 	flag.BoolVar(&readStdin, "read-stdin", false, "Read data from STDIN and send it")
 
+	flag.BoolVar(&registerClient, "register", false, "Register new client")
+	flag.StringVar(&registerClientURL, "register-url", "", "Register client URL")
+	flag.StringVar(&initialAccessToken, "initial-access-token", "", "Initial access token")
+
 	flag.Parse()
 }
 
@@ -79,6 +88,30 @@ func init() {
 func Run() {
 	if versionRequest {
 		fmt.Printf("%s\n", version.Version)
+		os.Exit(0)
+	}
+
+	if registerClient {
+		if registerClientURL == "" {
+			fmt.Printf("Need to specify --register-url=URL and possibly --initial-access-token=TOKEN\n")
+			os.Exit(0)
+		}
+		config := dcrp.Config{
+			InitialAccessToken: initialAccessToken,
+			ClientRegistrationEndpointURL: registerClientURL,
+			Metadata: dcrp.Metadata {
+				ClientName: "new fluffy client",
+				TokenEndpointAuthMethod: "client_secret_basic",
+				GrantTypes: []string{"client_credentials"},
+				SoftwareID: "atlas",
+				SoftwareVersion: "0.0.1",
+			},
+		}
+		if cl, err := config.Register(); err != nil {
+			fmt.Printf("Error: %s\n", err.Error())
+		} else {
+			fmt.Printf("Registered:\nclient_id:%s\nclient_secret:%s\n", cl.ClientID, cl.ClientSecret)
+		}
 		os.Exit(0)
 	}
 

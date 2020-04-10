@@ -1,4 +1,4 @@
-# cloud.google.com/go v0.26.0
+# cloud.google.com/go v0.34.0
 cloud.google.com/go/compute/metadata
 # github.com/coreos/go-oidc v2.2.1+incompatible
 github.com/coreos/go-oidc
@@ -30,9 +30,10 @@ golang.org/x/net/http2/hpack
 golang.org/x/net/idna
 golang.org/x/net/internal/timeseries
 golang.org/x/net/trace
-# golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
+# golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be => github.com/sunsingerus/oauth2 v0.0.0-20200410181841-d7afaacd4cbe
 golang.org/x/oauth2
 golang.org/x/oauth2/clientcredentials
+golang.org/x/oauth2/dcrp
 golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
