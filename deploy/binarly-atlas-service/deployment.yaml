@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mservice-service
+  name: atlas-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mservice-service
+      app: atlas-service
   template:
     metadata:
       labels:
-        app: mservice-service
+        app: atlas-service
     spec:
       containers:
         - name: service

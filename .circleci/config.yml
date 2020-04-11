@@ -1,7 +1,10 @@
 #
-# Full example id available here:
+# Full example is available here:
 # https://circleci.com/docs/2.0/configuration-reference/#full-example
 #
+# $DOCKERHUB_REPO, $DOCKERHUB_USER, $DOCKERHUB_PASSWORD are provided by circleci
+# as ENV vars, configured in Project Settings
+
 version: 2.1
 jobs:
   build_master:
@@ -20,8 +23,8 @@ jobs:
           command: |
             echo "Build Docker images"
 
-            docker build -f dockerfile/service/Dockerfile -t $DOCKERHUB_REPO/mservice-service:$RELEASE .
-            docker build -f dockerfile/client/Dockerfile -t $DOCKERHUB_REPO/mservice-client:$RELEASE .
+            docker build -f dockerfile/service/Dockerfile -t $DOCKERHUB_REPO/atlas-service:$RELEASE .
+            docker build -f dockerfile/client/Dockerfile -t $DOCKERHUB_REPO/atlas-client:$RELEASE .
       - run:
           name: Push Docker images
           command: |
@@ -29,8 +32,8 @@ jobs:
 
             docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
 
-            docker push $DOCKERHUB_REPO/mservice-service:$RELEASE
-            docker push $DOCKERHUB_REPO/mservice-client:$RELEASE
+            docker push $DOCKERHUB_REPO/atlas-service:$RELEASE
+            docker push $DOCKERHUB_REPO/atlas-client:$RELEASE
   build_branch:
     machine:
       enabled: true
@@ -45,8 +48,8 @@ jobs:
           command: |
             echo "Build Docker images"
 
-            docker build -f dockerfile/service/Dockerfile -t $DOCKERHUB_REPO/mservice-service:$RELEASE .
-            docker build -f dockerfile/client/Dockerfile -t $DOCKERHUB_REPO/mservice-client:$RELEASE .
+            docker build -f dockerfile/service/Dockerfile -t $DOCKERHUB_REPO/atlas-service:$RELEASE .
+            docker build -f dockerfile/client/Dockerfile -t $DOCKERHUB_REPO/atlas-client:$RELEASE .
       - run:
           name: Push Docker images
           command: |
@@ -54,8 +57,8 @@ jobs:
 
             docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
 
-            docker push $DOCKERHUB_REPO/mservice-service:$RELEASE
-            docker push $DOCKERHUB_REPO/mservice-client:$RELEASE
+            docker push $DOCKERHUB_REPO/atlas-service:$RELEASE
+            docker push $DOCKERHUB_REPO/atlas-client:$RELEASE
 workflows:
   version: 2.1
   build_and_deploy:

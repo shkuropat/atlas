@@ -2,10 +2,28 @@
 
 # Verify installation
 
-watch -n1 "kubectl --namespace cert-manager get pods"
+#
+#
+#
+function press_enter() {
+    read -p "Press enter to continue"
+}
 
-function cat_test() {
-cat <<EOF
+#
+#
+#
+function press_any_key() {
+    # -n defines the required character count to stop reading
+    # -s hides the user's input
+    # -r causes the string to be interpreted "raw" (without considering backslash escapes)
+    read -n 1 -s -r -p "Press any key to continue"
+}
+
+#
+#
+#
+function cat_test_manifests() {
+    cat <<EOF
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -33,14 +51,25 @@ spec:
 EOF
 }
 
-cat_test | kubectl apply -f -
+echo "Check cert-manager pods are in place"
+echo "This is an interactive process with 'wait' command, which can be terminated by Ctrl-C"
+echo "Press any key to continue"
+press_any_key
+watch -n1 "kubectl --namespace cert-manager get pods"
 
+
+cat_test_manifests | kubectl apply -f -
+
+echo "Check issuer,certificate are in place"
+echo "This is an interactive process with 'wait' command, which can be terminated by Ctrl-C"
+echo "Press any key to continue"
+press_any_key
 watch -n1 "kubectl --namespace cert-manager-test get issuer,certificate"
 
 kubectl --namespace cert-manager-test describe issuer,certificate | less -S
 
-cat_test | kubectl delete -f -
+cat_test_manifests | kubectl delete -f -
 
 clear
-echo "Now read on hot to setup certificates"
+echo "Now read on how to setup certificates"
 echo "https://cert-manager.io/docs/configuration/"
