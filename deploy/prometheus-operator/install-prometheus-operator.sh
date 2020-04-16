@@ -5,7 +5,7 @@ echo "External value for \$VALIDATE_YAML=$VALIDATE_YAML"
 
 PROMETHEUS_NAMESPACE="${PROMETHEUS_NAMESPACE:-prometheus}"
 # Possible values for "validate yaml" are values from --validate=XXX kubectl option. They are true/false ATM
-VALIDATE_YAML="${VALIDATE_YAML:-true}"
+VALIDATE_YAML="${VALIDATE_YAML:-false}"
 
 echo "OPTIONS"
 echo "Setup Prometheus into \$PROMETHEUS_NAMESPACE=${PROMETHEUS_NAMESPACE} namespace"

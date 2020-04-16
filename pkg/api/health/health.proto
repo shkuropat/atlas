@@ -5,7 +5,9 @@ syntax = "proto3";
 
 package grpc.health.v1;
 
-message HealthCheckRequest { string service = 1; }
+message HealthCheckRequest {
+    string service = 1;
+}
 
 message HealthCheckResponse {
     enum ServingStatus {
@@ -18,6 +20,5 @@ message HealthCheckResponse {
 
 service Health {
     rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
-
     rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);
 }

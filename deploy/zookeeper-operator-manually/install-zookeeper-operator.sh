@@ -5,7 +5,13 @@ source "${CUR_DIR}/zookeeper-operator-common.sh"
 
 # OPERATOR_NAMESPACE is declared in common/configuration file. Check in there for default value
 
+echo "OPTIONS"
 echo "Install operator into ${OPERATOR_NAMESPACE} namespace"
+echo ""
+echo "!!! IMPORTANT !!!"
+echo "If you do not agree with specified options, press ctrl-c now"
+sleep 30
+echo "Apply options now..."
 
 # CRD
 kubectl apply -f https://raw.githubusercontent.com/pravega/zookeeper-operator/master/deploy/crds/zookeeper_v1beta1_zookeepercluster_crd.yaml
