@@ -3,10 +3,10 @@
 Project status
 
 
-[![CircleCI](https://circleci.com/gh/sunsingerus/mservice.svg?style=svg)](https://circleci.com/gh/sunsingerus/mservice)
-[![issues](https://img.shields.io/github/issues/sunsingerus/mservice.svg)](https://github.com/sunsingerus/mservice/issues)
-[![tags](https://img.shields.io/github/tag/sunsingerus/mservice.svg)](https://github.com/sunsingerus/mservice/tags)
-[![Go Report Card](https://goreportcard.com/badge/github.com/sunsingerus/mservice)](https://goreportcard.com/report/github.com/sunsingerus/mservice)
+[![CircleCI](https://circleci.com/gh/binarly-io/Binarly-Atlas.svg?style=svg)](https://circleci.com/gh/binarly-io/Binarly-Atlas)
+[![issues](https://img.shields.io/github/issues/binarly-io/Binarly-Atlas.svg)](https://github.com/binarly-io/Binarly-Atlas/issues)
+[![tags](https://img.shields.io/github/tag/binarly-io/Binarly-Atlas.svg)](https://github.com/binarly-io/Binarly-Atlas/tags)
+[![Go Report Card](https://goreportcard.com/badge/github.com/binarly-io/Binarly-Atlas)](https://goreportcard.com/report/github.com/binarly-io/Binarly-Atlas)
 
 ## How to install `protoc`
 
