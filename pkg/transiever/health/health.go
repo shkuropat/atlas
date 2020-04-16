@@ -15,7 +15,7 @@ package transiever_health
 import (
 	"context"
 
-	pb "github.com/sunsingerus/mservice/pkg/api/health"
+	pb "github.com/binarly-io/binarly-atlas/pkg/api/health"
 )
 
 type HealthEndpoint struct {

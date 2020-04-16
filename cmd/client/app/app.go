@@ -16,22 +16,23 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	log "github.com/golang/glog"
-	"github.com/sunsingerus/mservice/pkg/auth/client"
-	"github.com/sunsingerus/mservice/pkg/controller/client"
-	"github.com/sunsingerus/mservice/pkg/transiever/client"
-	"github.com/sunsingerus/mservice/pkg/transiever/service"
-	"github.com/sunsingerus/mservice/pkg/transport/client"
-	"golang.org/x/oauth2/dcrp"
-	"google.golang.org/grpc"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
-	controller "github.com/sunsingerus/mservice/pkg/controller/client"
-	"github.com/sunsingerus/mservice/pkg/version"
+	log "github.com/golang/glog"
+	"golang.org/x/oauth2/dcrp"
+	"google.golang.org/grpc"
+
+	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/auth/client"
+	"github.com/binarly-io/binarly-atlas/pkg/controller/client"
+	controller "github.com/binarly-io/binarly-atlas/pkg/controller/client"
+	"github.com/binarly-io/binarly-atlas/pkg/transiever/client"
+	"github.com/binarly-io/binarly-atlas/pkg/transiever/service"
+	"github.com/binarly-io/binarly-atlas/pkg/transport/client"
+	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
 
 // CLI parameter variables
@@ -57,8 +58,8 @@ var (
 	clientSecret string
 	tokenURL     string
 
-	registerClient bool
-	registerClientURL string
+	registerClient     bool
+	registerClientURL  string
 	initialAccessToken string
 )
 
@@ -97,14 +98,14 @@ func Run() {
 			os.Exit(0)
 		}
 		config := dcrp.Config{
-			InitialAccessToken: initialAccessToken,
+			InitialAccessToken:            initialAccessToken,
 			ClientRegistrationEndpointURL: registerClientURL,
-			Metadata: dcrp.Metadata {
-				ClientName: "new fluffy client",
+			Metadata: dcrp.Metadata{
+				ClientName:              "new fluffy client",
 				TokenEndpointAuthMethod: "client_secret_basic",
-				GrantTypes: []string{"client_credentials"},
-				SoftwareID: "atlas",
-				SoftwareVersion: "0.0.1",
+				GrantTypes:              []string{"client_credentials"},
+				SoftwareID:              "atlas",
+				SoftwareVersion:         "0.0.1",
 			},
 		}
 		if cl, err := config.Register(); err != nil {

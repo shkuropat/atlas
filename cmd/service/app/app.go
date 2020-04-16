@@ -16,21 +16,22 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	log "github.com/golang/glog"
-	"github.com/sunsingerus/mservice/pkg/auth/service"
-	controller "github.com/sunsingerus/mservice/pkg/controller/service"
-	"github.com/sunsingerus/mservice/pkg/transiever/health"
-	"github.com/sunsingerus/mservice/pkg/transiever/service"
-	"github.com/sunsingerus/mservice/pkg/transport/service"
-	"google.golang.org/grpc"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
-	pbHealth "github.com/sunsingerus/mservice/pkg/api/health"
-	pbMService "github.com/sunsingerus/mservice/pkg/api/mservice"
-	"github.com/sunsingerus/mservice/pkg/version"
+	log "github.com/golang/glog"
+	"google.golang.org/grpc"
+
+	pbHealth "github.com/binarly-io/binarly-atlas/pkg/api/health"
+	pbMService "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
+	controller "github.com/binarly-io/binarly-atlas/pkg/controller/service"
+	"github.com/binarly-io/binarly-atlas/pkg/transiever/health"
+	"github.com/binarly-io/binarly-atlas/pkg/transiever/service"
+	"github.com/binarly-io/binarly-atlas/pkg/transport/service"
+	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
 
 // CLI parameter variables

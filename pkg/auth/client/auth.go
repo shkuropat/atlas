@@ -13,16 +13,14 @@
 package client_auth
 
 import (
-	log "github.com/golang/glog"
-	"golang.org/x/oauth2"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/oauth"
-
 	"context"
-	cc "golang.org/x/oauth2/clientcredentials"
 
 	"github.com/coreos/go-oidc"
-
+	log "github.com/golang/glog"
+	"golang.org/x/oauth2"
+	cc "golang.org/x/oauth2/clientcredentials"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/oauth"
 )
 
 func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, error) {

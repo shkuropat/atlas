@@ -14,12 +14,13 @@ package transiever_client
 
 import (
 	"context"
-	log "github.com/golang/glog"
-	"github.com/sunsingerus/mservice/pkg/transiever"
 	"io"
 	"os"
 
-	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
+	log "github.com/golang/glog"
+
+	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/transiever"
 )
 
 func Init() {

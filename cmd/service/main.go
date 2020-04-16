@@ -13,7 +13,7 @@
 package main
 
 import (
-	"github.com/sunsingerus/mservice/cmd/service/app"
+	"github.com/binarly-io/binarly-atlas/cmd/service/app"
 )
 
 func main() {

@@ -15,15 +15,15 @@ package service_auth
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"strings"
+
 	"github.com/dgrijalva/jwt-go"
+	log "github.com/golang/glog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
-	"io/ioutil"
-	"strings"
-
-	log "github.com/golang/glog"
 )
 
 var (

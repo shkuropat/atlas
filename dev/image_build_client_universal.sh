@@ -32,9 +32,6 @@ CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 SRC_ROOT="$(realpath "${CUR_DIR}/..")"
 source "${CUR_DIR}/go_build_config.sh"
 
-# Build clickhouse-operator install .yaml manifest
-#"${MANIFESTS_ROOT}/operator/build-clickhouse-operator-install-yaml.sh"
-
 # Build image with Docker
 if [[ "${MINIKUBE}" == "yes" ]]; then
     # We'd like to build for minikube

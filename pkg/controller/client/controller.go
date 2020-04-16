@@ -13,12 +13,14 @@
 package controller_client
 
 import (
-	log "github.com/golang/glog"
-	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
-	"github.com/sunsingerus/mservice/pkg/transiever/client"
 	"os"
 	"path/filepath"
 	"time"
+
+	log "github.com/golang/glog"
+
+	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/transiever/client"
 )
 
 func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, error) {

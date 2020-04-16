@@ -13,11 +13,12 @@
 package service_transport
 
 import (
+	"os"
+
 	log "github.com/golang/glog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/testdata"
-	"os"
 )
 
 func SetupTransport(tlsCertFile, tlsKeyFile string) ([]grpc.ServerOption, error) {

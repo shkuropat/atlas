@@ -8,7 +8,8 @@ SRC_ROOT="$(realpath "${CUR_DIR}/..")"
 MANIFESTS_ROOT="${SRC_ROOT}/deploy"
 PKG_ROOT="${SRC_ROOT}/pkg"
 
-REPO="github.com/sunsingerus/mservice"
+REPO="github.com/binarly-io/binarly-atlas"
+
 # 1.2.3
 VERSION=$(cd "${SRC_ROOT}"; cat release)
 # 885c3f7

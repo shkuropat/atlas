@@ -15,7 +15,7 @@ package controller_service
 import (
 	log "github.com/golang/glog"
 
-	pb "github.com/sunsingerus/mservice/pkg/api/mservice"
+	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
 )
 
 func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *pb.Command) {
