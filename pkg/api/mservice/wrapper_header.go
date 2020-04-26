@@ -17,19 +17,18 @@ import (
 )
 
 func NewHeader(
-	_type uint32,
+	Type int32,
 	name string,
-	version uint32,
+	version int32,
 	uuid string,
-	uuid_reference string,
+	uuidReference string,
 	seconds int64,
-	nanos int32,
+	nanoSeconds int32,
 	description string,
 ) *Header {
-
 	h := new(Header)
 
-	h.SetTypeOrName(_type, name)
+	h.SetTypeOrName(Type, name)
 
 	if version > 0 {
 		h.SetVersion(version)
@@ -41,12 +40,12 @@ func NewHeader(
 		h.SetUUID(uuid)
 	}
 
-	if uuid_reference != "" {
-		h.SetUUIDReference(uuid_reference)
+	if uuidReference != "" {
+		h.SetUUIDReference(uuidReference)
 	}
 
 	if seconds > 0 {
-		h.SetTimestamp(seconds, nanos)
+		h.SetTimestamp(seconds, nanoSeconds)
 	}
 
 	if description != "" {
@@ -62,20 +61,20 @@ func (h *Header) ensureTypeName() {
 	}
 }
 
-func (h *Header) SetTypeOrName(_type uint32, name string) {
-	if _type > 0 {
-		h.SetType(_type)
+func (h *Header) SetTypeOrName(Type int32, name string) {
+	if Type > 0 {
+		h.SetType(Type)
 	} else {
 		h.SetName(name)
 	}
 }
 
-func (h *Header) SetType(_type uint32) {
+func (h *Header) SetType(Type int32) {
 	h.ensureTypeName()
 	if h.TypeName.TypeOptional == nil {
 		h.TypeName.TypeOptional = new(TypeName_Type)
 	}
-	h.TypeName.TypeOptional.(*TypeName_Type).Type = _type
+	h.TypeName.TypeOptional.(*TypeName_Type).Type = Type
 }
 
 func (h *Header) SetName(name string) {
@@ -86,7 +85,7 @@ func (h *Header) SetName(name string) {
 	h.TypeName.NameOptional.(*TypeName_Name).Name = name
 }
 
-func (h *Header) SetVersion(version uint32) {
+func (h *Header) SetVersion(version int32) {
 	if h.VersionOptional == nil {
 		h.VersionOptional = new(Header_Version)
 		h.VersionOptional.(*Header_Version).Version = version

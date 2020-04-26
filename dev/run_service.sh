@@ -35,9 +35,9 @@ fi
     	-alsologtostderr=true \
     	-log_dir=log \
     	-tls \
-	-oauth \
-	-jwt-public-key-file="${CUR_DIR}/public-key" \
     	-v=1
+#	-oauth \
+#	-jwt-public-key-file="${CUR_DIR}/public-key" \
 #	-logtostderr=true \
 #	-stderrthreshold=FATAL \
 

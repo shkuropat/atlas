@@ -18,9 +18,13 @@ func NewMetadata(filename string) *Metadata {
 	return md
 }
 
-func (md *Metadata) SetFilename(filename string) {
-	if md.FilenameOptional == nil {
-		md.FilenameOptional = new(Metadata_Filename)
+func (m *Metadata) SetFilename(filename string) {
+	if filename == "" {
+		return
 	}
-	md.FilenameOptional.(*Metadata_Filename).Filename = filename
+
+	if m.FilenameOptional == nil {
+		m.FilenameOptional = new(Metadata_Filename)
+	}
+	m.FilenameOptional.(*Metadata_Filename).Filename = filename
 }

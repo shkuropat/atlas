@@ -7,7 +7,7 @@ message TypeName {
     oneof type_optional {
         // Type of the object
         // Object can be typed/identified either by type or by name
-        uint32 type = 100;
+        int32 type = 100;
     }
 
     oneof name_optional {

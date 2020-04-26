@@ -14,11 +14,11 @@ service MServiceControlPlane {
 
 	// Bi-directional Data stream
 	//
-	// Some commands can followed by data load. Be it logs, dumps, etc.
-	rpc Data (stream DataChunk) returns (stream DataChunk) {}
+	// Some commands may be followed by data load. Be it logs, dumps, etc.
+	rpc DataChunks (stream DataChunk) returns (stream DataChunk) {}
 
 	// Metrics stream
 	//
-	// Some commands can be followed by metrics stream.
-	rpc Metrics(stream Metric) returns (Metric) {}
+	// Some commands may be followed by metrics stream.
+	rpc Metrics (stream Metric) returns (Metric) {}
 }

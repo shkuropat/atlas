@@ -7,9 +7,9 @@ import "type_metadata.proto";
 
 enum DataChunkType {
     // Due to first enum value has to be zero in proto3
-    DATA_CHUNK_RESERVED    = 0;
-    DATA_CHUNK_UNSPECIFIED = 100;
-    DATA_CHUNK_DATA        = 200;
+    DATA_CHUNK_TYPE_RESERVED    = 0;
+    DATA_CHUNK_TYPE_UNSPECIFIED = 100;
+    DATA_CHUNK_TYPE_DATA        = 200;
 }
 
 // DataChunk is a chunk of data transferred as a single piece.
@@ -24,12 +24,12 @@ message DataChunk {
 
     oneof len_optional {
         // Len of the whole data
-        uint64 len = 300;
+        int64 len = 300;
     }
 
     oneof offset_optional {
         // Offset of the current chunk in the whole data
-        uint64 offset = 400;
+        int64 offset = 400;
     }
 
     oneof last_optional {

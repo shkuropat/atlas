@@ -17,12 +17,13 @@ import (
 	"path/filepath"
 	"time"
 
-	log "github.com/golang/glog"
+	log "github.com/sirupsen/logrus"
 
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
 	"github.com/binarly-io/binarly-atlas/pkg/transiever/client"
 )
 
+// SendDataChunkFile sends file from client to service and receives response back
 func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, error) {
 	if _, err := os.Stat(filename); err != nil {
 		return 0, err
@@ -37,14 +38,15 @@ func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, err
 
 	log.Infof("START send file %s", filename)
 	metadata := pb.NewMetadata(filepath.Base(filename))
-	n, err := transiever_client.StreamDataChunks(client, metadata, f)
+	n, _, _, err := transiever_client.DataExchange(client, metadata, f, true)
 	log.Infof("DONE send file %s size %d err %v", filename, n, err)
 
 	return n, err
 }
 
+// SendStdin sends STDIN from client to service and receives response back
 func SendStdin(client pb.MServiceControlPlaneClient) (int64, error) {
-	n, err := transiever_client.StreamDataChunks(client, nil, os.Stdin)
+	n, _, _, err := transiever_client.DataExchange(client, nil, os.Stdin, true)
 	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
 	return n, err
 }

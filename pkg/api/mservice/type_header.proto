@@ -13,7 +13,7 @@ message Header {
 
     oneof version_optional {
         // Version of the object
-        uint32 version = 200;
+        int32 version = 200;
     }
 
     oneof uuid_optional {

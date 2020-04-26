@@ -18,16 +18,16 @@ import (
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/health"
 )
 
-type HealthEndpoint struct {
+type HealthServer struct {
 	pb.UnimplementedHealthServer
 }
 
-func (h *HealthEndpoint) Check(ctx context.Context, args *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
+func (h *HealthServer) Check(ctx context.Context, args *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
 	return &pb.HealthCheckResponse{
 		Status: pb.HealthCheckResponse_SERVING,
 	}, nil
 }
 
-func (h *HealthEndpoint) Watch(*pb.HealthCheckRequest, pb.Health_WatchServer) error {
+func (h *HealthServer) Watch(*pb.HealthCheckRequest, pb.Health_WatchServer) error {
 	return nil
 }

@@ -13,8 +13,8 @@
 package transiever_service
 
 import (
-	"io"
-	"os"
+	"bytes"
+	"strings"
 
 	log "github.com/golang/glog"
 
@@ -22,23 +22,19 @@ import (
 	"github.com/binarly-io/binarly-atlas/pkg/transiever"
 )
 
-func Init() {
-	transiever.Init()
-}
-
 func GetOutgoingQueue() chan *pb.Command {
-	return transiever.GetOutgoingQueue()
+	return transiever.GetOutgoing()
 }
 
 func GetIncomingQueue() chan *pb.Command {
-	return transiever.GetIncomingQueue()
+	return transiever.GetIncoming()
 }
 
-type MServiceControlPlaneEndpoint struct {
+type MServiceControlPlaneServer struct {
 	pb.UnimplementedMServiceControlPlaneServer
 }
 
-func (s *MServiceControlPlaneEndpoint) Commands(server pb.MServiceControlPlane_CommandsServer) error {
+func (s *MServiceControlPlaneServer) Commands(server pb.MServiceControlPlane_CommandsServer) error {
 	log.Info("Commands() called")
 	defer log.Info("Commands() exited")
 
@@ -46,21 +42,17 @@ func (s *MServiceControlPlaneEndpoint) Commands(server pb.MServiceControlPlane_C
 	return nil
 }
 
-func (s *MServiceControlPlaneEndpoint) Data(server pb.MServiceControlPlane_DataServer) error {
+func (s *MServiceControlPlaneServer) Data(DataChunksServer pb.MServiceControlPlane_DataChunksServer) error {
 	log.Info("Data() called")
 	defer log.Info("Data() exited")
 
-	stream, _ := pb.OpenIncomingDataChunkStream(server)
-	defer stream.Close()
-	_, err := io.Copy(os.Stdout, stream)
+	_, buf, err := pb.RecvDataChunkFile(DataChunksServer)
 
-	log.Infof("Incoming filename: %s", stream.Metadata.GetFilename())
+	// Send back
+	var buf2 = &bytes.Buffer{}
+	buf2.WriteString(strings.ToUpper(buf.String()))
+
+	_, err = pb.SendDataChunkFile(DataChunksServer, pb.NewMetadata("returnback.file"), buf2)
+
 	return err
-}
-
-func (s *MServiceControlPlaneEndpoint) Metrics(server pb.MServiceControlPlane_MetricsServer) error {
-	log.Info("Metrics() called")
-	defer log.Info("Metrics() exited")
-
-	return nil
 }

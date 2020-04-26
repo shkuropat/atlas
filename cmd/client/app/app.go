@@ -29,6 +29,7 @@ import (
 	"github.com/binarly-io/binarly-atlas/pkg/auth/client"
 	"github.com/binarly-io/binarly-atlas/pkg/controller/client"
 	controller "github.com/binarly-io/binarly-atlas/pkg/controller/client"
+	"github.com/binarly-io/binarly-atlas/pkg/transiever"
 	"github.com/binarly-io/binarly-atlas/pkg/transiever/client"
 	"github.com/binarly-io/binarly-atlas/pkg/transiever/service"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/client"
@@ -101,7 +102,7 @@ func Run() {
 			InitialAccessToken:            initialAccessToken,
 			ClientRegistrationEndpointURL: registerClientURL,
 			Metadata: dcrp.Metadata{
-				ClientName:              "new fluffy client",
+				ClientName:              "new fluffy ControlPlaneClient",
 				TokenEndpointAuthMethod: "client_secret_basic",
 				GrantTypes:              []string{"client_credentials"},
 				SoftwareID:              "atlas",
@@ -127,7 +128,7 @@ func Run() {
 		os.Exit(1)
 	}()
 
-	log.Infof("Starting client. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
+	log.Infof("Starting ControlPlaneClient. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
 
 	log.Infof("Dial() to %s", serviceAddress)
 	conn, err := grpc.Dial(serviceAddress, getDialOptions()...)
@@ -137,13 +138,13 @@ func Run() {
 	}
 	defer conn.Close()
 
-	client := pb.NewMServiceControlPlaneClient(conn)
+	ControlPlaneClient := pb.NewMServiceControlPlaneClient(conn)
 
-	transiever_client.Init()
+	transiever.Init()
 
-	log.Infof("About to cal RunMServiceControlPlaneClient()")
+	log.Infof("About to cal CommandsExchange()")
 	time.Sleep(5 * time.Second)
-	go transiever_client.RunMServiceControlPlaneClient(client)
+	go transiever_client.CommandsExchange(ControlPlaneClient)
 	log.Infof("Wait...")
 	time.Sleep(5 * time.Second)
 	go controller.IncomingCommandsHandler(transiever_service.GetIncomingQueue(), transiever_service.GetOutgoingQueue())
@@ -152,11 +153,11 @@ func Run() {
 	go controller.SendEchoRequest(transiever_service.GetOutgoingQueue())
 
 	if readFilename != "" {
-		controller_client.SendFile(client, readFilename)
+		controller_client.SendFile(ControlPlaneClient, readFilename)
 	}
 
 	if readStdin {
-		controller_client.SendStdin(client)
+		controller_client.SendStdin(ControlPlaneClient)
 	}
 
 	log.Infof("Press Ctrl+C to exit...")

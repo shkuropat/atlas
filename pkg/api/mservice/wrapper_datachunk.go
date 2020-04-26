@@ -12,10 +12,10 @@
 
 package mservice
 
-func NewDataChunk(metadata *Metadata, offset *uint64, last bool, data []byte) *DataChunk {
+func NewDataChunk(metadata *Metadata, offset *int64, last bool, data []byte) *DataChunk {
 	chunk := &DataChunk{
 		Header: NewHeader(
-			uint32(DataChunkType_DATA_CHUNK_DATA),
+			int32(DataChunkType_DATA_CHUNK_TYPE_DATA),
 			"",
 			0,
 			"123",
@@ -55,21 +55,21 @@ func (dc *DataChunk) SetMetadata(metadata *Metadata) {
 	dc.MetadataOptional.(*DataChunk_Metadata).Metadata = metadata
 }
 
-func (dc *DataChunk) SetLen(len uint64) {
+func (dc *DataChunk) SetLen(len int64) {
 	if dc.LenOptional == nil {
 		dc.LenOptional = new(DataChunk_Len)
 		dc.LenOptional.(*DataChunk_Len).Len = len
 	}
 }
 
-func (dc *DataChunk) GetOffsetWithAvailabilityReport() (uint64, bool) {
+func (dc *DataChunk) GetOffsetWithAvailabilityReport() (int64, bool) {
 	if x, ok := dc.GetOffsetOptional().(*DataChunk_Offset); ok {
 		return x.Offset, true
 	}
 	return 0, false
 }
 
-func (dc *DataChunk) SetOffset(offset uint64) {
+func (dc *DataChunk) SetOffset(offset int64) {
 	if dc.OffsetOptional == nil {
 		dc.OffsetOptional = new(DataChunk_Offset)
 		dc.OffsetOptional.(*DataChunk_Offset).Offset = offset

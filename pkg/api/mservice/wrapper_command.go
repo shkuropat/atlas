@@ -13,29 +13,35 @@
 package mservice
 
 func NewCommand(
-	_type CommandType,
+	commandType CommandType,
 	name string,
-	version uint32,
+	version int32,
 	uuid string,
-	uuid_reference string,
+	uuidReference string,
 	seconds int64,
-	nanos int32,
+	nanoSeconds int32,
 	description string,
 ) *Command {
 	return &Command{
 		Header: NewHeader(
-			uint32(_type),
+			int32(commandType),
 			name,
 			version,
 			uuid,
-			uuid_reference,
+			uuidReference,
 			seconds,
-			nanos,
+			nanoSeconds,
 			description,
 		),
 	}
 }
 
+// GetType gets command type
 func (m *Command) GetType() CommandType {
 	return CommandType(m.GetHeader().GetTypeName().GetType())
+}
+
+// GetName gets command name
+func (m *Command) GetName() string {
+	return m.GetHeader().GetTypeName().GetName()
 }

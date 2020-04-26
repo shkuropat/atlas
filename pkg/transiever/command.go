@@ -20,27 +20,30 @@ import (
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
 )
 
-type CommandSendReceiveInterface interface {
+// CommandSenderReceiver defines transport level interface (for both client and server),
+// which serves Command streams bi-directionally.
+type CommandSenderReceiver interface {
 	Send(*pb.Command) error
 	Recv() (*pb.Command, error)
 }
 
-func CommandsExchangeEndlessLoop(i CommandSendReceiveInterface) {
+func CommandsExchangeEndlessLoop(CommandSenderReceiver CommandSenderReceiver) {
 	waitIncoming := make(chan bool)
 	waitOutgoing := make(chan bool)
 
+	// Recv() loop
 	go func() {
 		for {
-			msg, err := i.Recv()
+			msg, err := CommandSenderReceiver.Recv()
 			if msg != nil {
 				log.Infof("CommandsExchangeEndlessLoop.Recv() got msg")
-				GetIncomingQueue() <- msg
+				GetIncoming() <- msg
 			}
 			if err == nil {
 				// All went well, ready to receive more data
 			} else if err == io.EOF {
 				// Correct EOF
-				log.Infof("CommandsExchangeEndlessLoop.Recv() get EOF")
+				log.Infof("CommandsExchangeEndlessLoop.Recv() got EOF")
 
 				close(waitIncoming)
 				return
@@ -54,6 +57,7 @@ func CommandsExchangeEndlessLoop(i CommandSendReceiveInterface) {
 		}
 	}()
 
+	// Send() loop
 	go func() {
 		for {
 			select {
@@ -61,9 +65,9 @@ func CommandsExchangeEndlessLoop(i CommandSendReceiveInterface) {
 				// Incoming stream from this client is closed/broken, no need to wait commands for it
 				close(waitOutgoing)
 				return
-			case command := <-GetOutgoingQueue():
+			case command := <-GetOutgoing():
 				log.Infof("got command to send")
-				err := i.Send(command)
+				err := CommandSenderReceiver.Send(command)
 				if err == nil {
 					// All went well
 					log.Infof("CommandsExchangeEndlessLoop.Send() OK")
@@ -87,21 +91,21 @@ func CommandsExchangeEndlessLoop(i CommandSendReceiveInterface) {
 }
 
 var (
-	maxIncomingOutstanding int32 = 100
-	incomingQueue          chan *pb.Command
-	maxOutgoingOutstanding int32 = 100
-	outgoingQueue          chan *pb.Command
+	incomingBacklog int32 = 100
+	incoming        chan *pb.Command
+	outgoingBacklog int32 = 100
+	outgoing        chan *pb.Command
 )
 
 func Init() {
-	incomingQueue = make(chan *pb.Command, maxIncomingOutstanding)
-	outgoingQueue = make(chan *pb.Command, maxOutgoingOutstanding)
+	incoming = make(chan *pb.Command, incomingBacklog)
+	outgoing = make(chan *pb.Command, outgoingBacklog)
 }
 
-func GetOutgoingQueue() chan *pb.Command {
-	return outgoingQueue
+func GetOutgoing() chan *pb.Command {
+	return outgoing
 }
 
-func GetIncomingQueue() chan *pb.Command {
-	return incomingQueue
+func GetIncoming() chan *pb.Command {
+	return incoming
 }

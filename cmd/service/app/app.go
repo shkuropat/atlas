@@ -16,6 +16,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/binarly-io/binarly-atlas/pkg/transiever"
 	"net"
 	"os"
 	"os/signal"
@@ -99,7 +100,7 @@ func Run() {
 
 	log.Infof("Starting service. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
 
-	transiever_service.Init()
+	transiever.Init()
 
 	log.Infof("Listening on %s", serviceAddress)
 	listener, err := net.Listen("tcp", serviceAddress)
@@ -109,8 +110,8 @@ func Run() {
 	}
 
 	grpcServer := grpc.NewServer(getGRPCServerOptions()...)
-	pbMService.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneEndpoint{})
-	pbHealth.RegisterHealthServer(grpcServer, &transiever_health.HealthEndpoint{})
+	pbMService.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneServer{})
+	pbHealth.RegisterHealthServer(grpcServer, &transiever_health.HealthServer{})
 
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
