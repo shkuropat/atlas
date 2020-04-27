@@ -30,6 +30,7 @@ fi
     echo "Starting ${EXECUTABLE_BINARY}..."
 
     mkdir -p "${LOG_DIR}"
+    set -x
     "${EXECUTABLE_BINARY}" \
     	-config="${SRC_ROOT}/config/config-dev.yaml" \
     	-alsologtostderr=true \
@@ -45,6 +46,7 @@ fi
 # -alsologtostderr=true Logs are written to standard error as well as to files
 # -logtostderr=true  Logs are written to standard error instead of to files
 # -stderrthreshold=FATAL Log events at or above this severity are logged to standard	error as well as to files
+    set +x
 
 if [[ $2 == "noclean" ]]; then
     echo "Clean step skipped"

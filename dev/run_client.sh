@@ -30,10 +30,12 @@ fi
     echo "Starting ${EXECUTABLE_BINARY}..."
 
     mkdir -p "${LOG_DIR}"
+    set -x
     "${EXECUTABLE_BINARY}" \
         --tls \
     	--service-address "localhost:10000" \
     	--read-filename "${CUR_DIR}/example.txt"
+    set +x
 
 if [[ $2 == "noclean" ]]; then
     echo "Clean step skipped"

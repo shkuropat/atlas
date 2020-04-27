@@ -63,6 +63,9 @@ var (
 
 	// jwtPublicKeyFile specifies path to RSA Public Key file to be used for JWT parsing
 	jwtPublicKeyFile string
+
+	// brokers specifies list of Kafka brokers
+	brokers string
 )
 
 func init() {
@@ -75,6 +78,7 @@ func init() {
 	flag.BoolVar(&oauth, "oauth", false, "Whether to use OAuth2 for authentication")
 	flag.StringVar(&jwtPublicKeyFile, "jwt-public-key-file", "", "Public RSA key used for JWT parsing")
 	flag.IntVar(&port, "port", 10000, "The server port")
+	flag.StringVar(&brokers, "brokers", "", "List of Kafka brokers")
 
 	flag.Parse()
 }
