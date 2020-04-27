@@ -10,10 +10,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package transiever_client
+package controller_service
 
-import "testing"
+import (
+	"context"
 
-func TestTransieverClient(t *testing.T) {
-	t.Logf("transiever_client")
+	pb "github.com/binarly-io/binarly-atlas/pkg/api/health"
+)
+
+type HealthServer struct {
+	pb.UnimplementedHealthServer
+}
+
+func (h *HealthServer) Check(ctx context.Context, args *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
+	return &pb.HealthCheckResponse{
+		Status: pb.HealthCheckResponse_SERVING,
+	}, nil
+}
+
+func (h *HealthServer) Watch(*pb.HealthCheckRequest, pb.Health_WatchServer) error {
+	return nil
 }

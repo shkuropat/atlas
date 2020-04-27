@@ -10,12 +10,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package transiever_client
+package controller_client
 
 import (
 	"bytes"
 	"context"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever"
+	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"io"
 	"os"
 
@@ -24,7 +24,7 @@ import (
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
 )
 
-func CommandsExchange(client pb.MServiceControlPlaneClient) {
+func CommandsExchange(ControlPlaneClient pb.MServiceControlPlaneClient) {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -33,15 +33,15 @@ func CommandsExchange(client pb.MServiceControlPlaneClient) {
 	//	md := metadata.Pairs("authorization", "my-secret-token")
 	//	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	rpcCommands, err := client.Commands(ctx)
+	rpcCommands, err := ControlPlaneClient.Commands(ctx)
 	if err != nil {
-		log.Fatalf("client.Control() failed %v", err)
+		log.Fatalf("ControlPlaneClient.Control() failed %v", err)
 		os.Exit(1)
 	}
 	defer rpcCommands.CloseSend()
 
 	log.Infof("Commands() called")
-	transiever.CommandsExchangeEndlessLoop(rpcCommands)
+	controller.CommandsExchangeEndlessLoop(rpcCommands)
 }
 
 func DataExchange(

@@ -27,11 +27,8 @@ import (
 
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
 	"github.com/binarly-io/binarly-atlas/pkg/auth/client"
+	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/controller/client"
-	controller "github.com/binarly-io/binarly-atlas/pkg/controller/client"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever/client"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever/service"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/client"
 	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
@@ -140,17 +137,17 @@ func Run() {
 
 	ControlPlaneClient := pb.NewMServiceControlPlaneClient(conn)
 
-	transiever.Init()
+	controller.Init()
 
 	log.Infof("About to cal CommandsExchange()")
 	time.Sleep(5 * time.Second)
-	go transiever_client.CommandsExchange(ControlPlaneClient)
+	go controller_client.CommandsExchange(ControlPlaneClient)
 	log.Infof("Wait...")
 	time.Sleep(5 * time.Second)
-	go controller.IncomingCommandsHandler(transiever_service.GetIncomingQueue(), transiever_service.GetOutgoingQueue())
+	go controller_client.IncomingCommandsHandler(controller.GetIncoming(), controller.GetOutgoing())
 	log.Infof("Wait...")
 	time.Sleep(5 * time.Second)
-	go controller.SendEchoRequest(transiever_service.GetOutgoingQueue())
+	go controller_client.SendEchoRequest(controller.GetOutgoing())
 
 	if readFilename != "" {
 		controller_client.SendFile(ControlPlaneClient, readFilename)

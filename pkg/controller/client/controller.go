@@ -20,7 +20,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever/client"
 )
 
 // SendDataChunkFile sends file from client to service and receives response back
@@ -38,7 +37,7 @@ func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, err
 
 	log.Infof("START send file %s", filename)
 	metadata := pb.NewMetadata(filepath.Base(filename))
-	n, _, _, err := transiever_client.DataExchange(client, metadata, f, true)
+	n, _, _, err := DataExchange(client, metadata, f, true)
 	log.Infof("DONE send file %s size %d err %v", filename, n, err)
 
 	return n, err
@@ -46,7 +45,7 @@ func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, err
 
 // SendStdin sends STDIN from client to service and receives response back
 func SendStdin(client pb.MServiceControlPlaneClient) (int64, error) {
-	n, _, _, err := transiever_client.DataExchange(client, nil, os.Stdin, true)
+	n, _, _, err := DataExchange(client, nil, os.Stdin, true)
 	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
 	return n, err
 }

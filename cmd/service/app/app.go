@@ -16,7 +16,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever"
 	"net"
 	"os"
 	"os/signal"
@@ -28,9 +27,8 @@ import (
 	pbHealth "github.com/binarly-io/binarly-atlas/pkg/api/health"
 	pbMService "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
 	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
-	controller "github.com/binarly-io/binarly-atlas/pkg/controller/service"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever/health"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever/service"
+	"github.com/binarly-io/binarly-atlas/pkg/controller/service"
+	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/service"
 	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
@@ -104,7 +102,7 @@ func Run() {
 
 	log.Infof("Starting service. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
 
-	transiever.Init()
+	controller.Init()
 
 	log.Infof("Listening on %s", serviceAddress)
 	listener, err := net.Listen("tcp", serviceAddress)
@@ -114,8 +112,8 @@ func Run() {
 	}
 
 	grpcServer := grpc.NewServer(getGRPCServerOptions()...)
-	pbMService.RegisterMServiceControlPlaneServer(grpcServer, &transiever_service.MServiceControlPlaneServer{})
-	pbHealth.RegisterHealthServer(grpcServer, &transiever_health.HealthServer{})
+	pbMService.RegisterMServiceControlPlaneServer(grpcServer, &controller_service.MServiceControlPlaneServer{})
+	pbHealth.RegisterHealthServer(grpcServer, &controller_service.HealthServer{})
 
 	go func() {
 		if err := grpcServer.Serve(listener); err != nil {
@@ -124,7 +122,7 @@ func Run() {
 		}
 	}()
 
-	go controller.IncomingCommandsHandler(transiever_service.GetIncomingQueue(), transiever_service.GetOutgoingQueue())
+	go controller_service.IncomingCommandsHandler(controller_service.GetIncomingQueue(), controller_service.GetOutgoingQueue())
 
 	<-ctx.Done()
 }

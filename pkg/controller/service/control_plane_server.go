@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package transiever_service
+package controller_service
 
 import (
 	"bytes"
@@ -19,15 +19,15 @@ import (
 	log "github.com/golang/glog"
 
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
-	"github.com/binarly-io/binarly-atlas/pkg/transiever"
+	"github.com/binarly-io/binarly-atlas/pkg/controller"
 )
 
 func GetOutgoingQueue() chan *pb.Command {
-	return transiever.GetOutgoing()
+	return controller.GetOutgoing()
 }
 
 func GetIncomingQueue() chan *pb.Command {
-	return transiever.GetIncoming()
+	return controller.GetIncoming()
 }
 
 type MServiceControlPlaneServer struct {
@@ -38,7 +38,7 @@ func (s *MServiceControlPlaneServer) Commands(server pb.MServiceControlPlane_Com
 	log.Info("Commands() called")
 	defer log.Info("Commands() exited")
 
-	transiever.CommandsExchangeEndlessLoop(server)
+	controller.CommandsExchangeEndlessLoop(server)
 	return nil
 }
 
