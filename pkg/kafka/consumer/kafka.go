@@ -42,7 +42,9 @@ func (c *Consumer) Consume() {
 	if err != nil {
 		panic(err)
 	}
-	defer func() { _ = group.Close() }()
+	defer func() {
+		_ = group.Close()
+	}()
 
 	// Track errors
 	//go func() {
@@ -57,15 +59,13 @@ func (c *Consumer) Consume() {
 		topics := []string{c.topic}
 		handler := ConsumerGroupHandler{}
 
-		// `Consume` should be called inside an infinite loop, when a
-		// server-side rebalance happens, the consumer session will need to be
-		// recreated to get the new claims
+		// `Consume` should be called inside an infinite loop.
+		// When a server-side rebalance happens, the consumer session will need to be recreated to get the new claims
 		err := group.Consume(ctx, topics, handler)
 		if err != nil {
 			panic(err)
 		}
 	}
-
 }
 
 // ConsumerGroupHandler instances are used to handle individual topic/partition claims.

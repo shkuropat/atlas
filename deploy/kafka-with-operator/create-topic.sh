@@ -1,14 +1,30 @@
 #!/bin/bash
 
-cat << EOF | kubectl apply --namespace kafka -f -
+CLUSTER="${CLUSTER:-kafka}"
+TOPIC="${TOPIC:-}"
+PARTITIONS="${PARTITIONS:-1}"
+REPLICATION_FACTOR="${REPLICATION_FACTOR:-1}"
+NAMESPACE="${NAMESPACE:-kafka}"
+
+if [[ -z "${TOPIC}" ]]; then
+    echo "Please specify TOPIC. Abort."
+    exit 1
+fi
+
+cat << EOF | \
+    CLUSTER="${CLUSTER}" \
+    TOPIC="${TOPIC}" \
+    PARTITIONS="${PARTITIONS}" \
+    REPLICATION_FACTOR="${REPLICATION_FACTOR}" \
+    envsubst | kubectl apply --namespace "${NAMESPACE}" -f -
 apiVersion: kafka.banzaicloud.io/v1alpha1
 kind: KafkaTopic
 metadata:
-  name: my-topic
+  name: ${TOPIC}
 spec:
   clusterRef:
-    name: kafka
-  name: my-topic
-  partitions: 1
-  replicationFactor: 1
+    name: ${CLUSTER}
+  name: ${TOPIC}
+  partitions: ${PARTITIONS}
+  replicationFactor: ${REPLICATION_FACTOR}
 EOF

@@ -29,7 +29,7 @@ func NewProducer(brokers []string, topic string) *Producer {
 	}
 }
 
-func (p *Producer) Produce(data []byte) error {
+func (p *Producer) Send(data []byte) error {
 	producer, err := sarama.NewSyncProducer(p.brokers, nil)
 	if err != nil {
 		log.Fatalln(err)
