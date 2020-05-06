@@ -27,8 +27,8 @@ import (
 	pbHealth "github.com/binarly-io/binarly-atlas/pkg/api/health"
 	pbMService "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
 	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
-	"github.com/binarly-io/binarly-atlas/pkg/controller/service"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
+	"github.com/binarly-io/binarly-atlas/pkg/controller/service"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/service"
 	"github.com/binarly-io/binarly-atlas/pkg/version"
 )

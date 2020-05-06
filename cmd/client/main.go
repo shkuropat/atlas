@@ -13,10 +13,10 @@
 package main
 
 import (
-	"github.com/binarly-io/binarly-atlas/cmd/client/app"
+	"github.com/binarly-io/binarly-atlas/cmd/client/cmd"
 )
 
 func main() {
 	// Application entry point
-	app.Run()
+	cmd.Execute()
 }
