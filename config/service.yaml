@@ -1,1 +1,3 @@
 verbose: true
+brokers:
+  - localhost:1234

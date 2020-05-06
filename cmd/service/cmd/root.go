@@ -26,18 +26,12 @@ import (
 const (
 	serviceAddressFlagName = "service-address"
 
-	defaultConfigFileName = ".atlas-service.yaml"
+	defaultConfigFile     = ".atlas-service.yaml"
 	defaultServiceAddress = ":10000"
 )
 
 // CLI parameter variables
 var (
-	// verbose specifies whether app should be verbose
-	verbose bool
-
-	// configFile defines path to config file to be used
-	configFile string
-
 	// serviceAddr specifies address of service to use
 	serviceAddress string
 
@@ -69,7 +63,7 @@ var (
 			defaultServiceAddress,
 			serviceAddressFlagName,
 			defaultServiceAddress,
-			defaultConfigFileName,
+			defaultConfigFile,
 		),
 		PersistentPreRun: func(cmd *cmd.Command, args []string) {
 			log.Debugf("using address: %s", conf.GetString(serviceAddressFlagName))
@@ -78,9 +72,10 @@ var (
 )
 
 func init() {
+	cmd.OnInitialize(func() {common.Init(defaultConfigFile)})
 
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s)", defaultConfigFileName))
+	rootCmd.PersistentFlags().BoolVarP(&common.Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().StringVar(&common.ConfigFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s)", defaultConfigFile))
 
 	rootCmd.PersistentFlags().StringVar(&serviceAddress, "service-address", defaultServiceAddress, fmt.Sprintf("The address of service to use in the format host:port, as %s", defaultServiceAddress))
 
@@ -100,9 +95,6 @@ func init() {
 	if err := conf.BindPFlags(rootCmd.PersistentFlags()); err != nil {
 		log.Fatal(err)
 	}
-
-	common.InitLog(verbose)
-	common.InitConfig(configFile, defaultConfigFileName)
 }
 
 func Execute() {

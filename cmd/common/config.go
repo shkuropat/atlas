@@ -20,22 +20,29 @@ import (
 	conf "github.com/spf13/viper"
 )
 
-// InitConfig reads in config file and ENV variables if set.
-func InitConfig(configFile, defaultConfigFile string) {
+var(
+	// ConfigFile defines path to config file to be used
+	ConfigFile string
+)
 
-	if configFile == "" {
+// InitConfig reads in config file and ENV variables if set.
+func InitConfig(defaultConfigFile string) {
+
+	if ConfigFile == "" {
 		// Use config file from home directory
 		homedir, err := homedir.Dir()
 		if err != nil {
-			log.Fatalf("unable to fin homedir %v", err)
+			log.Fatalf("unable to find homedir %v", err)
 		}
 		// Look for default config file in HOME dir
 		conf.AddConfigPath(homedir)
 		conf.SetConfigName(defaultConfigFile)
 		conf.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
+		log.Infof("looking for config %s in %s", defaultConfigFile, homedir)
 	} else {
 		// Look for explicitly specified config file
-		conf.SetConfigFile(configFile)
+		conf.SetConfigFile(ConfigFile)
+		log.Infof("looking for config %s", ConfigFile)
 	}
 
 	// By default empty environment variables are considered unset and will fall back to the next configuration source.
@@ -50,11 +57,10 @@ func InitConfig(configFile, defaultConfigFile string) {
 	// Check ENV variables for all keys set in config, default & flags
 	conf.AutomaticEnv()
 
-	// If a config file is found, read it in.
 	if err := conf.ReadInConfig(); err == nil {
 		log.Debugf("config file used: %s", conf.ConfigFileUsed())
 	} else if _, ok := err.(conf.ConfigFileNotFoundError); ok {
-		// Config file not found; ignore error if desired
+		// Config file not found
 		log.Infof("no config file found")
 	} else {
 		// Config file was found but another error was produced

@@ -10,22 +10,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package common
+package cmd
 
 import (
+	"github.com/MakeNowJust/heredoc"
 	log "github.com/sirupsen/logrus"
+	cmd "github.com/spf13/cobra"
+	conf "github.com/spf13/viper"
 )
 
-var(
-	// Verbose specifies whether app should be verbose
-	Verbose bool
-)
+var configCmd = &cmd.Command{
+	Use:   "config",
+	Short: "Print config",
+	Long: heredoc.Docf(`
+			Print software config and exit
+			`,
+	),
+	Run: func(cmd *cmd.Command, args []string) {
+		log.Info("Config:")
+		for k, v := range conf.AllSettings() {
+			log.Infof("%s: %v", k, v)
+		}
+	},
+}
 
-// InitLog sets logging options
-func InitLog() {
-	log.SetFormatter(&log.TextFormatter{})
-
-	if Verbose {
-		log.SetLevel(log.TraceLevel)
-	}
+func init() {
+	rootCmd.AddCommand(configCmd)
 }
