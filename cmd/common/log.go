@@ -10,13 +10,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package common
 
 import (
-	"github.com/binarly-io/binarly-atlas/cmd/service/cmd"
+	log "github.com/sirupsen/logrus"
 )
 
-func main() {
-	// Application entry point
-	cmd.Execute()
+// InitLog sets logging options
+func InitLog(verbose bool) {
+	log.SetFormatter(&log.TextFormatter{})
+
+	if verbose {
+		log.SetLevel(log.TraceLevel)
+	}
 }

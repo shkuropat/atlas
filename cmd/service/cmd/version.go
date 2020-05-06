@@ -10,13 +10,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
-	"github.com/binarly-io/binarly-atlas/cmd/service/cmd"
+	"fmt"
+
+	"github.com/MakeNowJust/heredoc"
+	cmd "github.com/spf13/cobra"
+
+	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
 
-func main() {
-	// Application entry point
-	cmd.Execute()
+var versionCmd = &cmd.Command{
+	Use:   "version",
+	Short: "Print software version",
+	Long: heredoc.Docf(`
+			Print software version and exit
+			`,
+	),
+	Run: func(cmd *cmd.Command, args []string) {
+		fmt.Printf("%s\n", version.Version)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(versionCmd)
 }

@@ -10,13 +10,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cmd
 
 import (
-	"github.com/binarly-io/binarly-atlas/cmd/service/cmd"
+	"github.com/MakeNowJust/heredoc"
+	log "github.com/sirupsen/logrus"
+	cmd "github.com/spf13/cobra"
+	conf "github.com/spf13/viper"
 )
 
-func main() {
-	// Application entry point
-	cmd.Execute()
+var configCmd = &cmd.Command{
+	Use:   "config",
+	Short: "Print config",
+	Long: heredoc.Docf(`
+			Print software config and exit
+			`,
+	),
+	Run: func(cmd *cmd.Command, args []string) {
+		log.Info("Config:")
+		for k, v := range conf.AllSettings() {
+			log.Infof("%s: %v", k, v)
+		}
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(configCmd)
 }

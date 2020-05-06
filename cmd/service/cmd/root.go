@@ -26,8 +26,8 @@ import (
 const (
 	serviceAddressFlagName = "service-address"
 
-	defaultConfigFileName = ".atlas-client.yaml"
-	defaultServiceAddress = "localhost:10000"
+	defaultConfigFileName = ".atlas-service.yaml"
+	defaultServiceAddress = ":10000"
 )
 
 // CLI parameter variables
@@ -41,19 +41,25 @@ var (
 	// serviceAddr specifies address of service to use
 	serviceAddress string
 
-	tls                bool
-	caFile             string
-	serverHostOverride string
+	// tls specifies whether TLS be used or not
+	tls bool
+	// tlsCertFile specifies path to certificate file. To be used with TLS
+	tlsCertFile string
+	// tlsKeyFile specifies path to key file. To be used with TLS
+	tlsKeyFile string
 
-	auth         bool
-	clientID     string
-	clientSecret string
-	tokenURL     string
+	// auth specifies whether to use OAuth2
+	auth bool
+	// jwtPublicKeyFile specifies path to RSA Public Key file to be used for JWT parsing
+	jwtPublicKeyFile string
+
+	// brokers specifies list of Kafka brokers
+	brokers string
 
 	// rootCmd represents the base command when called without any sub-commands
 	rootCmd = &cmd.Command{
-		Use:   "atlas client [COMMAND]",
-		Short: "Atlas client.",
+		Use:   "atlas service [COMMAND]",
+		Short: "Atlas service.",
 		Long: heredoc.Docf(`
 			For setting the address of the form HOST:PORT, you can
 			- use the flag --%s=%s
@@ -72,6 +78,7 @@ var (
 )
 
 func init() {
+
 	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s)", defaultConfigFileName))
 
@@ -79,14 +86,15 @@ func init() {
 
 	// TLS section
 	rootCmd.PersistentFlags().BoolVar(&tls, "tls", false, "use TLS connection")
-	rootCmd.PersistentFlags().StringVar(&caFile, "ca-file", "", "CA root cert file")
-	rootCmd.PersistentFlags().StringVar(&serverHostOverride, "server-host-override", "x.test.youtube.com", "server name use to verify the hostname returned by TLS handshake")
+	rootCmd.PersistentFlags().StringVar(&tlsCertFile, "tls-cert-file", "", "The TLS cert file. To be used with TLS")
+	rootCmd.PersistentFlags().StringVar(&tlsKeyFile, "tls-key-file", "", "The TLS key file. To be used with TLS")
 
 	// OAuth section
 	rootCmd.PersistentFlags().BoolVar(&auth, "oauth", false, "Whether to use OAuth2 for authentication")
-	rootCmd.PersistentFlags().StringVar(&clientID, "client-id", "", "ClientID used for Identity server access")
-	rootCmd.PersistentFlags().StringVar(&clientSecret, "client-secret", "", "ClientSecret used for Identity server access")
-	rootCmd.PersistentFlags().StringVar(&tokenURL, "token-url", "", "URL of Identity server's token service")
+	rootCmd.PersistentFlags().StringVar(&jwtPublicKeyFile, "jwt-public-key-file", "", "Public RSA key used for JWT parsing")
+
+	// Kafka
+	rootCmd.PersistentFlags().StringVar(&brokers, "brokers", "", "List of Kafka brokers")
 
 	// Bind full flag set to the configuration
 	if err := conf.BindPFlags(rootCmd.PersistentFlags()); err != nil {
