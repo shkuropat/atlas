@@ -20,7 +20,7 @@ import (
 	conf "github.com/spf13/viper"
 )
 
-var(
+var (
 	// ConfigFile defines path to config file to be used
 	ConfigFile string
 )

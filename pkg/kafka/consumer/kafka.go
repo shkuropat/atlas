@@ -14,9 +14,8 @@ package kafka
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/Shopify/sarama"
+	log "github.com/sirupsen/logrus"
 )
 
 type Consumer struct {
@@ -33,12 +32,19 @@ func NewConsumer(brokers []string, groupID string, topic string) *Consumer {
 	}
 }
 
-func (c *Consumer) Consume() {
-	//config := sarama.NewConfig()
-	//config.Version = sarama.V2_0_0_0 // specify appropriate version
-	//config.Consumer.Return.Errors = true
-	//group, err := sarama.NewConsumerGroup([]string{"localhost:9092"}, "my-group", config)
-	group, err := sarama.NewConsumerGroup(c.brokers, c.groupID, nil)
+// ConsumeLoop runs an endless loop of kafka consumer
+func (c *Consumer) ConsumeLoop(consumeNewest bool, ack bool) {
+
+	// new configuration instance with sane defaults.
+	config := sarama.NewConfig()
+	config.ClientID = "atlas consumer"
+	if consumeNewest {
+		config.Consumer.Offsets.Initial = sarama.OffsetNewest
+	} else {
+		config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	}
+
+	group, err := sarama.NewConsumerGroup(c.brokers, c.groupID, config)
 	if err != nil {
 		panic(err)
 	}
@@ -57,7 +63,7 @@ func (c *Consumer) Consume() {
 	ctx := context.Background()
 	for {
 		topics := []string{c.topic}
-		handler := ConsumerGroupHandler{}
+		handler := NewConsumerGroupHandler(ack)
 
 		// `Consume` should be called inside an infinite loop.
 		// When a server-side rebalance happens, the consumer session will need to be recreated to get the new claims
@@ -74,26 +80,40 @@ func (c *Consumer) Consume() {
 //
 // PLEASE NOTE that handlers are likely be called from several goroutines concurrently,
 // ensure that all state is safely protected against race conditions.
-type ConsumerGroupHandler struct{}
+type ConsumerGroupHandler struct {
+	ack bool
+}
+
+func NewConsumerGroupHandler(ack bool) ConsumerGroupHandler {
+	return ConsumerGroupHandler{
+		ack: ack,
+	}
+}
 
 // Setup is run at the beginning of a new session, before ConsumeClaim.
 func (ConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
+	log.Infof("ConsumerGroupHandler.Setup()")
 	return nil
 }
 
 // Cleanup is run at the end of a session, once all ConsumeClaim goroutines have exited
 // but before the offsets are committed for the very last time.
 func (ConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
+	log.Infof("ConsumerGroupHandler.Cleanup()")
 	return nil
 }
 
 // ConsumeClaim must start a consumer loop of ConsumerGroupClaim's Messages().
-// Once the Messages() channel is closed, the Handler must finish its processing
-// loop and exit.
+// Once the Messages() channel is closed, the Handler must finish
+// its processing loop and exit.
 func (h ConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	log.Infof("ConsumerGroupHandler.ConsumeClaim()")
 	for msg := range claim.Messages() {
-		fmt.Printf("Message topic:%q partition:%d offset:%d\n", msg.Topic, msg.Partition, msg.Offset)
-		sess.MarkMessage(msg, "")
+		log.Printf("Got message topic:%q partition:%d offset:%d data:%s\n", msg.Topic, msg.Partition, msg.Offset, string(msg.Value))
+		if h.ack {
+			sess.MarkMessage(msg, "")
+			log.Infof("Ack message topic:%q partition:%d offset:%d\n", msg.Topic, msg.Partition, msg.Offset)
+		}
 	}
 	return nil
 }

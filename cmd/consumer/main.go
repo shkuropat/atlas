@@ -10,22 +10,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package common
+package main
 
 import (
-	log "github.com/sirupsen/logrus"
+	"github.com/binarly-io/binarly-atlas/cmd/consumer/cmd"
 )
 
-var (
-	// Verbose specifies whether app should be verbose
-	Verbose bool
-)
-
-// InitLog sets logging options
-func InitLog() {
-	log.SetFormatter(&log.TextFormatter{})
-
-	if Verbose {
-		log.SetLevel(log.TraceLevel)
-	}
+func main() {
+	// Application entry point
+	cmd.Execute()
 }

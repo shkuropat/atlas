@@ -23,5 +23,8 @@ SERVICE_BIN="${SERVICE_BIN:-${SRC_ROOT}/dev/bin/service}"
 # Client binary name can be specified externally
 CLIENT_BIN="${CLIENT_BIN:-${SRC_ROOT}/dev/bin/client}"
 
+# Consumer binary name can be specified externally
+CONSUMER_BIN="${CONSUMER_BIN:-${SRC_ROOT}/dev/bin/consumer}"
+
 # Where modules kept
 MODULES_DIR=vendor

@@ -83,9 +83,9 @@ func DataExchange(
 		}
 	}
 
-	if recv {
-		received, buf, err = pb.RecvDataChunkFile(DataChunksClient)
-	}
+	//	if recv {
+	//		received, buf, err = pb.RecvDataChunkFile(DataChunksClient)
+	//	}
 
 	return sent, received, buf, err
 }

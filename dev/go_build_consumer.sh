@@ -16,12 +16,12 @@ GO111MODULE=on go mod "${MODULES_DIR}"
 
 if [[ -z "${OUTPUT_BIN}" ]]; then
     # Not specified, requires default value
-    OUTPUT_BIN="${SERVICE_BIN}"
+    OUTPUT_BIN="${CONSUMER_BIN}"
 fi
 
 if [[ -z "${MAIN_SRC_FILE}" ]]; then
     # Not specified, requires default value
-    MAIN_SRC_FILE="${SRC_ROOT}/cmd/service/main.go"
+    MAIN_SRC_FILE="${SRC_ROOT}/cmd/consumer/main.go"
 fi
 
 GOOS=linux

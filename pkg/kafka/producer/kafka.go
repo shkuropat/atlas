@@ -33,12 +33,11 @@ func (p *Producer) Send(data []byte) error {
 	producer, err := sarama.NewSyncProducer(p.brokers, nil)
 	if err != nil {
 		log.Fatalln(err)
-		return err
 	}
 
 	defer func() {
 		if err := producer.Close(); err != nil {
-			log.Fatalln(err)
+			log.Error(err)
 		}
 	}()
 
@@ -51,9 +50,9 @@ func (p *Producer) Send(data []byte) error {
 
 	partition, offset, err := producer.SendMessage(msg)
 	if err != nil {
-		log.Printf("FAILED to send message: %s\n", err)
+		log.Errorf("FAILED to send message: %s\n", err)
 	} else {
-		log.Printf("> message sent to partition %d at offset %d\n", partition, offset)
+		log.Infof("> message sent to partition %d at offset %d\n", partition, offset)
 	}
 
 	return err

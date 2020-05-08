@@ -18,4 +18,4 @@ DOCKERHUB_LOGIN="${DOCKERHUB_LOGIN}" \
 DOCKERHUB_PUBLISH="${DOCKERHUB_PUBLISH}" \
 DOCKERFILE="${DOCKERFILE}" \
 MINIKUBE="${MINIKUBE}" \
-"${CUR_DIR}/image_build_client_universal.sh"
+"${CUR_DIR}/image_build_universal.sh"

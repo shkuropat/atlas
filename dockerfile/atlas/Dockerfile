@@ -17,7 +17,9 @@ RUN GO111MODULE=on go mod vendor
 RUN ./dev/run_test.sh
 
 # Build operator binary with explicitly specified output
-RUN OUTPUT_BIN=/tmp/client ./dev/go_build_client.sh
+RUN OUTPUT_BIN=/tmp/client   ./dev/go_build_client.sh
+RUN OUTPUT_BIN=/tmp/consumer ./dev/go_build_consumer.sh
+RUN OUTPUT_BIN=/tmp/service  ./dev/go_build_service.sh
 
 # === Image ===
 
@@ -29,10 +31,12 @@ WORKDIR /
 
 # Copy binary into result image from builder
 COPY --from=builder /tmp/client .
+COPY --from=builder /tmp/consumer .
+COPY --from=builder /tmp/service .
 
 # Run binary
 # We can specify additional options, such as:
 #   --config=/path/to/config
 #   --kube-config=/path/to/kubeconf
-ENTRYPOINT ["/client"]
-#CMD ["-logtostderr=true", "-v=1"]
+ENTRYPOINT ["/bin/sh"]
+#CMD ["-c", "--", "while true; do sleep 30; done;"]

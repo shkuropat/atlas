@@ -13,13 +13,12 @@
 package controller_service
 
 import (
-	"bytes"
-	"strings"
-
 	log "github.com/golang/glog"
+	conf "github.com/spf13/viper"
 
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
+	"github.com/binarly-io/binarly-atlas/pkg/kafka/producer"
 )
 
 func GetOutgoingQueue() chan *pb.Command {
@@ -46,13 +45,18 @@ func (s *MServiceControlPlaneServer) Data(DataChunksServer pb.MServiceControlPla
 	log.Info("Data() called")
 	defer log.Info("Data() exited")
 
-	_, buf, err := pb.RecvDataChunkFile(DataChunksServer)
+	_, buf, metadata, err := pb.RecvDataChunkFile(DataChunksServer)
 
-	// Send back
-	var buf2 = &bytes.Buffer{}
-	buf2.WriteString(strings.ToUpper(buf.String()))
+	log.Infof("Data() Got file len: %d name: %v", buf.Len(), metadata.GetFilename())
 
-	_, err = pb.SendDataChunkFile(DataChunksServer, pb.NewMetadata("returnback.file"), buf2)
+	producer := kafka.NewProducer(conf.GetStringSlice("brokers"), conf.GetString("topic"))
+	_ = producer.Send(buf.Bytes())
 
+	//	// Send back
+	//	var buf2 = &bytes.Buffer{}
+	//	buf2.WriteString(strings.ToUpper(buf.String()))
+	//
+	//	_, err = pb.SendDataChunkFile(DataChunksServer, pb.NewMetadata("returnback.file"), buf2)
+	//
 	return err
 }

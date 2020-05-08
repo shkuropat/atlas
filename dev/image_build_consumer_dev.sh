@@ -7,10 +7,10 @@ CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "${CUR_DIR}/go_build_config.sh"
 
 # Externally configurable build-dependent options
-TAG="${TAG:-binarly/atlas-service:dev}"
+TAG="${TAG:-binarly/atlas-consumer:dev}"
 DOCKERHUB_LOGIN="${DOCKERHUB_LOGIN}"
 DOCKERHUB_PUBLISH="${DOCKERHUB_PUBLISH:-yes}"
-DOCKERFILE="${SRC_ROOT}/dockerfile/service/Dockerfile"
+DOCKERFILE="${SRC_ROOT}/dockerfile/consumer/Dockerfile"
 MINIKUBE="${MINIKUBE:-no}"
 
 TAG="${TAG}" \

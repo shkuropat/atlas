@@ -302,12 +302,12 @@ func SendDataChunkFile(
 	return io.Copy(f, src)
 }
 
-func RecvDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver) (int64, *bytes.Buffer, error) {
+func RecvDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver) (int64, *bytes.Buffer, *Metadata, error) {
 	log.Infof("Recv()")
 
 	f, err := OpenDataChunkFile(DataChunkSenderReceiver)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
 	defer f.Close()
 
@@ -318,5 +318,5 @@ func RecvDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver) (int64, 
 	log.Infof("metadata: %s", f.Metadata.String())
 	log.Infof("data: %s", buf.String())
 
-	return written, buf, err
+	return written, buf, f.Metadata, err
 }

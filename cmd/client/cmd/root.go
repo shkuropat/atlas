@@ -26,7 +26,7 @@ import (
 const (
 	serviceAddressFlagName = "service-address"
 
-	defaultConfigFile = ".atlas-client.yaml"
+	defaultConfigFile     = ".atlas-client.yaml"
 	defaultServiceAddress = "localhost:10000"
 )
 
@@ -66,11 +66,13 @@ var (
 )
 
 func init() {
-	cmd.OnInitialize(func() {common.Init(defaultConfigFile)})
+	cmd.OnInitialize(func() { common.Init(defaultConfigFile) })
 
+	// Common section
 	rootCmd.PersistentFlags().BoolVarP(&common.Verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVar(&common.ConfigFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s)", defaultConfigFile))
 
+	// Service section
 	rootCmd.PersistentFlags().StringVar(&serviceAddress, "service-address", defaultServiceAddress, fmt.Sprintf("The address of service to use in the format host:port, as %s", defaultServiceAddress))
 
 	// TLS section

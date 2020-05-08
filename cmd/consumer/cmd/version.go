@@ -10,22 +10,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package common
+package cmd
 
 import (
-	log "github.com/sirupsen/logrus"
+	"fmt"
+
+	"github.com/MakeNowJust/heredoc"
+	cmd "github.com/spf13/cobra"
+
+	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
 
-var (
-	// Verbose specifies whether app should be verbose
-	Verbose bool
-)
+var versionCmd = &cmd.Command{
+	Use:   "version",
+	Short: "Print software version",
+	Long: heredoc.Docf(`
+			Print software version and exit
+			`,
+	),
+	Run: func(cmd *cmd.Command, args []string) {
+		fmt.Printf("%s\n", version.Version)
+	},
+}
 
-// InitLog sets logging options
-func InitLog() {
-	log.SetFormatter(&log.TextFormatter{})
-
-	if Verbose {
-		log.SetLevel(log.TraceLevel)
-	}
+func init() {
+	rootCmd.AddCommand(versionCmd)
 }

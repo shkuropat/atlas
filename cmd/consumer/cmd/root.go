@@ -24,29 +24,12 @@ import (
 )
 
 const (
-	serviceAddressFlagName = "service-address"
-
-	defaultConfigFile     = ".atlas-service.yaml"
-	defaultServiceAddress = ":10000"
+	defaultConfigFile     = ".atlas-client.yaml"
+	defaultServiceAddress = "localhost:10000"
 )
 
 // CLI parameter variables
 var (
-	// serviceAddr specifies address of service to use
-	serviceAddress string
-
-	// tls specifies whether TLS be used or not
-	tls bool
-	// tlsCertFile specifies path to certificate file. To be used with TLS
-	tlsCertFile string
-	// tlsKeyFile specifies path to key file. To be used with TLS
-	tlsKeyFile string
-
-	// auth specifies whether to use OAuth2
-	auth bool
-	// jwtPublicKeyFile specifies path to RSA Public Key file to be used for JWT parsing
-	jwtPublicKeyFile string
-
 	// brokers specifies list of Kafka brokers
 	brokers string
 
@@ -55,21 +38,13 @@ var (
 
 	// rootCmd represents the base command when called without any sub-commands
 	rootCmd = &cmd.Command{
-		Use:   "atlas service [COMMAND]",
-		Short: "Atlas service.",
+		Use:   "atlas kafka consumer [COMMAND]",
+		Short: "Atlas kafka consumer.",
 		Long: heredoc.Docf(`
-			For setting the address of the form HOST:PORT, you can
-			- use the flag --%s=%s
-			- or you can set '%s: %s' in config $HOME/%s
+			Atlas kafka consumer
 			`,
-			serviceAddressFlagName,
-			defaultServiceAddress,
-			serviceAddressFlagName,
-			defaultServiceAddress,
-			defaultConfigFile,
 		),
 		PersistentPreRun: func(cmd *cmd.Command, args []string) {
-			log.Debugf("using address: %s", conf.GetString(serviceAddressFlagName))
 		},
 	}
 )
@@ -80,18 +55,6 @@ func init() {
 	// Common section
 	rootCmd.PersistentFlags().BoolVarP(&common.Verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVar(&common.ConfigFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s)", defaultConfigFile))
-
-	// Service section
-	rootCmd.PersistentFlags().StringVar(&serviceAddress, "service-address", defaultServiceAddress, fmt.Sprintf("The address of service to use in the format host:port, as %s", defaultServiceAddress))
-
-	// TLS section
-	rootCmd.PersistentFlags().BoolVar(&tls, "tls", false, "use TLS connection")
-	rootCmd.PersistentFlags().StringVar(&tlsCertFile, "tls-cert-file", "", "The TLS cert file. To be used with TLS")
-	rootCmd.PersistentFlags().StringVar(&tlsKeyFile, "tls-key-file", "", "The TLS key file. To be used with TLS")
-
-	// OAuth section
-	rootCmd.PersistentFlags().BoolVar(&auth, "oauth", false, "Whether to use OAuth2 for authentication")
-	rootCmd.PersistentFlags().StringVar(&jwtPublicKeyFile, "jwt-public-key-file", "", "Public RSA key used for JWT parsing")
 
 	// Kafka section
 	rootCmd.PersistentFlags().StringVar(&brokers, "brokers", "", "List of Kafka brokers")
