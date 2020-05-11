@@ -26,7 +26,6 @@ import (
 	"google.golang.org/grpc"
 
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
-	"github.com/binarly-io/binarly-atlas/pkg/auth/client"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/controller/client"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/client"
@@ -76,7 +75,7 @@ var sendCmd = &cmd.Command{
 		log.Infof("Starting client. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
 
 		log.Infof("Dial() to %s", serviceAddress)
-		conn, err := grpc.Dial(serviceAddress, getDialOptions()...)
+		conn, err := grpc.Dial(serviceAddress, client_transport.GetGRPCClientOptions(tls, auth, caFile, serverHostOverride, clientID, clientSecret, tokenURL)...)
 		if err != nil {
 			log.Fatalf("fail to dial %v", err)
 		}
@@ -119,37 +118,4 @@ func init() {
 	}
 
 	rootCmd.AddCommand(sendCmd)
-}
-
-// getDialOptions  builds gRPC dial options from flags
-func getDialOptions() []grpc.DialOption {
-	var opts []grpc.DialOption
-
-	if tls {
-		log.Infof("TLS requested")
-		if transportOpts, err := client_transport.SetupTransport(caFile, serverHostOverride); err == nil {
-			opts = append(opts, transportOpts...)
-		} else {
-			log.Fatalf("%s", err.Error())
-		}
-	} else {
-		opts = append(opts, grpc.WithInsecure())
-	}
-
-	if auth {
-		log.Infof("OAuth2 requested")
-		if !tls {
-			log.Fatalf("Need TLS to be enabled")
-		}
-
-		if oAuthOpts, err := client_auth.SetupOAuth(clientID, clientSecret, tokenURL); err == nil {
-			opts = append(opts, oAuthOpts...)
-		} else {
-			log.Fatalf("%s", err.Error())
-		}
-	}
-
-	opts = append(opts, grpc.WithBlock())
-
-	return opts
 }

@@ -9,12 +9,13 @@ source "${CUR_DIR}/go_build_config.sh"
 LOG_DIR="${CUR_DIR}/log"
 
 EXECUTABLE_BINARY="${EXECUTABLE_BINARY:-$CLIENT_BIN}"
+BUILDER_SCRIPT="${BUILDER_SCRIPT:-$CUR_DIR/$CLIENT_BUILDER_SCRIPT}"
 
 if [[ $1 == "nobuild" ]]; then
     echo "Build step skipped, starting old binary"
 else
     echo -n "Building ${EXECUTABLE_BINARY}, please wait..."
-    if "${CUR_DIR}/go_build_client.sh"; then
+    if "${BUILDER_SCRIPT}"; then
         echo "Successfully built ${EXECUTABLE_BINARY}."
     else
         echo "Unable to build ${EXECUTABLE_BINARY}. Abort."

@@ -13,15 +13,13 @@
 package service_transport
 
 import (
-	"os"
-
 	log "github.com/golang/glog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/testdata"
 )
 
-func SetupTransport(tlsCertFile, tlsKeyFile string) ([]grpc.ServerOption, error) {
+func setupTLS(tlsCertFile, tlsKeyFile string) ([]grpc.ServerOption, error) {
 	if tlsCertFile == "" {
 		tlsCertFile = testdata.Path("server1.pem")
 	}
@@ -42,7 +40,6 @@ func SetupTransport(tlsCertFile, tlsKeyFile string) ([]grpc.ServerOption, error)
 
 	if err != nil {
 		log.Fatalf("failed to generate credentials %v", err)
-		os.Exit(1)
 	}
 
 	opts := []grpc.ServerOption{

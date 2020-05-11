@@ -14,13 +14,11 @@ package service_auth
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
+	"crypto/rsa"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/golang/glog"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -29,166 +27,131 @@ import (
 var (
 	errMissingMetadata = status.Errorf(codes.InvalidArgument, "No metadata provided")
 	errMissingToken    = status.Errorf(codes.Unauthenticated, "No authorization token provided")
+	errMissingBearer   = status.Errorf(codes.Unauthenticated, "No bearer token provided within authorization token")
 	errInvalidToken    = status.Errorf(codes.Unauthenticated, "Invalid token")
 
-	jwtPublicKey []byte
+	jwtRSAPublicKey *rsa.PublicKey
 )
-
-// In case of failed authorization, the interceptor blocks execution of the handler and returns an error.
-// type grpc.StreamServerInterceptor
-func streamInterceptor(
-	srv interface{},
-	ss grpc.ServerStream,
-	info *grpc.StreamServerInfo,
-	handler grpc.StreamHandler,
-) error {
-	log.Infof("streamInterceptor %s %t %t", info.FullMethod, info.IsClientStream, info.IsServerStream)
-
-	ctx := ss.Context()
-	if err := authorize(ctx); err != nil {
-		log.Infof("AUTH FAILED streamInterceptor %s %t %t", info.FullMethod, info.IsClientStream, info.IsServerStream)
-		return err
-	}
-
-	log.Infof("AUTH OK streamInterceptor %s %t %t", info.FullMethod, info.IsClientStream, info.IsServerStream)
-
-	// Continue execution of handler
-	return handler(srv, ss)
-}
-
-// In case of failed authorization, the interceptor blocks execution of the handler and returns an error.
-// type grpc.StreamClientInterceptor
-func unaryInterceptor(
-	ctx context.Context,
-	req interface{},
-	info *grpc.UnaryServerInfo,
-	handler grpc.UnaryHandler,
-) (interface{}, error) {
-	log.Infof("unaryInterceptor %s", info.FullMethod)
-
-	// Skip authorize when GetJWT is requested
-	//if info.FullMethod != "/proto.EventStoreService/GetJWT" {
-	//	if err := authorize(ctx); err != nil {
-	//		return nil, err
-	//	}
-	//}
-
-	if err := authorize(ctx); err != nil {
-		return nil, err
-	}
-
-	// Continue execution of handler
-	return handler(ctx, req)
-}
 
 // authorize ensures a valid token exists within a request's metadata and authorizes the token received from Metadata
 func authorize(ctx context.Context) error {
+	// Fetch Bearer token
+	// In case it is provided and is correct, consider auth completed
+	_, err := fetchJWTToken(ctx)
+
+	return err
+}
+
+func fetchJWTToken(ctx context.Context) (*jwt.Token, error) {
+	var err error
+
+	// Fetch metadata from request's context
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return errMissingMetadata
+		return nil, errMissingMetadata
 	}
 
+	// Fetch authorization metadata from request's metadata
+	authMetadata, ok := md["authorization"]
+	if !ok {
+		return nil, errMissingToken
+	}
+	dumpMetadata(md)
+
+	// Fetch authorization token from authorization metadata
+	tokenStr, err := fetchBearerToken(authMetadata)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseToken(tokenStr)
+}
+
+func fetchBearerToken(md []string) (string, error) {
+	if len(md) < 1 {
+		return "", errMissingBearer
+	}
+
+	// Fetch token line "Bearer XXXXXXXXXXXX"
+	bearer := md[0]
+
+	// Fetch bearer token itself - trim prefix
+	token := strings.TrimPrefix(bearer, "Bearer ")
+	if len(token) < 1 {
+		return "", errMissingBearer
+	}
+	log.Infof("Bearer %s", token)
+
+	return token, nil
+}
+
+func dumpMetadata(md metadata.MD) {
 	log.Infof("Dump Metadata ---")
-	for key, strings := range md {
+	// Metadata is a map[string][]string
+	for key, value := range md {
 		log.Infof("[%s]=", key)
-		for _, str := range strings {
+		for _, str := range value {
 			log.Infof("    %s", str)
 		}
 	}
 	log.Infof("End Dump Metadata ---")
-
-	authMetadata, ok := md["authorization"]
-	if !ok {
-		return errMissingToken
-	}
-
-	token := strings.TrimPrefix(authMetadata[0], "Bearer ")
-
-	log.Infof("Bearer %s", token)
-	err := validateToken(token)
-	if err != nil {
-		return status.Errorf(codes.Unauthenticated, err.Error())
-	}
-
-	return nil
 }
 
-// valid validates the authorization.
-func validateToken(_token string) error {
+// parseToken validates the authorization token
+func parseToken(_token string) (*jwt.Token, error) {
 
-	// Parse takes the token string and a function for looking up the key. The latter is especially
-	// useful if you use multiple keys for your application.  The standard is to use 'kid' in the
-	// head of the token to identify which key to use, but the parsed token (head and claims) is provided
-	// to the callback, providing flexibility.
+	// Parse takes the token string and a function for looking up the key.
+	// The latter is especially useful if you use multiple keys for your application.
+	// The standard is to use 'kid' in the head of the token to identify which key to use,
+	// but the parsed token (head and claims) is provided to the callback, providing flexibility.
 	token, err := jwt.Parse(_token, func(token *jwt.Token) (interface{}, error) {
+		// Parse methods use this callback function to supply
+		// the key for verification.  The function receives the parsed,
+		// but unverified Token.  This allows you to use properties in the
+		// Header of the token (such as `kid`) to identify which key to use.
 
-		// What also is used for JWT token
+		// What method is used in this token?
+
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); ok {
+			// This method is supported
+
+			// Return RSA Public Key
+			return jwtRSAPublicKey, nil
+		}
+
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); ok {
-			// Do now support it
+			// This method IS NOT SUPPORTED
 		}
 
 		if _, ok := token.Method.(*jwt.SigningMethodECDSA); ok {
-			// Do now support it
+			// This method IS NOT SUPPORTED
 		}
 
-		if _, ok := token.Method.(*jwt.SigningMethodRSA); ok {
-			// Support it
-			// Return RSA Public Key
-
-			rsaPK, err := jwt.ParseRSAPublicKeyFromPEM(jwtPublicKey)
-			if err != nil {
-				return nil, err
-			}
-
-			return rsaPK, nil
-		}
-
-		return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		return nil, status.Errorf(codes.Unauthenticated, "unexpected signing method: %v", token.Header["alg"])
 	})
-
-	if err == nil {
-		log.Infof("validateTokenOk")
-	} else {
-		log.Infof("validateTokenErr %v", err)
-	}
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		log.Infof("Looking for claims")
-		for key, value := range claims {
-			log.Infof("[%s]=%s", key, value)
-		}
-	}
-
-	if token.Valid {
-		return nil
-	} else {
-		return errInvalidToken
-	}
-}
-
-func SetupOAuth(jwtPublicKeyFile string) ([]grpc.ServerOption, error) {
-	opts := []grpc.ServerOption{
-		// Add an interceptor for all unary RPCs.
-		grpc.UnaryInterceptor(unaryInterceptor),
-
-		// Add an interceptor for all stream RPCs.
-		grpc.StreamInterceptor(streamInterceptor),
-	}
-
-	var err error
-	jwtPublicKey, err = ioutil.ReadFile(jwtPublicKeyFile)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to access Public Key File '%s' file", jwtPublicKeyFile)
+		log.Errorf("jwt.Parse() FAILED with error %v", err)
+		return nil, errInvalidToken
+	}
+	if !token.Valid {
+		log.Errorf("jwt.Parse() FAILED with !token.Valid")
+		return nil, errInvalidToken
 	}
 
-	publicKeyPrefix := "-----BEGIN PUBLIC KEY-----"
-	publicKeySuffix := "-----END PUBLIC KEY-----"
-	if !strings.HasPrefix(string(jwtPublicKey), publicKeyPrefix) ||
-		(!strings.HasSuffix(string(jwtPublicKey), publicKeySuffix) &&
-			!strings.HasSuffix(string(jwtPublicKey), publicKeySuffix+"\n")) {
-		return nil, fmt.Errorf("%s file must contain public key enclosed in %s %s",
-			jwtPublicKeyFile, publicKeyPrefix, publicKeySuffix)
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		log.Errorf("no token.Claims available")
+		return nil, errInvalidToken
+	}
+	if len(claims) == 0 {
+		log.Errorf("zero token.Claims available - this is not correct")
+		return nil, errInvalidToken
 	}
 
-	return opts, nil
+	log.Infof("Claims:")
+	for key, value := range claims {
+		log.Infof("%s: %s", key, value)
+	}
+
+	return token, nil
 }

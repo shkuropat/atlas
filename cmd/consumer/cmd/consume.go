@@ -15,6 +15,7 @@ package cmd
 import (
 	"context"
 	"github.com/MakeNowJust/heredoc"
+	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
 	"github.com/binarly-io/binarly-atlas/pkg/kafka/consumer"
 	"github.com/binarly-io/binarly-atlas/pkg/version"
 	log "github.com/sirupsen/logrus"
@@ -66,8 +67,10 @@ var consumeCmd = &cmd.Command{
 		log.Infof("Starting consumer. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
 		log.Infof("Press Ctrl+C to exit...")
 
-		consumer := kafka.NewConsumer(conf.GetStringSlice("brokers"), "g1", conf.GetString("topic"))
-		consumer.ConsumeLoop(conf.GetBool("newest"), conf.GetBool("ack"))
+		log.Infof("Config:\n%s", config_consumer.Config.String())
+
+		consumer := kafka.NewConsumer(config_consumer.Config.Brokers, config_consumer.Config.GroupID, config_consumer.Config.Topic)
+		consumer.ConsumeLoop(config_consumer.Config.ReadNewest, config_consumer.Config.Ack)
 
 		<-ctx.Done()
 	},

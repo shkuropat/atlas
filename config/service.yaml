@@ -1,3 +1,4 @@
 verbose: true
 brokers:
   - localhost:1234
+topic: testtopic

@@ -26,7 +26,6 @@ import (
 
 	pbHealth "github.com/binarly-io/binarly-atlas/pkg/api/health"
 	pbMService "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
-	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/controller/service"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/service"
@@ -78,9 +77,9 @@ var serveCmd = &cmd.Command{
 			log.Fatalf("failed to Listen() %v", err)
 		}
 
-		grpcServer := grpc.NewServer(getGRPCServerOptions()...)
-		pbMService.RegisterMServiceControlPlaneServer(grpcServer, &controller_service.MServiceControlPlaneServer{})
-		pbHealth.RegisterHealthServer(grpcServer, &controller_service.HealthServer{})
+		grpcServer := grpc.NewServer(service_transport.GetGRPCServerOptions(tls, auth, tlsCertFile, tlsKeyFile, jwtPublicKeyFile)...)
+		pbMService.RegisterMServiceControlPlaneServer(grpcServer, controller_service.NewMServiceControlPlaneServer())
+		pbHealth.RegisterHealthServer(grpcServer, controller_service.NewHealthServer())
 
 		go func() {
 			if err := grpcServer.Serve(listener); err != nil {
@@ -101,34 +100,4 @@ func init() {
 	}
 
 	rootCmd.AddCommand(serveCmd)
-}
-
-// getGRPCServerOptions builds gRPC server options from flags
-func getGRPCServerOptions() []grpc.ServerOption {
-	var opts []grpc.ServerOption
-	if tls {
-		log.Infof("TLS requested")
-
-		if transportOpts, err := service_transport.SetupTransport(tlsCertFile, tlsKeyFile); err == nil {
-			opts = append(opts, transportOpts...)
-		} else {
-			log.Fatalf("%s", err.Error())
-			os.Exit(1)
-		}
-	}
-
-	if auth {
-		log.Infof("OAuth2 requested")
-		if !tls {
-			log.Fatalf("Need TLS to be enabled")
-		}
-
-		if oAuthOpts, err := service_auth.SetupOAuth(jwtPublicKeyFile); err == nil {
-			opts = append(opts, oAuthOpts...)
-		} else {
-			log.Fatalf("%s", err.Error())
-		}
-	}
-
-	return opts
 }

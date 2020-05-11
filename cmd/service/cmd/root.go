@@ -21,6 +21,7 @@ import (
 	conf "github.com/spf13/viper"
 
 	"github.com/binarly-io/binarly-atlas/cmd/common"
+	"github.com/binarly-io/binarly-atlas/pkg/config/service"
 )
 
 const (
@@ -75,7 +76,10 @@ var (
 )
 
 func init() {
-	cmd.OnInitialize(func() { common.Init(defaultConfigFile) })
+	cmd.OnInitialize(func() {
+		common.Init(defaultConfigFile)
+		config_service.ReadIn()
+	})
 
 	// Common section
 	rootCmd.PersistentFlags().BoolVarP(&common.Verbose, "verbose", "v", false, "verbose output")

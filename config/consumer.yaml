@@ -1,1 +1,7 @@
 verbose: true
+brokers:
+  - localhost:1234
+topic: testtopic
+groupID: g1
+readNewest: true
+ack: true

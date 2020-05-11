@@ -13,12 +13,11 @@
 package controller_service
 
 import (
-	log "github.com/golang/glog"
-	conf "github.com/spf13/viper"
-
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/config/service"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/kafka/producer"
+	log "github.com/golang/glog"
 )
 
 func GetOutgoingQueue() chan *pb.Command {
@@ -31,6 +30,10 @@ func GetIncomingQueue() chan *pb.Command {
 
 type MServiceControlPlaneServer struct {
 	pb.UnimplementedMServiceControlPlaneServer
+}
+
+func NewMServiceControlPlaneServer() *MServiceControlPlaneServer {
+	return &MServiceControlPlaneServer{}
 }
 
 func (s *MServiceControlPlaneServer) Commands(server pb.MServiceControlPlane_CommandsServer) error {
@@ -49,7 +52,7 @@ func (s *MServiceControlPlaneServer) Data(DataChunksServer pb.MServiceControlPla
 
 	log.Infof("Data() Got file len: %d name: %v", buf.Len(), metadata.GetFilename())
 
-	producer := kafka.NewProducer(conf.GetStringSlice("brokers"), conf.GetString("topic"))
+	producer := kafka.NewProducer(config_service.Config.Brokers, config_service.Config.Topic)
 	_ = producer.Send(buf.Bytes())
 
 	//	// Send back

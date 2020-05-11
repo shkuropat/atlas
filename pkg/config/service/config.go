@@ -10,28 +10,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package controller_service
+package config_service
 
 import (
-	"context"
+	"bytes"
+	"fmt"
 
-	pb "github.com/binarly-io/binarly-atlas/pkg/api/health"
+	conf "github.com/spf13/viper"
 )
 
-type HealthServer struct {
-	pb.UnimplementedHealthServer
+type ConfigService struct {
+	Verbose bool     `json:"verbose" yaml:"verbose"`
+	Brokers []string `json:"brokers" yaml:"brokers"`
+	Topic   string   `json:"topic"   yaml:"topic"`
 }
 
-func NewHealthServer() *HealthServer {
-	return &HealthServer{}
+var Config ConfigService
+
+func ReadIn() {
+	conf.Unmarshal(&Config)
 }
 
-func (h *HealthServer) Check(ctx context.Context, args *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
-	return &pb.HealthCheckResponse{
-		Status: pb.HealthCheckResponse_SERVING,
-	}, nil
-}
+func (c *ConfigService) String() string {
+	b := &bytes.Buffer{}
 
-func (h *HealthServer) Watch(*pb.HealthCheckRequest, pb.Health_WatchServer) error {
-	return nil
+	_, _ = fmt.Fprintf(b, "Verbose: %v\n", c.Verbose)
+	_, _ = fmt.Fprintf(b, "Brokers: %v\n", c.Brokers)
+	_, _ = fmt.Fprintf(b, "Topic: %v\n", c.Topic)
+
+	return b.String()
 }

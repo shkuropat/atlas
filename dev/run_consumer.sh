@@ -9,12 +9,13 @@ source "${CUR_DIR}/go_build_config.sh"
 LOG_DIR="${CUR_DIR}/log"
 
 EXECUTABLE_BINARY="${EXECUTABLE_BINARY:-$CONSUMER_BIN}"
+BUILDER_SCRIPT="${BUILDER_SCRIPT:-$CUR_DIR/$CONSUMER_BUILDER_SCRIPT}"
 
 if [[ $1 == "nobuild" ]]; then
     echo "Build step skipped, starting old binary"
 else
     echo -n "Building ${EXECUTABLE_BINARY}, please wait..."
-    if "${CUR_DIR}/go_build_client.sh"; then
+    if "${BUILDER_SCRIPT}"; then
         echo "Successfully built ${EXECUTABLE_BINARY}."
     else
         echo "Unable to build ${EXECUTABLE_BINARY}. Abort."
@@ -32,7 +33,8 @@ fi
     mkdir -p "${LOG_DIR}"
     set -x
     "${EXECUTABLE_BINARY}" \
-    	--config "${CONFIG_DIR}/consumer.yaml"
+    	--config "${CONFIG_DIR}/consumer.yaml" \
+    	consume
     set +x
 
 if [[ $2 == "noclean" ]]; then

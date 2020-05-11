@@ -13,9 +13,9 @@
 package common
 
 import (
+	hd "github.com/mitchellh/go-homedir"
 	"strings"
 
-	"github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	conf "github.com/spf13/viper"
 )
@@ -30,7 +30,7 @@ func InitConfig(defaultConfigFile string) {
 
 	if ConfigFile == "" {
 		// Use config file from home directory
-		homedir, err := homedir.Dir()
+		homedir, err := hd.Dir()
 		if err != nil {
 			log.Fatalf("unable to find homedir %v", err)
 		}

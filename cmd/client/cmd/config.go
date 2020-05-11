@@ -16,7 +16,8 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	log "github.com/sirupsen/logrus"
 	cmd "github.com/spf13/cobra"
-	conf "github.com/spf13/viper"
+
+	"github.com/binarly-io/binarly-atlas/pkg/config/client"
 )
 
 var configCmd = &cmd.Command{
@@ -27,10 +28,7 @@ var configCmd = &cmd.Command{
 			`,
 	),
 	Run: func(cmd *cmd.Command, args []string) {
-		log.Info("Config:")
-		for k, v := range conf.AllSettings() {
-			log.Infof("%s: %v", k, v)
-		}
+		log.Infof("Config:\n%v", config_client.Config.String())
 	},
 }
 

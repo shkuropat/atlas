@@ -13,15 +13,13 @@
 package client_transport
 
 import (
-	"os"
-
 	log "github.com/golang/glog"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/testdata"
 )
 
-func SetupTransport(caFile, serverHostOverride string) ([]grpc.DialOption, error) {
+func setupTLS(caFile, serverHostOverride string) ([]grpc.DialOption, error) {
 	if caFile == "" {
 		caFile = testdata.Path("ca.pem")
 	}
@@ -29,7 +27,6 @@ func SetupTransport(caFile, serverHostOverride string) ([]grpc.DialOption, error
 	transportCredentials, err := credentials.NewClientTLSFromFile(caFile, serverHostOverride)
 	if err != nil {
 		log.Fatalf("failed to create TLS credentials %v", err)
-		os.Exit(1)
 	}
 
 	log.Infof("enabling TLS with ca=%s", caFile)
