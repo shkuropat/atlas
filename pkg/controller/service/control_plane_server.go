@@ -14,6 +14,7 @@ package controller_service
 
 import (
 	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
 	"github.com/binarly-io/binarly-atlas/pkg/config/service"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/kafka/producer"
@@ -47,6 +48,12 @@ func (s *MServiceControlPlaneServer) Commands(server pb.MServiceControlPlane_Com
 func (s *MServiceControlPlaneServer) Data(DataChunksServer pb.MServiceControlPlane_DataChunksServer) error {
 	log.Info("Data() called")
 	defer log.Info("Data() exited")
+
+	claims, err := service_auth.GetClaims(DataChunksServer.Context())
+	log.Infof("Claims:")
+	for name, value := range claims {
+		log.Infof("%s: %v", name, value)
+	}
 
 	_, buf, metadata, err := pb.RecvDataChunkFile(DataChunksServer)
 

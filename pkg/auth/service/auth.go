@@ -29,6 +29,7 @@ var (
 	errMissingToken    = status.Errorf(codes.Unauthenticated, "No authorization token provided")
 	errMissingBearer   = status.Errorf(codes.Unauthenticated, "No bearer token provided within authorization token")
 	errInvalidToken    = status.Errorf(codes.Unauthenticated, "Invalid token")
+	errInvalidClaims    = status.Errorf(codes.Unauthenticated, "Invalid claims")
 
 	jwtRSAPublicKey *rsa.PublicKey
 )
@@ -59,12 +60,12 @@ func fetchJWTToken(ctx context.Context) (*jwt.Token, error) {
 	dumpMetadata(md)
 
 	// Fetch authorization token from authorization metadata
-	tokenStr, err := fetchBearerToken(authMetadata)
+	tokenString, err := fetchBearerToken(authMetadata)
 	if err != nil {
 		return nil, err
 	}
 
-	return parseToken(tokenStr)
+	return parseToken(tokenString)
 }
 
 func fetchBearerToken(md []string) (string, error) {
@@ -76,13 +77,13 @@ func fetchBearerToken(md []string) (string, error) {
 	bearer := md[0]
 
 	// Fetch bearer token itself - trim prefix
-	token := strings.TrimPrefix(bearer, "Bearer ")
-	if len(token) < 1 {
+	tokenString := strings.TrimPrefix(bearer, "Bearer ")
+	if len(tokenString) < 1 {
 		return "", errMissingBearer
 	}
-	log.Infof("Bearer %s", token)
+	log.Infof("Bearer %s", tokenString)
 
-	return token, nil
+	return tokenString, nil
 }
 
 func dumpMetadata(md metadata.MD) {
@@ -98,13 +99,13 @@ func dumpMetadata(md metadata.MD) {
 }
 
 // parseToken validates the authorization token
-func parseToken(_token string) (*jwt.Token, error) {
+func parseToken(tokenString string) (*jwt.Token, error) {
 
 	// Parse takes the token string and a function for looking up the key.
 	// The latter is especially useful if you use multiple keys for your application.
 	// The standard is to use 'kid' in the head of the token to identify which key to use,
 	// but the parsed token (head and claims) is provided to the callback, providing flexibility.
-	token, err := jwt.Parse(_token, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Parse methods use this callback function to supply
 		// the key for verification.  The function receives the parsed,
 		// but unverified Token.  This allows you to use properties in the
@@ -138,20 +139,46 @@ func parseToken(_token string) (*jwt.Token, error) {
 		return nil, errInvalidToken
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		log.Errorf("no token.Claims available")
-		return nil, errInvalidToken
-	}
-	if len(claims) == 0 {
-		log.Errorf("zero token.Claims available - this is not correct")
-		return nil, errInvalidToken
+	// Ensure token has some payload
+	err = verifyClaims(token)
+	if err != nil {
+		log.Errorf("jwt.Parse() FAILED with error %v", err)
+		return nil, err
 	}
 
+	// Main part - token's payload
+	claims := getClaims(token)
 	log.Infof("Claims:")
-	for key, value := range claims {
-		log.Infof("%s: %s", key, value)
+	for name, value := range claims {
+		log.Infof("%s: %v", name, value)
 	}
 
 	return token, nil
+}
+
+func verifyClaims(token *jwt.Token) error {
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		log.Errorf("no token.Claims available")
+		return errInvalidClaims
+	}
+	if len(claims) == 0 {
+		log.Errorf("zero token.Claims available - this is not correct")
+		return errInvalidClaims
+	}
+	return nil
+}
+
+func getClaims(token *jwt.Token) jwt.MapClaims {
+	return token.Claims.(jwt.MapClaims)
+}
+
+// authorize ensures a valid token exists within a request's metadata and authorizes the token received from Metadata
+func GetClaims(ctx context.Context) (jwt.MapClaims, error) {
+	token, err := fetchJWTToken(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return getClaims(token), nil
 }
