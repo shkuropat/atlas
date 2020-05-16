@@ -1,4 +1,12 @@
 verbose: true
+
+# Kafka
 brokers:
   - localhost:1234
 topic: testtopic
+
+# MinIO
+endpoint: minio
+accessKeyID: accessKeyID
+secretAccessKey: secretAccessKey
+secure: true

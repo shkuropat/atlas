@@ -29,7 +29,7 @@ var (
 	errMissingToken    = status.Errorf(codes.Unauthenticated, "No authorization token provided")
 	errMissingBearer   = status.Errorf(codes.Unauthenticated, "No bearer token provided within authorization token")
 	errInvalidToken    = status.Errorf(codes.Unauthenticated, "Invalid token")
-	errInvalidClaims    = status.Errorf(codes.Unauthenticated, "Invalid claims")
+	errInvalidClaims   = status.Errorf(codes.Unauthenticated, "Invalid claims")
 
 	jwtRSAPublicKey *rsa.PublicKey
 )

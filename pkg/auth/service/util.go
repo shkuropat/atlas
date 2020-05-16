@@ -52,4 +52,3 @@ func verifyPEM(pem []byte) error {
 
 	return nil
 }
-

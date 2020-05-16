@@ -19,13 +19,21 @@ import (
 	conf "github.com/spf13/viper"
 )
 
+// IMPORTANT
+// IMPORTANT Do not forget to update String() function
+// IMPORTANT
 type ConfigConsumer struct {
-	Verbose    bool     `json:"verbose"    yaml:"verbose"`
+	Verbose bool `json:"verbose"    yaml:"verbose"`
+
+	// Kafka
 	Brokers    []string `json:"brokers"    yaml:"brokers"`
 	Topic      string   `json:"topic"      yaml:"topic"`
 	GroupID    string   `json:"groupID"    yaml:"groupID"`
 	ReadNewest bool     `json:"readNewest" yaml:"readNewest"`
 	Ack        bool     `json:"ack"        yaml:"ack"`
+	// IMPORTANT
+	// IMPORTANT Do not forget to update String() function
+	// IMPORTANT
 }
 
 var Config ConfigConsumer

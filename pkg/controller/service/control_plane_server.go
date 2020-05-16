@@ -17,7 +17,7 @@ import (
 	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
 	"github.com/binarly-io/binarly-atlas/pkg/config/service"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
-	"github.com/binarly-io/binarly-atlas/pkg/kafka/producer"
+	"github.com/binarly-io/binarly-atlas/pkg/minio"
 	log "github.com/golang/glog"
 )
 
@@ -55,12 +55,10 @@ func (s *MServiceControlPlaneServer) Data(DataChunksServer pb.MServiceControlPla
 		log.Infof("%s: %v", name, value)
 	}
 
-	_, buf, metadata, err := pb.RecvDataChunkFile(DataChunksServer)
-
-	log.Infof("Data() Got file len: %d name: %v", buf.Len(), metadata.GetFilename())
-
-	producer := kafka.NewProducer(config_service.Config.Brokers, config_service.Config.Topic)
-	_ = producer.Send(buf.Bytes())
+	_, _, err = relayIntoMinIO(DataChunksServer)
+	if err != nil {
+		log.Errorf("error: %v", err.Error())
+	}
 
 	//	// Send back
 	//	var buf2 = &bytes.Buffer{}
@@ -69,4 +67,32 @@ func (s *MServiceControlPlaneServer) Data(DataChunksServer pb.MServiceControlPla
 	//	_, err = pb.SendDataChunkFile(DataChunksServer, pb.NewMetadata("returnback.file"), buf2)
 	//
 	return err
+}
+
+func relayIntoMinIO(DataChunksServer pb.MServiceControlPlane_DataChunksServer) (int64, *pb.Metadata, error) {
+	mi, err := minio.NewMinIO(
+		config_service.Config.Endpoint,
+		config_service.Config.AccessKeyID,
+		config_service.Config.SecretAccessKey,
+		config_service.Config.Secure,
+	)
+
+	if err != nil {
+
+	}
+
+	bucketName := "b1"
+	objectName := pb.CreateNewUUID()
+
+	return pb.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, bucketName, objectName)
+}
+
+func relayIntoKafka() {
+	//	_, buf, metadata, err := pb.RecvDataChunkFile(DataChunksServer)
+	//
+	//	log.Infof("Data() Got file len: %d name: %v", buf.Len(), metadata.GetFilename())
+	//
+	//	producer := kafka.NewProducer(config_service.Config.Brokers, config_service.Config.Topic)
+	//	_ = producer.Send(buf.Bytes())
+	//
 }

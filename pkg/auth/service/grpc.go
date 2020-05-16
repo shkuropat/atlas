@@ -44,7 +44,6 @@ func SetupOAuth(jwtRSAPublicKeyFile string) ([]grpc.ServerOption, error) {
 	return opts, nil
 }
 
-
 // In case of failed authorization, the interceptor blocks execution of the handler and returns an error.
 // type grpc.StreamServerInterceptor
 func streamInterceptor(

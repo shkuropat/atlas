@@ -19,8 +19,14 @@ import (
 	conf "github.com/spf13/viper"
 )
 
+// IMPORTANT
+// IMPORTANT Do not forget to update String() function
+// IMPORTANT
 type ConfigClient struct {
 	Verbose bool `json:"verbose" yaml:"verbose"`
+	// IMPORTANT
+	// IMPORTANT Do not forget to update String() function
+	// IMPORTANT
 }
 
 var Config ConfigClient

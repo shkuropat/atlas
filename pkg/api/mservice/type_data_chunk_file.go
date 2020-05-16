@@ -18,6 +18,8 @@ import (
 	"io"
 
 	log "github.com/sirupsen/logrus"
+
+	"github.com/binarly-io/binarly-atlas/pkg/minio"
 )
 
 // DataChunkSenderReceiver defines transport level interface (for both client and server),
@@ -53,9 +55,9 @@ type DataChunkFile struct {
 
 // OpenDataChunkFile opens set of DataChunk(s)
 // Inspired by os.OpenFile()
-func OpenDataChunkFile(DataChunkTransporter DataChunkSenderReceiver) (*DataChunkFile, error) {
+func OpenDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver) (*DataChunkFile, error) {
 	return &DataChunkFile{
-		DataChunkSenderReceiver: DataChunkTransporter,
+		DataChunkSenderReceiver: DataChunkSenderReceiver,
 	}, nil
 }
 
@@ -302,21 +304,55 @@ func SendDataChunkFile(
 	return io.Copy(f, src)
 }
 
-func RecvDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver) (int64, *bytes.Buffer, *Metadata, error) {
-	log.Infof("Recv()")
+func RecvDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver, dst io.Writer) (int64, *Metadata, error) {
+	log.Infof("RecvDataChunkFile()")
 
 	f, err := OpenDataChunkFile(DataChunkSenderReceiver)
 	if err != nil {
-		return 0, nil, nil, err
+		return 0, nil, err
 	}
 	defer f.Close()
 
+	written, err := io.Copy(dst, f)
+	if err != nil {
+		log.Errorf("RecvDataChunkFile() got error: %v", err.Error())
+	}
+
+	return written, f.Metadata, err
+}
+
+func RecvDataChunkFileIntoBuf(DataChunkSenderReceiver DataChunkSenderReceiver) (int64, *bytes.Buffer, *Metadata, error) {
+	log.Infof("RecvDataChunkFileIntoBuf()")
+
 	var buf = &bytes.Buffer{}
-	written, err := io.Copy(buf, f)
+	written, metadata, err := RecvDataChunkFile(DataChunkSenderReceiver, buf)
+	if err != nil {
+		log.Errorf("RecvDataChunkFileIntoBuf() got error: %v", err.Error())
+	}
+
+	// Debug
+	log.Infof("metadata: %s", metadata.String())
+	log.Infof("data: %s", buf.String())
+
+	return written, buf, metadata, err
+}
+
+func RelayDataChunkFileIntoMinIO(DataChunkSenderReceiver DataChunkSenderReceiver, mi *minio.MinIO, bucketName, objectName string) (int64, *Metadata, error) {
+	log.Infof("RelayDataChunkFileIntoMinIO()")
+
+	f, err := OpenDataChunkFile(DataChunkSenderReceiver)
+	if err != nil {
+		return 0, nil, err
+	}
+	defer f.Close()
+
+	written, err := mi.Put(bucketName, objectName, f)
+	if err != nil {
+		log.Errorf("RelayDataChunkFileIntoMinIO() got error: %v", err.Error())
+	}
 
 	// Debug
 	log.Infof("metadata: %s", f.Metadata.String())
-	log.Infof("data: %s", buf.String())
 
-	return written, buf, f.Metadata, err
+	return written, f.Metadata, err
 }
