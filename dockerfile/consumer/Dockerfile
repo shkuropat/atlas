@@ -27,6 +27,9 @@ RUN apk add --no-cache ca-certificates
 
 WORKDIR /
 
+# Add config files from local source dir into image
+ADD config/consumer.yaml   /etc/atlas/
+
 # Copy binary into result image from builder
 COPY --from=builder /tmp/consumer .
 
@@ -35,4 +38,5 @@ COPY --from=builder /tmp/consumer .
 #   --config=/path/to/config
 #   --kube-config=/path/to/kubeconf
 ENTRYPOINT ["/consumer"]
+CMD ["--config=/etc/atlas/consumer.yaml"]
 #CMD ["-logtostderr=true", "-v=1"]

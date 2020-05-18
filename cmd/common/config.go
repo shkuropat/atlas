@@ -20,13 +20,32 @@ import (
 	conf "github.com/spf13/viper"
 )
 
+const (
+	// Check for an env var with a name matching the key upper-cased and prefixed with the EnvPrefix
+	// Prefix has "_" added automatically, so no need to say 'ATLAS_'
+	CONFIG_ENV_VAR_PREFIX = "ATLAS"
+)
+
 var (
 	// ConfigFile defines path to config file to be used
 	ConfigFile string
 )
 
+func FullConfigFilePaths(paths []string, filename string) []string {
+	res := []string{}
+	for _, path := range paths {
+		res = append(res, path+"/"+filename)
+	}
+
+	return res
+}
+
+func PrintConfigFilePaths(paths []string, filename string) string {
+	return strings.Join(FullConfigFilePaths(paths, filename), " ")
+}
+
 // InitConfig reads in config file and ENV variables if set.
-func InitConfig(defaultConfigFile string) {
+func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string) {
 
 	if ConfigFile == "" {
 		// Use config file from home directory
@@ -34,8 +53,14 @@ func InitConfig(defaultConfigFile string) {
 		if err != nil {
 			log.Fatalf("unable to find homedir %v", err)
 		}
-		// Look for default config file in HOME dir
-		conf.AddConfigPath(homedir)
+		// Look for default config file in root-based list of dirs, such as /etc, /opt/etc ...
+		for _, path := range rootPaths {
+			conf.AddConfigPath(path)
+		}
+		// Look for default config file in HOMEDIR-based list of dirs, such as $HOME/.atlas ...
+		for _, path := range homeRelativePaths {
+			conf.AddConfigPath(homedir + "/" + path)
+		}
 		conf.SetConfigName(defaultConfigFile)
 		conf.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
 		log.Infof("looking for config %s in %s", defaultConfigFile, homedir)
@@ -48,9 +73,9 @@ func InitConfig(defaultConfigFile string) {
 	// By default empty environment variables are considered unset and will fall back to the next configuration source.
 	// To treat empty environment variables as set, use the AllowEmptyEnv method.
 	conf.AllowEmptyEnv(false)
-	// Check for an env var with a name matching the key uppercased and prefixed with the EnvPrefix
+	// Check for an env var with a name matching the key upper-cased and prefixed with the EnvPrefix
 	// Prefix has "_" added automatically, so no need to say 'ATLAS_'
-	conf.SetEnvPrefix("ATLAS")
+	conf.SetEnvPrefix(CONFIG_ENV_VAR_PREFIX)
 	// SetEnvKeyReplacer allows you to use a strings.Replacer object to rewrite Env keys to an extent.
 	// This is useful if you want to use - or something in your Get() calls, but want your environmental variables to use _ delimiters.
 	conf.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))

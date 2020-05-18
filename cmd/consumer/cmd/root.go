@@ -25,8 +25,9 @@ import (
 )
 
 const (
-	defaultConfigFile     = ".atlas-client.yaml"
-	defaultServiceAddress = "localhost:10000"
+	etcConfigFireDir     = "/etc/atlas"
+	homedirConfigFileDir = ".atlas"
+	defaultConfigFile    = "consumer.yaml"
 )
 
 // CLI parameter variables
@@ -52,13 +53,13 @@ var (
 
 func init() {
 	cmd.OnInitialize(func() {
-		common.Init(defaultConfigFile)
+		common.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFile)
 		config_consumer.ReadIn()
 	})
 
 	// Common section
 	rootCmd.PersistentFlags().BoolVarP(&common.Verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().StringVar(&common.ConfigFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s)", defaultConfigFile))
+	rootCmd.PersistentFlags().StringVar(&common.ConfigFile, "config", "", fmt.Sprintf("config file (default: %s)", common.PrintConfigFilePaths([]string{etcConfigFireDir, "$HOME/" + homedirConfigFileDir}, defaultConfigFile)))
 
 	// Kafka section
 	rootCmd.PersistentFlags().StringVar(&brokers, "brokers", "", "List of Kafka brokers")

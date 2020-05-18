@@ -33,6 +33,9 @@ RUN apk add --no-cache bash
 
 WORKDIR /
 
+# Add config files from local source dir into image
+ADD config/service.yaml    /etc/atlas/
+
 # Copy binary into result image from builder
 COPY --from=builder /tmp/service .
 
@@ -44,4 +47,5 @@ COPY --from=builder /go/bin/grpc-health-probe .
 #   --config=/path/to/config
 #   --kube-config=/path/to/kubeconf
 ENTRYPOINT ["/service"]
+CMD ["--config=/etc/atlas/service.yaml"]
 #CMD ["-logtostderr=true", "-v=1"]

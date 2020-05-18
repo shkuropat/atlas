@@ -1,1 +1,18 @@
+# General
 verbose: true
+service-address: localhost:10000
+
+# TLS
+tls: false
+#ca-file: /path/to/CA-root-cert-file
+#server-host-override: URL used to verify the hostname returned by TLS handshake
+
+# OAuth
+oauth: false
+# OAuth Login
+#client-id: ClientID used for Identity server access
+#client-secret: ClientSecret used for Identity server access
+#token-url: URL of Identity server's token service
+# OAuth Register
+#register-url: https://where.to.register.client/path
+#initial-access-token: TOKEN

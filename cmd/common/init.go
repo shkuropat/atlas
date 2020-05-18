@@ -1,6 +1,6 @@
 package common
 
-func Init(defaultConfigFile string) {
+func Init(rootPaths, homeRelativePaths []string, defaultConfigFile string) {
 	InitLog()
-	InitConfig(defaultConfigFile)
+	InitConfig(rootPaths, homeRelativePaths, defaultConfigFile)
 }

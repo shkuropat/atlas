@@ -27,6 +27,9 @@ RUN apk add --no-cache ca-certificates
 
 WORKDIR /
 
+# Add config files from local source dir into image
+ADD config/client.yaml     /etc/atlas/
+
 # Copy binary into result image from builder
 COPY --from=builder /tmp/client .
 
@@ -35,4 +38,5 @@ COPY --from=builder /tmp/client .
 #   --config=/path/to/config
 #   --kube-config=/path/to/kubeconf
 ENTRYPOINT ["/client"]
+CMD ["--config=/etc/atlas/client.yaml"]
 #CMD ["-logtostderr=true", "-v=1"]

@@ -27,7 +27,10 @@ import (
 const (
 	serviceAddressFlagName = "service-address"
 
-	defaultConfigFile     = ".atlas-service.yaml"
+	etcConfigFireDir     = "/etc/atlas"
+	homedirConfigFileDir = ".atlas"
+	defaultConfigFile    = "service.yaml"
+
 	defaultServiceAddress = ":10000"
 )
 
@@ -77,13 +80,13 @@ var (
 
 func init() {
 	cmd.OnInitialize(func() {
-		common.Init(defaultConfigFile)
+		common.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFile)
 		config_service.ReadIn()
 	})
 
 	// Common section
 	rootCmd.PersistentFlags().BoolVarP(&common.Verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().StringVar(&common.ConfigFile, "config", "", fmt.Sprintf("config file (default is $HOME/%s)", defaultConfigFile))
+	rootCmd.PersistentFlags().StringVar(&common.ConfigFile, "config", "", fmt.Sprintf("config file (default: %s)", common.PrintConfigFilePaths([]string{etcConfigFireDir, "$HOME/" + homedirConfigFileDir}, defaultConfigFile)))
 
 	// Service section
 	rootCmd.PersistentFlags().StringVar(&serviceAddress, "service-address", defaultServiceAddress, fmt.Sprintf("The address of service to use in the format host:port, as %s", defaultServiceAddress))

@@ -1,4 +1,15 @@
+# General
 verbose: true
+service-address: ":10000"
+
+# TLS
+tls: false
+#tls-cert-file: /path/to/cert-file
+#tls-key-file: /path/to/key-file
+
+# OAuth
+oauth: false
+#jwt-public-key-file: /path/to/key-file
 
 # Kafka
 brokers:
@@ -6,7 +17,7 @@ brokers:
 topic: testtopic
 
 # MinIO
-endpoint: minio
-accessKeyID: accessKeyID
-secretAccessKey: secretAccessKey
+endpoint: minio-internal-service
+accessKeyID: minio
+secretAccessKey: minio123
 secure: true
