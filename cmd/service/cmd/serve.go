@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,18 +16,19 @@ package cmd
 
 import (
 	"context"
-	"github.com/MakeNowJust/heredoc"
-	log "github.com/sirupsen/logrus"
-	cmd "github.com/spf13/cobra"
-	conf "github.com/spf13/viper"
-	"google.golang.org/grpc"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
-	pbHealth "github.com/binarly-io/binarly-atlas/pkg/api/health"
-	pbMService "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/MakeNowJust/heredoc"
+	log "github.com/sirupsen/logrus"
+	cmd "github.com/spf13/cobra"
+	conf "github.com/spf13/viper"
+	"google.golang.org/grpc"
+
+	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
+	atlas_health "github.com/binarly-io/binarly-atlas/pkg/api/health"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/controller/service"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/service"
@@ -78,8 +81,8 @@ var serveCmd = &cmd.Command{
 		}
 
 		grpcServer := grpc.NewServer(service_transport.GetGRPCServerOptions(tls, auth, tlsCertFile, tlsKeyFile, jwtPublicKeyFile)...)
-		pbMService.RegisterMServiceControlPlaneServer(grpcServer, controller_service.NewMServiceControlPlaneServer())
-		pbHealth.RegisterHealthServer(grpcServer, controller_service.NewHealthServer())
+		atlas.RegisterControlPlaneServer(grpcServer, controller_service.NewMServiceControlPlaneServer())
+		atlas_health.RegisterHealthServer(grpcServer, controller_service.NewHealthServer())
 
 		go func() {
 			if err := grpcServer.Serve(listener); err != nil {

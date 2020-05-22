@@ -27,6 +27,13 @@ else
     exit 1
 fi
 
+if [[ -z "${DOCKERHUB_LOGIN}" ]]; then
+    echo "IMPORTANT!"
+    echo "There is no \$DOCKERHUB_LOGIN specified, therefore docker push most likely will fail"
+    echo "Press Ctrl+C now to interrupt"
+    sleep 30
+fi
+
 # Source-dependent options
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 SRC_ROOT="$(realpath "${CUR_DIR}/..")"

@@ -7,7 +7,6 @@ require (
 	github.com/Shopify/sarama v1.26.1
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/protobuf v1.4.0
 	github.com/google/uuid v1.1.1
 	github.com/minio/minio-go/v6 v6.0.55

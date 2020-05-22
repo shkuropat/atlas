@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,16 +17,16 @@ package controller
 import (
 	"io"
 
-	log "github.com/golang/glog"
+	log "github.com/sirupsen/logrus"
 
-	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 )
 
 // CommandSenderReceiver defines transport level interface (for both client and server),
 // which serves Command streams bi-directionally.
 type CommandSenderReceiver interface {
-	Send(*pb.Command) error
-	Recv() (*pb.Command, error)
+	Send(*atlas.Command) error
+	Recv() (*atlas.Command, error)
 }
 
 func CommandsExchangeEndlessLoop(CommandSenderReceiver CommandSenderReceiver) {
@@ -92,20 +94,20 @@ func CommandsExchangeEndlessLoop(CommandSenderReceiver CommandSenderReceiver) {
 
 var (
 	incomingBacklog int32 = 100
-	incoming        chan *pb.Command
+	incoming        chan *atlas.Command
 	outgoingBacklog int32 = 100
-	outgoing        chan *pb.Command
+	outgoing        chan *atlas.Command
 )
 
 func Init() {
-	incoming = make(chan *pb.Command, incomingBacklog)
-	outgoing = make(chan *pb.Command, outgoingBacklog)
+	incoming = make(chan *atlas.Command, incomingBacklog)
+	outgoing = make(chan *atlas.Command, outgoingBacklog)
 }
 
-func GetOutgoing() chan *pb.Command {
+func GetOutgoing() chan *atlas.Command {
 	return outgoing
 }
 
-func GetIncoming() chan *pb.Command {
+func GetIncoming() chan *atlas.Command {
 	return incoming
 }

@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -46,6 +48,7 @@ func PrintConfigFilePaths(paths []string, filename string) string {
 
 // InitConfig reads in config file and ENV variables if set.
 func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string) {
+	log.Info("InitConfig()")
 
 	if ConfigFile == "" {
 		// Use config file from home directory
@@ -55,21 +58,26 @@ func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string)
 		}
 		// Look for default config file in root-based list of dirs, such as /etc, /opt/etc ...
 		for _, path := range rootPaths {
+			log.Infof("InitConfig() - add root path to look for config: %v", path)
 			conf.AddConfigPath(path)
 		}
 		// Look for default config file in HOMEDIR-based list of dirs, such as $HOME/.atlas ...
 		for _, path := range homeRelativePaths {
-			conf.AddConfigPath(homedir + "/" + path)
+			homeRelativePath := homedir + "/" + path
+			log.Infof("InitConfig() - add home relative path to look for config: %v : %v", path, homeRelativePath)
+			conf.AddConfigPath(homeRelativePath)
 		}
+		log.Infof("InitConfig() - add config file name to look for: %v", defaultConfigFile)
+
 		conf.SetConfigName(defaultConfigFile)
 		conf.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
-		log.Infof("looking for config %s in %s", defaultConfigFile, homedir)
 	} else {
 		// Look for explicitly specified config file
 		conf.SetConfigFile(ConfigFile)
-		log.Infof("looking for config %s", ConfigFile)
+		log.Infof("InitConfig() - looking for explicitly specified config: %s", ConfigFile)
 	}
 
+	log.Infof("InitConfig() - set env prefix: %v_", CONFIG_ENV_VAR_PREFIX)
 	// By default empty environment variables are considered unset and will fall back to the next configuration source.
 	// To treat empty environment variables as set, use the AllowEmptyEnv method.
 	conf.AllowEmptyEnv(false)
@@ -83,12 +91,12 @@ func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string)
 	conf.AutomaticEnv()
 
 	if err := conf.ReadInConfig(); err == nil {
-		log.Debugf("config file used: %s", conf.ConfigFileUsed())
+		log.Infof("InitConfig() - config file used: %s", conf.ConfigFileUsed())
 	} else if _, ok := err.(conf.ConfigFileNotFoundError); ok {
 		// Config file not found
-		log.Infof("no config file found")
+		log.Infof("InitConfig() - no config file found")
 	} else {
 		// Config file was found but another error was produced
-		log.Errorf("unable to read config file: %v", err)
+		log.Errorf("InitConfig() - unable to read config file: %v", err)
 	}
 }

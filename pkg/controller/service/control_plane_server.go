@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,31 +15,33 @@
 package controller_service
 
 import (
-	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
 	"github.com/binarly-io/binarly-atlas/pkg/config/service"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/minio"
-	log "github.com/golang/glog"
 )
 
-func GetOutgoingQueue() chan *pb.Command {
+func GetOutgoingQueue() chan *atlas.Command {
 	return controller.GetOutgoing()
 }
 
-func GetIncomingQueue() chan *pb.Command {
+func GetIncomingQueue() chan *atlas.Command {
 	return controller.GetIncoming()
 }
 
 type MServiceControlPlaneServer struct {
-	pb.UnimplementedMServiceControlPlaneServer
+	atlas.UnimplementedControlPlaneServer
 }
 
 func NewMServiceControlPlaneServer() *MServiceControlPlaneServer {
 	return &MServiceControlPlaneServer{}
 }
 
-func (s *MServiceControlPlaneServer) Commands(server pb.MServiceControlPlane_CommandsServer) error {
+// Commands gRPC call
+func (s *MServiceControlPlaneServer) Commands(server atlas.ControlPlane_CommandsServer) error {
 	log.Info("Commands() called")
 	defer log.Info("Commands() exited")
 
@@ -45,7 +49,8 @@ func (s *MServiceControlPlaneServer) Commands(server pb.MServiceControlPlane_Com
 	return nil
 }
 
-func (s *MServiceControlPlaneServer) Data(DataChunksServer pb.MServiceControlPlane_DataChunksServer) error {
+// Data gRPC call
+func (s *MServiceControlPlaneServer) Data(DataChunksServer atlas.ControlPlane_DataChunksServer) error {
 	log.Info("Data() called")
 	defer log.Info("Data() exited")
 
@@ -69,7 +74,7 @@ func (s *MServiceControlPlaneServer) Data(DataChunksServer pb.MServiceControlPla
 	return err
 }
 
-func relayIntoMinIO(DataChunksServer pb.MServiceControlPlane_DataChunksServer) (int64, *pb.Metadata, error) {
+func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
 	mi, err := minio.NewMinIO(
 		config_service.Config.Endpoint,
 		config_service.Config.AccessKeyID,
@@ -82,9 +87,9 @@ func relayIntoMinIO(DataChunksServer pb.MServiceControlPlane_DataChunksServer) (
 	}
 
 	bucketName := "b1"
-	objectName := pb.CreateNewUUID()
+	objectName := atlas.CreateNewUUID()
 
-	return pb.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, bucketName, objectName)
+	return atlas.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, bucketName, objectName)
 }
 
 func relayIntoKafka() {

@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,16 +17,16 @@ package controller_client
 import (
 	"bytes"
 	"context"
-	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"io"
 	"os"
 
 	log "github.com/sirupsen/logrus"
 
-	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
+	"github.com/binarly-io/binarly-atlas/pkg/controller"
 )
 
-func CommandsExchange(ControlPlaneClient pb.MServiceControlPlaneClient) {
+func CommandsExchange(ControlPlaneClient atlas.ControlPlaneClient) {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -45,8 +47,8 @@ func CommandsExchange(ControlPlaneClient pb.MServiceControlPlaneClient) {
 }
 
 func DataExchange(
-	ControlPlaneClient pb.MServiceControlPlaneClient,
-	metadata *pb.Metadata,
+	ControlPlaneClient atlas.ControlPlaneClient,
+	metadata *atlas.Metadata,
 	src io.Reader,
 	recv bool,
 ) (int64, int64, *bytes.Buffer, error) {
@@ -62,9 +64,10 @@ func DataExchange(
 	log.Infof("DataChunks()")
 	DataChunksClient, err := ControlPlaneClient.DataChunks(ctx)
 	if err != nil {
-		log.Fatalf("ControlPlaneClient.DataChunks() failed %v", err)
-		os.Exit(1)
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", err)
+		return 0, 0, nil, err
 	}
+
 	defer func() {
 		// This is hand-made flush() replacement for gRPC
 		// It is required in order to flush all outstanding data before
@@ -77,7 +80,7 @@ func DataExchange(
 	}()
 
 	if src != nil {
-		sent, err = pb.SendDataChunkFile(DataChunksClient, metadata, src)
+		sent, err = atlas.SendDataChunkFile(DataChunksClient, metadata, src)
 		if err != nil {
 			return sent, 0, nil, err
 		}

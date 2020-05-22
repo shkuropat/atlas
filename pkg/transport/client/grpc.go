@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,9 +15,10 @@
 package client_transport
 
 import (
-	"github.com/binarly-io/binarly-atlas/pkg/auth/client"
-	log "github.com/golang/glog"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+
+	"github.com/binarly-io/binarly-atlas/pkg/auth/client"
 )
 
 // GetGRPCClientOptions  builds gRPC dial options

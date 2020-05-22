@@ -12,27 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+syntax = "proto3";
 
-import (
-	"github.com/MakeNowJust/heredoc"
-	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
-	log "github.com/sirupsen/logrus"
-	cmd "github.com/spf13/cobra"
-)
+package atlas;
 
-var configCmd = &cmd.Command{
-	Use:   "config",
-	Short: "Print config",
-	Long: heredoc.Docf(`
-			Print software config and exit
-			`,
-	),
-	Run: func(cmd *cmd.Command, args []string) {
-		log.Infof("Config:\n%v", config_consumer.Config.String())
-	},
-}
+import "type_command.proto";
+import "type_data_chunk.proto";
+import "type_metric.proto";
 
-func init() {
-	rootCmd.AddCommand(configCmd)
+service ControlPlane {
+	// Bi-directional Commands stream
+	//
+	// Commands are sent from service to client and from client to server
+	rpc Commands (stream Command) returns (stream Command) {}
+
+	// Bi-directional Data stream
+	//
+	// Some commands may be followed by data load. Be it logs, dumps, etc.
+	rpc DataChunks (stream DataChunk) returns (stream DataChunk) {}
+
+	// Metrics stream
+	//
+	// Some commands may be followed by metrics stream.
+	rpc Metrics (stream Metric) returns (Metric) {}
 }

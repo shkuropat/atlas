@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,18 +16,16 @@ package cmd
 
 import (
 	"context"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
-
 	"github.com/MakeNowJust/heredoc"
 	log "github.com/sirupsen/logrus"
 	cmd "github.com/spf13/cobra"
 	conf "github.com/spf13/viper"
 	"google.golang.org/grpc"
+	"os"
+	"os/signal"
+	"syscall"
 
-	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/controller/client"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/client"
@@ -81,19 +81,19 @@ var sendCmd = &cmd.Command{
 		}
 		defer conn.Close()
 
-		ControlPlaneClient := pb.NewMServiceControlPlaneClient(conn)
+		ControlPlaneClient := atlas.NewControlPlaneClient(conn)
 
 		controller.Init()
 
-		log.Infof("About to cal CommandsExchange()")
-		time.Sleep(5 * time.Second)
-		go controller_client.CommandsExchange(ControlPlaneClient)
-		log.Infof("Wait...")
-		time.Sleep(5 * time.Second)
-		go controller_client.IncomingCommandsHandler(controller.GetIncoming(), controller.GetOutgoing())
-		log.Infof("Wait...")
-		time.Sleep(5 * time.Second)
-		go controller_client.SendEchoRequest(controller.GetOutgoing())
+//		log.Infof("About to call CommandsExchange()")
+//		time.Sleep(5 * time.Second)
+//		go controller_client.CommandsExchange(ControlPlaneClient)
+//		log.Infof("Wait...")
+//		time.Sleep(5 * time.Second)
+//		go controller_client.IncomingCommandsHandler(controller.GetIncoming(), controller.GetOutgoing())
+//		log.Infof("Wait...")
+//		time.Sleep(5 * time.Second)
+//		go controller_client.SendEchoRequest(controller.GetOutgoing())
 
 		if sendFilename != "" {
 			_, _ = controller_client.SendFile(ControlPlaneClient, sendFilename)

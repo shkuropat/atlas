@@ -12,27 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+syntax = "proto3";
 
-import (
-	"github.com/MakeNowJust/heredoc"
-	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
-	log "github.com/sirupsen/logrus"
-	cmd "github.com/spf13/cobra"
-)
+package atlas;
 
-var configCmd = &cmd.Command{
-	Use:   "config",
-	Short: "Print config",
-	Long: heredoc.Docf(`
-			Print software config and exit
-			`,
-	),
-	Run: func(cmd *cmd.Command, args []string) {
-		log.Infof("Config:\n%v", config_consumer.Config.String())
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(configCmd)
+// Metadata describes metadata or the object
+message Metadata {
+    // filename
+    oneof filename_optional {
+        string filename = 100;
+    }
+    // URL
+    oneof url_optional {
+        string url = 200;
+    }
 }

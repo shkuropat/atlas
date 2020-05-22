@@ -45,8 +45,8 @@ function generate_from_proto() {
     # --go_out requires list of plugins to be used
     "${PROTOC}" -I "${FOLDER}" --go_out=plugins=grpc:"${FOLDER}" "${FOLDER}"/*.proto
 
-    #protoc -I "${SRC_ROOT}" --go_out="${SRC_ROOT}" ./mservice.proto
+    #protoc -I "${SRC_ROOT}" --go_out="${SRC_ROOT}" ./atlas.proto
 }
 
-generate_from_proto "${PROTO_ROOT}"/mservice
+generate_from_proto "${PROTO_ROOT}"/atlas
 generate_from_proto "${PROTO_ROOT}"/health

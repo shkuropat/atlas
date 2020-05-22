@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -19,11 +21,11 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 )
 
 // SendDataChunkFile sends file from client to service and receives response back
-func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, error) {
+func SendFile(client atlas.ControlPlaneClient, filename string) (int64, error) {
 	if _, err := os.Stat(filename); err != nil {
 		return 0, err
 	}
@@ -36,7 +38,8 @@ func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, err
 	}
 
 	log.Infof("START send file %s", filename)
-	metadata := pb.NewMetadata(filepath.Base(filename))
+	metadata := atlas.NewMetadata()
+	metadata.SetFilename(filepath.Base(filename))
 	n, _, _, err := DataExchange(client, metadata, f, true)
 	log.Infof("DONE send file %s size %d err %v", filename, n, err)
 
@@ -44,19 +47,19 @@ func SendFile(client pb.MServiceControlPlaneClient, filename string) (int64, err
 }
 
 // SendStdin sends STDIN from client to service and receives response back
-func SendStdin(client pb.MServiceControlPlaneClient) (int64, error) {
+func SendStdin(client atlas.ControlPlaneClient) (int64, error) {
 	n, _, _, err := DataExchange(client, nil, os.Stdin, true)
 	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
 	return n, err
 }
 
-func SendEchoRequest(outgoingQueue chan *pb.Command) {
+func SendEchoRequest(outgoingQueue chan *atlas.Command) {
 	for i := 0; i < 5; i++ {
-		command := pb.NewCommand(
-			pb.CommandType_COMMAND_ECHO_REQUEST,
+		command := atlas.NewCommand(
+			atlas.CommandType_COMMAND_ECHO_REQUEST,
 			"",
 			0,
-			pb.CreateNewUUID(),
+			atlas.CreateNewUUID(),
 			"",
 			0,
 			0,
@@ -69,19 +72,19 @@ func SendEchoRequest(outgoingQueue chan *pb.Command) {
 	}
 }
 
-func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *pb.Command) {
+func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
 	log.Infof("Start IncomingCommandsHandler()")
 	defer log.Infof("Exit IncomingCommandsHandler()")
 
 	for {
 		cmd := <-incomingQueue
 		log.Infof("Got cmd %v", cmd)
-		if cmd.GetType() == pb.CommandType_COMMAND_ECHO_REQUEST {
-			command := pb.NewCommand(
-				pb.CommandType_COMMAND_ECHO_REPLY,
+		if cmd.GetType() == atlas.CommandType_COMMAND_ECHO_REQUEST {
+			command := atlas.NewCommand(
+				atlas.CommandType_COMMAND_ECHO_REPLY,
 				"",
 				0,
-				pb.CreateNewUUID(),
+				atlas.CreateNewUUID(),
 				"reference: "+cmd.GetHeader().GetUuid().StringValue,
 				0,
 				0,

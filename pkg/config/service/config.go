@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -23,17 +25,29 @@ import (
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
 type ConfigService struct {
-	Verbose bool `json:"verbose" yaml:"verbose"`
+	Verbose bool `mapstructure:"verbose"`
+
+	// Service
+	ServiceAddress string `mapstructure:"service-address"`
+
+	// TLS
+	TLS         bool   `mapstructure:"tls"`
+	TLSCertFile string `mapstructure:"tls-cert-file"`
+	TLSKeyFile  string `mapstructure:"tls-key-file"`
+
+	// OAuth
+	OAuth            bool   `mapstructure:"oauth"`
+	JWTPublicKeyFile string `mapstructure:"jwt-public-key-file"`
 
 	// Kafka
-	Brokers []string `json:"brokers" yaml:"brokers"`
-	Topic   string   `json:"topic"   yaml:"topic"`
+	Brokers []string `mapstructure:"brokers"`
+	Topic   string   `mapstructure:"topic"`
 
 	// MinIO
-	Endpoint        string `json:"endpoint"        yaml:"endpoint"`
-	AccessKeyID     string `json:"accessKeyID"     yaml:"accessKeyID"`
-	SecretAccessKey string `json:"secretAccessKey" yaml:"secretAccessKey"`
-	Secure          bool   `json:"secure"          yaml:"secure"`
+	Endpoint        string `mapstructure:"endpoint"`
+	AccessKeyID     string `mapstructure:"accessKeyID"`
+	SecretAccessKey string `mapstructure:"secretAccessKey"`
+	Secure          bool   `mapstructure:"secure"`
 
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
@@ -43,13 +57,23 @@ type ConfigService struct {
 var Config ConfigService
 
 func ReadIn() {
-	conf.Unmarshal(&Config)
+	_ = conf.Unmarshal(&Config)
 }
 
 func (c *ConfigService) String() string {
 	b := &bytes.Buffer{}
 
 	_, _ = fmt.Fprintf(b, "Verbose: %v\n", c.Verbose)
+
+	_, _ = fmt.Fprintf(b, "ServiceAddress: %v\n", c.ServiceAddress)
+
+	_, _ = fmt.Fprintf(b, "TLS: %v\n", c.TLS)
+	_, _ = fmt.Fprintf(b, "TLSCertFile: %v\n", c.TLSCertFile)
+	_, _ = fmt.Fprintf(b, "TLSKeyFile: %v\n", c.TLSKeyFile)
+
+	_, _ = fmt.Fprintf(b, "OAuth: %v\n", c.OAuth)
+	_, _ = fmt.Fprintf(b, "JWTPublicKeyFile: %v\n", c.JWTPublicKeyFile)
+
 	_, _ = fmt.Fprintf(b, "Brokers: %v\n", c.Brokers)
 	_, _ = fmt.Fprintf(b, "Topic: %v\n", c.Topic)
 

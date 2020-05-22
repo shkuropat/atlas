@@ -12,30 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package client_transport
+package atlas
 
-import (
-	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
-)
+// NewMetadata
+func NewMetadata() *Metadata {
+	return new(Metadata)
+}
 
-func setupTLS(caFile, serverHostOverride string) ([]grpc.DialOption, error) {
-	if caFile == "" {
-		caFile = testdata.Path("ca.pem")
+// SetFilename
+func (m *Metadata) SetFilename(filename string) {
+	if filename == "" {
+		return
 	}
 
-	transportCredentials, err := credentials.NewClientTLSFromFile(caFile, serverHostOverride)
-	if err != nil {
-		log.Fatalf("failed to create TLS credentials %v", err)
+	if m.FilenameOptional == nil {
+		m.FilenameOptional = new(Metadata_Filename)
+	}
+	m.FilenameOptional.(*Metadata_Filename).Filename = filename
+}
+
+// SetURL
+func (m *Metadata) SetURL(url string) {
+	if url == "" {
+		return
 	}
 
-	log.Infof("enabling TLS with ca=%s", caFile)
-
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(transportCredentials),
+	if m.UrlOptional == nil {
+		m.UrlOptional = new(Metadata_Url)
 	}
-
-	return opts, nil
+	m.UrlOptional.(*Metadata_Url).Url = url
 }

@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -14,16 +16,18 @@ package cmd
 
 import (
 	"context"
-	"github.com/MakeNowJust/heredoc"
-	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
-	"github.com/binarly-io/binarly-atlas/pkg/kafka/consumer"
-	"github.com/binarly-io/binarly-atlas/pkg/version"
-	log "github.com/sirupsen/logrus"
-	cmd "github.com/spf13/cobra"
-	conf "github.com/spf13/viper"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/MakeNowJust/heredoc"
+	log "github.com/sirupsen/logrus"
+	cmd "github.com/spf13/cobra"
+	conf "github.com/spf13/viper"
+
+	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
+	"github.com/binarly-io/binarly-atlas/pkg/kafka/consumer"
+	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
 
 var (

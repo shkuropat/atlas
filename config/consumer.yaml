@@ -1,3 +1,5 @@
+# Copyright 2020 The Atlas Authors. All rights reserved.
+
 verbose: true
 brokers:
   - localhost:1234

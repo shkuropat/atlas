@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -16,7 +18,7 @@ import (
 	"context"
 
 	"github.com/coreos/go-oidc"
-	log "github.com/golang/glog"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	cc "golang.org/x/oauth2/clientcredentials"
 	"google.golang.org/grpc"

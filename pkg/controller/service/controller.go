@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -13,24 +15,24 @@
 package controller_service
 
 import (
-	log "github.com/golang/glog"
+	log "github.com/sirupsen/logrus"
 
-	pb "github.com/binarly-io/binarly-atlas/pkg/api/mservice"
+	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 )
 
-func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *pb.Command) {
+func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
 	log.Infof("Start IncomingCommandsHandler()")
 	defer log.Infof("Exit IncomingCommandsHandler()")
 
 	for {
 		cmd := <-incomingQueue
 		log.Infof("Got cmd %v", cmd)
-		if cmd.GetType() == pb.CommandType_COMMAND_ECHO_REQUEST {
-			command := pb.NewCommand(
-				pb.CommandType_COMMAND_ECHO_REPLY,
+		if cmd.GetType() == atlas.CommandType_COMMAND_ECHO_REQUEST {
+			command := atlas.NewCommand(
+				atlas.CommandType_COMMAND_ECHO_REPLY,
 				"",
 				0,
-				pb.CreateNewUUID(),
+				atlas.CreateNewUUID(),
 				"reference: "+cmd.GetHeader().GetUuid().StringValue,
 				0,
 				0,

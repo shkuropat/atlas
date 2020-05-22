@@ -1,3 +1,5 @@
+// Copyright 2020 The Atlas Authors. All rights reserved.
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -15,23 +17,23 @@ package controller_service
 import (
 	"context"
 
-	pb "github.com/binarly-io/binarly-atlas/pkg/api/health"
+	atlas_health "github.com/binarly-io/binarly-atlas/pkg/api/health"
 )
 
 type HealthServer struct {
-	pb.UnimplementedHealthServer
+	atlas_health.UnimplementedHealthServer
 }
 
 func NewHealthServer() *HealthServer {
 	return &HealthServer{}
 }
 
-func (h *HealthServer) Check(ctx context.Context, args *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
-	return &pb.HealthCheckResponse{
-		Status: pb.HealthCheckResponse_SERVING,
+func (h *HealthServer) Check(ctx context.Context, args *atlas_health.HealthCheckRequest) (*atlas_health.HealthCheckResponse, error) {
+	return &atlas_health.HealthCheckResponse{
+		Status: atlas_health.HealthCheckResponse_SERVING,
 	}, nil
 }
 
-func (h *HealthServer) Watch(*pb.HealthCheckRequest, pb.Health_WatchServer) error {
+func (h *HealthServer) Watch(*atlas_health.HealthCheckRequest, atlas_health.Health_WatchServer) error {
 	return nil
 }
