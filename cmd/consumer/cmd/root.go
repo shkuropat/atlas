@@ -27,9 +27,10 @@ import (
 )
 
 const (
-	etcConfigFireDir     = "/etc/atlas"
-	homedirConfigFileDir = ".atlas"
-	defaultConfigFile    = "consumer.yaml"
+	etcConfigFireDir       = "/etc/atlas"
+	homedirConfigFileDir   = ".atlas"
+	defaultConfigFileNoExt = "consumer"
+	defaultConfigFile      = defaultConfigFileNoExt + ".yaml"
 )
 
 // CLI parameter variables
@@ -55,7 +56,7 @@ var (
 
 func init() {
 	cmd.OnInitialize(func() {
-		common.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFile)
+		common.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFileNoExt)
 		config_consumer.ReadIn()
 	})
 

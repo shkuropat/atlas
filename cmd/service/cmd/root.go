@@ -29,9 +29,10 @@ import (
 const (
 	serviceAddressFlagName = "service-address"
 
-	etcConfigFireDir     = "/etc/atlas"
-	homedirConfigFileDir = ".atlas"
-	defaultConfigFile    = "service.yaml"
+	etcConfigFireDir       = "/etc/atlas"
+	homedirConfigFileDir   = ".atlas"
+	defaultConfigFileNoExt = "service"
+	defaultConfigFile      = defaultConfigFileNoExt + ".yaml"
 
 	defaultServiceAddress = ":10000"
 )
@@ -82,7 +83,7 @@ var (
 
 func init() {
 	cmd.OnInitialize(func() {
-		common.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFile)
+		common.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFileNoExt)
 		config_service.ReadIn()
 	})
 

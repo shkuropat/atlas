@@ -85,15 +85,15 @@ var sendCmd = &cmd.Command{
 
 		controller.Init()
 
-//		log.Infof("About to call CommandsExchange()")
-//		time.Sleep(5 * time.Second)
-//		go controller_client.CommandsExchange(ControlPlaneClient)
-//		log.Infof("Wait...")
-//		time.Sleep(5 * time.Second)
-//		go controller_client.IncomingCommandsHandler(controller.GetIncoming(), controller.GetOutgoing())
-//		log.Infof("Wait...")
-//		time.Sleep(5 * time.Second)
-//		go controller_client.SendEchoRequest(controller.GetOutgoing())
+		//		log.Infof("About to call CommandsExchange()")
+		//		time.Sleep(5 * time.Second)
+		//		go controller_client.CommandsExchange(ControlPlaneClient)
+		//		log.Infof("Wait...")
+		//		time.Sleep(5 * time.Second)
+		//		go controller_client.IncomingCommandsHandler(controller.GetIncoming(), controller.GetOutgoing())
+		//		log.Infof("Wait...")
+		//		time.Sleep(5 * time.Second)
+		//		go controller_client.SendEchoRequest(controller.GetOutgoing())
 
 		if sendFilename != "" {
 			_, _ = controller_client.SendFile(ControlPlaneClient, sendFilename)
