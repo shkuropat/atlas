@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"github.com/MakeNowJust/heredoc"
 	log "github.com/sirupsen/logrus"
 	cmd "github.com/spf13/cobra"
@@ -49,13 +50,17 @@ var sendCmd = &cmd.Command{
 	Use:   "send [OPTION] [FILE]",
 	Short: "Send file or STDIN to service",
 	Long: heredoc.Docf(`
-			Send file or STDIN to service
-			`,
+			Specify file to send to service or STDIN
+	`,
 	),
 	Args: func(cmd *cmd.Command, args []string) error {
 		//if len(args) < 1 {
 		//	return errors.New("requires an filename as argument")
 		//}
+		if (sendFilename == "") && !sendSTDIN {
+			return fmt.Errorf("requires either file or STDIN to send - don't know what to send")
+		}
+
 		return nil
 	},
 	Run: func(cmd *cmd.Command, args []string) {

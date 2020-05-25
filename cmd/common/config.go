@@ -54,7 +54,7 @@ func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string)
 		// Use config file from home directory
 		homedir, err := hd.Dir()
 		if err != nil {
-			log.Fatalf("unable to find homedir %v", err)
+			log.Fatalf("InitConfig() - unable to find homedir %v", err)
 		}
 		// Look for default config file in root-based list of dirs, such as /etc, /opt/etc ...
 		for _, path := range rootPaths {

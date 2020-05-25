@@ -21,8 +21,8 @@ import (
 )
 
 func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
-	log.Infof("Start IncomingCommandsHandler()")
-	defer log.Infof("Exit IncomingCommandsHandler()")
+	log.Infof("IncomingCommandsHandler() - start")
+	defer log.Infof("IncomingCommandsHandler() - end")
 
 	for {
 		cmd := <-incomingQueue

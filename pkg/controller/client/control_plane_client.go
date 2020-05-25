@@ -52,6 +52,9 @@ func DataExchange(
 	src io.Reader,
 	recv bool,
 ) (int64, int64, *bytes.Buffer, error) {
+	log.Infof("DataChunks() - start")
+	defer log.Infof("DataChunks() - end")
+
 	var (
 		sent, received int64
 		buf            *bytes.Buffer
@@ -61,7 +64,6 @@ func DataExchange(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	log.Infof("DataChunks()")
 	DataChunksClient, err := ControlPlaneClient.DataChunks(ctx)
 	if err != nil {
 		log.Errorf("ControlPlaneClient.DataChunks() failed %v", err)
@@ -79,9 +81,12 @@ func DataExchange(
 		DataChunksClient.Recv()
 	}()
 
-	if src != nil {
+	if src == nil {
+		log.Info("src == nil")
+	} else {
 		sent, err = atlas.SendDataChunkFile(DataChunksClient, metadata, src)
 		if err != nil {
+			log.Warnf("SendDataChunkFile() failed with err %v", err)
 			return sent, 0, nil, err
 		}
 	}

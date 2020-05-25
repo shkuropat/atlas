@@ -26,18 +26,21 @@ import (
 
 // SendDataChunkFile sends file from client to service and receives response back
 func SendFile(client atlas.ControlPlaneClient, filename string) (int64, error) {
+	log.Info("SendFile() - start")
+	defer log.Info("SendFile() - end")
+
 	if _, err := os.Stat(filename); err != nil {
+		log.Warnf("no file %s stat %v", filename, err)
 		return 0, err
 	}
 
 	log.Infof("Has file %s", filename)
 	f, err := os.Open(filename)
 	if err != nil {
-		log.Infof("ERROR open file %s", filename)
+		log.Warnf("ERROR open file %s", filename)
 		return 0, err
 	}
 
-	log.Infof("START send file %s", filename)
 	metadata := atlas.NewMetadata()
 	metadata.SetFilename(filepath.Base(filename))
 	n, _, _, err := DataExchange(client, metadata, f, true)
@@ -48,6 +51,9 @@ func SendFile(client atlas.ControlPlaneClient, filename string) (int64, error) {
 
 // SendStdin sends STDIN from client to service and receives response back
 func SendStdin(client atlas.ControlPlaneClient) (int64, error) {
+	log.Info("SendStdin() - start")
+	defer log.Info("SendStdin() - end")
+
 	n, _, _, err := DataExchange(client, nil, os.Stdin, true)
 	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
 	return n, err
@@ -73,8 +79,8 @@ func SendEchoRequest(outgoingQueue chan *atlas.Command) {
 }
 
 func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
-	log.Infof("Start IncomingCommandsHandler()")
-	defer log.Infof("Exit IncomingCommandsHandler()")
+	log.Infof("IncomingCommandsHandler() - start")
+	defer log.Infof("IncomingCommandsHandler() - end")
 
 	for {
 		cmd := <-incomingQueue

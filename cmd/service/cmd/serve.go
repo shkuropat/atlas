@@ -81,7 +81,7 @@ var serveCmd = &cmd.Command{
 		}
 
 		grpcServer := grpc.NewServer(service_transport.GetGRPCServerOptions(tls, auth, tlsCertFile, tlsKeyFile, jwtPublicKeyFile)...)
-		atlas.RegisterControlPlaneServer(grpcServer, controller_service.NewMServiceControlPlaneServer())
+		atlas.RegisterControlPlaneServer(grpcServer, controller_service.NewControlPlaneServer())
 		atlas_health.RegisterHealthServer(grpcServer, controller_service.NewHealthServer())
 
 		go func() {

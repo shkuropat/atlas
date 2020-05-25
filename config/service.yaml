@@ -21,7 +21,9 @@ brokers:
 topic: testtopic
 
 # MinIO
-endpoint: minio-internal-service
+# endpoint is an URL without scheme
+endpoint: minio-internal-service:9000
+# Whether to use https or http
+secure: false
 accessKeyID: minio
 secretAccessKey: minio123
-secure: true

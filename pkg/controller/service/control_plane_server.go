@@ -32,27 +32,27 @@ func GetIncomingQueue() chan *atlas.Command {
 	return controller.GetIncoming()
 }
 
-type MServiceControlPlaneServer struct {
+type ControlPlaneServer struct {
 	atlas.UnimplementedControlPlaneServer
 }
 
-func NewMServiceControlPlaneServer() *MServiceControlPlaneServer {
-	return &MServiceControlPlaneServer{}
+func NewControlPlaneServer() *ControlPlaneServer {
+	return &ControlPlaneServer{}
 }
 
 // Commands gRPC call
-func (s *MServiceControlPlaneServer) Commands(server atlas.ControlPlane_CommandsServer) error {
-	log.Info("Commands() called")
-	defer log.Info("Commands() exited")
+func (s *ControlPlaneServer) Commands(server atlas.ControlPlane_CommandsServer) error {
+	log.Info("Commands() - start")
+	defer log.Info("Commands() - end")
 
 	controller.CommandsExchangeEndlessLoop(server)
 	return nil
 }
 
-// Data gRPC call
-func (s *MServiceControlPlaneServer) Data(DataChunksServer atlas.ControlPlane_DataChunksServer) error {
-	log.Info("Data() called")
-	defer log.Info("Data() exited")
+// DataChunks gRPC call
+func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_DataChunksServer) error {
+	log.Info("DataChunks() - start")
+	defer log.Info("DataChunks() - end")
 
 	claims, err := service_auth.GetClaims(DataChunksServer.Context())
 	log.Infof("Claims:")
@@ -75,6 +75,9 @@ func (s *MServiceControlPlaneServer) Data(DataChunksServer atlas.ControlPlane_Da
 }
 
 func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
+	log.Info("relayIntoMinIO() - start")
+	defer log.Info("relayIntoMinIO() - end")
+
 	mi, err := minio.NewMinIO(
 		config_service.Config.Endpoint,
 		config_service.Config.AccessKeyID,
@@ -86,7 +89,7 @@ func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64
 
 	}
 
-	bucketName := "b1"
+	bucketName := "bucket1"
 	objectName := atlas.CreateNewUUID()
 
 	return atlas.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, bucketName, objectName)
