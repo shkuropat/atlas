@@ -26,6 +26,7 @@ import (
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 )
 
+// CommandsExchange exchanges commands
 func CommandsExchange(ControlPlaneClient atlas.ControlPlaneClient) {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
@@ -46,6 +47,7 @@ func CommandsExchange(ControlPlaneClient atlas.ControlPlaneClient) {
 	controller.CommandsExchangeEndlessLoop(rpcCommands)
 }
 
+// DataExchange send data to server and receives back reply (if needed)
 func DataExchange(
 	ControlPlaneClient atlas.ControlPlaneClient,
 	metadata *atlas.Metadata,
@@ -81,9 +83,7 @@ func DataExchange(
 		DataChunksClient.Recv()
 	}()
 
-	if src == nil {
-		log.Info("src == nil")
-	} else {
+	if src != nil {
 		sent, err = atlas.SendDataChunkFile(DataChunksClient, metadata, src)
 		if err != nil {
 			log.Warnf("SendDataChunkFile() failed with err %v", err)
@@ -91,9 +91,9 @@ func DataExchange(
 		}
 	}
 
-	//	if recv {
-	//		received, buf, err = pb.RecvDataChunkFile(DataChunksClient)
-	//	}
+	if recv {
+		received, buf, _, err = atlas.RecvDataChunkFileIntoBuf(DataChunksClient)
+	}
 
 	return sent, received, buf, err
 }

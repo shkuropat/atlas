@@ -24,7 +24,7 @@ import (
 	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 )
 
-// SendDataChunkFile sends file from client to service and receives response back
+// SendFile sends file from client to service and receives response back (if any)
 func SendFile(client atlas.ControlPlaneClient, filename string) (int64, error) {
 	log.Info("SendFile() - start")
 	defer log.Info("SendFile() - end")
@@ -43,18 +43,18 @@ func SendFile(client atlas.ControlPlaneClient, filename string) (int64, error) {
 
 	metadata := atlas.NewMetadata()
 	metadata.SetFilename(filepath.Base(filename))
-	n, _, _, err := DataExchange(client, metadata, f, true)
+	n, _, _, err := DataExchange(client, metadata, f, false)
 	log.Infof("DONE send file %s size %d err %v", filename, n, err)
 
 	return n, err
 }
 
-// SendStdin sends STDIN from client to service and receives response back
+// SendStdin sends STDIN from client to service and receives response back (if any)
 func SendStdin(client atlas.ControlPlaneClient) (int64, error) {
 	log.Info("SendStdin() - start")
 	defer log.Info("SendStdin() - end")
 
-	n, _, _, err := DataExchange(client, nil, os.Stdin, true)
+	n, _, _, err := DataExchange(client, nil, os.Stdin, false)
 	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
 	return n, err
 }
