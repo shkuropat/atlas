@@ -27,21 +27,21 @@ var errorNotConnected = fmt.Errorf("minio is not connected")
 
 type MinIO struct {
 	Endpoint        string
+	Secure          bool
 	AccessKeyID     string
 	SecretAccessKey string
-	Secure          bool
 
 	client *minio.Client
 }
 
 // NewMinIO
-func NewMinIO(endpoint, accessKeyID, secretAccessKey string, secure bool) (*MinIO, error) {
+func NewMinIO(endpoint string, secure bool, accessKeyID, secretAccessKey string) (*MinIO, error) {
 	var err error
 	min := &MinIO{
 		Endpoint:        endpoint,
+		Secure:          secure,
 		AccessKeyID:     accessKeyID,
 		SecretAccessKey: secretAccessKey,
-		Secure:          secure,
 	}
 	min.client, err = minio.New(endpoint, accessKeyID, secretAccessKey, secure)
 

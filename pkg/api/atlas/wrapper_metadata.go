@@ -14,6 +14,10 @@
 
 package atlas
 
+import (
+	log "github.com/sirupsen/logrus"
+)
+
 // NewMetadata
 func NewMetadata() *Metadata {
 	return new(Metadata)
@@ -41,4 +45,8 @@ func (m *Metadata) SetURL(url string) {
 		m.UrlOptional = new(Metadata_Url)
 	}
 	m.UrlOptional.(*Metadata_Url).Url = url
+}
+
+func (m *Metadata) Log() {
+	log.Infof("metadata: %s", m.String())
 }

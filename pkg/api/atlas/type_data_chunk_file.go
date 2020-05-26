@@ -53,6 +53,10 @@ type DataChunkFile struct {
 	currentOffset int64
 	// offset of the current chunk within "all chunks" = initialOffset + currentOffset
 	offset int64
+
+	// Receive part
+	buf []byte
+	err error
 }
 
 // OpenDataChunkFile opens set of DataChunk(s)
@@ -70,6 +74,115 @@ func (s *DataChunkFile) ensureMetadata() {
 	}
 }
 
+// ensureBuf ensures DataChunkFile has buf in place
+func (s *DataChunkFile) ensureBuf() {
+	if s.buf == nil {
+		s.buf = []byte{}
+	}
+}
+
+// close
+func (s *DataChunkFile) close() {
+	s.Header = nil
+	s.Metadata = nil
+
+	s.initialOffset = 0
+	s.currentOffset = 0
+	s.offset = 0
+
+	s.buf = nil
+	s.err = nil
+}
+
+// acceptMetadata
+func (s *DataChunkFile) acceptMetadata(dataChunk *DataChunk) {
+	md := dataChunk.GetMetadata()
+	if md == nil {
+		return
+	}
+
+	filename := md.GetFilename()
+	if filename != "" {
+		s.ensureMetadata()
+		s.Metadata.SetFilename(filename)
+	}
+}
+
+// logDataChunk
+func (s *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
+	// Fetch filename from the chunks stream - it may be in any chunk, actually
+	filename := ""
+	if md := dataChunk.GetMetadata(); md != nil {
+		filename = md.GetFilename()
+	}
+	if filename == "" {
+		filename = "not specified"
+	}
+
+	// Fetch offset of this chunk within the stream
+	offset := "not specified"
+	if off, ok := dataChunk.GetOffsetWithAvailabilityReport(); ok {
+		offset = fmt.Sprintf("%d", off)
+	}
+
+	// How many bytes do we have in this chunk?
+	_len := len(dataChunk.GetBytes())
+	log.Infof("Data.Recv() got msg. filename: '%s', chunk len: %d, chunk offset: %s, last chunk: %v",
+		filename,
+		_len,
+		offset,
+		dataChunk.GetLast(),
+	)
+	fmt.Printf("%s\n", string(dataChunk.GetBytes()))
+}
+
+// getDataChunk
+func (s *DataChunkFile) getDataChunk() (*DataChunk, error) {
+	log.Infof("DataChunkFile.getDataChunk() - start")
+	defer log.Infof("DataChunkFile.getDataChunk() - end")
+
+	// Whether this chunk is the last one within this DataChunkFile
+	dataChunk, err := s.DataChunkSenderReceiver.Recv()
+
+	if dataChunk != nil {
+		// We've got data chunk and it has to be processed no matter what.
+		// Even in case Recv() reported error, we still need to process obtained data
+		s.acceptMetadata(dataChunk)
+		s.logDataChunk(dataChunk)
+	}
+
+	if err == nil {
+		// All went well, ready to receive more data
+	} else if err == io.EOF {
+		// Correct EOF arrived
+		log.Infof("DataChunkSenderReceiver.Recv() get EOF")
+	} else {
+		// Stream broken
+		log.Infof("DataChunkSenderReceiver.Recv() got err: %v", err)
+	}
+
+	return dataChunk, err
+}
+
+// appendDataBuf
+func (s *DataChunkFile) appendDataBuf() {
+	dataChunk, err := s.getDataChunk()
+	if dataChunk != nil {
+		if len(dataChunk.GetBytes()) > 0 {
+			s.ensureBuf()
+			s.buf = append(s.buf, dataChunk.GetBytes()...)
+		}
+
+		if dataChunk.GetLast() {
+			s.err = io.EOF
+		}
+	}
+
+	if err != nil {
+		s.err = err
+	}
+}
+
 // Implements io.Writer
 //
 // Write writes len(p) bytes from p to the underlying data stream.
@@ -80,8 +193,8 @@ func (s *DataChunkFile) ensureMetadata() {
 //
 // Implementations must not retain p.
 func (s *DataChunkFile) Write(p []byte) (n int, err error) {
-	log.Infof("Write() - start")
-	defer log.Infof("Write() - end")
+	log.Infof("DataChunkFile.Write() - start")
+	defer log.Infof("DataChunkFile.Write() - end")
 
 	n = len(p)
 	var md *Metadata = nil
@@ -112,84 +225,34 @@ func (s *DataChunkFile) Write(p []byte) (n int, err error) {
 //
 // WriterTo is the interface that wraps the WriteTo method.
 //
-// WriteTo writes data to w until there's no more data to write or
+// WriteTo writes data to dst until there's no more data to write or
 // when an error occurs. The return value n is the number of bytes
 // written. Any error encountered during the write is also returned.
 //
 // The Copy function uses WriterTo if available.
 func (s *DataChunkFile) WriteTo(dst io.Writer) (n int64, err error) {
-	log.Infof("WriteTo() - start")
-	defer log.Infof("WriteTo() - end")
+	log.Infof("DataChunkFile.WriteTo() - start")
+	defer log.Infof("DataChunkFile.WriteTo() - end")
 
 	n = 0
 	for {
-		// Whether this chunk is the last one on the stream
-		lastChunk := false
-		dataChunk, readErr := s.DataChunkSenderReceiver.Recv()
-
+		var dataChunk *DataChunk
+		dataChunk, err = s.getDataChunk()
 		if dataChunk != nil {
-			// We've got data chunk and it has to be processed no matter what.
-			// Even in case Recv() reported error, we still need to process obtained data
-
-			// Fetch filename from the chunks stream - it may be in any chunk, actually
-			filename := "not specified"
-			if md := dataChunk.GetMetadata(); md != nil {
-				filename = md.GetFilename()
-				if filename != "" {
-					s.ensureMetadata()
-					s.Metadata.SetFilename(filename)
-				}
-			}
-
-			// Fetch offset of this chunk within the stream
-			offset := "not specified"
-			if off, ok := dataChunk.GetOffsetWithAvailabilityReport(); ok {
-				offset = fmt.Sprintf("%d", off)
-			}
-
-			// How many bytes do we have in this chunk?
-			_len := len(dataChunk.GetBytes())
-			log.Infof("Data.Recv() got msg. filename: '%s', chunk len: %d, chunk offset: %s, last chunk: %v",
-				filename,
-				_len,
-				offset,
-				dataChunk.GetLast(),
-			)
-			fmt.Printf("%s\n", string(dataChunk.GetBytes()))
+			n += int64(len(dataChunk.GetBytes()))
 
 			// TODO need to handle write errors
 			_, _ = dst.Write(dataChunk.GetBytes())
 
-			n += int64(_len)
-
-			// This is officially last chunk on the chunks stream, so no need to Recv() any more, break the recv loop,
-			// but we need to handle possible errors first
 			if dataChunk.GetLast() {
-				lastChunk = true
+				return
 			}
 		}
 
-		if readErr == nil {
-			// All went well, ready to receive more data
-		} else if readErr == io.EOF {
-			// Correct EOF
-			log.Infof("Data.Recv() get EOF")
-			err = readErr
+		if err != nil {
 			return
-		} else {
-			// Stream broken
-			log.Infof("Data.Recv() got err: %v", err)
-			err = readErr
-			return
-		}
-
-		if lastChunk {
-			// This is officially last chunk on the chunks stream, so no need to Recv() any more, break the recv loop
-			break
 		}
 	}
-
-	return
 }
 
 // Implements io.Reader
@@ -221,24 +284,38 @@ func (s *DataChunkFile) WriteTo(dst io.Writer) (n int64, err error) {
 //
 // Implementations must not retain p.
 func (s *DataChunkFile) Read(p []byte) (n int, err error) {
-	log.Infof("Read() - start")
-	defer log.Infof("Read() - end")
+	log.Infof("DataChunkFile.Read() - start")
+	defer log.Infof("DataChunkFile.Read() - end")
 
-	return 0, fmt.Errorf("not implemented function: Read()")
+	if len(s.buf) == 0 {
+		s.appendDataBuf()
+	}
+
+	n = 0
+	if len(s.buf) > 0 {
+		n = copy(p, s.buf)
+		s.buf = s.buf[n:]
+
+		if len(s.buf) > 0 {
+			return n, nil
+		}
+	}
+
+	return n, s.err
 }
 
 // Implements io.ReaderFrom
 //
 // ReaderFrom is the interface that wraps the ReadFrom method.
 //
-// ReadFrom reads data from r until EOF or error.
+// ReadFrom reads data from src until EOF or error.
 // The return value n is the number of bytes read.
 // Any error except io.EOF encountered during the read is also returned.
 //
 // The Copy function uses ReaderFrom if available.
 func (s *DataChunkFile) ReadFrom(src io.Reader) (n int64, err error) {
-	log.Infof("ReadFrom() - start")
-	defer log.Infof("ReadFrom() - end")
+	log.Infof("DataChunkFile.ReadFrom() - start")
+	defer log.Infof("DataChunkFile.ReadFrom() - end")
 
 	n = 0
 	p := make([]byte, 1024)
@@ -274,8 +351,9 @@ func (s *DataChunkFile) ReadFrom(src io.Reader) (n int64, err error) {
 // The behavior of Close after the first call is undefined.
 // Specific implementations may document their own behavior.
 func (s *DataChunkFile) Close() error {
-	log.Infof("Close() - start")
-	defer log.Infof("Close() - end")
+	log.Infof("DataChunkFile.Close() - start")
+	defer log.Infof("DataChunkFile.Close() - end")
+	defer s.close()
 
 	if s.currentOffset == 0 {
 		// No data were sent via this stream, no need to send finalizer
@@ -301,6 +379,7 @@ func (s *DataChunkFile) Close() error {
 // TODO implement Reset function for DataChunkFile,
 //  so the same descriptor can be used for multiple transmissions.
 
+// SendDataChunkFile
 func SendDataChunkFile(
 	DataChunkSenderReceiver DataChunkSenderReceiver,
 	metadata *Metadata,
@@ -320,6 +399,7 @@ func SendDataChunkFile(
 	return io.Copy(f, src)
 }
 
+// RecvDataChunkFile
 func RecvDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver, dst io.Writer) (int64, *Metadata, error) {
 	log.Infof("RecvDataChunkFile() - start")
 	defer log.Infof("RecvDataChunkFile() - end")
@@ -332,12 +412,13 @@ func RecvDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver, dst io.W
 
 	written, err := io.Copy(dst, f)
 	if err != nil {
-		log.Errorf("RecvDataChunkFile() got error: %v", err.Error())
+		log.Errorf("got error: %v", err.Error())
 	}
 
 	return written, f.Metadata, err
 }
 
+// RecvDataChunkFileIntoBuf
 func RecvDataChunkFileIntoBuf(DataChunkSenderReceiver DataChunkSenderReceiver) (int64, *bytes.Buffer, *Metadata, error) {
 	log.Infof("RecvDataChunkFileIntoBuf() - start")
 	defer log.Infof("RecvDataChunkFileIntoBuf() - end")
@@ -355,12 +436,19 @@ func RecvDataChunkFileIntoBuf(DataChunkSenderReceiver DataChunkSenderReceiver) (
 	return written, buf, metadata, err
 }
 
-func RelayDataChunkFileIntoMinIO(DataChunkSenderReceiver DataChunkSenderReceiver, mi *minio.MinIO, bucketName, objectName string) (int64, *Metadata, error) {
+// RelayDataChunkFileIntoMinIO
+func RelayDataChunkFileIntoMinIO(
+	DataChunkSenderReceiver DataChunkSenderReceiver,
+	mi *minio.MinIO,
+	bucketName string,
+	objectName string,
+) (int64, *Metadata, error) {
 	log.Infof("RelayDataChunkFileIntoMinIO() - start")
 	defer log.Infof("RelayDataChunkFileIntoMinIO() - end")
 
 	f, err := OpenDataChunkFile(DataChunkSenderReceiver)
 	if err != nil {
+		log.Errorf("got error: %v", err)
 		return 0, nil, err
 	}
 	defer f.Close()
@@ -369,9 +457,28 @@ func RelayDataChunkFileIntoMinIO(DataChunkSenderReceiver DataChunkSenderReceiver
 	if err != nil {
 		log.Errorf("RelayDataChunkFileIntoMinIO() got error: %v", err.Error())
 	}
-
-	// Debug
-	log.Infof("metadata: %s", f.Metadata.String())
+	f.Metadata.Log()
 
 	return written, f.Metadata, err
+}
+
+// RelayDataChunkFileFromMinIO
+func RelayDataChunkFileFromMinIO(
+	DataChunkSenderReceiver DataChunkSenderReceiver,
+	mi *minio.MinIO,
+	bucketName string,
+	objectName string,
+) (int64, error) {
+	log.Infof("RelayDataChunkFileFromMinIO() - start")
+	defer log.Infof("RelayDataChunkFileFromMinIO() - end")
+
+	r, err := mi.Get(bucketName, objectName)
+	if err != nil {
+		log.Errorf("got error from MinIO: %v", err)
+		return 0, err
+	}
+
+	metadata := NewMetadata()
+	metadata.SetFilename(objectName)
+	return SendDataChunkFile(DataChunkSenderReceiver, metadata, r)
 }

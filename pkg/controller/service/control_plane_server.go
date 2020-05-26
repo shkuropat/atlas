@@ -74,15 +74,16 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 	return err
 }
 
+// relayIntoMinIO
 func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
 	log.Info("relayIntoMinIO() - start")
 	defer log.Info("relayIntoMinIO() - end")
 
 	mi, err := minio.NewMinIO(
 		config_service.Config.Endpoint,
+		config_service.Config.Secure,
 		config_service.Config.AccessKeyID,
 		config_service.Config.SecretAccessKey,
-		config_service.Config.Secure,
 	)
 
 	if err != nil {
