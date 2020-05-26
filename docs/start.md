@@ -8,24 +8,24 @@
    - Entry point: [cmd/service](../cmd/service)
    - Config file: [config/service.yaml](../config/service.yaml)
    The following commands are supported out of the box:
-   - [Main entry point] Serve requests [serve](../cmd/service/cmd/serve.go)
-   - [Supplementary] Display parsed config [config](../cmd/service/cmd/config.go)
-   - [Supplementary] Display software version [version](../cmd/service/cmd/version.go)
+   - [Main entry point] Serve requests command: [`serve`](../cmd/service/cmd/serve.go)
+   - [Supplementary] Display parsed config command: [`config`](../cmd/service/cmd/config.go)
+   - [Supplementary] Display software version command: [`version`](../cmd/service/cmd/version.go)
 1. Client. Makes gRPC calls to service
    - Entry point: [cmd/client](../cmd/client)
    - Config file: [config/client.yaml](../config/client.yaml)
    The following commands are supported out of the box:
-   - [Main entry point] Send file or STDIN from client to service [send](../cmd/client/cmd/send.go)
-   - [User management] Register OAuth client on OAuth server [register](../cmd/client/cmd/register.go)
-   - [Supplementary] Display parsed config [config](../cmd/client/cmd/config.go)
-   - [Supplementary] Display software version [version](../cmd/client/cmd/version.go)
+   - [Main entry point] Send file or STDIN from client to service command: [`send`](../cmd/client/cmd/send.go)
+   - [User management] Register OAuth client on OAuth server command: [`register`](../cmd/client/cmd/register.go)
+   - [Supplementary] Display parsed config command: [`config`](../cmd/client/cmd/config.go)
+   - [Supplementary] Display software version command: [`version`](../cmd/client/cmd/version.go)
 1. Consumer. Consumes data replayed by the service
    - Entry point: [cmd/consumer](../cmd/consumer)
    - Config file: [config/consumer.yaml](../config/consumer.yaml)
    The following commands are supported out of the box:
-   - [Main entry point] Consume data accumulated by the service [consume](../cmd/consumer/cmd/consume.go)
-   - [Supplementary] Display parsed config [config](../cmd/consumer/cmd/config.go)
-   - [Supplementary] Display software version [version](../cmd/consumer/cmd/version.go)
+   - [Main entry point] Consume data accumulated by the service command: [`consume`](../cmd/consumer/cmd/consume.go)
+   - [Supplementary] Display parsed config command: [`config`](../cmd/consumer/cmd/config.go)
+   - [Supplementary] Display software version command: [`version`](../cmd/consumer/cmd/version.go)
 
 ## Data exchange format and specification
 
