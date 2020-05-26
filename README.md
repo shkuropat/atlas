@@ -11,11 +11,14 @@ Project status badges
 ## What is this
 This is a gRPC client+service boilerplate / scaffolding.
 
+- [How to start][start]
+- [How to run client and server parts][run]
+
 ---
 ## Additional reading
 
-- [How to run client and server parts][run]
 - [How to install `protoc` compiler][protoc]
 
+[start]: ./docs/start.md
 [protoc]: ./docs/protoc.md
 [run]: ./docs/run.md
