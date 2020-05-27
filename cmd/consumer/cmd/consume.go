@@ -27,7 +27,7 @@ import (
 
 	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
 	"github.com/binarly-io/binarly-atlas/pkg/kafka/consumer"
-	"github.com/binarly-io/binarly-atlas/pkg/version"
+	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 )
 
 var (
@@ -68,7 +68,7 @@ var consumeCmd = &cmd.Command{
 			os.Exit(1)
 		}()
 
-		log.Infof("Starting consumer. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
+		log.Infof("Starting consumer. Version:%s GitSHA:%s BuiltAt:%s\n", softwareid.Version, softwareid.GitSHA, softwareid.BuiltAt)
 		log.Infof("Press Ctrl+C to exit...")
 
 		log.Infof("Config:\n%s", config_consumer.Config.String())

@@ -20,7 +20,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	cmd "github.com/spf13/cobra"
 
-	"github.com/binarly-io/binarly-atlas/pkg/version"
+	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 )
 
 var versionCmd = &cmd.Command{
@@ -31,7 +31,7 @@ var versionCmd = &cmd.Command{
 			`,
 	),
 	Run: func(cmd *cmd.Command, args []string) {
-		fmt.Printf("%s\n", version.Version)
+		fmt.Printf("%s\n", softwareid.Version)
 	},
 }
 

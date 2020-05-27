@@ -31,8 +31,8 @@ import (
 	atlas_health "github.com/binarly-io/binarly-atlas/pkg/api/health"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/controller/service"
+	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/service"
-	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
 
 var (
@@ -70,7 +70,7 @@ var serveCmd = &cmd.Command{
 			os.Exit(1)
 		}()
 
-		log.Infof("Starting service. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
+		log.Infof("Starting service. Version:%s GitSHA:%s BuiltAt:%s\n", softwareid.Version, softwareid.GitSHA, softwareid.BuiltAt)
 
 		controller.Init()
 

@@ -20,6 +20,8 @@ import (
 	cmd "github.com/spf13/cobra"
 	conf "github.com/spf13/viper"
 	"golang.org/x/oauth2/dcrp"
+
+	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 )
 
 var (
@@ -45,18 +47,19 @@ var registerCmd = &cmd.Command{
 			log.Fatalf("Need to specify --register-url=URL and possibly --initial-access-token=TOKEN\n")
 		}
 
-		config := dcrp.Config{
+		// DCRP stands for Dynamic Client Registration Protocol https://tools.ietf.org/html/rfc7591
+		clientRegistrator := dcrp.Config{
 			InitialAccessToken:            initialAccessToken,
 			ClientRegistrationEndpointURL: registerClientURL,
 			Metadata: dcrp.Metadata{
 				ClientName:              "new fluffy ControlPlaneClient",
 				TokenEndpointAuthMethod: "client_secret_basic",
 				GrantTypes:              []string{"client_credentials"},
-				SoftwareID:              "atlas",
-				SoftwareVersion:         "0.0.1",
+				SoftwareID:              softwareid.Name,
+				SoftwareVersion:         softwareid.Version,
 			},
 		}
-		if cl, err := config.Register(); err != nil {
+		if cl, err := clientRegistrator.Register(); err != nil {
 			log.Errorf("Error: %s\n", err.Error())
 		} else {
 			log.Infof("Registered:\nclient_id:%s\nclient_secret:%s\n", cl.ClientID, cl.ClientSecret)

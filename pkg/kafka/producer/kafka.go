@@ -24,6 +24,7 @@ type Producer struct {
 	topic   string
 }
 
+// NewProducer
 func NewProducer(brokers []string, topic string) *Producer {
 	return &Producer{
 		brokers: brokers,
@@ -31,6 +32,7 @@ func NewProducer(brokers []string, topic string) *Producer {
 	}
 }
 
+// Send
 func (p *Producer) Send(data []byte) error {
 	producer, err := sarama.NewSyncProducer(p.brokers, nil)
 	if err != nil {

@@ -17,20 +17,21 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/MakeNowJust/heredoc"
 	log "github.com/sirupsen/logrus"
 	cmd "github.com/spf13/cobra"
 	conf "github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
 	"github.com/binarly-io/binarly-atlas/pkg/controller/client"
+	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 	"github.com/binarly-io/binarly-atlas/pkg/transport/client"
-	"github.com/binarly-io/binarly-atlas/pkg/version"
 )
 
 const (
@@ -77,7 +78,7 @@ var sendCmd = &cmd.Command{
 			os.Exit(1)
 		}()
 
-		log.Infof("Starting client. Version:%s GitSHA:%s BuiltAt:%s\n", version.Version, version.GitSHA, version.BuiltAt)
+		log.Infof("Starting client. Version:%s GitSHA:%s BuiltAt:%s\n", softwareid.Version, softwareid.GitSHA, softwareid.BuiltAt)
 
 		log.Infof("Dial() to %s", serviceAddress)
 		conn, err := grpc.Dial(serviceAddress, client_transport.GetGRPCClientOptions(tls, auth, caFile, serverHostOverride, clientID, clientSecret, tokenURL)...)

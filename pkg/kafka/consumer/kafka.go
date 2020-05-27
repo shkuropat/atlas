@@ -16,6 +16,7 @@ package kafka
 
 import (
 	"context"
+	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 
 	"github.com/Shopify/sarama"
 	log "github.com/sirupsen/logrus"
@@ -40,7 +41,7 @@ func (c *Consumer) ConsumeLoop(consumeNewest bool, ack bool) {
 
 	// new configuration instance with sane defaults.
 	config := sarama.NewConfig()
-	config.ClientID = "atlas consumer"
+	config.ClientID = softwareid.Name
 	if consumeNewest {
 		config.Consumer.Offsets.Initial = sarama.OffsetNewest
 	} else {
