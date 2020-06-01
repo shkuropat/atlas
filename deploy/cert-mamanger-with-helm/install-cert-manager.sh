@@ -7,7 +7,7 @@ kubectl apply --validate=false -f https://raw.githubusercontent.com/jetstack/cer
 helm repo add jetstack https://charts.jetstack.io
 helm repo update
 
-kubectl create ns cert-manager
+kubectl create ns cert-manager || true
 
 # Install cert-manager into the cluster
 # Using helm3

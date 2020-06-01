@@ -25,7 +25,7 @@ func NewCommand(
 	description string,
 ) *Command {
 	return &Command{
-		Header: NewHeader(
+		Header: NewMetadata(
 			int32(commandType),
 			name,
 			version,
@@ -40,10 +40,10 @@ func NewCommand(
 
 // GetType gets command type
 func (m *Command) GetType() CommandType {
-	return CommandType(m.GetHeader().GetTypeName().GetType())
+	return CommandType(m.GetHeader().GetType())
 }
 
 // GetName gets command name
 func (m *Command) GetName() string {
-	return m.GetHeader().GetTypeName().GetName()
+	return m.GetHeader().GetName()
 }

@@ -15,18 +15,16 @@
 package atlas
 
 import (
-	"bytes"
 	"fmt"
+	"github.com/ulikunitz/xz/lzma"
 	"io"
 
 	log "github.com/sirupsen/logrus"
-
-	"github.com/binarly-io/binarly-atlas/pkg/minio"
 )
 
-// DataChunkSenderReceiver defines transport level interface (for both client and server),
+// DataChunkTransport defines transport level interface (for both client and server),
 // which serves DataChunk streams bi-directionally.
-type DataChunkSenderReceiver interface {
+type DataChunkTransport interface {
 	Send(*DataChunk) error
 	Recv() (*DataChunk, error)
 }
@@ -40,12 +38,14 @@ type DataChunkSenderReceiver interface {
 //	- io.Closer
 // and thus can be used in any functions, which operate these interfaces, such as io.Copy()
 type DataChunkFile struct {
-	DataChunkSenderReceiver DataChunkSenderReceiver
+	transport DataChunkTransport
 
 	// Header is mandatory
-	Header *Header
-	// Metadata is optional
-	Metadata *Metadata
+	Header *Metadata
+	// TransportMetadata is optional
+	TransportMetadata *Metadata
+	// PayloadMetadata is optional
+	PayloadMetadata *Metadata
 
 	// initialOffset of these chunks
 	initialOffset int64
@@ -57,6 +57,8 @@ type DataChunkFile struct {
 	// MaxWriteChunkSize limits max size of a payload within one data chunk to be sent
 	MaxWriteChunkSize int
 
+	lzmaWriter *lzma.Writer
+
 	// Receive part
 	buf []byte
 	err error
@@ -64,17 +66,34 @@ type DataChunkFile struct {
 
 // OpenDataChunkFile opens set of DataChunk(s)
 // Inspired by os.OpenFile()
-func OpenDataChunkFile(DataChunkSenderReceiver DataChunkSenderReceiver) (*DataChunkFile, error) {
+func OpenDataChunkFile(transport DataChunkTransport) (*DataChunkFile, error) {
 	return &DataChunkFile{
-		DataChunkSenderReceiver: DataChunkSenderReceiver,
+		transport: transport,
 	}, nil
 }
 
-// ensureMetadata ensures DataChunkFile has Metadata in place
-func (f *DataChunkFile) ensureMetadata() {
-	if f.Metadata == nil {
-		f.Metadata = new(Metadata)
+// ensureTransportMetadata ensures DataChunkFile has TransportMetadata in place
+func (f *DataChunkFile) ensureTransportMetadata() {
+	if f.TransportMetadata == nil {
+		f.TransportMetadata = new(Metadata)
 	}
+}
+
+// HasTransportMetadata
+func (f *DataChunkFile) HasTransportMetadata() bool {
+	return f.TransportMetadata != nil
+}
+
+// ensurePayloadMetadata ensures DataChunkFile has PayloadMetadata in place
+func (f *DataChunkFile) ensurePayloadMetadata() {
+	if f.PayloadMetadata == nil {
+		f.PayloadMetadata = new(Metadata)
+	}
+}
+
+// HasPayloadMetadata
+func (f *DataChunkFile) HasPayloadMetadata() bool {
+	return f.PayloadMetadata != nil
 }
 
 // ensureBuf ensures DataChunkFile has buf in place
@@ -87,7 +106,8 @@ func (f *DataChunkFile) ensureBuf() {
 // close
 func (f *DataChunkFile) close() {
 	f.Header = nil
-	f.Metadata = nil
+	f.TransportMetadata = nil
+	f.PayloadMetadata = nil
 
 	f.initialOffset = 0
 	f.currentOffset = 0
@@ -107,41 +127,47 @@ func (f *DataChunkFile) acceptHeader(dataChunk *DataChunk) {
 	f.Header = hdr
 }
 
-// acceptMetadata
-func (f *DataChunkFile) acceptMetadata(dataChunk *DataChunk) {
-	md := dataChunk.GetMetadata()
+// acceptTransportMetadata
+func (f *DataChunkFile) acceptTransportMetadata(dataChunk *DataChunk) {
+	md := dataChunk.GetTransportMetadata()
 	if md == nil {
 		return
 	}
 
-	filename := md.GetFilename()
-	if filename != "" {
-		f.ensureMetadata()
-		f.Metadata.SetFilename(filename)
+	f.TransportMetadata = md
+}
+
+// acceptPayloadMetadata
+func (f *DataChunkFile) acceptPayloadMetadata(dataChunk *DataChunk) {
+	md := dataChunk.GetPayloadMetadata()
+	if md == nil {
+		return
 	}
+
+	f.PayloadMetadata = md
 }
 
 // acceptMeta
 func (f *DataChunkFile) acceptMeta(dataChunk *DataChunk) {
-	f.acceptMetadata(dataChunk)
+	f.acceptTransportMetadata(dataChunk)
+	f.acceptPayloadMetadata(dataChunk)
 	f.acceptHeader(dataChunk)
 }
 
 // logDataChunk
 func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 	// Fetch filename from the chunks stream - it may be in any chunk, actually
-	filename := ""
-	if md := dataChunk.GetMetadata(); md != nil {
-		filename = md.GetFilename()
-	}
-	if filename == "" {
-		filename = "not specified"
+	filename := "not specified"
+	if dataChunk.HasPayloadMetadata() {
+		if dataChunk.GetPayloadMetadata().HasFilename() {
+			filename = dataChunk.GetPayloadMetadata().GetFilename()
+		}
 	}
 
 	// Fetch offset of this chunk within the stream
 	offset := "not specified"
-	if off, ok := dataChunk.GetOffsetWithAvailabilityReport(); ok {
-		offset = fmt.Sprintf("%d", off)
+	if dataChunk.Header.HasOffset() {
+		offset = fmt.Sprintf("%d", dataChunk.Header.GetOffset())
 	}
 
 	// How many bytes do we have in this chunk?
@@ -150,18 +176,18 @@ func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 		filename,
 		_len,
 		offset,
-		dataChunk.GetLast(),
+		dataChunk.Header.GetLast(),
 	)
 	fmt.Printf("%s\n", string(dataChunk.GetBytes()))
 }
 
-// getDataChunk
-func (f *DataChunkFile) getDataChunk() (*DataChunk, error) {
-	log.Infof("DataChunkFile.getDataChunk() - start")
-	defer log.Infof("DataChunkFile.getDataChunk() - end")
+// recvDataChunk
+func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
+	log.Infof("DataChunkFile.recvDataChunk() - start")
+	defer log.Infof("DataChunkFile.recvDataChunk() - end")
 
 	// Whether this chunk is the last one within this DataChunkFile
-	dataChunk, err := f.DataChunkSenderReceiver.Recv()
+	dataChunk, err := f.transport.Recv()
 	if dataChunk != nil {
 		f.acceptMeta(dataChunk)
 		f.logDataChunk(dataChunk)
@@ -171,10 +197,10 @@ func (f *DataChunkFile) getDataChunk() (*DataChunk, error) {
 		// All went well, ready to receive more data
 	} else if err == io.EOF {
 		// Correct EOF arrived
-		log.Infof("DataChunkSenderReceiver.Recv() get EOF")
+		log.Infof("DataChunkTransport.Recv() get EOF")
 	} else {
 		// Stream broken
-		log.Infof("DataChunkSenderReceiver.Recv() got err: %v", err)
+		log.Infof("DataChunkTransport.Recv() got err: %v", err)
 	}
 
 	return dataChunk, err
@@ -182,14 +208,14 @@ func (f *DataChunkFile) getDataChunk() (*DataChunk, error) {
 
 // appendDataBuf
 func (f *DataChunkFile) appendDataBuf() {
-	dataChunk, err := f.getDataChunk()
+	dataChunk, err := f.recvDataChunk()
 	if dataChunk != nil {
 		if len(dataChunk.GetBytes()) > 0 {
 			f.ensureBuf()
 			f.buf = append(f.buf, dataChunk.GetBytes()...)
 		}
 
-		if dataChunk.GetLast() {
+		if dataChunk.Header.GetLast() {
 			f.err = io.EOF
 		}
 	}
@@ -199,24 +225,26 @@ func (f *DataChunkFile) appendDataBuf() {
 	}
 }
 
-// writeDataChunk
-func (f *DataChunkFile) writeDataChunk(p []byte) (n int, err error) {
-	log.Infof("DataChunkFile.writeDataChunk() - start")
-	defer log.Infof("DataChunkFile.writeDataChunk() - end")
+// sendDataChunk
+func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
+	log.Infof("DataChunkFile.sendDataChunk() - start")
+	defer log.Infof("DataChunkFile.sendDataChunk() - end")
 
 	if (len(p) > f.MaxWriteChunkSize) && (f.MaxWriteChunkSize > 0) {
-		return 0, fmt.Errorf("attempt to writeDataChunk() with oversized chunk: %d > %d", len(p), f.MaxWriteChunkSize)
+		return 0, fmt.Errorf("attempt to sendDataChunk() with oversized chunk: %d > %d", len(p), f.MaxWriteChunkSize)
 	}
 
 	n = len(p)
-	var md *Metadata = nil
+	var transportMD *Metadata
+	var payloadMD *Metadata
 	if f.currentOffset == 0 {
 		// First chunk in this file, it may have some metadata
-		md = f.Metadata
+		transportMD = f.TransportMetadata
+		payloadMD = f.PayloadMetadata
 	}
 	f.offset = f.initialOffset + f.currentOffset
-	chunk := NewDataChunk(md, &f.offset, false, p)
-	err = f.DataChunkSenderReceiver.Send(chunk)
+	chunk := NewDataChunk(transportMD, payloadMD, &f.offset, false, p)
+	err = f.transport.Send(chunk)
 	if err != nil {
 		// We have some kind of error and were not able to send the data
 		n = 0
@@ -248,13 +276,13 @@ func (f *DataChunkFile) Write(p []byte) (n int, err error) {
 
 	if (len(p) < f.MaxWriteChunkSize) || (f.MaxWriteChunkSize <= 0) {
 		// No need to chunk
-		return f.writeDataChunk(p)
+		return f.sendDataChunk(p)
 	}
 
 	// Need to chunk
 	n = 0
 	for offset := 0; offset < len(p); offset += f.MaxWriteChunkSize {
-		if sent, e := f.writeDataChunk(p[offset:f.MaxWriteChunkSize]); e != nil {
+		if sent, e := f.sendDataChunk(p[offset:f.MaxWriteChunkSize]); e != nil {
 			return n, e
 		} else {
 			n += sent
@@ -280,14 +308,14 @@ func (f *DataChunkFile) WriteTo(dst io.Writer) (n int64, err error) {
 	n = 0
 	for {
 		var dataChunk *DataChunk
-		dataChunk, err = f.getDataChunk()
+		dataChunk, err = f.recvDataChunk()
 		if dataChunk != nil {
 			n += int64(len(dataChunk.GetBytes()))
 
 			// TODO need to handle write errors
 			_, _ = dst.Write(dataChunk.GetBytes())
 
-			if dataChunk.GetLast() {
+			if dataChunk.Header.GetLast() {
 				return
 			}
 		}
@@ -411,8 +439,8 @@ func (f *DataChunkFile) Close() error {
 	// Some data were sent via this stream, need to finalize transmission with finalizer packet
 
 	// Send "last" data chunk
-	chunk := NewDataChunk(nil, nil, true, nil)
-	err := f.DataChunkSenderReceiver.Send(chunk)
+	chunk := NewDataChunk(nil, nil, nil, true, nil)
+	err := f.transport.Send(chunk)
 	if err != nil {
 		if err == io.EOF {
 			log.Infof("Send() received EOF")
@@ -426,107 +454,3 @@ func (f *DataChunkFile) Close() error {
 
 // TODO implement Reset function for DataChunkFile,
 //  so the same descriptor can be used for multiple transmissions.
-
-// SendDataChunkFile
-func SendDataChunkFile(
-	dst DataChunkSenderReceiver,
-	metadata *Metadata,
-	src io.Reader,
-) (int64, error) {
-	log.Infof("SendDataChunkFile() - start")
-	defer log.Infof("SendDataChunkFile() - end")
-
-	f, err := OpenDataChunkFile(dst)
-	if err != nil {
-		log.Warnf("got err: %v", err)
-		return 0, err
-	}
-	defer f.Close()
-	f.Header = NewHeader(int32(DataChunkType_DATA_CHUNK_TYPE_DATA), "", 0, "", "123", 0, 0, "desc")
-	f.Metadata = metadata
-	return io.Copy(f, src)
-}
-
-// RecvDataChunkFile
-func RecvDataChunkFile(src DataChunkSenderReceiver, dst io.Writer) (int64, *Metadata, error) {
-	log.Infof("RecvDataChunkFile() - start")
-	defer log.Infof("RecvDataChunkFile() - end")
-
-	f, err := OpenDataChunkFile(src)
-	if err != nil {
-		return 0, nil, err
-	}
-	defer f.Close()
-
-	written, err := io.Copy(dst, f)
-	if err != nil {
-		log.Errorf("got error: %v", err.Error())
-	}
-
-	return written, f.Metadata, err
-}
-
-// RecvDataChunkFileIntoBuf
-func RecvDataChunkFileIntoBuf(src DataChunkSenderReceiver) (int64, *bytes.Buffer, *Metadata, error) {
-	log.Infof("RecvDataChunkFileIntoBuf() - start")
-	defer log.Infof("RecvDataChunkFileIntoBuf() - end")
-
-	var buf = &bytes.Buffer{}
-	written, metadata, err := RecvDataChunkFile(src, buf)
-	if err != nil {
-		log.Errorf("RecvDataChunkFileIntoBuf() got error: %v", err.Error())
-	}
-
-	// Debug
-	log.Infof("metadata: %s", metadata.String())
-	log.Infof("data: %s", buf.String())
-
-	return written, buf, metadata, err
-}
-
-// RelayDataChunkFileIntoMinIO
-func RelayDataChunkFileIntoMinIO(
-	src DataChunkSenderReceiver,
-	mi *minio.MinIO,
-	bucketName string,
-	objectName string,
-) (int64, *Metadata, error) {
-	log.Infof("RelayDataChunkFileIntoMinIO() - start")
-	defer log.Infof("RelayDataChunkFileIntoMinIO() - end")
-
-	f, err := OpenDataChunkFile(src)
-	if err != nil {
-		log.Errorf("got error: %v", err)
-		return 0, nil, err
-	}
-	defer f.Close()
-
-	written, err := mi.Put(bucketName, objectName, f)
-	if err != nil {
-		log.Errorf("RelayDataChunkFileIntoMinIO() got error: %v", err.Error())
-	}
-	f.Metadata.Log()
-
-	return written, f.Metadata, err
-}
-
-// RelayDataChunkFileFromMinIO
-func RelayDataChunkFileFromMinIO(
-	dst DataChunkSenderReceiver,
-	mi *minio.MinIO,
-	bucketName string,
-	objectName string,
-) (int64, error) {
-	log.Infof("RelayDataChunkFileFromMinIO() - start")
-	defer log.Infof("RelayDataChunkFileFromMinIO() - end")
-
-	r, err := mi.Get(bucketName, objectName)
-	if err != nil {
-		log.Errorf("got error from MinIO: %v", err)
-		return 0, err
-	}
-
-	metadata := NewMetadata()
-	metadata.SetFilename(objectName)
-	return SendDataChunkFile(dst, metadata, r)
-}

@@ -16,28 +16,27 @@ package kafka
 
 import (
 	"context"
-	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 
 	"github.com/Shopify/sarama"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 )
 
-type Consumer struct {
-	brokers []string
+type ConsumerGroup struct {
+	Endpoint
 	groupID string
-	topic   string
 }
 
-func NewConsumer(brokers []string, groupID string, topic string) *Consumer {
-	return &Consumer{
-		brokers: brokers,
-		groupID: groupID,
-		topic:   topic,
+func NewConsumerGroup(endpoint Endpoint, groupID string) *ConsumerGroup {
+	return &ConsumerGroup{
+		Endpoint: endpoint,
+		groupID:  groupID,
 	}
 }
 
 // ConsumeLoop runs an endless loop of kafka consumer
-func (c *Consumer) ConsumeLoop(consumeNewest bool, ack bool) {
+func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 
 	// new configuration instance with sane defaults.
 	config := sarama.NewConfig()
@@ -48,7 +47,7 @@ func (c *Consumer) ConsumeLoop(consumeNewest bool, ack bool) {
 		config.Consumer.Offsets.Initial = sarama.OffsetOldest
 	}
 
-	group, err := sarama.NewConsumerGroup(c.brokers, c.groupID, config)
+	group, err := sarama.NewConsumerGroup(c.Brokers, c.groupID, config)
 	if err != nil {
 		panic(err)
 	}
@@ -66,9 +65,11 @@ func (c *Consumer) ConsumeLoop(consumeNewest bool, ack bool) {
 	// Iterate over consumer sessions.
 	ctx := context.Background()
 	for {
-		topics := []string{c.topic}
+		topics := []string{c.Topic}
 		handler := NewConsumerGroupHandler(ack)
 
+		// Consume joins a cluster of consumers for a given list of topics
+		//
 		// `Consume` should be called inside an infinite loop.
 		// When a server-side rebalance happens, the consumer session will need to be recreated to get the new claims
 		err := group.Consume(ctx, topics, handler)
@@ -84,10 +85,13 @@ func (c *Consumer) ConsumeLoop(consumeNewest bool, ack bool) {
 //
 // PLEASE NOTE that handlers are likely be called from several goroutines concurrently,
 // ensure that all state is safely protected against race conditions.
+//
+// Implements sarama.ConsumerGroupHandler interface
 type ConsumerGroupHandler struct {
 	ack bool
 }
 
+// NewConsumerGroupHandler
 func NewConsumerGroupHandler(ack bool) ConsumerGroupHandler {
 	return ConsumerGroupHandler{
 		ack: ack,
@@ -96,14 +100,18 @@ func NewConsumerGroupHandler(ack bool) ConsumerGroupHandler {
 
 // Setup is run at the beginning of a new session, before ConsumeClaim.
 func (ConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
-	log.Infof("ConsumerGroupHandler.Setup()")
+	log.Infof("ConsumerGroupHandler.Setup() - start")
+	defer log.Infof("ConsumerGroupHandler.Setup() - end")
+
 	return nil
 }
 
 // Cleanup is run at the end of a session, once all ConsumeClaim goroutines have exited
 // but before the offsets are committed for the very last time.
 func (ConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
-	log.Infof("ConsumerGroupHandler.Cleanup()")
+	log.Infof("ConsumerGroupHandler.Cleanup() - start")
+	defer log.Infof("ConsumerGroupHandler.Cleanup() - end")
+
 	return nil
 }
 
@@ -111,8 +119,12 @@ func (ConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
 // Once the Messages() channel is closed, the Handler must finish
 // its processing loop and exit.
 func (h ConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	log.Infof("ConsumerGroupHandler.ConsumeClaim()")
+	// Claim is a claimed Partition, so Claim refers to Partition
+	log.Infof("ConsumerGroupHandler.ConsumeClaim() - start")
+	defer log.Infof("ConsumerGroupHandler.ConsumeClaim() - end")
+
 	for msg := range claim.Messages() {
+		// msg.Headers
 		log.Printf("Got message topic:%q partition:%d offset:%d data:%s\n", msg.Topic, msg.Partition, msg.Offset, string(msg.Value))
 		if h.ack {
 			sess.MarkMessage(msg, "")

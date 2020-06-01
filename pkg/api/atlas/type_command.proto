@@ -16,7 +16,7 @@ syntax = "proto3";
 
 package atlas;
 
-import "type_header.proto";
+import "type_metadata.proto";
 
 enum CommandType {
     // Due to first enum value has to be zero in proto3
@@ -35,5 +35,5 @@ enum CommandType {
 }
 
 message Command {
-    Header header = 100;
+    Metadata header = 100;
 }

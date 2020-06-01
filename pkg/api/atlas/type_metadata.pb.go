@@ -6,6 +6,7 @@ package atlas
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	math "math"
 )
 
@@ -22,19 +23,51 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 // Metadata describes metadata or the object
 type Metadata struct {
-	// filename
-	//
+	// Types that are valid to be assigned to TypeOptional:
+	//	*Metadata_Type
+	TypeOptional isMetadata_TypeOptional `protobuf_oneof:"type_optional"`
+	// Types that are valid to be assigned to NameOptional:
+	//	*Metadata_Name
+	NameOptional isMetadata_NameOptional `protobuf_oneof:"name_optional"`
+	// Types that are valid to be assigned to VersionOptional:
+	//	*Metadata_Version
+	VersionOptional isMetadata_VersionOptional `protobuf_oneof:"version_optional"`
+	// Types that are valid to be assigned to UuidOptional:
+	//	*Metadata_Uuid
+	UuidOptional isMetadata_UuidOptional `protobuf_oneof:"uuid_optional"`
+	// Types that are valid to be assigned to UuidReferenceOptional:
+	//	*Metadata_UuidReference
+	UuidReferenceOptional isMetadata_UuidReferenceOptional `protobuf_oneof:"uuid_reference_optional"`
+	// Types that are valid to be assigned to TimestampOptional:
+	//	*Metadata_Ts
+	TimestampOptional isMetadata_TimestampOptional `protobuf_oneof:"timestamp_optional"`
+	// Types that are valid to be assigned to EncodingOptional:
+	//	*Metadata_Encoding
+	EncodingOptional isMetadata_EncodingOptional `protobuf_oneof:"encoding_optional"`
+	// Types that are valid to be assigned to CompressionOptional:
+	//	*Metadata_Compression
+	CompressionOptional isMetadata_CompressionOptional `protobuf_oneof:"compression_optional"`
 	// Types that are valid to be assigned to FilenameOptional:
 	//	*Metadata_Filename
 	FilenameOptional isMetadata_FilenameOptional `protobuf_oneof:"filename_optional"`
-	// URL
-	//
 	// Types that are valid to be assigned to UrlOptional:
 	//	*Metadata_Url
-	UrlOptional          isMetadata_UrlOptional `protobuf_oneof:"url_optional"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_unrecognized     []byte                 `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
+	UrlOptional isMetadata_UrlOptional `protobuf_oneof:"url_optional"`
+	// Types that are valid to be assigned to DescriptionOptional:
+	//	*Metadata_Description
+	DescriptionOptional isMetadata_DescriptionOptional `protobuf_oneof:"description_optional"`
+	// Types that are valid to be assigned to LenOptional:
+	//	*Metadata_Len
+	LenOptional isMetadata_LenOptional `protobuf_oneof:"len_optional"`
+	// Types that are valid to be assigned to OffsetOptional:
+	//	*Metadata_Offset
+	OffsetOptional isMetadata_OffsetOptional `protobuf_oneof:"offset_optional"`
+	// Types that are valid to be assigned to LastOptional:
+	//	*Metadata_Last
+	LastOptional         isMetadata_LastOptional `protobuf_oneof:"last_optional"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
 }
 
 func (m *Metadata) Reset()         { *m = Metadata{} }
@@ -62,12 +95,204 @@ func (m *Metadata) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Metadata proto.InternalMessageInfo
 
+type isMetadata_TypeOptional interface {
+	isMetadata_TypeOptional()
+}
+
+type Metadata_Type struct {
+	Type int32 `protobuf:"varint,100,opt,name=type,proto3,oneof"`
+}
+
+func (*Metadata_Type) isMetadata_TypeOptional() {}
+
+func (m *Metadata) GetTypeOptional() isMetadata_TypeOptional {
+	if m != nil {
+		return m.TypeOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetType() int32 {
+	if x, ok := m.GetTypeOptional().(*Metadata_Type); ok {
+		return x.Type
+	}
+	return 0
+}
+
+type isMetadata_NameOptional interface {
+	isMetadata_NameOptional()
+}
+
+type Metadata_Name struct {
+	Name string `protobuf:"bytes,200,opt,name=name,proto3,oneof"`
+}
+
+func (*Metadata_Name) isMetadata_NameOptional() {}
+
+func (m *Metadata) GetNameOptional() isMetadata_NameOptional {
+	if m != nil {
+		return m.NameOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetName() string {
+	if x, ok := m.GetNameOptional().(*Metadata_Name); ok {
+		return x.Name
+	}
+	return ""
+}
+
+type isMetadata_VersionOptional interface {
+	isMetadata_VersionOptional()
+}
+
+type Metadata_Version struct {
+	Version int32 `protobuf:"varint,300,opt,name=version,proto3,oneof"`
+}
+
+func (*Metadata_Version) isMetadata_VersionOptional() {}
+
+func (m *Metadata) GetVersionOptional() isMetadata_VersionOptional {
+	if m != nil {
+		return m.VersionOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetVersion() int32 {
+	if x, ok := m.GetVersionOptional().(*Metadata_Version); ok {
+		return x.Version
+	}
+	return 0
+}
+
+type isMetadata_UuidOptional interface {
+	isMetadata_UuidOptional()
+}
+
+type Metadata_Uuid struct {
+	Uuid *UUID `protobuf:"bytes,400,opt,name=uuid,proto3,oneof"`
+}
+
+func (*Metadata_Uuid) isMetadata_UuidOptional() {}
+
+func (m *Metadata) GetUuidOptional() isMetadata_UuidOptional {
+	if m != nil {
+		return m.UuidOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetUuid() *UUID {
+	if x, ok := m.GetUuidOptional().(*Metadata_Uuid); ok {
+		return x.Uuid
+	}
+	return nil
+}
+
+type isMetadata_UuidReferenceOptional interface {
+	isMetadata_UuidReferenceOptional()
+}
+
+type Metadata_UuidReference struct {
+	UuidReference *UUID `protobuf:"bytes,500,opt,name=uuid_reference,json=uuidReference,proto3,oneof"`
+}
+
+func (*Metadata_UuidReference) isMetadata_UuidReferenceOptional() {}
+
+func (m *Metadata) GetUuidReferenceOptional() isMetadata_UuidReferenceOptional {
+	if m != nil {
+		return m.UuidReferenceOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetUuidReference() *UUID {
+	if x, ok := m.GetUuidReferenceOptional().(*Metadata_UuidReference); ok {
+		return x.UuidReference
+	}
+	return nil
+}
+
+type isMetadata_TimestampOptional interface {
+	isMetadata_TimestampOptional()
+}
+
+type Metadata_Ts struct {
+	Ts *timestamp.Timestamp `protobuf:"bytes,600,opt,name=ts,proto3,oneof"`
+}
+
+func (*Metadata_Ts) isMetadata_TimestampOptional() {}
+
+func (m *Metadata) GetTimestampOptional() isMetadata_TimestampOptional {
+	if m != nil {
+		return m.TimestampOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetTs() *timestamp.Timestamp {
+	if x, ok := m.GetTimestampOptional().(*Metadata_Ts); ok {
+		return x.Ts
+	}
+	return nil
+}
+
+type isMetadata_EncodingOptional interface {
+	isMetadata_EncodingOptional()
+}
+
+type Metadata_Encoding struct {
+	Encoding string `protobuf:"bytes,700,opt,name=encoding,proto3,oneof"`
+}
+
+func (*Metadata_Encoding) isMetadata_EncodingOptional() {}
+
+func (m *Metadata) GetEncodingOptional() isMetadata_EncodingOptional {
+	if m != nil {
+		return m.EncodingOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetEncoding() string {
+	if x, ok := m.GetEncodingOptional().(*Metadata_Encoding); ok {
+		return x.Encoding
+	}
+	return ""
+}
+
+type isMetadata_CompressionOptional interface {
+	isMetadata_CompressionOptional()
+}
+
+type Metadata_Compression struct {
+	Compression string `protobuf:"bytes,800,opt,name=compression,proto3,oneof"`
+}
+
+func (*Metadata_Compression) isMetadata_CompressionOptional() {}
+
+func (m *Metadata) GetCompressionOptional() isMetadata_CompressionOptional {
+	if m != nil {
+		return m.CompressionOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetCompression() string {
+	if x, ok := m.GetCompressionOptional().(*Metadata_Compression); ok {
+		return x.Compression
+	}
+	return ""
+}
+
 type isMetadata_FilenameOptional interface {
 	isMetadata_FilenameOptional()
 }
 
 type Metadata_Filename struct {
-	Filename string `protobuf:"bytes,100,opt,name=filename,proto3,oneof"`
+	Filename string `protobuf:"bytes,900,opt,name=filename,proto3,oneof"`
 }
 
 func (*Metadata_Filename) isMetadata_FilenameOptional() {}
@@ -91,7 +316,7 @@ type isMetadata_UrlOptional interface {
 }
 
 type Metadata_Url struct {
-	Url string `protobuf:"bytes,200,opt,name=url,proto3,oneof"`
+	Url string `protobuf:"bytes,1000,opt,name=url,proto3,oneof"`
 }
 
 func (*Metadata_Url) isMetadata_UrlOptional() {}
@@ -110,11 +335,119 @@ func (m *Metadata) GetUrl() string {
 	return ""
 }
 
+type isMetadata_DescriptionOptional interface {
+	isMetadata_DescriptionOptional()
+}
+
+type Metadata_Description struct {
+	Description string `protobuf:"bytes,1100,opt,name=description,proto3,oneof"`
+}
+
+func (*Metadata_Description) isMetadata_DescriptionOptional() {}
+
+func (m *Metadata) GetDescriptionOptional() isMetadata_DescriptionOptional {
+	if m != nil {
+		return m.DescriptionOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetDescription() string {
+	if x, ok := m.GetDescriptionOptional().(*Metadata_Description); ok {
+		return x.Description
+	}
+	return ""
+}
+
+type isMetadata_LenOptional interface {
+	isMetadata_LenOptional()
+}
+
+type Metadata_Len struct {
+	Len int64 `protobuf:"varint,1200,opt,name=len,proto3,oneof"`
+}
+
+func (*Metadata_Len) isMetadata_LenOptional() {}
+
+func (m *Metadata) GetLenOptional() isMetadata_LenOptional {
+	if m != nil {
+		return m.LenOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetLen() int64 {
+	if x, ok := m.GetLenOptional().(*Metadata_Len); ok {
+		return x.Len
+	}
+	return 0
+}
+
+type isMetadata_OffsetOptional interface {
+	isMetadata_OffsetOptional()
+}
+
+type Metadata_Offset struct {
+	Offset int64 `protobuf:"varint,1300,opt,name=offset,proto3,oneof"`
+}
+
+func (*Metadata_Offset) isMetadata_OffsetOptional() {}
+
+func (m *Metadata) GetOffsetOptional() isMetadata_OffsetOptional {
+	if m != nil {
+		return m.OffsetOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetOffset() int64 {
+	if x, ok := m.GetOffsetOptional().(*Metadata_Offset); ok {
+		return x.Offset
+	}
+	return 0
+}
+
+type isMetadata_LastOptional interface {
+	isMetadata_LastOptional()
+}
+
+type Metadata_Last struct {
+	Last bool `protobuf:"varint,1400,opt,name=last,proto3,oneof"`
+}
+
+func (*Metadata_Last) isMetadata_LastOptional() {}
+
+func (m *Metadata) GetLastOptional() isMetadata_LastOptional {
+	if m != nil {
+		return m.LastOptional
+	}
+	return nil
+}
+
+func (m *Metadata) GetLast() bool {
+	if x, ok := m.GetLastOptional().(*Metadata_Last); ok {
+		return x.Last
+	}
+	return false
+}
+
 // XXX_OneofWrappers is for the internal use of the proto package.
 func (*Metadata) XXX_OneofWrappers() []interface{} {
 	return []interface{}{
+		(*Metadata_Type)(nil),
+		(*Metadata_Name)(nil),
+		(*Metadata_Version)(nil),
+		(*Metadata_Uuid)(nil),
+		(*Metadata_UuidReference)(nil),
+		(*Metadata_Ts)(nil),
+		(*Metadata_Encoding)(nil),
+		(*Metadata_Compression)(nil),
 		(*Metadata_Filename)(nil),
 		(*Metadata_Url)(nil),
+		(*Metadata_Description)(nil),
+		(*Metadata_Len)(nil),
+		(*Metadata_Offset)(nil),
+		(*Metadata_Last)(nil),
 	}
 }
 
@@ -127,13 +460,34 @@ func init() {
 }
 
 var fileDescriptor_6b5234c8ffbbe006 = []byte{
-	// 126 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2e, 0xa9, 0x2c, 0x48,
-	0x8d, 0xcf, 0x4d, 0x2d, 0x49, 0x4c, 0x49, 0x2c, 0x49, 0xd4, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17,
-	0x62, 0x4d, 0x2c, 0xc9, 0x49, 0x2c, 0x56, 0x4a, 0xe2, 0xe2, 0xf0, 0x85, 0x4a, 0x08, 0xc9, 0x70,
-	0x71, 0xa4, 0x65, 0xe6, 0xa4, 0xe6, 0x25, 0xe6, 0xa6, 0x4a, 0xa4, 0x28, 0x30, 0x6a, 0x70, 0x7a,
-	0x30, 0x04, 0xc1, 0x45, 0x84, 0x84, 0xb9, 0x98, 0x4b, 0x8b, 0x72, 0x24, 0x4e, 0x30, 0x82, 0x65,
-	0x18, 0x83, 0x40, 0x3c, 0x27, 0x61, 0x2e, 0x41, 0x98, 0x82, 0xf8, 0xfc, 0x82, 0x92, 0xcc, 0xfc,
-	0xbc, 0xc4, 0x1c, 0x27, 0x3e, 0x2e, 0x9e, 0xd2, 0xa2, 0x1c, 0x38, 0x3f, 0x89, 0x0d, 0x6c, 0xa3,
-	0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0xec, 0x4f, 0xc7, 0x39, 0x88, 0x00, 0x00, 0x00,
+	// 455 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x92, 0x3f, 0x8e, 0xd3, 0x40,
+	0x14, 0xc6, 0x71, 0x62, 0x27, 0xce, 0xcb, 0x66, 0xc3, 0x4e, 0x02, 0xcc, 0x06, 0x21, 0xa2, 0xa5,
+	0x49, 0x83, 0x57, 0x02, 0x71, 0x01, 0x44, 0x61, 0x0a, 0x9a, 0x11, 0x5b, 0xaf, 0xbc, 0xf1, 0x73,
+	0x64, 0x69, 0xec, 0xb1, 0x3c, 0x63, 0x24, 0x7a, 0x0e, 0x40, 0xc1, 0x01, 0x38, 0x00, 0x05, 0x07,
+	0xe0, 0x00, 0x14, 0x1c, 0x20, 0x47, 0xe0, 0x00, 0x14, 0x94, 0x68, 0x9e, 0xe3, 0x7f, 0x12, 0x55,
+	0xf4, 0x7e, 0xef, 0x7b, 0x2f, 0xfe, 0xbe, 0x37, 0xb0, 0x32, 0x1f, 0x0b, 0xbc, 0xcd, 0xd0, 0x44,
+	0x71, 0x64, 0xa2, 0xa0, 0x28, 0x95, 0x51, 0xcc, 0x8b, 0x8c, 0x8c, 0xf4, 0xe6, 0xe9, 0x41, 0xa9,
+	0x83, 0xc4, 0x6b, 0x82, 0x77, 0x55, 0x72, 0x6d, 0xd2, 0x0c, 0xb5, 0x89, 0xb2, 0xa2, 0xd6, 0x6d,
+	0x96, 0x34, 0x5c, 0x55, 0x69, 0x5c, 0x83, 0xab, 0xa3, 0x07, 0xfe, 0xbb, 0xd3, 0x2e, 0xb6, 0x06,
+	0xd7, 0xf6, 0x79, 0xbc, 0x75, 0x76, 0x5e, 0x78, 0x4f, 0x50, 0xc5, 0x1e, 0x80, 0x9b, 0x47, 0x19,
+	0xf2, 0x9f, 0xce, 0xd6, 0xd9, 0xcd, 0x42, 0x47, 0x50, 0xc9, 0x1e, 0xc3, 0xf4, 0x03, 0x96, 0x3a,
+	0x55, 0x39, 0xff, 0x36, 0xa2, 0x81, 0x91, 0x68, 0x08, 0xbb, 0x02, 0xd7, 0xfe, 0x09, 0xff, 0x3c,
+	0xde, 0x3a, 0xbb, 0xf9, 0x8b, 0x79, 0x40, 0xdf, 0x17, 0xdc, 0xdc, 0xbc, 0x7d, 0x13, 0x8e, 0x05,
+	0xf5, 0xd8, 0x2b, 0x38, 0xb7, 0xbf, 0xb7, 0x25, 0x26, 0x58, 0x62, 0xbe, 0x47, 0xfe, 0xe7, 0x3f,
+	0x6a, 0x57, 0x2c, 0xac, 0x4a, 0x34, 0x22, 0xf6, 0x1c, 0x46, 0x46, 0xf3, 0xa3, 0x4b, 0xd2, 0x4d,
+	0x50, 0x3b, 0x0e, 0x1a, 0xc7, 0xc1, 0xfb, 0xc6, 0x71, 0xe8, 0x89, 0x91, 0xd1, 0xec, 0x09, 0xf8,
+	0x98, 0xef, 0x55, 0x9c, 0xe6, 0x07, 0xfe, 0xc3, 0x23, 0x07, 0x13, 0xd1, 0x22, 0xf6, 0x0c, 0xe6,
+	0x7b, 0x95, 0x15, 0x25, 0x6a, 0x72, 0xf2, 0x75, 0x42, 0x8a, 0xa9, 0xe8, 0x53, 0xbb, 0x23, 0x49,
+	0x25, 0x52, 0x0a, 0x9f, 0xa6, 0xa4, 0xf0, 0x45, 0x8b, 0xd8, 0x0a, 0xc6, 0x55, 0x29, 0xf9, 0xef,
+	0xba, 0x33, 0x13, 0xb6, 0xb2, 0x8b, 0x63, 0xd4, 0xfb, 0x32, 0x2d, 0x8c, 0x5d, 0xfc, 0xcb, 0xa7,
+	0x26, 0x88, 0x3e, 0xb5, 0x93, 0x12, 0x73, 0xfe, 0x7d, 0xb6, 0x75, 0x76, 0xe3, 0x70, 0x2e, 0x6c,
+	0xc5, 0x2e, 0x61, 0xa2, 0x92, 0x44, 0xa3, 0xe1, 0x5f, 0x80, 0xf8, 0x99, 0x38, 0x01, 0x7b, 0x0a,
+	0x19, 0x69, 0xc3, 0xff, 0xda, 0x86, 0x1f, 0x2e, 0x04, 0x95, 0xaf, 0x97, 0xb0, 0xa0, 0xbb, 0x2a,
+	0xda, 0x1a, 0x49, 0x0b, 0xec, 0x97, 0x75, 0x80, 0xc1, 0xfd, 0xd3, 0x69, 0x06, 0x22, 0xca, 0xbf,
+	0x05, 0x97, 0xf0, 0x68, 0x78, 0x90, 0xae, 0xb5, 0x06, 0xd6, 0x3e, 0xa5, 0x8e, 0xae, 0xe0, 0xa2,
+	0x09, 0xb2, 0x83, 0x0f, 0x61, 0xdd, 0xcb, 0x6e, 0x20, 0x6e, 0x12, 0xeb, 0xe0, 0x39, 0x9c, 0x55,
+	0xa5, 0x1c, 0x0c, 0xf7, 0xf2, 0x19, 0xe8, 0x24, 0xf6, 0xea, 0x0b, 0x58, 0xd6, 0x91, 0x0c, 0xec,
+	0xd8, 0x30, 0x5a, 0x70, 0x37, 0xa1, 0x37, 0xf1, 0xf2, 0x5f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x0e,
+	0x9f, 0x07, 0xf4, 0x31, 0x03, 0x00, 0x00,
 }

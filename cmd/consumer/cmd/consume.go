@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"context"
+	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
+	"io"
 	"os"
 	"os/signal"
 	"syscall"
@@ -26,7 +28,7 @@ import (
 	conf "github.com/spf13/viper"
 
 	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
-	"github.com/binarly-io/binarly-atlas/pkg/kafka/consumer"
+	"github.com/binarly-io/binarly-atlas/pkg/kafka"
 	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 )
 
@@ -72,9 +74,36 @@ var consumeCmd = &cmd.Command{
 		log.Infof("Press Ctrl+C to exit...")
 
 		log.Infof("Config:\n%s", config_consumer.Config.String())
+		transport := kafka.NewKafkaDataChunkTransport(
+			nil,
+			kafka.NewConsumer(
+				kafka.Endpoint{
+					Brokers: config_consumer.Config.Brokers,
+					Topic:   config_consumer.Config.Topic,
+				},
+			),
+			true,
+		)
+		defer transport.Close()
 
-		consumer := kafka.NewConsumer(config_consumer.Config.Brokers, config_consumer.Config.GroupID, config_consumer.Config.Topic)
-		consumer.ConsumeLoop(config_consumer.Config.ReadNewest, config_consumer.Config.Ack)
+		f, err := atlas.OpenDataChunkFile(transport)
+		if err != nil {
+			log.Errorf("err: %v", err)
+		}
+		defer f.Close()
+
+		n, err := io.Copy(os.Stdout, f)
+		if err == nil {
+			log.Infof("written: %d", n)
+			f.PayloadMetadata.Log()
+		} else {
+			log.Errorf("err: %v", err)
+		}
+
+		//consumer := kafka.NewConsumerGroup(
+		//	config_consumer.Config.GroupID,
+		//)
+		//consumer.ConsumeLoop(config_consumer.Config.ReadNewest, config_consumer.Config.Ack)
 
 		<-ctx.Done()
 	},

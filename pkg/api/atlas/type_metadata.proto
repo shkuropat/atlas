@@ -16,14 +16,80 @@ syntax = "proto3";
 
 package atlas;
 
+import "google/protobuf/timestamp.proto";
+import "type_uuid.proto";
+
 // Metadata describes metadata or the object
 message Metadata {
-    // filename
-    oneof filename_optional {
-        string filename = 100;
+    oneof type_optional {
+        // Type of the object
+        // Object can be typed/identified either by type or by name
+        int32 type = 100;
     }
-    // URL
+
+    oneof name_optional {
+        // Name of the object
+        // Object can be typed/identified either by type or by name
+        string name = 200;
+    }
+
+    oneof version_optional {
+        // Version of the object
+        int32 version = 300;
+    }
+
+    oneof uuid_optional {
+        // Unique identified of the object
+        UUID uuid = 400;
+    }
+
+    oneof uuid_reference_optional {
+        // Unique identifier of the reference object, if necessary
+        UUID uuid_reference = 500;
+    }
+
+    oneof timestamp_optional {
+        // Timestamp is optional
+        google.protobuf.Timestamp ts = 600;
+    }
+
+    oneof encoding_optional {
+        // Encoding is optional
+        string encoding = 700;
+    }
+
+    oneof compression_optional {
+        // Compression is optional
+        string compression = 800;
+    }
+
+    oneof filename_optional {
+        // Filename is optional
+        string filename = 900;
+    }
+
     oneof url_optional {
-        string url = 200;
+        // URL is optional
+        string url = 1000;
+    }
+
+    oneof description_optional {
+        // Description is optional
+        string description = 1100;
+    }
+
+    oneof len_optional {
+        // Len is optional
+        int64 len = 1200;
+    }
+
+    oneof offset_optional {
+        // Offset is optional
+        int64 offset = 1300;
+    }
+
+    oneof last_optional {
+        // Last is optional
+        bool last = 1400;
     }
 }

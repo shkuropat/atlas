@@ -15,13 +15,16 @@
 package controller_service
 
 import (
-	log "github.com/sirupsen/logrus"
-
+	"fmt"
 	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
+	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
 	"github.com/binarly-io/binarly-atlas/pkg/config/service"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
+	"github.com/binarly-io/binarly-atlas/pkg/kafka"
 	"github.com/binarly-io/binarly-atlas/pkg/minio"
+	log "github.com/sirupsen/logrus"
+	"io"
 )
 
 func GetOutgoingQueue() chan *atlas.Command {
@@ -60,7 +63,8 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 		log.Infof("%s: %v", name, value)
 	}
 
-	_, _, err = relayIntoMinIO(DataChunksServer)
+	//_, _, err = relayIntoMinIO(DataChunksServer)
+	_, _, err = relayIntoKafka(DataChunksServer)
 	if err != nil {
 		log.Errorf("error: %v", err.Error())
 	}
@@ -96,12 +100,48 @@ func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64
 	return atlas.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, bucketName, objectName)
 }
 
-func relayIntoKafka() {
-	//	_, buf, metadata, err := pb.RecvDataChunkFile(DataChunksServer)
-	//
-	//	log.Infof("Data() Got file len: %d name: %v", buf.Len(), metadata.GetFilename())
-	//
-	//	producer := kafka.NewProducer(config_service.Config.Brokers, config_service.Config.Topic)
-	//	_ = producer.Send(buf.Bytes())
-	//
+func relayIntoKafka(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
+	// Kafka transport
+	kTransport := kafka.NewKafkaDataChunkTransport(
+		kafka.NewProducer(
+			kafka.Endpoint{
+				Brokers: config_consumer.Config.Brokers,
+				Topic:   config_consumer.Config.Topic,
+			},
+		),
+		nil,
+		true,
+	)
+	if kTransport == nil {
+		log.Errorf("no transport")
+		return 0, nil, fmt.Errorf("no transport")
+	}
+	defer kTransport.Close()
+
+	// Kafka file
+	kFile, err := atlas.OpenDataChunkFile(kTransport)
+	if err != nil {
+		log.Errorf("got error: %v", err)
+		return 0, nil, err
+	}
+	defer kFile.Close()
+
+	// Server file
+	sFile, err := atlas.OpenDataChunkFile(DataChunksServer)
+	if err != nil {
+		log.Errorf("got error: %v", err)
+		return 0, nil, err
+	}
+	defer sFile.Close()
+
+	n, err := io.Copy(kFile, sFile)
+	if err == nil {
+		log.Infof("written: %d", n)
+		sFile.PayloadMetadata.Log()
+		kFile.PayloadMetadata.Log()
+	} else {
+		log.Errorf("err: %v", err)
+	}
+
+	return n, sFile.PayloadMetadata, err
 }

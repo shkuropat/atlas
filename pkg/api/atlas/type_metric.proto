@@ -17,8 +17,7 @@ syntax = "proto3";
 package atlas;
 
 import "google/protobuf/timestamp.proto";
-import "type_typename.proto";
-import "type_header.proto";
+import "type_metadata.proto";
 
 enum MetricType {
     METRIC_TYPE_RESERVED    = 0;
@@ -70,11 +69,21 @@ enum MetricsType {
 
 // Metrics is a set of Metric tuples
 message Metrics {
-    Header header = 100;
+    Metadata header = 100;
 
     // MetricType can be specified once for the whole set of metrics, instead of specifying in each one of them
-    TypeName metric_type = 200;
+    oneof type_optional {
+        // Type of the object
+        // Object can be typed/identified either by type or by name
+        int32 type = 200;
+    }
+
+    oneof name_optional {
+        // Name of the object
+        // Object can be typed/identified either by type or by name
+        string name = 300;
+    }
 
     // Metrics is the purpose of the whole Metrics data type, is expected to be present all the time
-    repeated Metric metrics = 300;
+    repeated Metric metrics = 400;
 }

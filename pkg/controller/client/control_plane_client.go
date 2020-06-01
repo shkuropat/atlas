@@ -20,10 +20,9 @@ import (
 	"io"
 	"os"
 
-	log "github.com/sirupsen/logrus"
-
 	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 	"github.com/binarly-io/binarly-atlas/pkg/controller"
+	log "github.com/sirupsen/logrus"
 )
 
 // CommandsExchange exchanges commands
@@ -52,10 +51,11 @@ func DataExchange(
 	ControlPlaneClient atlas.ControlPlaneClient,
 	metadata *atlas.Metadata,
 	src io.Reader,
+	compress bool,
 	recv bool,
 ) (int64, int64, *bytes.Buffer, error) {
-	log.Infof("DataChunks() - start")
-	defer log.Infof("DataChunks() - end")
+	log.Infof("DataExchange() - start")
+	defer log.Infof("DataExchange() - end")
 
 	var (
 		sent, received int64
@@ -84,7 +84,7 @@ func DataExchange(
 	}()
 
 	if src != nil {
-		sent, err = atlas.SendDataChunkFile(DataChunksClient, metadata, src)
+		sent, err = atlas.SendDataChunkFile(DataChunksClient, metadata, src, compress)
 		if err != nil {
 			log.Warnf("SendDataChunkFile() failed with err %v", err)
 			return sent, 0, nil, err

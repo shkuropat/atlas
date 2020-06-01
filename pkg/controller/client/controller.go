@@ -41,9 +41,9 @@ func SendFile(client atlas.ControlPlaneClient, filename string) (int64, error) {
 		return 0, err
 	}
 
-	metadata := atlas.NewMetadata()
+	metadata := new(atlas.Metadata)
 	metadata.SetFilename(filepath.Base(filename))
-	n, _, _, err := DataExchange(client, metadata, f, false)
+	n, _, _, err := DataExchange(client, metadata, f, true, false)
 	log.Infof("DONE send file %s size %d err %v", filename, n, err)
 
 	return n, err
@@ -54,7 +54,7 @@ func SendStdin(client atlas.ControlPlaneClient) (int64, error) {
 	log.Info("SendStdin() - start")
 	defer log.Info("SendStdin() - end")
 
-	n, _, _, err := DataExchange(client, nil, os.Stdin, false)
+	n, _, _, err := DataExchange(client, nil, os.Stdin, true, false)
 	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
 	return n, err
 }

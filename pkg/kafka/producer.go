@@ -16,43 +16,56 @@ package kafka
 
 import (
 	"github.com/Shopify/sarama"
+	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 	log "github.com/sirupsen/logrus"
 )
 
+// Producer
 type Producer struct {
-	brokers []string
-	topic   string
+	Endpoint
+
+	config   *sarama.Config
+	producer sarama.SyncProducer
 }
 
 // NewProducer
-func NewProducer(brokers []string, topic string) *Producer {
-	return &Producer{
-		brokers: brokers,
-		topic:   topic,
+func NewProducer(endpoint Endpoint) *Producer {
+	var err error
+
+	p := &Producer{}
+	p.Endpoint = endpoint
+	p.config = sarama.NewConfig()
+	p.config.ClientID = softwareid.Name
+	p.producer, err = sarama.NewSyncProducer(p.Brokers, p.config)
+	if err != nil {
+		log.Error(err)
+		p.Close()
+		return nil
+	}
+
+	return p
+}
+
+// Close
+func (p *Producer) Close() {
+	if p.producer != nil {
+		_ = p.producer.Close()
+		p.producer = nil
 	}
 }
 
 // Send
 func (p *Producer) Send(data []byte) error {
-	producer, err := sarama.NewSyncProducer(p.brokers, nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	defer func() {
-		if err := producer.Close(); err != nil {
-			log.Error(err)
-		}
-	}()
 
 	msg := &sarama.ProducerMessage{
-		Topic: p.topic,
+		Topic: p.Topic,
 		Value: sarama.ByteEncoder(data),
-		// The partitioning key for this message.
-		// Key: 1
+		// Key
+		// Headers - relayed to consumer
+		// Metadata - relayed to the Successes and Errors channels
 	}
 
-	partition, offset, err := producer.SendMessage(msg)
+	partition, offset, err := p.producer.SendMessage(msg)
 	if err != nil {
 		log.Errorf("FAILED to send message: %s\n", err)
 	} else {

@@ -12,21 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+package kafka
 
-package atlas;
-
-// TypeName describes type or name of the object
-message TypeName {
-    oneof type_optional {
-        // Type of the object
-        // Object can be typed/identified either by type or by name
-        int32 type = 100;
-    }
-
-    oneof name_optional {
-        // Name of the object
-        // Object can be typed/identified either by type or by name
-        string name = 200;
-    }
+type Endpoint struct {
+	Brokers   []string
+	Topic     string
+	Partition int32
 }
