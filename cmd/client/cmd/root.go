@@ -22,8 +22,10 @@ import (
 	cmd "github.com/spf13/cobra"
 	conf "github.com/spf13/viper"
 
-	"github.com/binarly-io/binarly-atlas/cmd/common"
-	"github.com/binarly-io/binarly-atlas/pkg/config/client"
+	"github.com/binarly-io/atlas/pkg/ainit"
+	"github.com/binarly-io/atlas/pkg/alog"
+	"github.com/binarly-io/atlas/pkg/config"
+	"github.com/binarly-io/atlas/pkg/config/client"
 )
 
 const (
@@ -74,13 +76,13 @@ var (
 
 func init() {
 	cmd.OnInitialize(func() {
-		common.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFileNoExt)
+		ainit.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFileNoExt)
 		config_client.ReadIn()
 	})
 
 	// Common section
-	rootCmd.PersistentFlags().BoolVarP(&common.Verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().StringVar(&common.ConfigFile, "config", "", fmt.Sprintf("config file (default: %s)", common.PrintConfigFilePaths([]string{etcConfigFireDir, "$HOME/" + homedirConfigFileDir}, defaultConfigFile)))
+	rootCmd.PersistentFlags().BoolVarP(&alog.Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().StringVar(&config.ConfigFile, "config", "", fmt.Sprintf("config file (default: %s)", config.PrintConfigFilePaths([]string{etcConfigFireDir, "$HOME/" + homedirConfigFileDir}, defaultConfigFile)))
 
 	// Service section
 	rootCmd.PersistentFlags().StringVar(&serviceAddress, "service-address", defaultServiceAddress, fmt.Sprintf("The address of service to use in the format host:port, as %s", defaultServiceAddress))

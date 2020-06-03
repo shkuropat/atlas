@@ -18,7 +18,7 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/binarly-io/binarly-atlas/pkg/minio"
+	"github.com/binarly-io/atlas/pkg/minio"
 	log "github.com/sirupsen/logrus"
 )
 

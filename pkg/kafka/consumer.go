@@ -18,7 +18,7 @@ import (
 	"github.com/Shopify/sarama"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
+	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
 // Consumer

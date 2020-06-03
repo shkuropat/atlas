@@ -12,22 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package common
+package ainit
 
 import (
-	log "github.com/sirupsen/logrus"
+	"github.com/binarly-io/atlas/pkg/alog"
+	"github.com/binarly-io/atlas/pkg/config"
 )
 
-var (
-	// Verbose specifies whether app should be verbose
-	Verbose bool
-)
-
-// InitLog sets logging options
-func InitLog() {
-	log.SetFormatter(&log.TextFormatter{})
-
-	if Verbose {
-		log.SetLevel(log.TraceLevel)
-	}
+func Init(rootPaths, homeRelativePaths []string, defaultConfigFile string) {
+	alog.InitLog()
+	config.InitConfig(rootPaths, homeRelativePaths, defaultConfigFile)
 }

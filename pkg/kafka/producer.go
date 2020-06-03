@@ -16,8 +16,9 @@ package kafka
 
 import (
 	"github.com/Shopify/sarama"
-	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
 // Producer

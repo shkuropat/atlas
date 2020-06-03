@@ -19,7 +19,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
 // CommandSenderReceiver defines transport level interface (for both client and server),

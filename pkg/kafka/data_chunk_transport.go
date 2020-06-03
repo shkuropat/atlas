@@ -19,7 +19,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 
-	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
 type KafkaDataChunkTransport struct {

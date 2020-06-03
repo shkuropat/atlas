@@ -9,7 +9,7 @@ MANIFESTS_ROOT="${SRC_ROOT}/deploy"
 PKG_ROOT="${SRC_ROOT}/pkg"
 CONFIG_DIR="${SRC_ROOT}/config"
 
-REPO="github.com/binarly-io/binarly-atlas"
+REPO="github.com/binarly-io/atlas"
 
 # 1.2.3
 VERSION=$(cd "${SRC_ROOT}"; cat release)

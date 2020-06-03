@@ -16,7 +16,6 @@ package cmd
 
 import (
 	"context"
-	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
 	"io"
 	"os"
 	"os/signal"
@@ -27,9 +26,10 @@ import (
 	cmd "github.com/spf13/cobra"
 	conf "github.com/spf13/viper"
 
-	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
-	"github.com/binarly-io/binarly-atlas/pkg/kafka"
-	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/config/consumer"
+	"github.com/binarly-io/atlas/pkg/kafka"
+	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
 var (

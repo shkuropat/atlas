@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package common
+package config
 
 import (
 	hd "github.com/mitchellh/go-homedir"
@@ -22,10 +22,10 @@ import (
 	conf "github.com/spf13/viper"
 )
 
-const (
+var (
 	// Check for an env var with a name matching the key upper-cased and prefixed with the EnvPrefix
 	// Prefix has "_" added automatically, so no need to say 'ATLAS_'
-	CONFIG_ENV_VAR_PREFIX = "ATLAS"
+	configEnvVarPrefix = "ATLAS"
 )
 
 var (
@@ -77,13 +77,13 @@ func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string)
 		log.Infof("InitConfig() - looking for explicitly specified config: %s", ConfigFile)
 	}
 
-	log.Infof("InitConfig() - set env prefix: %v_", CONFIG_ENV_VAR_PREFIX)
+	log.Infof("InitConfig() - set env prefix: %v_", configEnvVarPrefix)
 	// By default empty environment variables are considered unset and will fall back to the next configuration source.
 	// To treat empty environment variables as set, use the AllowEmptyEnv method.
 	conf.AllowEmptyEnv(false)
 	// Check for an env var with a name matching the key upper-cased and prefixed with the EnvPrefix
 	// Prefix has "_" added automatically, so no need to say 'ATLAS_'
-	conf.SetEnvPrefix(CONFIG_ENV_VAR_PREFIX)
+	conf.SetEnvPrefix(configEnvVarPrefix)
 	// SetEnvKeyReplacer allows you to use a strings.Replacer object to rewrite Env keys to an extent.
 	// This is useful if you want to use - or something in your Get() calls, but want your environmental variables to use _ delimiters.
 	conf.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))

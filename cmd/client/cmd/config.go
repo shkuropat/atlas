@@ -19,7 +19,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	cmd "github.com/spf13/cobra"
 
-	"github.com/binarly-io/binarly-atlas/pkg/config/client"
+	"github.com/binarly-io/atlas/pkg/config/client"
 )
 
 var configCmd = &cmd.Command{

@@ -17,7 +17,7 @@ package controller_service
 import (
 	"context"
 
-	atlas_health "github.com/binarly-io/binarly-atlas/pkg/api/health"
+	atlas_health "github.com/binarly-io/atlas/pkg/api/health"
 )
 
 type HealthServer struct {

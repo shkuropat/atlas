@@ -17,7 +17,7 @@ package controller_service
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
 func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {

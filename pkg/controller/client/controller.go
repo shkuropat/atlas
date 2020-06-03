@@ -21,7 +21,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
 // SendFile sends file from client to service and receives response back (if any)

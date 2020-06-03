@@ -20,7 +20,7 @@ import (
 	"github.com/MakeNowJust/heredoc"
 	cmd "github.com/spf13/cobra"
 
-	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
+	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
 var versionCmd = &cmd.Command{

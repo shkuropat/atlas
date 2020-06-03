@@ -16,9 +16,10 @@ package cmd
 
 import (
 	"github.com/MakeNowJust/heredoc"
-	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
 	log "github.com/sirupsen/logrus"
 	cmd "github.com/spf13/cobra"
+
+	"github.com/binarly-io/atlas/pkg/config/consumer"
 )
 
 var configCmd = &cmd.Command{

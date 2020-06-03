@@ -27,11 +27,11 @@ import (
 	conf "github.com/spf13/viper"
 	"google.golang.org/grpc"
 
-	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
-	"github.com/binarly-io/binarly-atlas/pkg/controller"
-	"github.com/binarly-io/binarly-atlas/pkg/controller/client"
-	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
-	"github.com/binarly-io/binarly-atlas/pkg/transport/client"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/controller"
+	"github.com/binarly-io/atlas/pkg/controller/client"
+	"github.com/binarly-io/atlas/pkg/softwareid"
+	"github.com/binarly-io/atlas/pkg/transport/client"
 )
 
 const (

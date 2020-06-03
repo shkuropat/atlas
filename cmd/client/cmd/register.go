@@ -21,7 +21,7 @@ import (
 	conf "github.com/spf13/viper"
 	"golang.org/x/oauth2/dcrp"
 
-	"github.com/binarly-io/binarly-atlas/pkg/softwareid"
+	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
 var (

@@ -20,8 +20,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
-	"github.com/binarly-io/binarly-atlas/pkg/controller"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/controller"
 	log "github.com/sirupsen/logrus"
 )
 

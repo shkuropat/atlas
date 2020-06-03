@@ -12,9 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package common
+package alog
 
-func Init(rootPaths, homeRelativePaths []string, defaultConfigFile string) {
-	InitLog()
-	InitConfig(rootPaths, homeRelativePaths, defaultConfigFile)
+import (
+	log "github.com/sirupsen/logrus"
+)
+
+var (
+	// Verbose specifies whether app should be verbose
+	Verbose bool
+)
+
+// InitLog sets logging options
+func InitLog() {
+	log.SetFormatter(&log.TextFormatter{})
+
+	if Verbose {
+		log.SetLevel(log.TraceLevel)
+	}
 }

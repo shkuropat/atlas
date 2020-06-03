@@ -15,7 +15,7 @@
 package main
 
 import (
-	"github.com/binarly-io/binarly-atlas/cmd/service/cmd"
+	"github.com/binarly-io/atlas/cmd/service/cmd"
 )
 
 func main() {

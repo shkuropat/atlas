@@ -18,7 +18,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/binarly-io/binarly-atlas/pkg/auth/client"
+	"github.com/binarly-io/atlas/pkg/auth/client"
 )
 
 // GetGRPCClientOptions  builds gRPC dial options

@@ -16,15 +16,16 @@ package controller_service
 
 import (
 	"fmt"
-	"github.com/binarly-io/binarly-atlas/pkg/api/atlas"
-	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
-	"github.com/binarly-io/binarly-atlas/pkg/config/consumer"
-	"github.com/binarly-io/binarly-atlas/pkg/config/service"
-	"github.com/binarly-io/binarly-atlas/pkg/controller"
-	"github.com/binarly-io/binarly-atlas/pkg/kafka"
-	"github.com/binarly-io/binarly-atlas/pkg/minio"
-	log "github.com/sirupsen/logrus"
 	"io"
+
+	log "github.com/sirupsen/logrus"
+
+	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/auth/service"
+	"github.com/binarly-io/atlas/pkg/config/service"
+	"github.com/binarly-io/atlas/pkg/controller"
+	"github.com/binarly-io/atlas/pkg/kafka"
+	"github.com/binarly-io/atlas/pkg/minio"
 )
 
 func GetOutgoingQueue() chan *atlas.Command {
@@ -105,8 +106,8 @@ func relayIntoKafka(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64
 	kTransport := kafka.NewKafkaDataChunkTransport(
 		kafka.NewProducer(
 			kafka.Endpoint{
-				Brokers: config_consumer.Config.Brokers,
-				Topic:   config_consumer.Config.Topic,
+				Brokers: config_service.Config.Brokers,
+				Topic:   config_service.Config.Topic,
 			},
 		),
 		nil,

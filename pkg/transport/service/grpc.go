@@ -18,7 +18,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
-	"github.com/binarly-io/binarly-atlas/pkg/auth/service"
+	"github.com/binarly-io/atlas/pkg/auth/service"
 )
 
 // GetGRPCServerOptions builds gRPC server options
