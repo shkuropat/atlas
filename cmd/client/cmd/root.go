@@ -23,9 +23,10 @@ import (
 	conf "github.com/spf13/viper"
 
 	"github.com/binarly-io/atlas/pkg/ainit"
-	"github.com/binarly-io/atlas/pkg/alog"
 	"github.com/binarly-io/atlas/pkg/config"
 	"github.com/binarly-io/atlas/pkg/config/client"
+	"github.com/binarly-io/atlas/pkg/logger"
+	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
 const (
@@ -76,12 +77,12 @@ var (
 
 func init() {
 	cmd.OnInitialize(func() {
-		ainit.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFileNoExt)
+		ainit.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFileNoExt, softwareid.Name)
 		config_client.ReadIn()
 	})
 
 	// Common section
-	rootCmd.PersistentFlags().BoolVarP(&alog.Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&logger.Verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().StringVar(&config.ConfigFile, "config", "", fmt.Sprintf("config file (default: %s)", config.PrintConfigFilePaths([]string{etcConfigFireDir, "$HOME/" + homedirConfigFileDir}, defaultConfigFile)))
 
 	// Service section

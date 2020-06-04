@@ -23,12 +23,6 @@ import (
 )
 
 var (
-	// Check for an env var with a name matching the key upper-cased and prefixed with the EnvPrefix
-	// Prefix has "_" added automatically, so no need to say 'ATLAS_'
-	configEnvVarPrefix = "ATLAS"
-)
-
-var (
 	// ConfigFile defines path to config file to be used
 	ConfigFile string
 )
@@ -47,7 +41,7 @@ func PrintConfigFilePaths(paths []string, filename string) string {
 }
 
 // InitConfig reads in config file and ENV variables if set.
-func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string) {
+func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string, configEnvVarPrefix string) {
 	log.Info("InitConfig()")
 
 	if ConfigFile == "" {
@@ -77,6 +71,7 @@ func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string)
 		log.Infof("InitConfig() - looking for explicitly specified config: %s", ConfigFile)
 	}
 
+	configEnvVarPrefix = strings.ToUpper(configEnvVarPrefix)
 	log.Infof("InitConfig() - set env prefix: %v_", configEnvVarPrefix)
 	// By default empty environment variables are considered unset and will fall back to the next configuration source.
 	// To treat empty environment variables as set, use the AllowEmptyEnv method.

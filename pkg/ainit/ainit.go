@@ -15,11 +15,11 @@
 package ainit
 
 import (
-	"github.com/binarly-io/atlas/pkg/alog"
 	"github.com/binarly-io/atlas/pkg/config"
+	"github.com/binarly-io/atlas/pkg/logger"
 )
 
-func Init(rootPaths, homeRelativePaths []string, defaultConfigFile string) {
-	alog.InitLog()
-	config.InitConfig(rootPaths, homeRelativePaths, defaultConfigFile)
+func Init(rootPaths, homeRelativePaths []string, defaultConfigFile, configEnvVarPrefix string) {
+	logger.InitLog()
+	config.InitConfig(rootPaths, homeRelativePaths, defaultConfigFile, configEnvVarPrefix)
 }

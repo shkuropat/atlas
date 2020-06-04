@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package alog
+package logger
 
 import (
 	log "github.com/sirupsen/logrus"
