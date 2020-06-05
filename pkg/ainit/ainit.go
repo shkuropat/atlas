@@ -19,7 +19,7 @@ import (
 	"github.com/binarly-io/atlas/pkg/logger"
 )
 
-func Init(rootPaths, homeRelativePaths []string, defaultConfigFile, configEnvVarPrefix string) {
+func Init(conf *config.Config) {
 	logger.InitLog()
-	config.InitConfig(rootPaths, homeRelativePaths, defaultConfigFile, configEnvVarPrefix)
+	config.InitConfig(conf)
 }

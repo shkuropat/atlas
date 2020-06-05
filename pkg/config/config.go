@@ -15,9 +15,12 @@
 package config
 
 import (
-	hd "github.com/mitchellh/go-homedir"
+	"fmt"
+	"os"
+	"runtime"
 	"strings"
 
+	hd "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	conf "github.com/spf13/viper"
 )
@@ -27,63 +30,147 @@ var (
 	ConfigFile string
 )
 
-func FullConfigFilePaths(paths []string, filename string) []string {
+func joinFilePaths(paths []string, filename string) []string {
 	res := []string{}
 	for _, path := range paths {
-		res = append(res, path+"/"+filename)
+		res = append(res, fmt.Sprintf("%s%c%s", path, os.PathSeparator, filename))
 	}
 
 	return res
 }
 
-func PrintConfigFilePaths(paths []string, filename string) string {
-	return strings.Join(FullConfigFilePaths(paths, filename), " ")
+func getFilePathsString(paths []string, filename string) string {
+	return strings.Join(joinFilePaths(paths, filename), string(os.PathListSeparator))
+}
+
+const (
+	root = "root"
+	home = "home"
+
+	windows = "windows"
+	linux   = "linux"
+)
+
+type PathSet map[string][]string
+type PathOptions map[string]PathSet
+type Config struct {
+	pathOptions  PathOptions
+	envVarPrefix string
+	configFile   string
+	configType   string
+}
+
+func NewConfig() *Config {
+	config := &Config{
+		envVarPrefix: "",
+		configFile:   "config",
+		configType:   "yaml",
+	}
+	config.pathOptions = make(PathOptions)
+	return config
+}
+
+func (c *Config) SetEnvVarPrefix(prefix string) *Config {
+	c.envVarPrefix = strings.Replace(strings.ToUpper(prefix), "-", "_", -1)
+	return c
+}
+
+func (c *Config) SetConfigFile(file string) *Config {
+	c.configFile = file
+	return c
+}
+
+func (c *Config) SetConfigType(_type string) *Config {
+	c.configType = _type
+	return c
+}
+
+func (c *Config) AddWindowsPaths(rootPaths, homeRelativePaths []string) *Config {
+	pathSet := make(PathSet)
+	pathSet[root] = rootPaths
+	pathSet[home] = homeRelativePaths
+
+	c.pathOptions[windows] = pathSet
+	return c
+}
+
+func (c *Config) AddLinuxPaths(rootPaths, homeRelativePaths []string) *Config {
+	pathSet := make(PathSet)
+	pathSet[root] = rootPaths
+	pathSet[home] = homeRelativePaths
+
+	c.pathOptions[linux] = pathSet
+	return c
+}
+
+func (c *Config) getRootPaths() []string {
+	return c.getPaths(root)
+}
+
+func (c *Config) getHomePaths() []string {
+	return c.getPaths(home)
+}
+
+func (c *Config) getPaths(what string) []string {
+	if _, ok := c.pathOptions[runtime.GOOS]; ok {
+		paths, _ := c.pathOptions[runtime.GOOS][what]
+		return paths
+	}
+	return nil
 }
 
 // InitConfig reads in config file and ENV variables if set.
-func InitConfig(rootPaths, homeRelativePaths []string, defaultConfigFile string, configEnvVarPrefix string) {
+func InitConfig(config *Config) {
 	log.Info("InitConfig()")
 
+	if config == nil {
+		// Provide some default config
+		config = NewConfig()
+	}
+
 	if ConfigFile == "" {
+		// Config file is not explicitly specified, we need to find it
 		// Use config file from home directory
 		homedir, err := hd.Dir()
 		if err != nil {
 			log.Fatalf("InitConfig() - unable to find homedir %v", err)
 		}
 		// Look for default config file in root-based list of dirs, such as /etc, /opt/etc ...
-		for _, path := range rootPaths {
+		for _, path := range config.getRootPaths() {
 			log.Infof("InitConfig() - add root path to look for config: %v", path)
 			conf.AddConfigPath(path)
 		}
 		// Look for default config file in HOMEDIR-based list of dirs, such as $HOME/.atlas ...
-		for _, path := range homeRelativePaths {
+		for _, path := range config.getHomePaths() {
 			homeRelativePath := homedir + "/" + path
 			log.Infof("InitConfig() - add home relative path to look for config: %v : %v", path, homeRelativePath)
 			conf.AddConfigPath(homeRelativePath)
 		}
-		log.Infof("InitConfig() - add config file name to look for: %v", defaultConfigFile)
 
-		conf.SetConfigName(defaultConfigFile)
-		conf.SetConfigType("yaml") // REQUIRED if the config file does not have the extension in the name
+		log.Infof("InitConfig() - add config file name to look for: %v", config.configFile)
+		log.Infof("InitConfig() - add config file type to look for: %v", config.configType)
+		conf.SetConfigName(config.configFile)
+		conf.SetConfigType(config.configType) // REQUIRED if the config file does not have the extension in the name
 	} else {
 		// Look for explicitly specified config file
 		conf.SetConfigFile(ConfigFile)
 		log.Infof("InitConfig() - looking for explicitly specified config: %s", ConfigFile)
 	}
 
-	configEnvVarPrefix = strings.ToUpper(configEnvVarPrefix)
-	log.Infof("InitConfig() - set env prefix: %v_", configEnvVarPrefix)
-	// By default empty environment variables are considered unset and will fall back to the next configuration source.
-	// To treat empty environment variables as set, use the AllowEmptyEnv method.
-	conf.AllowEmptyEnv(false)
-	// Check for an env var with a name matching the key upper-cased and prefixed with the EnvPrefix
-	// Prefix has "_" added automatically, so no need to say 'ATLAS_'
-	conf.SetEnvPrefix(configEnvVarPrefix)
-	// SetEnvKeyReplacer allows you to use a strings.Replacer object to rewrite Env keys to an extent.
-	// This is useful if you want to use - or something in your Get() calls, but want your environmental variables to use _ delimiters.
-	conf.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	// Check ENV variables for all keys set in config, default & flags
-	conf.AutomaticEnv()
+	if config.envVarPrefix != "" {
+		log.Infof("InitConfig() - set env prefix: %v_", config.envVarPrefix)
+		// By default empty environment variables are considered unset and will fall back to the next configuration source.
+		// To treat empty environment variables as set, use the AllowEmptyEnv method.
+		conf.AllowEmptyEnv(false)
+		// Check for an env var with a name matching the key upper-cased and prefixed with the EnvPrefix
+		// Prefix has "_" added automatically, so no need to say 'ATLAS_'
+		conf.SetEnvPrefix(config.envVarPrefix)
+		// SetEnvKeyReplacer allows you to use a strings.Replacer object to rewrite Env keys to an extent.
+		// This is useful if you want to use - or something in your Get() calls, but want your environmental variables to use _ delimiters.
+		conf.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+		// Check ENV variables for all keys set in config, default & flags
+		conf.AutomaticEnv()
+	}
 
 	if err := conf.ReadInConfig(); err == nil {
 		log.Infof("InitConfig() - config file used: %s", conf.ConfigFileUsed())

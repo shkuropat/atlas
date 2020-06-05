@@ -77,13 +77,17 @@ var (
 
 func init() {
 	cmd.OnInitialize(func() {
-		ainit.Init([]string{etcConfigFireDir}, []string{homedirConfigFileDir}, defaultConfigFileNoExt, softwareid.Name)
+		conf := config.NewConfig().
+			AddLinuxPaths([]string{etcConfigFireDir}, []string{homedirConfigFileDir}).
+			SetConfigFile(defaultConfigFileNoExt).
+			SetEnvVarPrefix(softwareid.Name)
+		ainit.Init(conf)
 		config_client.ReadIn()
 	})
 
 	// Common section
 	rootCmd.PersistentFlags().BoolVarP(&logger.Verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().StringVar(&config.ConfigFile, "config", "", fmt.Sprintf("config file (default: %s)", config.PrintConfigFilePaths([]string{etcConfigFireDir, "$HOME/" + homedirConfigFileDir}, defaultConfigFile)))
+	rootCmd.PersistentFlags().StringVar(&config.ConfigFile, "config", "", fmt.Sprintf("config file (default: %s)", defaultConfigFile))
 
 	// Service section
 	rootCmd.PersistentFlags().StringVar(&serviceAddress, "service-address", defaultServiceAddress, fmt.Sprintf("The address of service to use in the format host:port, as %s", defaultServiceAddress))
