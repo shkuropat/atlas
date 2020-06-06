@@ -1,0 +1,10 @@
+#!/bin/bash
+
+ACCESS_KEY="minio"
+SECRET_KEY="minio123"
+ACCESS_KEY_BASE64=$(echo -n "${ACCESS_KEY}" | base64)
+SECRET_KEY_BASE64=$(echo -n "${SECRET_KEY}" | base64)
+SERVERS_NUM="1"
+VOLUMES_PER_SERVER="1"
+VOLUME_SIZE="1Gi"
+STORAGE_CLASS_NAME="gp2"
