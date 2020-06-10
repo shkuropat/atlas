@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/binarly-io/atlas/pkg/minio"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -91,51 +90,4 @@ func RecvDataChunkFileIntoBuf(src DataChunkTransport) (int64, *bytes.Buffer, *Me
 	log.Infof("data: %s", buf.String())
 
 	return written, buf, metadata, err
-}
-
-// RelayDataChunkFileIntoMinIO
-func RelayDataChunkFileIntoMinIO(
-	src DataChunkTransport,
-	mi *minio.MinIO,
-	bucketName string,
-	objectName string,
-) (int64, *Metadata, error) {
-	log.Infof("RelayDataChunkFileIntoMinIO() - start")
-	defer log.Infof("RelayDataChunkFileIntoMinIO() - end")
-
-	f, err := OpenDataChunkFile(src)
-	if err != nil {
-		log.Errorf("got error: %v", err)
-		return 0, nil, err
-	}
-	defer f.Close()
-
-	written, err := mi.Put(bucketName, objectName, f)
-	if err != nil {
-		log.Errorf("RelayDataChunkFileIntoMinIO() got error: %v", err.Error())
-	}
-	f.PayloadMetadata.Log()
-
-	return written, f.PayloadMetadata, err
-}
-
-// RelayDataChunkFileFromMinIO
-func RelayDataChunkFileFromMinIO(
-	dst DataChunkTransport,
-	mi *minio.MinIO,
-	bucketName string,
-	objectName string,
-) (int64, error) {
-	log.Infof("RelayDataChunkFileFromMinIO() - start")
-	defer log.Infof("RelayDataChunkFileFromMinIO() - end")
-
-	r, err := mi.Get(bucketName, objectName)
-	if err != nil {
-		log.Errorf("got error from MinIO: %v", err)
-		return 0, err
-	}
-
-	metadata := new(Metadata)
-	metadata.SetFilename(objectName)
-	return SendDataChunkFile(dst, metadata, r, true)
 }

@@ -98,7 +98,7 @@ func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64
 	bucketName := "bucket1"
 	objectName := atlas.CreateNewUUID()
 
-	return atlas.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, bucketName, objectName)
+	return minio.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, bucketName, objectName)
 }
 
 func relayIntoKafka(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
