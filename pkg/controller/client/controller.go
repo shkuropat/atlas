@@ -15,6 +15,8 @@
 package controller_client
 
 import (
+	"bytes"
+	"io"
 	"os"
 	"path/filepath"
 	"time"
@@ -54,9 +56,30 @@ func SendStdin(client atlas.ControlPlaneClient) (int64, error) {
 	log.Info("SendStdin() - start")
 	defer log.Info("SendStdin() - end")
 
-	n, _, _, err := DataExchange(client, nil, os.Stdin, true, false)
+	metadata := new(atlas.Metadata)
+	metadata.SetFilename(os.Stdin.Name())
+	n, _, _, err := DataExchange(client, metadata, os.Stdin, true, false)
 	log.Infof("DONE send %s size %d err %v", os.Stdin.Name(), n, err)
 	return n, err
+}
+
+// SendReader
+func SendReader(client atlas.ControlPlaneClient, r io.Reader, metadata *atlas.Metadata) (int64, error) {
+	log.Info("SendReader() - start")
+	defer log.Info("SendReader() - end")
+
+	n, _, _, err := DataExchange(client, metadata, r, true, false)
+	log.Infof("DONE send %s size %d err %v", "io.Reader", n, err)
+	return n, err
+}
+
+// SendBytes
+func SendBytes(client atlas.ControlPlaneClient, data []byte, metadata *atlas.Metadata) (int64, error) {
+	log.Info("SendBytes() - start")
+	defer log.Info("SendBytes() - end")
+
+	r := bytes.NewReader(data)
+	return SendReader(client, r, metadata)
 }
 
 func SendEchoRequest(outgoingQueue chan *atlas.Command) {
