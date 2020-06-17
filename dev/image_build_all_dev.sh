@@ -18,9 +18,6 @@ fi
 echo "Build Service..."
 DOCKERHUB_LOGIN="${DOCKERHUB_LOGIN}" "${CUR_DIR}"/image_build_service_dev.sh
 
-echo "Build Client..."
-DOCKERHUB_LOGIN="${DOCKERHUB_LOGIN}" "${CUR_DIR}"/image_build_client_dev.sh
-
 echo "Build Consumer..."
 DOCKERHUB_LOGIN="${DOCKERHUB_LOGIN}" "${CUR_DIR}"/image_build_consumer_dev.sh
 

@@ -9,8 +9,5 @@ CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 echo -n "Service..."
 "${CUR_DIR}"/go_build_service.sh
 
-echo -n "Client..."
-"${CUR_DIR}"/go_build_client.sh
-
 echo -n "Consumer..."
 "${CUR_DIR}"/go_build_consumer.sh

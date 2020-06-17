@@ -126,7 +126,6 @@ golang.org/x/net/trace
 # golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d => github.com/sunsingerus/oauth2 v0.0.0-20200410181841-d7afaacd4cbe
 golang.org/x/oauth2
 golang.org/x/oauth2/clientcredentials
-golang.org/x/oauth2/dcrp
 golang.org/x/oauth2/google
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
