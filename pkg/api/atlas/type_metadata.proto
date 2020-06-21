@@ -18,6 +18,7 @@ package atlas;
 
 import "google/protobuf/timestamp.proto";
 import "type_uuid.proto";
+import "type_s3_address.proto";
 
 // Metadata describes metadata or the object
 message Metadata {
@@ -73,23 +74,28 @@ message Metadata {
         string url = 1000;
     }
 
+    oneof s3address_optional {
+        // S3 address is optional
+        S3Address s3address = 1100;
+    }
+
     oneof description_optional {
         // Description is optional
-        string description = 1100;
+        string description = 1200;
     }
 
     oneof len_optional {
         // Len is optional
-        int64 len = 1200;
+        int64 len = 1300;
     }
 
     oneof offset_optional {
         // Offset is optional
-        int64 offset = 1300;
+        int64 offset = 1400;
     }
 
     oneof last_optional {
         // Last is optional
-        bool last = 1400;
+        bool last = 1500;
     }
 }

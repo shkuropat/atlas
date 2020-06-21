@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package atlas
 
-import (
-	"github.com/binarly-io/atlas/cmd/service/cmd"
-)
-
-func main() {
-	// Application entry point
-	cmd.Execute()
+func NewKafkaAddress(topic string, partition int32) *KafkaAddress {
+	return &KafkaAddress{
+		Topic:     topic,
+		Partition: partition,
+	}
 }

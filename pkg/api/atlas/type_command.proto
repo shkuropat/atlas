@@ -36,4 +36,7 @@ enum CommandType {
 
 message Command {
     Metadata header = 100;
+
+    // May contain any arbitrary sequence of bytes no longer than 2^32
+    bytes bytes = 200;
 }

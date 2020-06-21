@@ -23,10 +23,15 @@ import (
 )
 
 type MinIODataChunkTransport struct {
-	mi     *MinIO
-	close  bool
+	// MinIO handler
+	mi *MinIO
+	// Not used yet
+	close bool
+	// Name of the bucket where object located
 	bucket string
+	// Name of the object which contains data chunks
 	object string
+	// Slice of data chunks targeted as a new object
 	chunks []string
 }
 
@@ -42,14 +47,22 @@ func NewMinIODataChunkTransport(mi *MinIO, bucket, object string, close bool) *M
 
 // Close
 func (t *MinIODataChunkTransport) Close() error {
+	return t.compose()
+}
+
+// compose object out of chunks, if any
+func (t *MinIODataChunkTransport) compose() error {
+	// Compose single object out of slice of chunks targeted to be the object
+
+	// We need to have at least 1 chunk to compose object from
+	if len(t.chunks) < 1 {
+		return nil
+	}
 
 	// Slice of sources.
 	sources := make([]minio.SourceInfo, 0)
 	for _, chunk := range t.chunks {
-		sources = append(sources, minio.NewSourceInfo(
-			t.bucket, chunk, nil,
-		),
-		)
+		sources = append(sources, minio.NewSourceInfo(t.bucket, chunk, nil))
 	}
 
 	// Create destination info
@@ -67,7 +80,7 @@ func (t *MinIODataChunkTransport) Close() error {
 	return nil
 }
 
-// Send
+// Send puts each data chunk into own uniq-UUID-named object in bucket and appends object to slice of chunks
 func (t *MinIODataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
 
 	uuid, err := uuid.NewUUID()

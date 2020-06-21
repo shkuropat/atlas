@@ -16,6 +16,7 @@ package kafka
 
 import (
 	"github.com/Shopify/sarama"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/softwareid"
@@ -23,21 +24,23 @@ import (
 
 // Producer
 type Producer struct {
-	Endpoint
+	endpoint *Endpoint
+	address  *atlas.KafkaAddress
 
 	config   *sarama.Config
 	producer sarama.SyncProducer
 }
 
 // NewProducer
-func NewProducer(endpoint Endpoint) *Producer {
+func NewProducer(endpoint *Endpoint, address *atlas.KafkaAddress) *Producer {
 	var err error
 
 	p := &Producer{}
-	p.Endpoint = endpoint
+	p.endpoint = endpoint
+	p.address = address
 	p.config = sarama.NewConfig()
 	p.config.ClientID = softwareid.Name
-	p.producer, err = sarama.NewSyncProducer(p.Brokers, p.config)
+	p.producer, err = sarama.NewSyncProducer(p.endpoint.Brokers, p.config)
 	if err != nil {
 		log.Error(err)
 		p.Close()
@@ -59,7 +62,7 @@ func (p *Producer) Close() {
 func (p *Producer) Send(data []byte) error {
 
 	msg := &sarama.ProducerMessage{
-		Topic: p.Topic,
+		Topic: p.address.Topic,
 		Value: sarama.ByteEncoder(data),
 		// Key
 		// Headers - relayed to consumer

@@ -18,44 +18,31 @@ import (
 	"io"
 
 	"github.com/golang/protobuf/proto"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-type KafkaDataChunkTransport struct {
-	producer *Producer
-	consumer *Consumer
-	close    bool
+type DataChunkTransport struct {
+	Transport
 }
 
-// NewKafkaDataChunkTransport
-func NewKafkaDataChunkTransport(producer *Producer, consumer *Consumer, close bool) *KafkaDataChunkTransport {
-	return &KafkaDataChunkTransport{
-		producer: producer,
-		consumer: consumer,
-		close:    close,
-	}
-}
+// NewDataChunkTransport
+func NewDataChunkTransport(producer *Producer, consumer *Consumer, close bool) *DataChunkTransport {
+	log.Infof("NewDataChunkTransport() - start")
+	defer log.Infof("NewDataChunkTransport() - end")
 
-// Close
-func (t *KafkaDataChunkTransport) Close() {
-	if !t.close {
-		return
-	}
-
-	if t.producer != nil {
-		t.producer.Close()
-		t.producer = nil
-	}
-
-	if t.consumer != nil {
-		t.consumer.Close()
-		t.consumer = nil
+	return &DataChunkTransport{
+		Transport{
+			producer: producer,
+			consumer: consumer,
+			close:    close,
+		},
 	}
 }
 
 // Send
-func (t *KafkaDataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
+func (t *DataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
 	if buf, err := proto.Marshal(dataChunk); err == nil {
 		return t.producer.Send(buf)
 	} else {
@@ -64,7 +51,7 @@ func (t *KafkaDataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
 }
 
 // Recv
-func (t *KafkaDataChunkTransport) Recv() (*atlas.DataChunk, error) {
+func (t *DataChunkTransport) Recv() (*atlas.DataChunk, error) {
 	msg := t.consumer.Recv()
 	if msg == nil {
 		// TODO not sure

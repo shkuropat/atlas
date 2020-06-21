@@ -24,8 +24,7 @@ import (
 func RelayDataChunkFileIntoMinIO(
 	src atlas.DataChunkTransport,
 	mi *MinIO,
-	bucketName string,
-	objectName string,
+	s3address *atlas.S3Address,
 ) (int64, *atlas.Metadata, error) {
 	log.Infof("RelayDataChunkFileIntoMinIO() - start")
 	defer log.Infof("RelayDataChunkFileIntoMinIO() - end")
@@ -37,7 +36,7 @@ func RelayDataChunkFileIntoMinIO(
 	}
 	defer f.Close()
 
-	written, err := mi.Put(bucketName, objectName, f)
+	written, err := mi.Put(s3address.Bucket, s3address.Object, f)
 	if err != nil {
 		log.Errorf("RelayDataChunkFileIntoMinIO() got error: %v", err.Error())
 	}
@@ -50,19 +49,18 @@ func RelayDataChunkFileIntoMinIO(
 func RelayDataChunkFileFromMinIO(
 	dst atlas.DataChunkTransport,
 	mi *MinIO,
-	bucketName string,
-	objectName string,
+	s3address *atlas.S3Address,
 ) (int64, error) {
 	log.Infof("RelayDataChunkFileFromMinIO() - start")
 	defer log.Infof("RelayDataChunkFileFromMinIO() - end")
 
-	r, err := mi.Get(bucketName, objectName)
+	r, err := mi.Get(s3address.Bucket, s3address.Object)
 	if err != nil {
 		log.Errorf("got error from MinIO: %v", err)
 		return 0, err
 	}
 
 	metadata := new(atlas.Metadata)
-	metadata.SetFilename(objectName)
+	metadata.SetFilename(s3address.Object)
 	return atlas.SendDataChunkFile(dst, metadata, r, true)
 }

@@ -18,12 +18,14 @@ import (
 	"github.com/Shopify/sarama"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
 // Consumer
 type Consumer struct {
-	Endpoint
+	endpoint *Endpoint
+	address  *atlas.KafkaAddress
 
 	config            *sarama.Config
 	consumer          sarama.Consumer
@@ -31,28 +33,50 @@ type Consumer struct {
 }
 
 // NewConsumer
-func NewConsumer(endpoint Endpoint) *Consumer {
+func NewConsumer(endpoint *Endpoint, address *atlas.KafkaAddress) *Consumer {
 	var err error
 
 	c := &Consumer{}
-	c.Endpoint = endpoint
+	c.endpoint = endpoint
+	c.address = address
 	c.config = sarama.NewConfig()
 	c.config.ClientID = softwareid.Name
-	c.consumer, err = sarama.NewConsumer(c.Brokers, c.config)
+	c.consumer, err = sarama.NewConsumer(c.endpoint.Brokers, c.config)
 	if err != nil {
 		c.Close()
+		log.Errorf("unable to create new Kafka consumer with err: %v", err)
 		return nil
 	}
-	c.partitionConsumer, err = c.consumer.ConsumePartition(c.Topic, c.Partition, sarama.OffsetNewest)
+
+	topics, err := c.consumer.Topics()
 	if err != nil {
 		c.Close()
+		log.Errorf("unable to list topics with err: %v", err)
+		return nil
+	}
+
+	partitions, err := c.consumer.Partitions(c.address.Topic)
+	if err != nil {
+		c.Close()
+		log.Errorf("unable to list partitions with err: %v", err)
+		return nil
+	}
+
+	log.Info("Going to consume:")
+	log.Infof("topic %s of %v", c.address.Topic, topics)
+	log.Infof("partition %d of %v", c.address.Partition, partitions)
+
+	c.partitionConsumer, err = c.consumer.ConsumePartition(c.address.Topic, c.address.Partition, sarama.OffsetNewest)
+	if err != nil {
+		c.Close()
+		log.Errorf("unable to consume partition with err: %v", err)
 		return nil
 	}
 
 	return c
 }
 
-// Close
+// Close will close partition consumer and drain partition consumer's Messages() chan, so blocking Messages() will exit
 func (c *Consumer) Close() {
 	if c.partitionConsumer != nil {
 		_ = c.partitionConsumer.Close()
@@ -65,7 +89,7 @@ func (c *Consumer) Close() {
 	}
 }
 
-// Recv
+// Recv is a blocking call
 func (c *Consumer) Recv() *sarama.ConsumerMessage {
 	msg := <-c.partitionConsumer.Messages()
 	if msg != nil {

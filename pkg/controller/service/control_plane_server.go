@@ -15,9 +15,11 @@
 package controller_service
 
 import (
+	"context"
 	"fmt"
 	"io"
 
+	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
@@ -45,11 +47,13 @@ func NewControlPlaneServer() *ControlPlaneServer {
 }
 
 // Commands gRPC call
-func (s *ControlPlaneServer) Commands(server atlas.ControlPlane_CommandsServer) error {
+func (s *ControlPlaneServer) Commands(CommandsServer atlas.ControlPlane_CommandsServer) error {
 	log.Info("Commands() - start")
 	defer log.Info("Commands() - end")
 
-	controller.CommandsExchangeEndlessLoop(server)
+	_ = fetchUserMetadata(CommandsServer.Context())
+
+	controller.CommandsExchangeEndlessLoop(CommandsServer)
 	return nil
 }
 
@@ -58,16 +62,21 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 	log.Info("DataChunks() - start")
 	defer log.Info("DataChunks() - end")
 
-	claims, err := service_auth.GetClaims(DataChunksServer.Context())
-	log.Infof("Claims:")
-	for name, value := range claims {
-		log.Infof("%s: %v", name, value)
+	userMetadata := fetchUserMetadata(DataChunksServer.Context())
+
+	s3address, _, dataMetadata, err := relayIntoMinIO(DataChunksServer, userMetadata)
+	//_, _, err = relayIntoKafka(DataChunksServer)
+	if err != nil {
+		log.Errorf("relay error: %v", err.Error())
 	}
 
-	//_, _, err = relayIntoMinIO(DataChunksServer)
-	_, _, err = relayIntoKafka(DataChunksServer)
+	log.Infof("DataChunks() saved as %s/%s", s3address.Bucket, s3address.Object)
+
+	// Write event
+
+	err = writeEvent(userMetadata, dataMetadata, s3address)
 	if err != nil {
-		log.Errorf("error: %v", err.Error())
+		log.Errorf("event error: %v", err.Error())
 	}
 
 	//	// Send back
@@ -79,8 +88,54 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 	return err
 }
 
+func writeEvent(userMetadata jwt.MapClaims, dataMetadata *atlas.Metadata, s3address *atlas.S3Address) error {
+	kTransport := kafka.NewCommandTransport(kafka.NewProducer(
+		&kafka.Endpoint{
+			Brokers: config_service.Config.Brokers,
+		},
+		&atlas.KafkaAddress{
+			Topic: config_service.Config.Topic,
+		},
+	), nil, true)
+	if kTransport == nil {
+		log.Errorf("no transport")
+		return fmt.Errorf("no transport")
+	}
+	defer kTransport.Close()
+
+	return kTransport.Send(atlas.NewCommand(
+		atlas.CommandType_COMMAND_ECHO_REPLY,
+		"",
+		0,
+		atlas.CreateNewUUID(),
+		"reference: ",
+		0,
+		0,
+		"desc",
+	))
+}
+
+func fetchUserMetadata(ctx context.Context) jwt.MapClaims {
+	claims, err := service_auth.GetClaims(ctx)
+	if err != nil {
+		log.Warnf("unable to get claims with err: %v", err)
+		return nil
+	}
+
+	log.Infof("Claims:")
+	for name, value := range claims {
+		log.Infof("%s: %v", name, value)
+	}
+
+	return claims
+}
+
+func getBucketName(metadata jwt.MapClaims) string {
+	return "bucket1"
+}
+
 // relayIntoMinIO
-func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
+func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer, userMetadata jwt.MapClaims) (*atlas.S3Address, int64, *atlas.Metadata, error) {
 	log.Info("relayIntoMinIO() - start")
 	defer log.Info("relayIntoMinIO() - end")
 
@@ -95,19 +150,21 @@ func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64
 
 	}
 
-	bucketName := "bucket1"
-	objectName := atlas.CreateNewUUID()
+	s3address := atlas.NewS3Address(getBucketName(userMetadata), atlas.CreateNewUUID())
+	n, mt, err := minio.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, s3address)
 
-	return minio.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, bucketName, objectName)
+	return s3address, n, mt, err
 }
 
 func relayIntoKafka(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
 	// Kafka transport
-	kTransport := kafka.NewKafkaDataChunkTransport(
+	kTransport := kafka.NewDataChunkTransport(
 		kafka.NewProducer(
-			kafka.Endpoint{
+			&kafka.Endpoint{
 				Brokers: config_service.Config.Brokers,
-				Topic:   config_service.Config.Topic,
+			},
+			&atlas.KafkaAddress{
+				Topic: config_service.Config.Topic,
 			},
 		),
 		nil,

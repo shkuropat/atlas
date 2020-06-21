@@ -16,6 +16,7 @@ package kafka
 
 import (
 	"context"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 
 	"github.com/Shopify/sarama"
 	log "github.com/sirupsen/logrus"
@@ -24,13 +25,15 @@ import (
 )
 
 type ConsumerGroup struct {
-	Endpoint
-	groupID string
+	endpoint *Endpoint
+	address  *atlas.KafkaAddress
+	groupID  string
 }
 
-func NewConsumerGroup(endpoint Endpoint, groupID string) *ConsumerGroup {
+func NewConsumerGroup(endpoint *Endpoint, address *atlas.KafkaAddress, groupID string) *ConsumerGroup {
 	return &ConsumerGroup{
-		Endpoint: endpoint,
+		endpoint: endpoint,
+		address:  address,
 		groupID:  groupID,
 	}
 }
@@ -47,7 +50,7 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 		config.Consumer.Offsets.Initial = sarama.OffsetOldest
 	}
 
-	group, err := sarama.NewConsumerGroup(c.Brokers, c.groupID, config)
+	group, err := sarama.NewConsumerGroup(c.endpoint.Brokers, c.groupID, config)
 	if err != nil {
 		panic(err)
 	}
@@ -65,7 +68,7 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 	// Iterate over consumer sessions.
 	ctx := context.Background()
 	for {
-		topics := []string{c.Topic}
+		topics := []string{c.address.Topic}
 		handler := NewConsumerGroupHandler(ack)
 
 		// Consume joins a cluster of consumers for a given list of topics

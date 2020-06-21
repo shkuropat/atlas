@@ -12,29 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package cmd
+syntax = "proto3";
 
-import (
-	"fmt"
+package atlas;
 
-	"github.com/MakeNowJust/heredoc"
-	cmd "github.com/spf13/cobra"
+import "type_s3_address.proto";
 
-	"github.com/binarly-io/atlas/pkg/softwareid"
-)
-
-var versionCmd = &cmd.Command{
-	Use:   "version",
-	Short: "Print software version",
-	Long: heredoc.Docf(`
-			Print software version and exit
-			`,
-	),
-	Run: func(cmd *cmd.Command, args []string) {
-		fmt.Printf("%s\n", softwareid.Version)
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(versionCmd)
+message DiffTask {
+    S3Address a = 100;
+    S3Address b = 200;
+    S3Address meta = 300;
 }
