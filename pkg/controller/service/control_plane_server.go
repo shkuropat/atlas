@@ -89,22 +89,24 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 }
 
 func writeEvent(userMetadata jwt.MapClaims, dataMetadata *atlas.Metadata, s3address *atlas.S3Address) error {
-	kTransport := kafka.NewCommandTransport(kafka.NewProducer(
-		&kafka.Endpoint{
-			Brokers: config_service.Config.Brokers,
-		},
-		&atlas.KafkaAddress{
-			Topic: config_service.Config.Topic,
-		},
-	), nil, true)
-	if kTransport == nil {
+	transport := kafka.NewCommandTransport(
+		kafka.NewProducer(
+			&kafka.Endpoint{
+				Brokers: config_service.Config.Brokers,
+			},
+			&atlas.KafkaAddress{
+				Topic: config_service.Config.Topic,
+			},
+		), nil, true,
+	)
+	if transport == nil {
 		log.Errorf("no transport")
 		return fmt.Errorf("no transport")
 	}
-	defer kTransport.Close()
+	defer transport.Close()
 
-	return kTransport.Send(atlas.NewCommand(
-		atlas.CommandType_COMMAND_ECHO_REPLY,
+	cmd := atlas.NewCommand(
+		atlas.CommandType_COMMAND_DATA,
 		"",
 		0,
 		atlas.CreateNewUUID(),
@@ -112,7 +114,8 @@ func writeEvent(userMetadata jwt.MapClaims, dataMetadata *atlas.Metadata, s3addr
 		0,
 		0,
 		"desc",
-	))
+	)
+	return transport.Send(cmd)
 }
 
 func fetchUserMetadata(ctx context.Context) jwt.MapClaims {
