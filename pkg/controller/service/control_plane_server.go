@@ -51,44 +51,29 @@ func (s *ControlPlaneServer) Commands(CommandsServer atlas.ControlPlane_Commands
 	log.Info("Commands() - start")
 	defer log.Info("Commands() - end")
 
-	_ = fetchUserMetadata(CommandsServer.Context())
+	_ = fetchMetadata(CommandsServer.Context())
 
 	controller.CommandsExchangeEndlessLoop(CommandsServer)
 	return nil
 }
+
+var DataChunksHandler func(atlas.ControlPlane_DataChunksServer, jwt.MapClaims) error
 
 // DataChunks gRPC call
 func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_DataChunksServer) error {
 	log.Info("DataChunks() - start")
 	defer log.Info("DataChunks() - end")
 
-	userMetadata := fetchUserMetadata(DataChunksServer.Context())
 
-	s3address, _, dataMetadata, err := relayIntoMinIO(DataChunksServer, userMetadata)
-	//_, _, err = relayIntoKafka(DataChunksServer)
-	if err != nil {
-		log.Errorf("relay error: %v", err.Error())
+	if DataChunksHandler == nil {
+		return fmt.Errorf("no DataChunksHandler provided")
 	}
 
-	log.Infof("DataChunks() saved as %s/%s", s3address.Bucket, s3address.Object)
-
-	// Write event
-
-	err = writeEvent(userMetadata, dataMetadata, s3address)
-	if err != nil {
-		log.Errorf("event error: %v", err.Error())
-	}
-
-	//	// Send back
-	//	var buf2 = &bytes.Buffer{}
-	//	buf2.WriteString(strings.ToUpper(buf.String()))
-	//
-	//	_, err = pb.SendDataChunkFile(DataChunksServer, pb.NewMetadata("returnback.file"), buf2)
-	//
-	return err
+	metadata := fetchMetadata(DataChunksServer.Context())
+	return DataChunksHandler(DataChunksServer, metadata)
 }
 
-func writeEvent(userMetadata jwt.MapClaims, dataMetadata *atlas.Metadata, s3address *atlas.S3Address) error {
+func WriteEvent(callMetadata jwt.MapClaims, dataMetadata *atlas.Metadata, s3address *atlas.S3Address) error {
 	transport := kafka.NewCommandTransport(
 		kafka.NewProducer(
 			&kafka.Endpoint{
@@ -118,7 +103,8 @@ func writeEvent(userMetadata jwt.MapClaims, dataMetadata *atlas.Metadata, s3addr
 	return transport.Send(cmd)
 }
 
-func fetchUserMetadata(ctx context.Context) jwt.MapClaims {
+// fetchMetadata
+func fetchMetadata(ctx context.Context) jwt.MapClaims {
 	claims, err := service_auth.GetClaims(ctx)
 	if err != nil {
 		log.Warnf("unable to get claims with err: %v", err)
@@ -137,8 +123,8 @@ func getBucketName(metadata jwt.MapClaims) string {
 	return "bucket1"
 }
 
-// relayIntoMinIO
-func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer, userMetadata jwt.MapClaims) (*atlas.S3Address, int64, *atlas.Metadata, error) {
+// RelayIntoMinIO
+func RelayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer, callMetadata jwt.MapClaims) (*atlas.S3Address, int64, *atlas.Metadata, error) {
 	log.Info("relayIntoMinIO() - start")
 	defer log.Info("relayIntoMinIO() - end")
 
@@ -153,15 +139,16 @@ func relayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer, userMe
 
 	}
 
-	s3address := atlas.NewS3Address(getBucketName(userMetadata), atlas.CreateNewUUID())
+	s3address := atlas.NewS3Address(getBucketName(callMetadata), atlas.CreateNewUUID())
 	n, mt, err := minio.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, s3address)
 
 	return s3address, n, mt, err
 }
 
-func relayIntoKafka(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
+// RelayIntoKafka
+func RelayIntoKafka(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
 	// Kafka transport
-	kTransport := kafka.NewDataChunkTransport(
+	transport := kafka.NewDataChunkTransport(
 		kafka.NewProducer(
 			&kafka.Endpoint{
 				Brokers: config_service.Config.Brokers,
@@ -173,14 +160,14 @@ func relayIntoKafka(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64
 		nil,
 		true,
 	)
-	if kTransport == nil {
+	if transport == nil {
 		log.Errorf("no transport")
 		return 0, nil, fmt.Errorf("no transport")
 	}
-	defer kTransport.Close()
+	defer transport.Close()
 
 	// Kafka file
-	kFile, err := atlas.OpenDataChunkFile(kTransport)
+	kFile, err := atlas.OpenDataChunkFile(transport)
 	if err != nil {
 		log.Errorf("got error: %v", err)
 		return 0, nil, err
