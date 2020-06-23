@@ -17,17 +17,13 @@ package controller_service
 import (
 	"context"
 	"fmt"
-	"io"
 
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/auth/service"
-	"github.com/binarly-io/atlas/pkg/config/service"
 	"github.com/binarly-io/atlas/pkg/controller"
-	"github.com/binarly-io/atlas/pkg/kafka"
-	"github.com/binarly-io/atlas/pkg/minio"
 )
 
 func GetOutgoingQueue() chan *atlas.Command {
@@ -46,17 +42,26 @@ func NewControlPlaneServer() *ControlPlaneServer {
 	return &ControlPlaneServer{}
 }
 
+// CommandsHandler is a user-provided handler for Commands call
+var CommandsHandler func(atlas.ControlPlane_CommandsServer, jwt.MapClaims) error
+
 // Commands gRPC call
 func (s *ControlPlaneServer) Commands(CommandsServer atlas.ControlPlane_CommandsServer) error {
 	log.Info("Commands() - start")
 	defer log.Info("Commands() - end")
 
-	_ = fetchMetadata(CommandsServer.Context())
+	if CommandsHandler == nil {
+		return fmt.Errorf("no CommandsHandler provided")
+	}
 
-	controller.CommandsExchangeEndlessLoop(CommandsServer)
-	return nil
+	metadata := fetchMetadata(CommandsServer.Context())
+	return CommandsHandler(CommandsServer, metadata)
+
+	// controller.CommandsExchangeEndlessLoop(CommandsServer)
+	// return nil
 }
 
+// DataChunksHandler is a user-provided handler for DataChunks call
 var DataChunksHandler func(atlas.ControlPlane_DataChunksServer, jwt.MapClaims) error
 
 // DataChunks gRPC call
@@ -64,43 +69,12 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 	log.Info("DataChunks() - start")
 	defer log.Info("DataChunks() - end")
 
-
 	if DataChunksHandler == nil {
 		return fmt.Errorf("no DataChunksHandler provided")
 	}
 
 	metadata := fetchMetadata(DataChunksServer.Context())
 	return DataChunksHandler(DataChunksServer, metadata)
-}
-
-func WriteEvent(callMetadata jwt.MapClaims, dataMetadata *atlas.Metadata, s3address *atlas.S3Address) error {
-	transport := kafka.NewCommandTransport(
-		kafka.NewProducer(
-			&kafka.Endpoint{
-				Brokers: config_service.Config.Brokers,
-			},
-			&atlas.KafkaAddress{
-				Topic: config_service.Config.Topic,
-			},
-		), nil, true,
-	)
-	if transport == nil {
-		log.Errorf("no transport")
-		return fmt.Errorf("no transport")
-	}
-	defer transport.Close()
-
-	cmd := atlas.NewCommand(
-		atlas.CommandType_COMMAND_DATA,
-		"",
-		0,
-		atlas.CreateNewUUID(),
-		"reference: ",
-		0,
-		0,
-		"desc",
-	)
-	return transport.Send(cmd)
 }
 
 // fetchMetadata
@@ -117,79 +91,4 @@ func fetchMetadata(ctx context.Context) jwt.MapClaims {
 	}
 
 	return claims
-}
-
-func getBucketName(metadata jwt.MapClaims) string {
-	return "bucket1"
-}
-
-// RelayIntoMinIO
-func RelayIntoMinIO(DataChunksServer atlas.ControlPlane_DataChunksServer, callMetadata jwt.MapClaims) (*atlas.S3Address, int64, *atlas.Metadata, error) {
-	log.Info("relayIntoMinIO() - start")
-	defer log.Info("relayIntoMinIO() - end")
-
-	mi, err := minio.NewMinIO(
-		config_service.Config.Endpoint,
-		config_service.Config.Secure,
-		config_service.Config.AccessKeyID,
-		config_service.Config.SecretAccessKey,
-	)
-
-	if err != nil {
-
-	}
-
-	s3address := atlas.NewS3Address(getBucketName(callMetadata), atlas.CreateNewUUID())
-	n, mt, err := minio.RelayDataChunkFileIntoMinIO(DataChunksServer, mi, s3address)
-
-	return s3address, n, mt, err
-}
-
-// RelayIntoKafka
-func RelayIntoKafka(DataChunksServer atlas.ControlPlane_DataChunksServer) (int64, *atlas.Metadata, error) {
-	// Kafka transport
-	transport := kafka.NewDataChunkTransport(
-		kafka.NewProducer(
-			&kafka.Endpoint{
-				Brokers: config_service.Config.Brokers,
-			},
-			&atlas.KafkaAddress{
-				Topic: config_service.Config.Topic,
-			},
-		),
-		nil,
-		true,
-	)
-	if transport == nil {
-		log.Errorf("no transport")
-		return 0, nil, fmt.Errorf("no transport")
-	}
-	defer transport.Close()
-
-	// Kafka file
-	kFile, err := atlas.OpenDataChunkFile(transport)
-	if err != nil {
-		log.Errorf("got error: %v", err)
-		return 0, nil, err
-	}
-	defer kFile.Close()
-
-	// Server file
-	sFile, err := atlas.OpenDataChunkFile(DataChunksServer)
-	if err != nil {
-		log.Errorf("got error: %v", err)
-		return 0, nil, err
-	}
-	defer sFile.Close()
-
-	n, err := io.Copy(kFile, sFile)
-	if err == nil {
-		log.Infof("written: %d", n)
-		sFile.PayloadMetadata.Log()
-		kFile.PayloadMetadata.Log()
-	} else {
-		log.Errorf("err: %v", err)
-	}
-
-	return n, sFile.PayloadMetadata, err
 }

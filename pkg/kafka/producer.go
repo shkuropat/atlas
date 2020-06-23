@@ -24,7 +24,7 @@ import (
 
 // Producer
 type Producer struct {
-	endpoint *Endpoint
+	endpoint *atlas.KafkaEndpoint
 	address  *atlas.KafkaAddress
 
 	config   *sarama.Config
@@ -32,7 +32,7 @@ type Producer struct {
 }
 
 // NewProducer
-func NewProducer(endpoint *Endpoint, address *atlas.KafkaAddress) *Producer {
+func NewProducer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Producer {
 	var err error
 
 	p := &Producer{}

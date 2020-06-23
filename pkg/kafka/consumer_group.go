@@ -24,13 +24,15 @@ import (
 	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
+// ConsumerGroup
 type ConsumerGroup struct {
-	endpoint *Endpoint
+	endpoint *atlas.KafkaEndpoint
 	address  *atlas.KafkaAddress
 	groupID  string
 }
 
-func NewConsumerGroup(endpoint *Endpoint, address *atlas.KafkaAddress, groupID string) *ConsumerGroup {
+// NewConsumerGroup creates new consumer group
+func NewConsumerGroup(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress, groupID string) *ConsumerGroup {
 	return &ConsumerGroup{
 		endpoint: endpoint,
 		address:  address,

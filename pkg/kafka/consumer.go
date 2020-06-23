@@ -24,7 +24,7 @@ import (
 
 // Consumer
 type Consumer struct {
-	endpoint *Endpoint
+	endpoint *atlas.KafkaEndpoint
 	address  *atlas.KafkaAddress
 
 	config            *sarama.Config
@@ -33,7 +33,7 @@ type Consumer struct {
 }
 
 // NewConsumer
-func NewConsumer(endpoint *Endpoint, address *atlas.KafkaAddress) *Consumer {
+func NewConsumer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Consumer {
 	var err error
 
 	c := &Consumer{}
