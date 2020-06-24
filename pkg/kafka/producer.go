@@ -17,6 +17,7 @@ package kafka
 import (
 	"github.com/Shopify/sarama"
 	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/softwareid"
@@ -47,6 +48,28 @@ func NewProducer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Pr
 		return nil
 	}
 
+	return p
+}
+
+// NewProducerConfig
+func NewProducerConfig(cfg config.KafkaEndpointConfig) *Producer {
+	return NewProducer(
+		cfg.GetKafkaEndpoint(),
+		nil,
+	)
+}
+
+// SetAddresss
+func (p *Producer) SetAddress(address *atlas.KafkaAddress) *Producer {
+	p.address = address
+	return p
+}
+
+// SetTopic
+func (p *Producer) SetTopic(topic string) *Producer {
+	p.address = &atlas.KafkaAddress{
+		Topic: topic,
+	}
 	return p
 }
 

@@ -58,10 +58,10 @@ func NewMinIO(endpoint string, secure bool, accessKeyID, secretAccessKey string)
 // NewMinIOConfig
 func NewMinIOConfig(cfg config.MinIOEndpointConfig) (*MinIO, error) {
 	return NewMinIO(
-		cfg.GetEndpoint(),
-		cfg.GetSecure(),
-		cfg.GetAccessKeyID(),
-		cfg.GetSecretAccessKey(),
+		cfg.GetMinIOEndpoint(),
+		cfg.GetMinIOSecure(),
+		cfg.GetMinIOAccessKeyID(),
+		cfg.GetMinIOSecretAccessKey(),
 	)
 }
 

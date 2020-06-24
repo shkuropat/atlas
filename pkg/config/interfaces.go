@@ -14,9 +14,15 @@
 
 package config
 
+import "github.com/binarly-io/atlas/pkg/api/atlas"
+
 type MinIOEndpointConfig interface {
-	GetEndpoint() string
-	GetAccessKeyID() string
-	GetSecretAccessKey() string
-	GetSecure() bool
+	GetMinIOEndpoint() string
+	GetMinIOAccessKeyID() string
+	GetMinIOSecretAccessKey() string
+	GetMinIOSecure() bool
+}
+
+type KafkaEndpointConfig interface {
+	GetKafkaEndpoint() *atlas.KafkaEndpoint
 }
