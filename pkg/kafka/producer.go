@@ -59,7 +59,7 @@ func NewProducerConfig(cfg config.KafkaEndpointConfig) *Producer {
 	)
 }
 
-// SetAddresss
+// SetAddress
 func (p *Producer) SetAddress(address *atlas.KafkaAddress) *Producer {
 	p.address = address
 	return p
@@ -67,9 +67,7 @@ func (p *Producer) SetAddress(address *atlas.KafkaAddress) *Producer {
 
 // SetTopic
 func (p *Producer) SetTopic(topic string) *Producer {
-	p.address = &atlas.KafkaAddress{
-		Topic: topic,
-	}
+	p.address = atlas.NewKafkaAddress(topic, 0)
 	return p
 }
 

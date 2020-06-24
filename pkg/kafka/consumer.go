@@ -16,6 +16,7 @@ package kafka
 
 import (
 	"github.com/Shopify/sarama"
+	"github.com/binarly-io/atlas/pkg/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
@@ -74,6 +75,11 @@ func NewConsumer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Co
 	}
 
 	return c
+}
+
+// NewConsumerConfig
+func NewConsumerConfig(cfg config.KafkaEndpointConfig, topic string) *Consumer {
+	return NewConsumer(cfg.GetKafkaEndpoint(), atlas.NewKafkaAddress(topic, 0))
 }
 
 // Close will close partition consumer and drain partition consumer's Messages() chan, so blocking Messages() will exit

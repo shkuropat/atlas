@@ -17,6 +17,7 @@ package kafka
 import (
 	"context"
 	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/config"
 
 	"github.com/Shopify/sarama"
 	log "github.com/sirupsen/logrus"
@@ -38,6 +39,23 @@ func NewConsumerGroup(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress
 		address:  address,
 		groupID:  groupID,
 	}
+}
+
+// NewConsumerGroupConfig
+func NewConsumerGroupConfig(cfg config.KafkaEndpointConfig, groupID string) *ConsumerGroup {
+	return NewConsumerGroup(cfg.GetKafkaEndpoint(), nil, groupID)
+}
+
+// SetAddress
+func (c *ConsumerGroup) SetAddress(address *atlas.KafkaAddress) *ConsumerGroup {
+	c.address = address
+	return c
+}
+
+// SetTopic
+func (c *ConsumerGroup) SetTopic(topic string) *ConsumerGroup {
+	c.address = atlas.NewKafkaAddress(topic, 0)
+	return c
 }
 
 // ConsumeLoop runs an endless loop of kafka consumer
