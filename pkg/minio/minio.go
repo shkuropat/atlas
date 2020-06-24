@@ -21,6 +21,9 @@ import (
 
 	"github.com/minio/minio-go/v6"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/config"
 )
 
 var errorNotConnected = fmt.Errorf("minio is not connected")
@@ -52,6 +55,16 @@ func NewMinIO(endpoint string, secure bool, accessKeyID, secretAccessKey string)
 	return min, err
 }
 
+// NewMinIOConfig
+func NewMinIOConfig(cfg config.MinIOEndpointConfig) (*MinIO, error) {
+	return NewMinIO(
+		cfg.GetEndpoint(),
+		cfg.GetSecure(),
+		cfg.GetAccessKeyID(),
+		cfg.GetSecretAccessKey(),
+	)
+}
+
 // Put
 func (m *MinIO) Put(bucketName, objectName string, reader io.Reader) (int64, error) {
 	if m.client == nil {
@@ -68,6 +81,11 @@ func (m *MinIO) Put(bucketName, objectName string, reader io.Reader) (int64, err
 	return m.client.PutObjectWithContext(ctx, bucketName, objectName, reader, size, options)
 }
 
+// PutA
+func (m *MinIO) PutA(addr *atlas.S3Address, reader io.Reader) (int64, error) {
+	return m.Put(addr.Bucket, addr.Object, reader)
+}
+
 // FPut
 func (m *MinIO) FPut(bucketName, objectName, fileName string) (int64, error) {
 	if m.client == nil {
@@ -82,6 +100,11 @@ func (m *MinIO) FPut(bucketName, objectName, fileName string) (int64, error) {
 	return m.client.FPutObjectWithContext(ctx, bucketName, objectName, fileName, options)
 }
 
+// FPutA
+func (m *MinIO) FPutA(addr *atlas.S3Address, fileName string) (int64, error) {
+	return m.FPut(addr.Bucket, addr.Object, fileName)
+}
+
 // Get
 func (m *MinIO) Get(bucketName, objectName string) (io.Reader, error) {
 	if m.client == nil {
@@ -92,6 +115,11 @@ func (m *MinIO) Get(bucketName, objectName string) (io.Reader, error) {
 	opts := minio.GetObjectOptions{}
 	//opts.SetModified(time.Now().Round(10 * time.Minute)) // get object if was modified within the last 10 minutes
 	return m.client.GetObjectWithContext(ctx, bucketName, objectName, opts)
+}
+
+// GetA
+func (m *MinIO) GetA(addr *atlas.S3Address) (io.Reader, error) {
+	return m.Get(addr.Bucket, addr.Object)
 }
 
 // FGet
@@ -106,6 +134,11 @@ func (m *MinIO) FGet(bucketName, objectName, fileName string) error {
 	return m.client.FGetObjectWithContext(ctx, bucketName, objectName, fileName, opts)
 }
 
+// FGetA
+func (m *MinIO) FGetA(addr *atlas.S3Address, fileName string) error {
+	return m.FGet(addr.Bucket, addr.Object, fileName)
+}
+
 // Remove
 func (m *MinIO) Remove(bucketName, objectName string) error {
 	if m.client == nil {
@@ -115,20 +148,29 @@ func (m *MinIO) Remove(bucketName, objectName string) error {
 	return m.client.RemoveObject(bucketName, objectName)
 }
 
+// RemoveA
+func (m *MinIO) RemoveA(addr *atlas.S3Address) error {
+	return m.Remove(addr.Bucket, addr.Object)
+}
+
 // Copy
-func (m *MinIO) Copy(srcBucketName, srcObjectName, dstBucketName, dstObjectName string) error {
+func (m *MinIO) Copy(dstBucketName, dstObjectName, srcBucketName, srcObjectName string) error {
 	if m.client == nil {
 		return errorNotConnected
 	}
 
 	src := minio.NewSourceInfo(srcBucketName, srcObjectName, nil)
 	dst, err := minio.NewDestinationInfo(dstBucketName, dstObjectName, nil, nil)
-
 	if err != nil {
 		return err
 	}
 
 	return m.client.CopyObject(dst, src)
+}
+
+// CopyA
+func (m *MinIO) CopyA(dst, src *atlas.S3Address) error {
+	return m.Copy(dst.Bucket, dst.Object, src.Bucket, src.Object)
 }
 
 // ListBuckets
