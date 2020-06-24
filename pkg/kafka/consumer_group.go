@@ -30,6 +30,9 @@ type ConsumerGroup struct {
 	endpoint *atlas.KafkaEndpoint
 	address  *atlas.KafkaAddress
 	groupID  string
+
+	consumerGroupHandler sarama.ConsumerGroupHandler
+	messageProcessor     func(*sarama.ConsumerMessage) bool
 }
 
 // NewConsumerGroup creates new consumer group
@@ -56,6 +59,16 @@ func (c *ConsumerGroup) SetAddress(address *atlas.KafkaAddress) *ConsumerGroup {
 func (c *ConsumerGroup) SetTopic(topic string) *ConsumerGroup {
 	c.address = atlas.NewKafkaAddress(topic, 0)
 	return c
+}
+
+// SetConsumerGroupHandler
+func (c *ConsumerGroup) SetConsumerGroupHandler(handler sarama.ConsumerGroupHandler) {
+	c.consumerGroupHandler = handler
+}
+
+// SetMessageProcessor
+func (c *ConsumerGroup) SetMessageProcessor(processor func(*sarama.ConsumerMessage) bool) {
+	c.messageProcessor = processor
 }
 
 // ConsumeLoop runs an endless loop of kafka consumer
@@ -89,7 +102,11 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 	ctx := context.Background()
 	for {
 		topics := []string{c.address.Topic}
-		handler := NewConsumerGroupHandler(ack)
+
+		handler := c.consumerGroupHandler
+		if handler == nil {
+			handler = newDefaultConsumerGroupHandler(ack, c.messageProcessor)
+		}
 
 		// Consume joins a cluster of consumers for a given list of topics
 		//
@@ -110,19 +127,24 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 // ensure that all state is safely protected against race conditions.
 //
 // Implements sarama.ConsumerGroupHandler interface
-type ConsumerGroupHandler struct {
-	ack bool
+type DefaultConsumerGroupHandler struct {
+	ack       bool
+	processor func(*sarama.ConsumerMessage) bool
 }
 
-// NewConsumerGroupHandler
-func NewConsumerGroupHandler(ack bool) ConsumerGroupHandler {
-	return ConsumerGroupHandler{
-		ack: ack,
+// newDefaultConsumerGroupHandler
+func newDefaultConsumerGroupHandler(ack bool, processor func(*sarama.ConsumerMessage) bool) *DefaultConsumerGroupHandler {
+	return &DefaultConsumerGroupHandler{
+		ack:       ack,
+		processor: processor,
 	}
 }
 
+// Implement sarama.ConsumerGroupHandler interface
+
 // Setup is run at the beginning of a new session, before ConsumeClaim.
-func (ConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
+// Part of sarama.ConsumerGroupHandler interface
+func (*DefaultConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
 	log.Infof("ConsumerGroupHandler.Setup() - start")
 	defer log.Infof("ConsumerGroupHandler.Setup() - end")
 
@@ -131,7 +153,8 @@ func (ConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
 
 // Cleanup is run at the end of a session, once all ConsumeClaim goroutines have exited
 // but before the offsets are committed for the very last time.
-func (ConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
+// Part of sarama.ConsumerGroupHandler interface
+func (*DefaultConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
 	log.Infof("ConsumerGroupHandler.Cleanup() - start")
 	defer log.Infof("ConsumerGroupHandler.Cleanup() - end")
 
@@ -141,7 +164,8 @@ func (ConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
 // ConsumeClaim must start a consumer loop of ConsumerGroupClaim's Messages().
 // Once the Messages() channel is closed, the Handler must finish
 // its processing loop and exit.
-func (h ConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+// Part of sarama.ConsumerGroupHandler interface
+func (h *DefaultConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	// Claim is a claimed Partition, so Claim refers to Partition
 	log.Infof("ConsumerGroupHandler.ConsumeClaim() - start")
 	defer log.Infof("ConsumerGroupHandler.ConsumeClaim() - end")
@@ -149,7 +173,16 @@ func (h ConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, cla
 	for msg := range claim.Messages() {
 		// msg.Headers
 		log.Printf("Got message topic:%q partition:%d offset:%d data:%s\n", msg.Topic, msg.Partition, msg.Offset, string(msg.Value))
-		if h.ack {
+
+		// Call message processor
+		ack := h.ack
+		if h.processor == nil {
+			log.Warn("no message processor specified with DefaultConsumerGroupHandler")
+		} else {
+			ack = h.processor(msg)
+		}
+
+		if ack {
 			sess.MarkMessage(msg, "")
 			log.Infof("Ack message topic:%q partition:%d offset:%d\n", msg.Topic, msg.Partition, msg.Offset)
 		}
