@@ -41,6 +41,11 @@ func NewProducer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Pr
 	p.address = address
 	p.config = sarama.NewConfig()
 	p.config.ClientID = softwareid.Name
+	// If, this config is used to create a `SyncProducer`, both must be set
+	// to true and you shall not read from the channels since the producer does
+	// this internally.
+	p.config.Producer.Return.Successes = true
+	p.config.Producer.Return.Errors = true
 	p.producer, err = sarama.NewSyncProducer(p.endpoint.GetBrokers(), p.config)
 	if err != nil {
 		log.Errorf("unable to create NewSyncProducer(brokers:%v) with err: %v", p.endpoint.GetBrokers(), err)
