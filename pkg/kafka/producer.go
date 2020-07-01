@@ -16,10 +16,10 @@ package kafka
 
 import (
 	"github.com/Shopify/sarama"
-	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/config"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/config"
 	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
