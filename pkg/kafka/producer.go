@@ -41,9 +41,9 @@ func NewProducer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Pr
 	p.address = address
 	p.config = sarama.NewConfig()
 	p.config.ClientID = softwareid.Name
-	p.producer, err = sarama.NewSyncProducer(p.endpoint.Brokers, p.config)
+	p.producer, err = sarama.NewSyncProducer(p.endpoint.GetBrokers(), p.config)
 	if err != nil {
-		log.Error(err)
+		log.Errorf("unable to create NewSyncProducer(brokers:%v) with err: %v", p.endpoint.GetBrokers(), err)
 		p.Close()
 		return nil
 	}
