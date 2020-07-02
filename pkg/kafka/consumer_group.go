@@ -73,9 +73,13 @@ func (c *ConsumerGroup) SetMessageProcessor(processor func(*sarama.ConsumerMessa
 
 // ConsumeLoop runs an endless loop of kafka consumer
 func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
+	log.Info("ConsumerGroup.ConsumeLoop() - start")
+	defer log.Info("ConsumerGroup.ConsumeLoop() - end")
 
-	// new configuration instance with sane defaults.
+	// New configuration instance with sane defaults.
 	config := sarama.NewConfig()
+	// Consumer groups require Version to be >= V0_10_2_0
+	config.Version = sarama.V2_0_0_0
 	config.ClientID = softwareid.Name
 	if consumeNewest {
 		config.Consumer.Offsets.Initial = sarama.OffsetNewest
@@ -85,7 +89,7 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 
 	group, err := sarama.NewConsumerGroup(c.endpoint.Brokers, c.groupID, config)
 	if err != nil {
-		panic(err)
+		log.Fatalf("unable to create NewConsumerGroup for %v %v with err: %v", c.endpoint.Brokers, c.groupID, err)
 	}
 	defer func() {
 		_ = group.Close()
@@ -103,6 +107,8 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 	for {
 		topics := []string{c.address.Topic}
 
+		// Handler can be either explicitly specified, or a default one
+		// Default handler can still use external c.messageProcessor
 		handler := c.consumerGroupHandler
 		if handler == nil {
 			handler = newDefaultConsumerGroupHandler(ack, c.messageProcessor)
@@ -114,7 +120,7 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 		// When a server-side rebalance happens, the consumer session will need to be recreated to get the new claims
 		err := group.Consume(ctx, topics, handler)
 		if err != nil {
-			panic(err)
+			log.Fatalf("unable to Consume topics %v with err: %v", topics, err)
 		}
 	}
 }
