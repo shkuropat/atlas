@@ -232,12 +232,14 @@ func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
 	}
 
 	n = len(p)
+
 	var transportMD *Metadata
 	var payloadMD *Metadata
 	if f.currentOffset == 0 {
 		// First chunk in this file, it may have some metadata
 		transportMD = f.TransportMetadata
 		payloadMD = f.PayloadMetadata
+		log.Infof("Attaching metadata. transport=%v payload=%v", transportMD, payloadMD)
 	}
 	f.offset = f.initialOffset + f.currentOffset
 	chunk := NewDataChunk(transportMD, payloadMD, &f.offset, false, p)

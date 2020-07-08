@@ -17,6 +17,7 @@ package atlas
 import (
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/ulikunitz/xz/lzma"
 )
 
@@ -49,6 +50,8 @@ func OpenDataChunkFileWriter(
 	metadata *Metadata,
 	compress bool,
 ) (*DataChunkFileWriter, error) {
+	log.Infof("OpenDataChunkFileWriter() - start")
+	defer log.Infof("OpenDataChunkFileWriter() - end")
 
 	f := &DataChunkFile{
 		transport:       transport,
@@ -57,10 +60,13 @@ func OpenDataChunkFileWriter(
 	}
 
 	if compress {
+		log.Infof("OpenDataChunkFileWriter() - requesting LZMA compression")
+
 		f.ensureTransportMetadata()
 		f.TransportMetadata.SetCompression(LZMACompression)
 		lzmaWriter, err := lzma.NewWriter(f)
 		if err != nil {
+			log.Warnf("FAILED to create lzma writer. err: %v", err)
 			return nil, err
 		}
 		return &DataChunkFileWriter{
@@ -91,6 +97,9 @@ func (w *DataChunkFileWriter) Close() error {
 
 // Write
 func (w *DataChunkFileWriter) Write(p []byte) (n int, err error) {
+	log.Infof("DataChunkFileWriter.Write() - start")
+	defer log.Infof("DataChunkFileWriter.Write() - end")
+
 	if w.Compression.LZMAWriter != nil {
 		return w.Compression.LZMAWriter.Write(p)
 	}
@@ -109,17 +118,24 @@ type DataChunkFileReader struct {
 
 // OpenDataChunkFileReader
 func OpenDataChunkFileReader(transport DataChunkTransport, decompress bool) (*DataChunkFileReader, error) {
-	dcf := &DataChunkFile{
+	log.Infof("OpenDataChunkFileReader() - start")
+	defer log.Infof("OpenDataChunkFileReader() - end")
+
+	f := &DataChunkFile{
 		transport: transport,
 	}
 
 	if decompress {
-		lzmaReader, err := lzma.NewReader(dcf)
+		log.Infof("OpenDataChunkFileReader() - requesting LZMA decompression")
+
+		lzmaReader, err := lzma.NewReader(f)
 		if err != nil {
+			log.Warnf("FAILED to create lzma reader. err: %v", err)
 			return nil, err
 		}
+
 		return &DataChunkFileReader{
-			DataChunkFile: dcf,
+			DataChunkFile: f,
 			Compression: DataChunkFileReadCompression{
 				Type:       LZMACompression,
 				LZMAReader: lzmaReader,
@@ -128,35 +144,49 @@ func OpenDataChunkFileReader(transport DataChunkTransport, decompress bool) (*Da
 	}
 
 	return &DataChunkFileReader{
-		DataChunkFile: dcf,
+		DataChunkFile: f,
 	}, nil
 }
 
 // Close
-func (w *DataChunkFileReader) Close() error {
+func (r *DataChunkFileReader) Close() error {
 	var err error
-	if w.DataChunkFile != nil {
-		err = w.DataChunkFile.Close()
+	if r.DataChunkFile != nil {
+		err = r.DataChunkFile.Close()
 	}
 	return err
 }
 
 // Read
-func (w *DataChunkFileReader) Read(p []byte) (n int, err error) {
-	if w.Compression.LZMAReader != nil {
-		if !w.DataChunkFile.HasTransportMetadata() {
-			w.DataChunkFile.appendDataBuf()
+func (r *DataChunkFileReader) Read(p []byte) (n int, err error) {
+	log.Infof("DataChunkFileReader.Read() - start")
+	defer log.Infof("DataChunkFileReader.Read() - end")
+
+	if r.Compression.LZMAReader != nil {
+		log.Infof("DataChunkFileReader.Read() - decompression requested")
+
+		if !r.DataChunkFile.HasTransportMetadata() {
+			log.Infof("DataChunkFileReader.Read() - no TransportMetadata yet, wait for it")
+			r.DataChunkFile.appendDataBuf()
 		}
 
-		if w.DataChunkFile.HasTransportMetadata() {
-			if w.DataChunkFile.TransportMetadata.GetCompression() != "" {
-				return w.Compression.LZMAReader.Read(p)
-			}
+		if !r.DataChunkFile.HasTransportMetadata() {
+			log.Warnf("DataChunkFileReader.Read() - got no TransportMetadata, abort")
+			return 0, fmt.Errorf("decompression requested, but no metadata available")
 		}
+
+		if r.DataChunkFile.TransportMetadata.GetCompression() != "" {
+			log.Infof("DataChunkFileReader.Read() - reading compressed data")
+			return r.Compression.LZMAReader.Read(p)
+		}
+
+		log.Warnf("DataChunkFileReader.Read() - unknown compression method %v", r.DataChunkFile.TransportMetadata.GetCompression())
+
+		return 0, fmt.Errorf("unknown compression method")
 	}
 
-	if w.DataChunkFile != nil {
-		return w.DataChunkFile.Read(p)
+	if r.DataChunkFile != nil {
+		return r.DataChunkFile.Read(p)
 	}
 
 	return 0, fmt.Errorf("unknown read() entity")
