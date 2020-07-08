@@ -22,7 +22,7 @@ import (
 	"github.com/minio/minio-go/v6"
 )
 
-type MinIODataChunkTransport struct {
+type DataChunkTransport struct {
 	// MinIO handler
 	mi *MinIO
 	// Not used yet
@@ -35,9 +35,9 @@ type MinIODataChunkTransport struct {
 	chunks []string
 }
 
-// NewMinIODataChunkTransport
-func NewMinIODataChunkTransport(mi *MinIO, bucket, object string, close bool) *MinIODataChunkTransport {
-	return &MinIODataChunkTransport{
+// NewDataChunkTransport
+func NewDataChunkTransport(mi *MinIO, bucket, object string, close bool) *DataChunkTransport {
+	return &DataChunkTransport{
 		mi:     mi,
 		bucket: bucket,
 		object: object,
@@ -46,12 +46,12 @@ func NewMinIODataChunkTransport(mi *MinIO, bucket, object string, close bool) *M
 }
 
 // Close
-func (t *MinIODataChunkTransport) Close() error {
+func (t *DataChunkTransport) Close() error {
 	return t.compose()
 }
 
 // compose object out of chunks, if any
-func (t *MinIODataChunkTransport) compose() error {
+func (t *DataChunkTransport) compose() error {
 	// Compose single object out of slice of chunks targeted to be the object
 
 	// We need to have at least 1 chunk to compose object from
@@ -81,7 +81,7 @@ func (t *MinIODataChunkTransport) compose() error {
 }
 
 // Send puts each data chunk into own uniq-UUID-named object in bucket and appends object to slice of chunks
-func (t *MinIODataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
+func (t *DataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
 
 	uuid, err := uuid.NewUUID()
 	if err != nil {
@@ -98,6 +98,6 @@ func (t *MinIODataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
 }
 
 // Recv
-func (t *MinIODataChunkTransport) Recv() (*atlas.DataChunk, error) {
+func (t *DataChunkTransport) Recv() (*atlas.DataChunk, error) {
 	return nil, fmt.Errorf("unimplemented MinIODataChunkTransport.Recv()")
 }

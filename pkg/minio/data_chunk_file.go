@@ -20,16 +20,17 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-// RelayDataChunkFileIntoMinIO
-func RelayDataChunkFileIntoMinIO(
-	src atlas.DataChunkTransport,
+// AcceptDataChunkFile
+func AcceptDataChunkFile(
 	mi *MinIO,
 	s3address *atlas.S3Address,
+	src atlas.DataChunkTransport,
+	options *Options,
 ) (int64, *atlas.Metadata, error) {
-	log.Infof("RelayDataChunkFileIntoMinIO() - start")
-	defer log.Infof("RelayDataChunkFileIntoMinIO() - end")
+	log.Infof("AcceptDataChunkFile() - start")
+	defer log.Infof("AcceptDataChunkFile() - end")
 
-	r, err := atlas.OpenDataChunkFileReader(src, true)
+	r, err := atlas.OpenDataChunkFileReader(src, options.GetDecompress())
 	if err != nil {
 		log.Errorf("got error: %v", err)
 		return 0, nil, err
@@ -38,21 +39,22 @@ func RelayDataChunkFileIntoMinIO(
 
 	written, err := mi.Put(s3address.Bucket, s3address.Object, r)
 	if err != nil {
-		log.Errorf("RelayDataChunkFileIntoMinIO() got error: %v", err.Error())
+		log.Errorf("AcceptDataChunkFile() got error: %v", err.Error())
 	}
 	r.DataChunkFile.PayloadMetadata.Log()
 
 	return written, r.DataChunkFile.PayloadMetadata, err
 }
 
-// RelayDataChunkFileFromMinIO
-func RelayDataChunkFileFromMinIO(
+// FetchDataChunkFile
+func FetchDataChunkFile(
 	dst atlas.DataChunkTransport,
 	mi *MinIO,
 	s3address *atlas.S3Address,
+	options *Options,
 ) (int64, error) {
-	log.Infof("RelayDataChunkFileFromMinIO() - start")
-	defer log.Infof("RelayDataChunkFileFromMinIO() - end")
+	log.Infof("FetchDataChunkFile() - start")
+	defer log.Infof("FetchDataChunkFile() - end")
 
 	r, err := mi.Get(s3address.Bucket, s3address.Object)
 	if err != nil {
@@ -62,5 +64,5 @@ func RelayDataChunkFileFromMinIO(
 
 	metadata := new(atlas.Metadata)
 	metadata.SetFilename(s3address.Object)
-	return atlas.SendDataChunkFile(dst, metadata, r, true)
+	return atlas.SendDataChunkFile(dst, metadata, r, options.GetCompress())
 }
