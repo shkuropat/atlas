@@ -55,8 +55,8 @@ func NewMinIO(endpoint string, secure bool, accessKeyID, secretAccessKey string)
 	return min, err
 }
 
-// NewMinIOConfig
-func NewMinIOConfig(cfg config.MinIOEndpointConfig) (*MinIO, error) {
+// NewMinIOFromConfig
+func NewMinIOFromConfig(cfg config.MinIOEndpointConfig) (*MinIO, error) {
 	return NewMinIO(
 		cfg.GetMinIOEndpoint(),
 		cfg.GetMinIOSecure(),
