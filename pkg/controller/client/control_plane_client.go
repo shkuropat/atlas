@@ -79,10 +79,17 @@ func DataExchange(
 		DataChunksClient.Recv()
 	}()
 
+	t := atlas.OpenDataChunkTransportWithCompression(
+		DataChunksClient,
+		&atlas.DataChunkTransportCompressionOptions{
+			Compress:   options.GetCompress(),
+			Decompress: options.GetDecompress(),
+		})
+
 	if src != nil {
 		// We have something to send
 		result.Send.Sent,
-			result.Err = atlas.SendDataChunkFile(DataChunksClient, options.GetMetadata(), src, options.GetCompress())
+			result.Err = t.Send(src, options.GetMetadata())
 		if result.Err != nil {
 			log.Warnf("SendDataChunkFile() failed with err %v", result.Err)
 			return result
@@ -94,7 +101,7 @@ func DataExchange(
 		result.Receive.Received,
 			result.Receive.Data,
 			result.Receive.Metadata,
-			result.Err = atlas.RecvDataChunkFileIntoBuf(DataChunksClient, options.GetDecompress())
+			result.Err = t.RecvIntoBuf()
 		if result.Err != nil {
 			log.Warnf("RecvDataChunkFileIntoBuf() failed with err %v", result.Err)
 			return result
