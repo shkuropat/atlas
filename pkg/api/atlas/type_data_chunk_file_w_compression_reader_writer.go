@@ -16,6 +16,7 @@ package atlas
 
 import (
 	"fmt"
+
 	"github.com/ulikunitz/xz/lzma"
 )
 
@@ -23,17 +24,22 @@ const (
 	LZMACompression = "lzma"
 )
 
-// DataChunkFileCompression is a compression descriptor
-type DataChunkFileCompression struct {
+// DataChunkFileReadCompression is a compression descriptor
+type DataChunkFileReadCompression struct {
 	Type       string
 	LZMAReader *lzma.Reader
+}
+
+// DataChunkFileWriteCompression is a compression descriptor
+type DataChunkFileWriteCompression struct {
+	Type       string
 	LZMAWriter *lzma.Writer
 }
 
 // DataChunkFileWriter
 type DataChunkFileWriter struct {
 	DataChunkFile *DataChunkFile
-	Compression   DataChunkFileCompression
+	Compression   DataChunkFileWriteCompression
 }
 
 // OpenDataChunkFileWriter
@@ -59,7 +65,7 @@ func OpenDataChunkFileWriter(
 		}
 		return &DataChunkFileWriter{
 			DataChunkFile: f,
-			Compression: DataChunkFileCompression{
+			Compression: DataChunkFileWriteCompression{
 				Type:       LZMACompression,
 				LZMAWriter: lzmaWriter,
 			},
@@ -98,7 +104,7 @@ func (w *DataChunkFileWriter) Write(p []byte) (n int, err error) {
 // DataChunkFileReader
 type DataChunkFileReader struct {
 	DataChunkFile *DataChunkFile
-	Compression   DataChunkFileCompression
+	Compression   DataChunkFileReadCompression
 }
 
 // OpenDataChunkFileReader
@@ -114,7 +120,7 @@ func OpenDataChunkFileReader(transport DataChunkTransport, decompress bool) (*Da
 		}
 		return &DataChunkFileReader{
 			DataChunkFile: dcf,
-			Compression: DataChunkFileCompression{
+			Compression: DataChunkFileReadCompression{
 				Type:       LZMACompression,
 				LZMAReader: lzmaReader,
 			},

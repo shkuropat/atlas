@@ -18,9 +18,10 @@ import "github.com/binarly-io/atlas/pkg/api/atlas"
 
 // DataExchangeOptions
 type DataExchangeOptions struct {
-	Compress  bool
-	WaitReply bool
-	Metadata  *atlas.Metadata
+	Compress   bool
+	Decompress bool
+	WaitReply  bool
+	Metadata   *atlas.Metadata
 }
 
 // GetCompress
@@ -30,6 +31,15 @@ func (opts *DataExchangeOptions) GetCompress() bool {
 	}
 
 	return opts.Compress
+}
+
+// GetDecompress
+func (opts *DataExchangeOptions) GetDecompress() bool {
+	if opts == nil {
+		return false
+	}
+
+	return opts.Decompress
 }
 
 // GetWaitReply

@@ -94,7 +94,7 @@ func DataExchange(
 		result.Receive.Received,
 			result.Receive.Data,
 			result.Receive.Metadata,
-			result.Err = atlas.RecvDataChunkFileIntoBuf(DataChunksClient)
+			result.Err = atlas.RecvDataChunkFileIntoBuf(DataChunksClient, options.GetDecompress())
 		if result.Err != nil {
 			log.Warnf("RecvDataChunkFileIntoBuf() failed with err %v", result.Err)
 			return result
