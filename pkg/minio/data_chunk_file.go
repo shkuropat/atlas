@@ -20,24 +20,33 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
+type DataChunkTransportMinIO struct {
+	Transport atlas.DataChunkTransport
+	MI        *MinIO
+	Options   *Options
+}
+
+func NewDataChunkTransportMinIO(transport atlas.DataChunkTransport, mi *MinIO, options *Options) *DataChunkTransportMinIO {
+	return &DataChunkTransportMinIO{
+		Transport: transport,
+		MI:        mi,
+		Options:   options,
+	}
+}
+
 // AcceptDataChunkFile
-func AcceptDataChunkFile(
-	mi *MinIO,
-	s3address *atlas.S3Address,
-	src atlas.DataChunkTransport,
-	options *Options,
-) (int64, *atlas.Metadata, error) {
+func (f *DataChunkTransportMinIO) AcceptDataChunkFile(s3address *atlas.S3Address) (int64, *atlas.Metadata, error) {
 	log.Infof("AcceptDataChunkFile() - start")
 	defer log.Infof("AcceptDataChunkFile() - end")
 
-	r, err := atlas.OpenDataChunkFileReader(src, options.GetDecompress())
+	r, err := atlas.OpenDataChunkFileReader(f.Transport, f.Options.GetDecompress())
 	if err != nil {
 		log.Errorf("got error: %v", err)
 		return 0, nil, err
 	}
 	defer r.Close()
 
-	written, err := mi.Put(s3address.Bucket, s3address.Object, r)
+	written, err := f.MI.Put(s3address.Bucket, s3address.Object, r)
 	if err != nil {
 		log.Errorf("AcceptDataChunkFile() got error: %v", err.Error())
 	}
@@ -47,22 +56,20 @@ func AcceptDataChunkFile(
 }
 
 // FetchDataChunkFile
-func FetchDataChunkFile(
-	dst atlas.DataChunkTransport,
-	mi *MinIO,
-	s3address *atlas.S3Address,
-	options *Options,
-) (int64, error) {
+func (f *DataChunkTransportMinIO) FetchDataChunkFile(s3address *atlas.S3Address) (int64, error) {
 	log.Infof("FetchDataChunkFile() - start")
 	defer log.Infof("FetchDataChunkFile() - end")
 
-	r, err := mi.Get(s3address.Bucket, s3address.Object)
+	r, err := f.MI.Get(s3address.Bucket, s3address.Object)
 	if err != nil {
 		log.Errorf("got error from MinIO: %v", err)
 		return 0, err
 	}
 
+	t := atlas.OpenDataChunkTransportWithCompression(f.Transport, &atlas.DataChunkTransportCompressionOptions{
+		Decompress: f.Options.GetCompress(),
+	})
 	metadata := new(atlas.Metadata)
 	metadata.SetFilename(s3address.Object)
-	return atlas.SendDataChunkFile(dst, metadata, r, options.GetCompress())
+	return t.Send(r, metadata)
 }
