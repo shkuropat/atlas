@@ -44,18 +44,21 @@ func NewConsumerGroup(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress
 	}
 }
 
-// NewConsumerGroupConfig
-func NewConsumerGroupConfig(cfg config.KafkaEndpointConfig, groupID string) *ConsumerGroup {
+// NewConsumerGroupFromEndpoint.
+// IMPORTANT - you have to specify topic to read from either with
+//	1. SetAddress
+//	2. SetTopic
+func NewConsumerGroupFromEndpoint(cfg config.KafkaEndpointConfig, groupID string) *ConsumerGroup {
 	return NewConsumerGroup(cfg.GetKafkaEndpoint(), nil, groupID)
 }
 
-// SetAddress
+// SetAddress - sets the full address - Topic and Partition
 func (c *ConsumerGroup) SetAddress(address *atlas.KafkaAddress) *ConsumerGroup {
 	c.address = address
 	return c
 }
 
-// SetTopic
+// SetTopic - sets address in simplified form - specified Topic and Partition 0
 func (c *ConsumerGroup) SetTopic(topic string) *ConsumerGroup {
 	c.address = atlas.NewKafkaAddress(topic, 0)
 	return c
@@ -105,8 +108,6 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 	// Iterate over consumer sessions.
 	ctx := context.Background()
 	for {
-		topics := []string{c.address.Topic}
-
 		// Handler can be either explicitly specified, or a default one
 		// Default handler can still use external c.messageProcessor
 		handler := c.consumerGroupHandler
@@ -118,9 +119,9 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 		//
 		// `Consume` should be called inside an infinite loop.
 		// When a server-side rebalance happens, the consumer session will need to be recreated to get the new claims
-		err := group.Consume(ctx, topics, handler)
+		err := group.Consume(ctx, c.address.GetTopics(), handler)
 		if err != nil {
-			log.Fatalf("unable to Consume topics %v with err: %v", topics, err)
+			log.Fatalf("unable to Consume topics %v with err: %v", c.address.GetTopics(), err)
 		}
 	}
 }

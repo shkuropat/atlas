@@ -15,7 +15,6 @@
 package controller_client
 
 import (
-	"bytes"
 	"context"
 	"io"
 	"os"
@@ -49,27 +48,24 @@ func CommandsExchange(ControlPlaneClient atlas.ControlPlaneClient) {
 // DataExchange send data to server and receives back reply (if needed)
 func DataExchange(
 	ControlPlaneClient atlas.ControlPlaneClient,
-	metadata *atlas.Metadata,
 	src io.Reader,
-	compress bool,
-	recv bool,
-) (int64, int64, *bytes.Buffer, error) {
+	options *DataExchangeOptions,
+) *DataExchangeResult {
 	log.Infof("DataExchange() - start")
 	defer log.Infof("DataExchange() - end")
 
-	var (
-		sent, received int64
-		buf            *bytes.Buffer
-	)
+	result := &DataExchangeResult{}
 
 	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	DataChunksClient, err := ControlPlaneClient.DataChunks(ctx)
-	if err != nil {
-		log.Errorf("ControlPlaneClient.DataChunks() failed %v", err)
-		return 0, 0, nil, err
+	var DataChunksClient atlas.ControlPlane_DataChunksClient
+
+	DataChunksClient, result.Err = ControlPlaneClient.DataChunks(ctx)
+	if result.Err != nil {
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
+		return result
 	}
 
 	defer func() {
@@ -84,16 +80,26 @@ func DataExchange(
 	}()
 
 	if src != nil {
-		sent, err = atlas.SendDataChunkFile(DataChunksClient, metadata, src, compress)
-		if err != nil {
-			log.Warnf("SendDataChunkFile() failed with err %v", err)
-			return sent, 0, nil, err
+		// We have something to send
+		result.Send.Sent,
+			result.Err = atlas.SendDataChunkFile(DataChunksClient, options.GetMetadata(), src, options.GetCompress())
+		if result.Err != nil {
+			log.Warnf("SendDataChunkFile() failed with err %v", result.Err)
+			return result
 		}
 	}
 
-	if recv {
-		received, buf, _, err = atlas.RecvDataChunkFileIntoBuf(DataChunksClient)
+	if options.GetWaitReply() {
+		// We should wait for reply
+		result.Receive.Received,
+			result.Receive.Data,
+			result.Receive.Metadata,
+			result.Err = atlas.RecvDataChunkFileIntoBuf(DataChunksClient)
+		if result.Err != nil {
+			log.Warnf("RecvDataChunkFileIntoBuf() failed with err %v", result.Err)
+			return result
+		}
 	}
 
-	return sent, received, buf, err
+	return result
 }

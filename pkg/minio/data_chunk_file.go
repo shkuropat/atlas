@@ -29,20 +29,20 @@ func RelayDataChunkFileIntoMinIO(
 	log.Infof("RelayDataChunkFileIntoMinIO() - start")
 	defer log.Infof("RelayDataChunkFileIntoMinIO() - end")
 
-	f, err := atlas.OpenDataChunkFile(src)
+	r, err := atlas.OpenDataChunkFileReader(src, true)
 	if err != nil {
 		log.Errorf("got error: %v", err)
 		return 0, nil, err
 	}
-	defer f.Close()
+	defer r.Close()
 
-	written, err := mi.Put(s3address.Bucket, s3address.Object, f)
+	written, err := mi.Put(s3address.Bucket, s3address.Object, r)
 	if err != nil {
 		log.Errorf("RelayDataChunkFileIntoMinIO() got error: %v", err.Error())
 	}
-	f.PayloadMetadata.Log()
+	r.DataChunkFile.PayloadMetadata.Log()
 
-	return written, f.PayloadMetadata, err
+	return written, r.DataChunkFile.PayloadMetadata, err
 }
 
 // RelayDataChunkFileFromMinIO

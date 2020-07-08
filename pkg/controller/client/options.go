@@ -12,21 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package atlas
+package controller_client
 
-// NewKafkaAddress
-func NewKafkaAddress(topic string, partition int32) *KafkaAddress {
-	return &KafkaAddress{
-		Topic:     topic,
-		Partition: partition,
-	}
+import "github.com/binarly-io/atlas/pkg/api/atlas"
+
+// DataExchangeOptions
+type DataExchangeOptions struct {
+	Compress  bool
+	WaitReply bool
+	Metadata  *atlas.Metadata
 }
 
-// GetTopics
-func (m *KafkaAddress) GetTopics() []string {
-	if m != nil {
-		return []string{m.Topic}
+// GetCompress
+func (opts *DataExchangeOptions) GetCompress() bool {
+	if opts == nil {
+		return false
 	}
 
-	return nil
+	return opts.Compress
+}
+
+// GetWaitReply
+func (opts *DataExchangeOptions) GetWaitReply() bool {
+	if opts == nil {
+		return false
+	}
+
+	return opts.WaitReply
+}
+
+// GetMetadata
+func (opts *DataExchangeOptions) GetMetadata() *atlas.Metadata {
+	if opts == nil {
+		return nil
+	}
+
+	return opts.Metadata
 }

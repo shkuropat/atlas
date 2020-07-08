@@ -16,7 +16,6 @@ package atlas
 
 import (
 	"fmt"
-	"github.com/ulikunitz/xz/lzma"
 	"io"
 
 	log "github.com/sirupsen/logrus"
@@ -56,8 +55,6 @@ type DataChunkFile struct {
 
 	// MaxWriteChunkSize limits max size of a payload within one data chunk to be sent
 	MaxWriteChunkSize int
-
-	lzmaWriter *lzma.Writer
 
 	// Receive part
 	buf []byte

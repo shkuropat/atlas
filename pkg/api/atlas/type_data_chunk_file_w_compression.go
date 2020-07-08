@@ -19,10 +19,21 @@ import (
 	"github.com/ulikunitz/xz/lzma"
 )
 
+const (
+	LZMACompression = "lzma"
+)
+
+// DataChunkFileCompression is a compression descriptor
+type DataChunkFileCompression struct {
+	Type       string
+	LZMAReader *lzma.Reader
+	LZMAWriter *lzma.Writer
+}
+
 // DataChunkFileWriter
 type DataChunkFileWriter struct {
 	DataChunkFile *DataChunkFile
-	Writer        *lzma.Writer
+	Compression   DataChunkFileCompression
 }
 
 // OpenDataChunkFileWriter
@@ -39,28 +50,32 @@ func OpenDataChunkFileWriter(
 		PayloadMetadata: metadata,
 	}
 
-	var lzmaWriter *lzma.Writer
-	var err error
 	if compress {
 		f.ensureTransportMetadata()
-		f.TransportMetadata.SetCompression("lzma")
-		lzmaWriter, err = lzma.NewWriter(f)
+		f.TransportMetadata.SetCompression(LZMACompression)
+		lzmaWriter, err := lzma.NewWriter(f)
 		if err != nil {
 			return nil, err
 		}
+		return &DataChunkFileWriter{
+			DataChunkFile: f,
+			Compression: DataChunkFileCompression{
+				Type:       LZMACompression,
+				LZMAWriter: lzmaWriter,
+			},
+		}, nil
 	}
 
 	return &DataChunkFileWriter{
 		DataChunkFile: f,
-		Writer:        lzmaWriter,
 	}, nil
 }
 
 // Close
 func (w *DataChunkFileWriter) Close() error {
 	var err error
-	if w.Writer != nil {
-		err = w.Writer.Close()
+	if w.Compression.LZMAWriter != nil {
+		err = w.Compression.LZMAWriter.Close()
 	}
 	if w.DataChunkFile != nil {
 		err = w.DataChunkFile.Close()
@@ -70,8 +85,8 @@ func (w *DataChunkFileWriter) Close() error {
 
 // Write
 func (w *DataChunkFileWriter) Write(p []byte) (n int, err error) {
-	if w.Writer != nil {
-		return w.Writer.Write(p)
+	if w.Compression.LZMAWriter != nil {
+		return w.Compression.LZMAWriter.Write(p)
 	}
 	if w.DataChunkFile != nil {
 		return w.DataChunkFile.Write(p)
@@ -83,7 +98,7 @@ func (w *DataChunkFileWriter) Write(p []byte) (n int, err error) {
 // DataChunkFileReader
 type DataChunkFileReader struct {
 	DataChunkFile *DataChunkFile
-	Reader        *lzma.Reader
+	Compression   DataChunkFileCompression
 }
 
 // OpenDataChunkFileReader
@@ -92,18 +107,22 @@ func OpenDataChunkFileReader(transport DataChunkTransport, decompress bool) (*Da
 		transport: transport,
 	}
 
-	var lzmaReader *lzma.Reader
-	var err error
 	if decompress {
-		lzmaReader, err = lzma.NewReader(dcf)
+		lzmaReader, err := lzma.NewReader(dcf)
 		if err != nil {
 			return nil, err
 		}
+		return &DataChunkFileReader{
+			DataChunkFile: dcf,
+			Compression: DataChunkFileCompression{
+				Type:       LZMACompression,
+				LZMAReader: lzmaReader,
+			},
+		}, nil
 	}
 
 	return &DataChunkFileReader{
 		DataChunkFile: dcf,
-		Reader:        lzmaReader,
 	}, nil
 }
 
@@ -118,17 +137,18 @@ func (w *DataChunkFileReader) Close() error {
 
 // Read
 func (w *DataChunkFileReader) Read(p []byte) (n int, err error) {
-	if w.Reader != nil {
+	if w.Compression.LZMAReader != nil {
 		if !w.DataChunkFile.HasTransportMetadata() {
 			w.DataChunkFile.appendDataBuf()
 		}
 
 		if w.DataChunkFile.HasTransportMetadata() {
 			if w.DataChunkFile.TransportMetadata.GetCompression() != "" {
-				return w.Reader.Read(p)
+				return w.Compression.LZMAReader.Read(p)
 			}
 		}
 	}
+
 	if w.DataChunkFile != nil {
 		return w.DataChunkFile.Read(p)
 	}

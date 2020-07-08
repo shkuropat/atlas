@@ -75,12 +75,12 @@ func RecvDataChunkFile(src DataChunkTransport, dst io.Writer, decompress bool) (
 }
 
 // RecvDataChunkFileIntoBuf
-func RecvDataChunkFileIntoBuf(src DataChunkTransport) (int64, *bytes.Buffer, *Metadata, error) {
+func RecvDataChunkFileIntoBuf(src DataChunkTransport, decompress bool) (int64, *bytes.Buffer, *Metadata, error) {
 	log.Infof("RecvDataChunkFileIntoBuf() - start")
 	defer log.Infof("RecvDataChunkFileIntoBuf() - end")
 
 	var buf = &bytes.Buffer{}
-	written, metadata, err := RecvDataChunkFile(src, buf, true)
+	written, metadata, err := RecvDataChunkFile(src, buf, decompress)
 	if err != nil {
 		log.Errorf("RecvDataChunkFileIntoBuf() got error: %v", err.Error())
 	}
