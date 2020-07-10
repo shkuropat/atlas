@@ -21,51 +21,27 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// DataChunkTransportCompressionOptions
-type DataChunkTransportCompressionOptions struct {
-	Compress   bool
-	Decompress bool
+// DataChunkFileAdapter
+type DataChunkFileAdapter struct {
+	transport DataChunkTransport
+	options   *DataChunkFileAdapterOptions
 }
 
-// GetCompress
-func (opts *DataChunkTransportCompressionOptions) GetCompress() bool {
-	if opts == nil {
-		return false
-	}
-
-	return opts.Compress
-}
-
-// GetDecompress
-func (opts *DataChunkTransportCompressionOptions) GetDecompress() bool {
-	if opts == nil {
-		return false
-	}
-
-	return opts.Decompress
-}
-
-// DataChunkTransportWithCompression
-type DataChunkTransportWithCompression struct {
-	Transport DataChunkTransport
-	Options   *DataChunkTransportCompressionOptions
-}
-
-// OpenDataChunkTransportWithCompression
-func OpenDataChunkTransportWithCompression(transport DataChunkTransport, options *DataChunkTransportCompressionOptions) *DataChunkTransportWithCompression {
-	return &DataChunkTransportWithCompression{
-		Transport: transport,
-		Options:   options,
+// NewDataChunkFileAdapter
+func NewDataChunkFileAdapter(transport DataChunkTransport, options *DataChunkFileAdapterOptions) *DataChunkFileAdapter {
+	return &DataChunkFileAdapter{
+		transport: transport,
+		options:   options,
 	}
 }
 
-// Send
-func (f *DataChunkTransportWithCompression) Send(src io.Reader, metadata *Metadata) (int64, error) {
+// AcceptFrom sends data into adapter from `src`
+func (f *DataChunkFileAdapter) AcceptFrom(src io.Reader, metadata *Metadata) (int64, error) {
 	log.Infof("DataChunkTransportWithCompression.Send() - start")
 	defer log.Infof("DataChunkTransportWithCompression.Send() - end")
 
-	w, err := OpenDataChunkFileWriter(
-		f.Transport,
+	w, err := OpenDataChunkFileCompressor(
+		f.transport,
 		NewMetadata(
 			int32(DataChunkType_DATA_CHUNK_TYPE_DATA),
 			"",
@@ -77,7 +53,7 @@ func (f *DataChunkTransportWithCompression) Send(src io.Reader, metadata *Metada
 			"desc",
 		),
 		metadata,
-		f.Options.GetCompress(),
+		f.options.GetCompress(),
 	)
 	if err != nil {
 		log.Warnf("got err: %v", err)
@@ -88,12 +64,12 @@ func (f *DataChunkTransportWithCompression) Send(src io.Reader, metadata *Metada
 	return io.Copy(w, src)
 }
 
-// Recv
-func (f *DataChunkTransportWithCompression) Recv(dst io.Writer) (int64, *Metadata, error) {
+// RelayInto gets data from adapter into `dst`
+func (f *DataChunkFileAdapter) RelayInto(dst io.Writer) (int64, *Metadata, error) {
 	log.Infof("DataChunkTransportWithCompression.Recv() - start")
 	defer log.Infof("DataChunkTransportWithCompression.Recv() - end")
 
-	r, err := OpenDataChunkFileReader(f.Transport, f.Options.GetDecompress())
+	r, err := OpenDataChunkFileDecompressor(f.transport, f.options.GetDecompress())
 	if err != nil {
 		return 0, nil, err
 	}
@@ -107,13 +83,13 @@ func (f *DataChunkTransportWithCompression) Recv(dst io.Writer) (int64, *Metadat
 	return written, r.DataChunkFile.PayloadMetadata, err
 }
 
-// RecvIntoBuf
-func (f *DataChunkTransportWithCompression) RecvIntoBuf() (int64, *bytes.Buffer, *Metadata, error) {
+// RelayIntoBuf gets data from adapter into newly created buffer
+func (f *DataChunkFileAdapter) RelayIntoBuf() (int64, *bytes.Buffer, *Metadata, error) {
 	log.Infof("DataChunkTransportWithCompression.RecvIntoBuf() - start")
 	defer log.Infof("DataChunkTransportWithCompression.RecvIntoBuf() - end")
 
 	var buf = &bytes.Buffer{}
-	written, metadata, err := f.Recv(buf)
+	written, metadata, err := f.RelayInto(buf)
 	if err != nil {
 		log.Errorf("DataChunkTransportWithCompression.RecvIntoBuf() got error: %v", err.Error())
 	}

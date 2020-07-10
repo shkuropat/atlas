@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package minio
+package atlas
 
-// Options
-type Options struct {
+// DataChunkFileAdapterOptions
+type DataChunkFileAdapterOptions struct {
 	Compress   bool
 	Decompress bool
 }
 
 // GetCompress
-func (opts *Options) GetCompress() bool {
+func (opts *DataChunkFileAdapterOptions) GetCompress() bool {
 	if opts == nil {
 		return false
 	}
@@ -30,7 +30,7 @@ func (opts *Options) GetCompress() bool {
 }
 
 // GetDecompress
-func (opts *Options) GetDecompress() bool {
+func (opts *DataChunkFileAdapterOptions) GetDecompress() bool {
 	if opts == nil {
 		return false
 	}

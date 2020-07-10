@@ -20,56 +20,59 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-type DataChunkTransportMinIO struct {
-	Transport atlas.DataChunkTransport
-	MI        *MinIO
-	Options   *Options
+type DataChunkFileAdapter struct {
+	mi        *MinIO
+	s3address *atlas.S3Address
+	options   *atlas.DataChunkFileAdapterOptions
 }
 
-func NewDataChunkTransportMinIO(transport atlas.DataChunkTransport, mi *MinIO, options *Options) *DataChunkTransportMinIO {
-	return &DataChunkTransportMinIO{
-		Transport: transport,
-		MI:        mi,
-		Options:   options,
+func NewDataChunkFileAdapter(mi *MinIO, s3address *atlas.S3Address, options *atlas.DataChunkFileAdapterOptions) *DataChunkFileAdapter {
+	return &DataChunkFileAdapter{
+		mi:        mi,
+		s3address: s3address,
+		options:   options,
 	}
 }
 
-// AcceptDataChunkFile
-func (f *DataChunkTransportMinIO) AcceptDataChunkFile(s3address *atlas.S3Address) (int64, *atlas.Metadata, error) {
+// AcceptFrom sends data into adapter from `src`
+func (f *DataChunkFileAdapter) AcceptFrom(src atlas.DataChunkTransport) (int64, *atlas.Metadata, error) {
 	log.Infof("AcceptDataChunkFile() - start")
 	defer log.Infof("AcceptDataChunkFile() - end")
 
-	r, err := atlas.OpenDataChunkFileReader(f.Transport, f.Options.GetDecompress())
+	r, err := atlas.OpenDataChunkFileDecompressor(src, f.options.GetDecompress())
 	if err != nil {
 		log.Errorf("got error: %v", err)
 		return 0, nil, err
 	}
 	defer r.Close()
 
-	written, err := f.MI.Put(s3address.Bucket, s3address.Object, r)
+	written, err := f.mi.Put(f.s3address.Bucket, f.s3address.Object, r)
 	if err != nil {
 		log.Errorf("AcceptDataChunkFile() got error: %v", err.Error())
 	}
+
+	log.Info("Accepted data meta:")
 	r.DataChunkFile.PayloadMetadata.Log()
+	r.DataChunkFile.TransportMetadata.Log()
 
 	return written, r.DataChunkFile.PayloadMetadata, err
 }
 
-// FetchDataChunkFile
-func (f *DataChunkTransportMinIO) FetchDataChunkFile(s3address *atlas.S3Address) (int64, error) {
+// RelayInto gets data from adapter into `dst`
+func (f *DataChunkFileAdapter) RelayInto(dst atlas.DataChunkTransport) (int64, error) {
 	log.Infof("FetchDataChunkFile() - start")
 	defer log.Infof("FetchDataChunkFile() - end")
 
-	r, err := f.MI.Get(s3address.Bucket, s3address.Object)
+	r, err := f.mi.Get(f.s3address.Bucket, f.s3address.Object)
 	if err != nil {
 		log.Errorf("got error from MinIO: %v", err)
 		return 0, err
 	}
 
-	t := atlas.OpenDataChunkTransportWithCompression(f.Transport, &atlas.DataChunkTransportCompressionOptions{
-		Decompress: f.Options.GetCompress(),
+	t := atlas.NewDataChunkFileAdapter(dst, &atlas.DataChunkFileAdapterOptions{
+		Decompress: f.options.GetCompress(),
 	})
 	metadata := new(atlas.Metadata)
-	metadata.SetFilename(s3address.Object)
-	return t.Send(r, metadata)
+	metadata.SetFilename(f.s3address.Object)
+	return t.AcceptFrom(r, metadata)
 }

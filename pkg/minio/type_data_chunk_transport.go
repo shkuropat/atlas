@@ -17,10 +17,18 @@ package minio
 import (
 	"bytes"
 	"fmt"
-	"github.com/binarly-io/atlas/pkg/api/atlas"
+
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v6"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
+
+// DataChunkTransport defines transport level interface
+// Has the following functions:
+//   Send(*DataChunk) error
+//   Recv() (*DataChunk, error)
 
 type DataChunkTransport struct {
 	// MinIO handler
@@ -37,6 +45,9 @@ type DataChunkTransport struct {
 
 // NewDataChunkTransport
 func NewDataChunkTransport(mi *MinIO, bucket, object string, close bool) *DataChunkTransport {
+	log.Infof("minio.NewDataChunkTransport() - start")
+	defer log.Infof("minio.NewDataChunkTransport() - end")
+
 	return &DataChunkTransport{
 		mi:     mi,
 		bucket: bucket,
@@ -80,8 +91,10 @@ func (t *DataChunkTransport) compose() error {
 	return nil
 }
 
-// Send puts each data chunk into own uniq-UUID-named object in bucket and appends object to slice of chunks
+// Send puts each data chunk into own unique-UUID-named object in bucket and appends object to slice of chunks
 func (t *DataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
+	log.Infof("minio.DataChunkTransport.Send() - start")
+	defer log.Infof("minio.DataChunkTransport.Send() - end")
 
 	uuid, err := uuid.NewUUID()
 	if err != nil {
@@ -99,5 +112,8 @@ func (t *DataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
 
 // Recv
 func (t *DataChunkTransport) Recv() (*atlas.DataChunk, error) {
+	log.Infof("minio.DataChunkTransport.Recv() - start")
+	defer log.Infof("minio.DataChunkTransport.Recv() - end")
+
 	return nil, fmt.Errorf("unimplemented MinIODataChunkTransport.Recv()")
 }

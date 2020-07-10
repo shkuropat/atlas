@@ -22,7 +22,8 @@ import (
 )
 
 const (
-	LZMACompression = "lzma"
+	CompressionNone = "none"
+	CompressionLZMA = "lzma"
 )
 
 // DataChunkFileReadCompression is a compression descriptor
@@ -43,15 +44,15 @@ type DataChunkFileWriter struct {
 	Compression   DataChunkFileWriteCompression
 }
 
-// OpenDataChunkFileWriter
-func OpenDataChunkFileWriter(
+// OpenDataChunkFileCompressor
+func OpenDataChunkFileCompressor(
 	transport DataChunkTransport,
 	header *Metadata,
 	metadata *Metadata,
 	compress bool,
 ) (*DataChunkFileWriter, error) {
-	log.Infof("OpenDataChunkFileWriter() - start")
-	defer log.Infof("OpenDataChunkFileWriter() - end")
+	log.Infof("OpenDataChunkFileCompressor() - start")
+	defer log.Infof("OpenDataChunkFileCompressor() - end")
 
 	f := &DataChunkFile{
 		transport:       transport,
@@ -60,10 +61,10 @@ func OpenDataChunkFileWriter(
 	}
 
 	if compress {
-		log.Infof("OpenDataChunkFileWriter() - requesting LZMA compression")
+		log.Infof("OpenDataChunkFileCompressor() - requesting LZMA compression")
 
 		f.ensureTransportMetadata()
-		f.TransportMetadata.SetCompression(LZMACompression)
+		f.TransportMetadata.SetCompression(CompressionLZMA)
 		lzmaWriter, err := lzma.NewWriter(f)
 		if err != nil {
 			log.Warnf("FAILED to create lzma writer. err: %v", err)
@@ -72,7 +73,7 @@ func OpenDataChunkFileWriter(
 		return &DataChunkFileWriter{
 			DataChunkFile: f,
 			Compression: DataChunkFileWriteCompression{
-				Type:       LZMACompression,
+				Type:       CompressionLZMA,
 				LZMAWriter: lzmaWriter,
 			},
 		}, nil
@@ -116,17 +117,17 @@ type DataChunkFileReader struct {
 	Compression   DataChunkFileReadCompression
 }
 
-// OpenDataChunkFileReader
-func OpenDataChunkFileReader(transport DataChunkTransport, decompress bool) (*DataChunkFileReader, error) {
-	log.Infof("OpenDataChunkFileReader() - start")
-	defer log.Infof("OpenDataChunkFileReader() - end")
+// OpenDataChunkFileDecompressor
+func OpenDataChunkFileDecompressor(transport DataChunkTransport, decompress bool) (*DataChunkFileReader, error) {
+	log.Infof("OpenDataChunkFileDecompressor() - start")
+	defer log.Infof("OpenDataChunkFileDecompressor() - end")
 
 	f := &DataChunkFile{
 		transport: transport,
 	}
 
 	if decompress {
-		log.Infof("OpenDataChunkFileReader() - requesting LZMA decompression")
+		log.Infof("OpenDataChunkFileDecompressor() - requesting LZMA decompression")
 
 		lzmaReader, err := lzma.NewReader(f)
 		if err != nil {
@@ -137,7 +138,7 @@ func OpenDataChunkFileReader(transport DataChunkTransport, decompress bool) (*Da
 		return &DataChunkFileReader{
 			DataChunkFile: f,
 			Compression: DataChunkFileReadCompression{
-				Type:       LZMACompression,
+				Type:       CompressionLZMA,
 				LZMAReader: lzmaReader,
 			},
 		}, nil
@@ -167,7 +168,7 @@ func (r *DataChunkFileReader) Read(p []byte) (n int, err error) {
 
 		if !r.DataChunkFile.HasTransportMetadata() {
 			log.Infof("DataChunkFileReader.Read() - no TransportMetadata yet, wait for it")
-			r.DataChunkFile.appendDataBuf()
+			r.DataChunkFile.recvDataChunkAndAppendBuf()
 		}
 
 		if !r.DataChunkFile.HasTransportMetadata() {

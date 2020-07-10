@@ -21,13 +21,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// DataChunkTransport defines transport level interface (for both client and server),
-// which serves DataChunk streams bi-directionally.
-type DataChunkTransport interface {
-	Send(*DataChunk) error
-	Recv() (*DataChunk, error)
-}
-
 // DataChunkFile is a handler to set of DataChunk(s)
 // Inspired by os.File handler and is expected to be used in the same context.
 // DataChunkFile implements the following interfaces:
@@ -114,50 +107,48 @@ func (f *DataChunkFile) close() {
 	f.err = nil
 }
 
-// acceptHeader
+// acceptHeader accepts header from DataChunk into file
 func (f *DataChunkFile) acceptHeader(dataChunk *DataChunk) {
-	hdr := dataChunk.GetHeader()
-	if hdr == nil {
-		return
+	if header := dataChunk.GetHeader(); header != nil {
+		f.Header = header
 	}
-
-	f.Header = hdr
 }
 
-// acceptTransportMetadata
+// acceptTransportMetadata accepts transport metadata from DataChunk into file
 func (f *DataChunkFile) acceptTransportMetadata(dataChunk *DataChunk) {
-	md := dataChunk.GetTransportMetadata()
-	if md == nil {
-		return
+	if md := dataChunk.GetTransportMetadata(); md != nil {
+		f.TransportMetadata = md
 	}
-
-	f.TransportMetadata = md
 }
 
-// acceptPayloadMetadata
+// acceptPayloadMetadata accepts payload metadata from DataChunk into file
 func (f *DataChunkFile) acceptPayloadMetadata(dataChunk *DataChunk) {
-	md := dataChunk.GetPayloadMetadata()
-	if md == nil {
-		return
+	if md := dataChunk.GetPayloadMetadata(); md != nil {
+		f.PayloadMetadata = md
 	}
-
-	f.PayloadMetadata = md
 }
 
-// acceptMeta
-func (f *DataChunkFile) acceptMeta(dataChunk *DataChunk) {
+// acceptAllMetadata accepts all metadata from from DataChunk into file
+func (f *DataChunkFile) acceptAllMetadata(dataChunk *DataChunk) {
 	f.acceptTransportMetadata(dataChunk)
 	f.acceptPayloadMetadata(dataChunk)
 	f.acceptHeader(dataChunk)
 }
 
-// logDataChunk
+// logDataChunk logs DataChunk
 func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 	// Fetch filename from the chunks stream - it may be in any chunk, actually
 	filename := "not specified"
-	if dataChunk.HasPayloadMetadata() {
-		if dataChunk.GetPayloadMetadata().HasFilename() {
-			filename = dataChunk.GetPayloadMetadata().GetFilename()
+	if f.HasPayloadMetadata() {
+		if f.PayloadMetadata.HasFilename() {
+			filename = f.PayloadMetadata.GetFilename()
+		}
+	}
+
+	compression := CompressionNone
+	if f.HasTransportMetadata() {
+		if f.TransportMetadata.HasCompression() {
+			compression = f.TransportMetadata.GetCompression()
 		}
 	}
 
@@ -169,13 +160,18 @@ func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 
 	// How many bytes do we have in this chunk?
 	_len := len(dataChunk.GetBytes())
-	log.Infof("Data.Recv() got msg. filename: '%s', chunk len: %d, chunk offset: %s, last chunk: %v",
+	log.Infof("got DataChunk. filename:%s, compression:%s, chunk len:%d, chunk offset:%s, last chunk:%v",
 		filename,
+		compression,
 		_len,
 		offset,
 		dataChunk.Header.GetLast(),
 	)
-	fmt.Printf("%s\n", string(dataChunk.GetBytes()))
+	if compression == CompressionNone {
+		fmt.Printf("%s\n", string(dataChunk.GetBytes()))
+	} else {
+		fmt.Printf("got %d %s compressed bytes\n", _len, compression)
+	}
 }
 
 // recvDataChunk
@@ -186,7 +182,7 @@ func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
 	// Whether this chunk is the last one within this DataChunkFile
 	dataChunk, err := f.transport.Recv()
 	if dataChunk != nil {
-		f.acceptMeta(dataChunk)
+		f.acceptAllMetadata(dataChunk)
 		f.logDataChunk(dataChunk)
 	}
 
@@ -196,15 +192,15 @@ func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
 		// Correct EOF arrived
 		log.Infof("DataChunkTransport.Recv() get EOF")
 	} else {
-		// Stream broken
+		// Stream is somehow broken
 		log.Infof("DataChunkTransport.Recv() got err: %v", err)
 	}
 
 	return dataChunk, err
 }
 
-// appendDataBuf
-func (f *DataChunkFile) appendDataBuf() {
+// recvDataChunkAndAppendBuf
+func (f *DataChunkFile) recvDataChunkAndAppendBuf() {
 	dataChunk, err := f.recvDataChunk()
 	if dataChunk != nil {
 		if len(dataChunk.GetBytes()) > 0 {
@@ -274,11 +270,11 @@ func (f *DataChunkFile) Write(p []byte) (n int, err error) {
 	defer log.Infof("DataChunkFile.Write() - end")
 
 	if (len(p) < f.MaxWriteChunkSize) || (f.MaxWriteChunkSize <= 0) {
-		// No need to chunk
+		// No need to chunk, can send as one piece
 		return f.sendDataChunk(p)
 	}
 
-	// Need to chunk
+	// This piece is too big, need to chunk
 	n = 0
 	for offset := 0; offset < len(p); offset += f.MaxWriteChunkSize {
 		if sent, e := f.sendDataChunk(p[offset:f.MaxWriteChunkSize]); e != nil {
@@ -358,11 +354,13 @@ func (f *DataChunkFile) Read(p []byte) (n int, err error) {
 	defer log.Infof("DataChunkFile.Read() - end")
 
 	if len(f.buf) == 0 {
-		f.appendDataBuf()
+		// No buffered dara available, need to get some
+		f.recvDataChunkAndAppendBuf()
 	}
 
 	n = 0
 	if len(f.buf) > 0 {
+		// Have some buffered data, copy it out
 		n = copy(p, f.buf)
 		f.buf = f.buf[n:]
 
