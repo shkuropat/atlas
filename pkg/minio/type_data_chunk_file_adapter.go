@@ -16,6 +16,7 @@ package minio
 
 import (
 	log "github.com/sirupsen/logrus"
+	"io"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
@@ -75,4 +76,26 @@ func (f *DataChunkFileAdapter) RelayInto(dst atlas.DataChunkTransport) (int64, e
 	metadata := new(atlas.Metadata)
 	metadata.SetFilename(f.s3address.Object)
 	return t.AcceptFrom(r, metadata)
+}
+
+// CopyFrom sends data into adapter from `src`
+func (f *DataChunkFileAdapter) CopyFrom(src io.Reader) (int64, error) {
+	log.Infof("CopyFrom() - start")
+	defer log.Infof("CopyFrom() - end")
+
+	return f.mi.Put(f.s3address.Bucket, f.s3address.Object, src)
+}
+
+// CopyInto gets data from adapter into `dst`
+func (f *DataChunkFileAdapter) CopyInto(dst io.Writer) (int64, error) {
+	log.Infof("CopyInto() - start")
+	defer log.Infof("CopyInto() - end")
+
+	r, err := f.mi.Get(f.s3address.Bucket, f.s3address.Object)
+	if err != nil {
+		log.Errorf("got error from MinIO: %v", err)
+		return 0, err
+	}
+
+	return io.Copy(dst, r)
 }
