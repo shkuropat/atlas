@@ -133,7 +133,7 @@ func (f *DataChunkFileWOptions) WriteTo(dst io.Writer) (int64, error) {
 	log.Infof("DataChunkFileWOptions.WriteTo() - start")
 	defer log.Infof("DataChunkFileWOptions.WriteTo() - end")
 
-	return copy(dst, f)
+	return cp(dst, f)
 }
 
 // Read
@@ -176,7 +176,7 @@ func (f *DataChunkFileWOptions) ReadFrom(src io.Reader) (int64, error) {
 	log.Infof("DataChunkFileWOptions.ReadFrom() - start")
 	defer log.Infof("DataChunkFileWOptions.ReadFrom() - end")
 
-	n, err := copy(f, src)
+	n, err := cp(f, src)
 
 	log.Info("Accepted data meta:")
 	f.DataChunkFile.PayloadMetadata.Log()
@@ -203,10 +203,10 @@ func (f *DataChunkFileWOptions) WriteToBuf() (int64, *bytes.Buffer, error) {
 	return written, buf, err
 }
 
-// copy
-func copy(dst io.Writer, src io.Reader) (int64, error) {
-	log.Infof("copy() - start")
-	defer log.Infof("copy() - end")
+// cp copies from src into dst. Have to use `cp` because `copy` is a built-in function
+func cp(dst io.Writer, src io.Reader) (int64, error) {
+	log.Infof("cp() - start")
+	defer log.Infof("cp() - end")
 
 	var written int64
 	var err error
