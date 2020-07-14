@@ -79,17 +79,23 @@ func DataExchange(
 		DataChunksClient.Recv()
 	}()
 
-	f := atlas.NewDataChunkFileAdapter(
+	f, err := atlas.OpenDataChunkFileWOptions(
 		DataChunksClient,
-		&atlas.DataChunkFileAdapterOptions{
+		&atlas.DataChunkFileOptions{
+			Metadata:   options.GetMetadata(),
 			Compress:   options.GetCompress(),
 			Decompress: options.GetDecompress(),
 		})
+	if err != nil {
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
+		result.Err = err
+		return result
+	}
 
 	if src != nil {
 		// We have something to send
 		result.Send.Sent,
-			result.Err = f.AcceptFrom(src, options.GetMetadata())
+			result.Err = f.ReadFrom(src)
 		if result.Err != nil {
 			log.Warnf("SendDataChunkFile() failed with err %v", result.Err)
 			return result
@@ -100,13 +106,13 @@ func DataExchange(
 		// We should wait for reply
 		result.Receive.Received,
 			result.Receive.Data,
-			result.Receive.Metadata,
-			result.Err = f.RelayIntoBuf()
+			result.Err = f.WriteToBuf()
 		if result.Err != nil {
 			log.Warnf("RecvDataChunkFileIntoBuf() failed with err %v", result.Err)
 			return result
 		}
 	}
+	result.Receive.Metadata = f.DataChunkFile.PayloadMetadata
 
 	return result
 }

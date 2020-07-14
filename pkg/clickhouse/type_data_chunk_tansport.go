@@ -33,8 +33,7 @@ func NewDataChunkTransport() *DataChunkTransport {
 	log.Infof("clickhouse.NewDataChunkTransport() - start")
 	defer log.Infof("clickhouse.NewDataChunkTransport() - end")
 
-	return &DataChunkTransport{
-	}
+	return &DataChunkTransport{}
 }
 
 // Send

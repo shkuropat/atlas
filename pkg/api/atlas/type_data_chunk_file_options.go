@@ -14,26 +14,42 @@
 
 package atlas
 
-// DataChunkFileAdapterOptions
-type DataChunkFileAdapterOptions struct {
+// DataChunkFileOptions
+type DataChunkFileOptions struct {
+	Header     *Metadata
+	Metadata   *Metadata
 	Compress   bool
 	Decompress bool
 }
 
+// GetHeader
+func (opts *DataChunkFileOptions) GetHeader() *Metadata {
+	if opts == nil {
+		return nil
+	}
+	return opts.Header
+}
+
+// GetMetadata
+func (opts *DataChunkFileOptions) GetMetadata() *Metadata {
+	if opts == nil {
+		return nil
+	}
+	return opts.Metadata
+}
+
 // GetCompress
-func (opts *DataChunkFileAdapterOptions) GetCompress() bool {
+func (opts *DataChunkFileOptions) GetCompress() bool {
 	if opts == nil {
 		return false
 	}
-
 	return opts.Compress
 }
 
 // GetDecompress
-func (opts *DataChunkFileAdapterOptions) GetDecompress() bool {
+func (opts *DataChunkFileOptions) GetDecompress() bool {
 	if opts == nil {
 		return false
 	}
-
 	return opts.Decompress
 }
