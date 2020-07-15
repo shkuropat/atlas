@@ -30,6 +30,14 @@ type File struct {
 
 // OpenFile
 func OpenFile(mi *MinIO, s3address *atlas.S3Address) (*File, error) {
+	// Sanity check
+	if (mi == nil) || (s3address == nil) {
+		return nil, fmt.Errorf("minio.OpenFile() requires full object address to be specfied")
+	}
+
+	// TODO ping MinIO?
+
+	// All seems to be good, create file
 	return &File{
 		mi:        mi,
 		s3address: s3address,
