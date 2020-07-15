@@ -17,6 +17,7 @@ package cmdrunner
 import (
 	"bytes"
 	"io"
+	"strings"
 	"time"
 
 	exe "github.com/go-cmd/cmd"
@@ -55,12 +56,12 @@ func (r *Runner) Run(options *Options) exe.Status {
 	log.Infof("wait for cmd to complete")
 
 	// Start and wait for command to complete
+	log.Infof("Starting command:\n%s %s", r.name, strings.Join(r.args, " "))
 	r.cmd.Start()
 	<-r.cmd.Done()
 
 	r.stopTicker(quitTick)
 	r.stopTimeout(quitTimeout)
-
 	r.status = r.cmd.Status()
 
 	r.WriteOutput(options.GetStdoutWriter(), options.GetStderrWriter())
