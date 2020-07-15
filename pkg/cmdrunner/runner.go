@@ -41,8 +41,8 @@ func New(name string, args ...string) *Runner {
 
 // Run
 func (r *Runner) Run(options *Options) exe.Status {
-	log.Infof("run() - start")
-	defer log.Infof("run() - end")
+	log.Infof("Run() - start")
+	defer log.Infof("Run() - end")
 
 	// Start a long-running process, capture stdout and stderr
 	r.cmd = exe.NewCmdOptions(
@@ -61,7 +61,6 @@ func (r *Runner) Run(options *Options) exe.Status {
 	r.stopTicker(quitTick)
 	r.stopTimeout(quitTimeout)
 
-	// Block waiting for command to exit, be stopped, or be killed
 	r.status = r.cmd.Status()
 
 	r.WriteOutput(options.GetStdoutWriter(), options.GetStderrWriter())
@@ -71,11 +70,16 @@ func (r *Runner) Run(options *Options) exe.Status {
 
 // WriteOutput
 func (r *Runner) WriteOutput(stdout, stderr io.Writer) {
+	log.Infof("WriteOutput() - start")
+	defer log.Infof("WriteOutput() - end")
+
 	if stdout != nil {
-		io.Copy(stdout, r.GetStdoutReader())
+		n, err := io.Copy(stdout, r.GetStdoutReader())
+		log.Infof("copied to stdout %d bytes. err: %v", n, err)
 	}
 	if stderr != nil {
-		io.Copy(stderr, r.GetStderrReader())
+		n, err := io.Copy(stderr, r.GetStderrReader())
+		log.Infof("copied to stderr %d bytes. err: %v", n, err)
 	}
 }
 
