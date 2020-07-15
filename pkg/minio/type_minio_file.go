@@ -15,6 +15,7 @@
 package minio
 
 import (
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	log "github.com/sirupsen/logrus"
 	"io"
@@ -35,12 +36,27 @@ func OpenFile(mi *MinIO, s3address *atlas.S3Address) (*File, error) {
 	}, nil
 }
 
+// Close
+func (f *File) Close() error {
+	return nil
+}
+
+// Read
+func (f *File) Read(p []byte) (int, error) {
+	return 0, fmt.Errorf("unimplemented method minio.File.Read()")
+}
+
 // ReadFrom reads data from src
 func (f *File) ReadFrom(src io.Reader) (int64, error) {
 	log.Infof("minio.File.ReadFrom() - start")
 	defer log.Infof("minio.File.ReadFrom() - end")
 
 	return f.mi.Put(f.s3address.Bucket, f.s3address.Object, src)
+}
+
+// Write
+func (f *File) Write(p []byte) (int, error) {
+	return 0, fmt.Errorf("unimplemented method minio.File.Write()")
 }
 
 // WriteTo writes data to dst
