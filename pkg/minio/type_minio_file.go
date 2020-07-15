@@ -136,6 +136,9 @@ func (f *File) compose() error {
 		return err
 	}
 
+	// Chunks are obsoleted from this moment
+	f.chunks = nil
+
 	// Compose object by concatenating multiple source files.
 	err = f.mi.client.ComposeObject(dst, sources)
 	if err != nil {
