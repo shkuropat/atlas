@@ -139,9 +139,6 @@ func (f *File) compose() error {
 		return err
 	}
 
-	// Chunks are obsoleted from this moment
-	f.chunks = nil
-
 	// Compose object by concatenating multiple source files.
 	err = f.mi.client.ComposeObject(dst, sources)
 	if err != nil {
@@ -149,6 +146,15 @@ func (f *File) compose() error {
 		return err
 	}
 	log.Infof("composed object %s/%s", f.s3address.Bucket, f.s3address.Object)
+
+	for _, chunk := range f.chunks {
+		if err = f.mi.client.RemoveObject(f.s3address.Bucket, chunk); err != nil {
+			log.Errorf("unable to RemoveObject() %s/%s err:%v", f.s3address.Bucket, chunk, err)
+		}
+	}
+
+	// Chunks are obsoleted from this moment
+	f.chunks = nil
 
 	return nil
 }
