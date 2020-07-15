@@ -85,13 +85,16 @@ func (f *File) Write(p []byte) (int, error) {
 		log.Errorf("unable to put create UUID. err:%v", err)
 		return 0, err
 	}
+
+	bucket := f.s3address.Bucket
 	object := uuid.String()
-	n, err := f.mi.Put(f.s3address.Bucket, f.s3address.Object, bytes.NewBuffer(p))
+	n, err := f.mi.Put(bucket, object, bytes.NewBuffer(p))
 	if err != nil {
 		log.Errorf("unable to put chunk. err:%v", err)
 		return int(n), err
 	}
 	f.chunks = append(f.chunks, object)
+	log.Infof("put chunk %s/%s size %d", bucket, object, n)
 
 	return int(n), err
 }
@@ -145,6 +148,7 @@ func (f *File) compose() error {
 		log.Errorf("unable to ComposeObject() err:%v", err)
 		return err
 	}
+	log.Infof("composed object %s/%s", f.s3address.Bucket, f.s3address.Object)
 
 	return nil
 }
