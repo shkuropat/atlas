@@ -17,10 +17,11 @@ package minio
 import (
 	"context"
 	"fmt"
-	"io"
-
 	"github.com/minio/minio-go/v6"
 	log "github.com/sirupsen/logrus"
+	"io"
+	"io/ioutil"
+	"os"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/config"
@@ -134,9 +135,39 @@ func (m *MinIO) FGet(bucketName, objectName, fileName string) error {
 	return m.client.FGetObjectWithContext(ctx, bucketName, objectName, fileName, opts)
 }
 
+// FGetTempFile
+func (m *MinIO) FGetTempFile(bucketName, objectName, dir, pattern string) (string, error) {
+	r, err := m.Get(bucketName, objectName)
+	if err != nil {
+		log.Errorf("unable to get MinIO object %s/%s err: %v", bucketName, objectName, err)
+		return "", err
+	}
+
+	f, err := ioutil.TempFile(dir, pattern)
+	if err != nil {
+		log.Errorf("unable to create tmp file dir: %s pattern: %s err: %v", dir, pattern, err)
+		return "", err
+	}
+	defer f.Close()
+
+	_, err = io.Copy(f, r)
+	if err != nil {
+		log.Errorf("unable to get copy MinIO object %s/%s err: %v", bucketName, objectName, err)
+		os.Remove(f.Name())
+		return "", err
+	}
+
+	return f.Name(), nil
+}
+
 // FGetA
 func (m *MinIO) FGetA(addr *atlas.S3Address, fileName string) error {
 	return m.FGet(addr.Bucket, addr.Object, fileName)
+}
+
+// FGetTempFileA
+func (m *MinIO) FGetTempFileA(addr *atlas.S3Address, dir, pattern string) (string, error) {
+	return m.FGetTempFile(addr.Bucket, addr.Object, dir, pattern)
 }
 
 // Remove
