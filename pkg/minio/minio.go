@@ -87,6 +87,16 @@ func (m *MinIO) PutA(addr *atlas.S3Address, reader io.Reader) (int64, error) {
 	return m.Put(addr.Bucket, addr.Object, reader)
 }
 
+// PutUUIDFile
+func (m *MinIO) PutUUIDFile(bucketName string, reader io.Reader) (string, int64, error) {
+	target := &atlas.S3Address{
+		Bucket: bucketName,
+		Object: atlas.CreateNewUUID(),
+	}
+	n, err := m.PutA(target, reader)
+	return target.Object, n, err
+}
+
 // FPut
 func (m *MinIO) FPut(bucketName, objectName, fileName string) (int64, error) {
 	if m.client == nil {
@@ -99,6 +109,14 @@ func (m *MinIO) FPut(bucketName, objectName, fileName string) (int64, error) {
 	}
 
 	return m.client.FPutObjectWithContext(ctx, bucketName, objectName, fileName, options)
+}
+
+// FPutUUIDFile
+func (m *MinIO) FPutUUIDFile(bucketName, fileName string) (string, int64, error) {
+	objectName := atlas.CreateNewUUID()
+	n, err := m.FPut(bucketName, objectName, fileName)
+
+	return objectName, n, err
 }
 
 // FPutA
