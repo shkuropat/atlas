@@ -14,6 +14,8 @@
 
 package atlas
 
+import "github.com/golang/protobuf/proto"
+
 func NewCommand(
 	commandType CommandType,
 	name string,
@@ -46,4 +48,24 @@ func (m *Command) GetType() CommandType {
 // GetName gets command name
 func (m *Command) GetName() string {
 	return m.GetHeader().GetName()
+}
+
+// SetBytes
+func (m *Command) SetBytes(bytes []byte) {
+	m.Bytes = bytes
+}
+
+// Marshal
+func (m *Command) Marshal(msg proto.Message) error {
+	if bytes, err := proto.Marshal(msg); err == nil {
+		m.SetBytes(bytes)
+		return nil
+	} else {
+		return err
+	}
+}
+
+// Unmarshal
+func (m *Command) Unmarshal(msg proto.Message) error {
+	return proto.Unmarshal(m.GetBytes(), msg)
 }

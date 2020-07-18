@@ -32,6 +32,7 @@ enum CommandType {
     COMMAND_DATA_SCHEDULE    = 900;
     COMMAND_DATA_REQUEST     = 1000;
     COMMAND_DATA             = 1100;
+    COMMAND_ADDRESS          = 1200;
 }
 
 message Command {
