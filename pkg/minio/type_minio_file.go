@@ -36,6 +36,9 @@ type File struct {
 
 // OpenFile
 func OpenFile(mi *MinIO, s3address *atlas.S3Address) (*File, error) {
+	log.Tracef("minio.OpenFile() - start")
+	defer log.Tracef("minio.OpenFile() - end")
+
 	// Sanity check
 	if (mi == nil) || (s3address == nil) {
 		return nil, fmt.Errorf("minio.OpenFile() requires full object address to be specfied")
@@ -52,16 +55,16 @@ func OpenFile(mi *MinIO, s3address *atlas.S3Address) (*File, error) {
 
 // Close
 func (f *File) Close() error {
-	log.Infof("minio.File.Close() - start")
-	defer log.Infof("minio.File.Close() - end")
+	log.Tracef("minio.File.Close() - start")
+	defer log.Tracef("minio.File.Close() - end")
 
 	return f.compose()
 }
 
 // Read
 func (f *File) Read(p []byte) (int, error) {
-	log.Infof("minio.File.Read() - start")
-	defer log.Infof("minio.File.Read() - end")
+	log.Tracef("minio.File.Read() - start")
+	defer log.Tracef("minio.File.Read() - end")
 
 	log.Errorf("unimplemented method minio.File.Read()")
 	return 0, fmt.Errorf("unimplemented method minio.File.Read()")
@@ -69,16 +72,16 @@ func (f *File) Read(p []byte) (int, error) {
 
 // ReadFrom reads data from src
 func (f *File) ReadFrom(src io.Reader) (int64, error) {
-	log.Infof("minio.File.ReadFrom() - start")
-	defer log.Infof("minio.File.ReadFrom() - end")
+	log.Tracef("minio.File.ReadFrom() - start")
+	defer log.Tracef("minio.File.ReadFrom() - end")
 
 	return f.mi.Put(f.s3address.Bucket, f.s3address.Object, src)
 }
 
 // Write
 func (f *File) Write(p []byte) (int, error) {
-	log.Infof("minio.File.Write() - start")
-	defer log.Infof("minio.File.Write() - end")
+	log.Tracef("minio.File.Write() - start")
+	defer log.Tracef("minio.File.Write() - end")
 
 	uuid, err := uuid.NewUUID()
 	if err != nil {
@@ -101,8 +104,8 @@ func (f *File) Write(p []byte) (int, error) {
 
 // WriteTo writes data to dst
 func (f *File) WriteTo(dst io.Writer) (int64, error) {
-	log.Infof("minio.File.WriteTo() - start")
-	defer log.Infof("minio.File.WriteTo() - end")
+	log.Tracef("minio.File.WriteTo() - start")
+	defer log.Tracef("minio.File.WriteTo() - end")
 
 	r, err := f.mi.Get(f.s3address.Bucket, f.s3address.Object)
 	if err != nil {
@@ -116,8 +119,8 @@ func (f *File) WriteTo(dst io.Writer) (int64, error) {
 // compose object out of chunks, if any
 func (f *File) compose() error {
 	// Compose single object out of slice of chunks targeted to be the object
-	log.Infof("minio.File.compose() - start")
-	defer log.Infof("minio.File.compose() - end")
+	log.Tracef("minio.File.compose() - start")
+	defer log.Tracef("minio.File.compose() - end")
 
 	// We need to have at least 1 chunk to compose object from
 	if len(f.chunks) < 1 {

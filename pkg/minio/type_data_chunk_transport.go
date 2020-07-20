@@ -45,8 +45,8 @@ type DataChunkTransport struct {
 
 // NewDataChunkTransport
 func NewDataChunkTransport(mi *MinIO, bucket, object string, close bool) *DataChunkTransport {
-	log.Infof("minio.NewDataChunkTransport() - start")
-	defer log.Infof("minio.NewDataChunkTransport() - end")
+	log.Tracef("minio.NewDataChunkTransport() - start")
+	defer log.Tracef("minio.NewDataChunkTransport() - end")
 
 	return &DataChunkTransport{
 		mi:     mi,
@@ -93,8 +93,8 @@ func (t *DataChunkTransport) compose() error {
 
 // Send puts each data chunk into own unique-UUID-named object in bucket and appends object to slice of chunks
 func (t *DataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
-	log.Infof("minio.DataChunkTransport.Send() - start")
-	defer log.Infof("minio.DataChunkTransport.Send() - end")
+	log.Tracef("minio.DataChunkTransport.Send() - start")
+	defer log.Tracef("minio.DataChunkTransport.Send() - end")
 
 	uuid, err := uuid.NewUUID()
 	if err != nil {
@@ -112,8 +112,8 @@ func (t *DataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
 
 // Recv
 func (t *DataChunkTransport) Recv() (*atlas.DataChunk, error) {
-	log.Infof("minio.DataChunkTransport.Recv() - start")
-	defer log.Infof("minio.DataChunkTransport.Recv() - end")
+	log.Tracef("minio.DataChunkTransport.Recv() - start")
+	defer log.Tracef("minio.DataChunkTransport.Recv() - end")
 
 	return nil, fmt.Errorf("unimplemented MinIODataChunkTransport.Recv()")
 }

@@ -44,8 +44,8 @@ type DataChunkFileCompression struct {
 
 // OpenDataChunkFileWOptions
 func OpenDataChunkFileWOptions(transport DataChunkTransport, options *DataChunkFileOptions) (*DataChunkFileWOptions, error) {
-	log.Infof("OpenDataChunkFileWOptions() - start")
-	defer log.Infof("OpenDataChunkFileWOptions() - end")
+	log.Tracef("OpenDataChunkFileWOptions() - start")
+	defer log.Tracef("OpenDataChunkFileWOptions() - end")
 
 	// Open underlying DataChunkFile
 	f, err := OpenDataChunkFile(transport)
@@ -91,8 +91,8 @@ func OpenDataChunkFileWOptions(transport DataChunkTransport, options *DataChunkF
 
 // Close
 func (f *DataChunkFileWOptions) Close() error {
-	log.Infof("DataChunkFileWOptions.Close() - start")
-	defer log.Infof("DataChunkFileWOptions.Close() - end")
+	log.Tracef("DataChunkFileWOptions.Close() - start")
+	defer log.Tracef("DataChunkFileWOptions.Close() - end")
 
 	var err1 error
 	var err2 error
@@ -115,8 +115,8 @@ func (f *DataChunkFileWOptions) Close() error {
 
 // Write
 func (f *DataChunkFileWOptions) Write(p []byte) (n int, err error) {
-	log.Infof("DataChunkFileWOptions.Write() - start")
-	defer log.Infof("DataChunkFileWOptions.Write() - end")
+	log.Tracef("DataChunkFileWOptions.Write() - start")
+	defer log.Tracef("DataChunkFileWOptions.Write() - end")
 
 	if f.Compression.LZMAWriter != nil {
 		return f.Compression.LZMAWriter.Write(p)
@@ -130,22 +130,22 @@ func (f *DataChunkFileWOptions) Write(p []byte) (n int, err error) {
 
 // WriteTo writes data to dst
 func (f *DataChunkFileWOptions) WriteTo(dst io.Writer) (int64, error) {
-	log.Infof("DataChunkFileWOptions.WriteTo() - start")
-	defer log.Infof("DataChunkFileWOptions.WriteTo() - end")
+	log.Tracef("DataChunkFileWOptions.WriteTo() - start")
+	defer log.Tracef("DataChunkFileWOptions.WriteTo() - end")
 
 	return cp(dst, f)
 }
 
 // Read
 func (f *DataChunkFileWOptions) Read(p []byte) (n int, err error) {
-	log.Infof("DataChunkFileWOptions.Read() - start")
-	defer log.Infof("DataChunkFileWOptions.Read() - end")
+	log.Tracef("DataChunkFileWOptions.Read() - start")
+	defer log.Tracef("DataChunkFileWOptions.Read() - end")
 
 	if f.Compression.LZMAReader != nil {
-		log.Infof("decompression requested")
+		log.Debugf("decompression requested")
 
 		if !f.DataChunkFile.HasTransportMetadata() {
-			log.Infof("no TransportMetadata yet, wait for it")
+			log.Debugf("no TransportMetadata yet, wait for it")
 			f.DataChunkFile.recvDataChunkAndAppendBuf()
 		}
 
@@ -155,7 +155,7 @@ func (f *DataChunkFileWOptions) Read(p []byte) (n int, err error) {
 		}
 
 		if f.DataChunkFile.TransportMetadata.GetCompression() != "" {
-			log.Infof("reading compressed data")
+			log.Tracef("reading compressed data")
 			return f.Compression.LZMAReader.Read(p)
 		}
 
@@ -173,12 +173,12 @@ func (f *DataChunkFileWOptions) Read(p []byte) (n int, err error) {
 
 // ReadFrom reads data from src
 func (f *DataChunkFileWOptions) ReadFrom(src io.Reader) (int64, error) {
-	log.Infof("DataChunkFileWOptions.ReadFrom() - start")
-	defer log.Infof("DataChunkFileWOptions.ReadFrom() - end")
+	log.Tracef("DataChunkFileWOptions.ReadFrom() - start")
+	defer log.Tracef("DataChunkFileWOptions.ReadFrom() - end")
 
 	n, err := cp(f, src)
 
-	log.Info("Accepted data meta:")
+	log.Debugf("Accepted data meta:")
 	f.DataChunkFile.PayloadMetadata.Log()
 	f.DataChunkFile.TransportMetadata.Log()
 
@@ -187,8 +187,8 @@ func (f *DataChunkFileWOptions) ReadFrom(src io.Reader) (int64, error) {
 
 // WriteToBuf writes data to newly created buffer
 func (f *DataChunkFileWOptions) WriteToBuf() (int64, *bytes.Buffer, error) {
-	log.Infof("DataChunkFileWOptions.WriteToBuf() - start")
-	defer log.Infof("DataChunkFileWOptions.WriteToBuf() - end")
+	log.Tracef("DataChunkFileWOptions.WriteToBuf() - start")
+	defer log.Tracef("DataChunkFileWOptions.WriteToBuf() - end")
 
 	var buf = &bytes.Buffer{}
 	written, err := f.WriteTo(buf)
@@ -197,16 +197,16 @@ func (f *DataChunkFileWOptions) WriteToBuf() (int64, *bytes.Buffer, error) {
 	}
 
 	// Debug
-	log.Infof("metadata: %s", f.DataChunkFile.PayloadMetadata.String())
-	log.Infof("data: %s", buf.String())
+	log.Debugf("metadata: %s", f.DataChunkFile.PayloadMetadata.String())
+	log.Debugf("data: %s", buf.String())
 
 	return written, buf, err
 }
 
 // cp copies from src into dst. Have to use `cp` because `copy` is a built-in function
 func cp(dst io.Writer, src io.Reader) (int64, error) {
-	log.Infof("cp() - start")
-	defer log.Infof("cp() - end")
+	log.Tracef("cp() - start")
+	defer log.Tracef("cp() - end")
 
 	var written int64
 	var err error

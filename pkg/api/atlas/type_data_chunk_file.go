@@ -176,8 +176,8 @@ func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 
 // recvDataChunk
 func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
-	log.Infof("DataChunkFile.recvDataChunk() - start")
-	defer log.Infof("DataChunkFile.recvDataChunk() - end")
+	log.Tracef("DataChunkFile.recvDataChunk() - start")
+	defer log.Tracef("DataChunkFile.recvDataChunk() - end")
 
 	// Whether this chunk is the last one within this DataChunkFile
 	dataChunk, err := f.transport.Recv()
@@ -220,8 +220,8 @@ func (f *DataChunkFile) recvDataChunkAndAppendBuf() {
 
 // sendDataChunk
 func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
-	log.Infof("DataChunkFile.sendDataChunk() - start")
-	defer log.Infof("DataChunkFile.sendDataChunk() - end")
+	log.Tracef("DataChunkFile.sendDataChunk() - start")
+	defer log.Tracef("DataChunkFile.sendDataChunk() - end")
 
 	if (len(p) > f.MaxWriteChunkSize) && (f.MaxWriteChunkSize > 0) {
 		return 0, fmt.Errorf("attempt to sendDataChunk() with oversized chunk: %d > %d", len(p), f.MaxWriteChunkSize)
@@ -235,7 +235,7 @@ func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
 		// First chunk in this file, it may have some metadata
 		transportMD = f.TransportMetadata
 		payloadMD = f.PayloadMetadata
-		log.Infof("Attaching metadata. transport=%v payload=%v", transportMD, payloadMD)
+		log.Tracef("Attaching metadata. transport=%v payload=%v", transportMD, payloadMD)
 	}
 	f.offset = f.initialOffset + f.currentOffset
 	chunk := NewDataChunk(transportMD, payloadMD, &f.offset, false, p)
@@ -266,8 +266,8 @@ func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
 //
 // Implementations must not retain p.
 func (f *DataChunkFile) Write(p []byte) (n int, err error) {
-	log.Infof("DataChunkFile.Write() - start")
-	defer log.Infof("DataChunkFile.Write() - end")
+	log.Tracef("DataChunkFile.Write() - start")
+	defer log.Tracef("DataChunkFile.Write() - end")
 
 	if (len(p) < f.MaxWriteChunkSize) || (f.MaxWriteChunkSize <= 0) {
 		// No need to chunk, can send as one piece
@@ -297,8 +297,8 @@ func (f *DataChunkFile) Write(p []byte) (n int, err error) {
 //
 // The Copy function uses WriterTo if available.
 func (f *DataChunkFile) WriteTo(dst io.Writer) (n int64, err error) {
-	log.Infof("DataChunkFile.WriteTo() - start")
-	defer log.Infof("DataChunkFile.WriteTo() - end")
+	log.Tracef("DataChunkFile.WriteTo() - start")
+	defer log.Tracef("DataChunkFile.WriteTo() - end")
 
 	n = 0
 	for {
@@ -350,8 +350,8 @@ func (f *DataChunkFile) WriteTo(dst io.Writer) (n int64, err error) {
 //
 // Implementations must not retain p.
 func (f *DataChunkFile) Read(p []byte) (n int, err error) {
-	log.Infof("DataChunkFile.Read() - start")
-	defer log.Infof("DataChunkFile.Read() - end")
+	log.Tracef("DataChunkFile.Read() - start")
+	defer log.Tracef("DataChunkFile.Read() - end")
 
 	if len(f.buf) == 0 {
 		// No buffered dara available, need to get some
@@ -382,8 +382,8 @@ func (f *DataChunkFile) Read(p []byte) (n int, err error) {
 //
 // The Copy function uses ReaderFrom if available.
 func (f *DataChunkFile) ReadFrom(src io.Reader) (n int64, err error) {
-	log.Infof("DataChunkFile.ReadFrom() - start")
-	defer log.Infof("DataChunkFile.ReadFrom() - end")
+	log.Tracef("DataChunkFile.ReadFrom() - start")
+	defer log.Tracef("DataChunkFile.ReadFrom() - end")
 
 	bufSize := 1024
 	if f.MaxWriteChunkSize > 0 {
@@ -424,8 +424,8 @@ func (f *DataChunkFile) ReadFrom(src io.Reader) (n int64, err error) {
 // The behavior of Close after the first call is undefined.
 // Specific implementations may document their own behavior.
 func (f *DataChunkFile) Close() error {
-	log.Infof("DataChunkFile.Close() - start")
-	defer log.Infof("DataChunkFile.Close() - end")
+	log.Tracef("DataChunkFile.Close() - start")
+	defer log.Tracef("DataChunkFile.Close() - end")
 	defer f.close()
 
 	if f.currentOffset == 0 {

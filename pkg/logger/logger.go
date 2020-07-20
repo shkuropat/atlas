@@ -15,19 +15,55 @@
 package logger
 
 import (
+	"fmt"
 	log "github.com/sirupsen/logrus"
+	"strings"
 )
 
 var (
-	// Verbose specifies whether app should be verbose
-	Verbose bool
+	// Level specifies verbosity level in string form
+	// Available levels are:
+	// "panic"
+	// "fatal"
+	// "error"
+	// "warn", "warning"
+	// "info"
+	// "debug"
+	// "trace"
+	Level string
+
+	// Formatter specifies log format
+	// Available formatters are:
+	// "json"
+	// "text", "txt"
+	Formatter string
 )
 
 // InitLog sets logging options
 func InitLog() {
-	log.SetFormatter(&log.TextFormatter{})
-
-	if Verbose {
-		log.SetLevel(log.TraceLevel)
+	formatter, err := parseFormatter(Formatter)
+	if err != nil {
+		// Use default formatter
+		formatter = &log.TextFormatter{}
 	}
+	log.SetFormatter(formatter)
+
+	level, err := log.ParseLevel(Level)
+	if err != nil {
+		// Set default level
+		level = log.InfoLevel
+	}
+	log.SetLevel(level)
+}
+
+// parseFormatter makes Formatter out of its string name
+func parseFormatter(str string) (log.Formatter, error) {
+	switch strings.ToLower(str) {
+	case "json":
+		return &log.JSONFormatter{}, nil
+	case "txt", "text":
+		return &log.TextFormatter{}, nil
+	}
+
+	return nil, fmt.Errorf("not a valid logrus formatter: %q", str)
 }
