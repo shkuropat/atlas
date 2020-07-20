@@ -17,6 +17,7 @@ package atlas
 import (
 	"fmt"
 	"io"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -52,6 +53,9 @@ type DataChunkFile struct {
 	// Receive part
 	buf []byte
 	err error
+
+	// Log part
+	printed time.Time
 }
 
 // OpenDataChunkFile opens set of DataChunk(s)
@@ -137,6 +141,28 @@ func (f *DataChunkFile) acceptAllMetadata(dataChunk *DataChunk) {
 
 // logDataChunk logs DataChunk
 func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
+	// Should this chunk be logged
+	print := false
+	now := time.Now()
+	interval := 30 * time.Second
+	if f.printed.IsZero() {
+		// No chunks printed before
+		print = true
+	} else if dataChunk.Header.GetLast() {
+		// Print last chunk
+		print = true
+	} else if now.After(f.printed.Add(interval)) {
+		// Print every X seconds
+		print = true
+	} else if log.GetLevel() == log.TraceLevel {
+		// Print in case of trace
+		print = true
+	}
+
+	if !print {
+		return
+	}
+
 	// Fetch filename from the chunks stream - it may be in any chunk, actually
 	filename := "not specified"
 	if f.HasPayloadMetadata() {
@@ -173,6 +199,8 @@ func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 	//} else {
 	//	fmt.Printf("got %d %s compressed bytes\n", _len, compression)
 	//}
+
+	f.printed = now
 }
 
 // recvDataChunk
