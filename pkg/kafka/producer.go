@@ -48,7 +48,7 @@ func NewProducer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Pr
 	p.config.Producer.Return.Errors = true
 	p.producer, err = sarama.NewSyncProducer(p.endpoint.GetBrokers(), p.config)
 	if err != nil {
-		log.Errorf("unable to create NewSyncProducer(brokers:%v) with err: %v", p.endpoint.GetBrokers(), err)
+		log.Errorf("unable to create NewSyncProducer(brokers:%v). err: %v", p.endpoint.GetBrokers(), err)
 		p.Close()
 		return nil
 	}
@@ -95,11 +95,11 @@ func (p *Producer) Send(data []byte) error {
 		// Metadata - relayed to the Successes and Errors channels
 	}
 
-	partition, offset, err := p.producer.SendMessage(msg)
+	_, _, err := p.producer.SendMessage(msg)
 	if err != nil {
-		log.Errorf("FAILED to send message: %s\n", err)
+		log.Errorf("FAILED to send message: %s", err)
 	} else {
-		log.Infof("> message sent to partition %d at offset %d\n", partition, offset)
+		log.Infof("message sent to %s", MsgAddressPrintable(msg))
 	}
 
 	return err

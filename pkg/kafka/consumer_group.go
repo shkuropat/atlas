@@ -92,7 +92,7 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 
 	group, err := sarama.NewConsumerGroup(c.endpoint.Brokers, c.groupID, config)
 	if err != nil {
-		log.Fatalf("unable to create NewConsumerGroup for %v %v with err: %v", c.endpoint.Brokers, c.groupID, err)
+		log.Fatalf("unable to create NewConsumerGroup for %v %v err: %v", c.endpoint.Brokers, c.groupID, err)
 	}
 	defer func() {
 		_ = group.Close()
@@ -121,7 +121,7 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 		// When a server-side rebalance happens, the consumer session will need to be recreated to get the new claims
 		err := group.Consume(ctx, c.address.GetTopics(), handler)
 		if err != nil {
-			log.Fatalf("unable to Consume topics %v with err: %v", c.address.GetTopics(), err)
+			log.Fatalf("unable to Consume topics %v err: %v", c.address.GetTopics(), err)
 		}
 	}
 }
@@ -152,8 +152,8 @@ func newDefaultConsumerGroupHandler(ack bool, processor func(*sarama.ConsumerMes
 // Setup is run at the beginning of a new session, before ConsumeClaim.
 // Part of sarama.ConsumerGroupHandler interface
 func (*DefaultConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
-	log.Infof("ConsumerGroupHandler.Setup() - start")
-	defer log.Infof("ConsumerGroupHandler.Setup() - end")
+	log.Infof("DefaultConsumerGroupHandler.Setup() - start")
+	defer log.Infof("DefaultConsumerGroupHandler.Setup() - end")
 
 	return nil
 }
@@ -162,8 +162,8 @@ func (*DefaultConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
 // but before the offsets are committed for the very last time.
 // Part of sarama.ConsumerGroupHandler interface
 func (*DefaultConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
-	log.Infof("ConsumerGroupHandler.Cleanup() - start")
-	defer log.Infof("ConsumerGroupHandler.Cleanup() - end")
+	log.Infof("DefaultConsumerGroupHandler.Cleanup() - start")
+	defer log.Infof("DefaultConsumerGroupHandler.Cleanup() - end")
 
 	return nil
 }
@@ -174,24 +174,24 @@ func (*DefaultConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error
 // Part of sarama.ConsumerGroupHandler interface
 func (h *DefaultConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	// Claim is a claimed Partition, so Claim refers to Partition
-	log.Infof("ConsumerGroupHandler.ConsumeClaim() - start")
-	defer log.Infof("ConsumerGroupHandler.ConsumeClaim() - end")
+	log.Infof("DefaultConsumerGroupHandler.ConsumeClaim() - start")
+	defer log.Infof("DefaultConsumerGroupHandler.ConsumeClaim() - end")
 
 	for msg := range claim.Messages() {
 		// msg.Headers
-		log.Printf("Got message topic:%q partition:%d offset:%d data:%s\n", msg.Topic, msg.Partition, msg.Offset, string(msg.Value))
+		log.Infof("Got message %s", MsgAddressPrintable(msg))
 
 		// Call message processor
 		ack := h.ack
 		if h.processor == nil {
-			log.Warn("no message processor specified with DefaultConsumerGroupHandler")
+			log.Warnf("no message processor specified with DefaultConsumerGroupHandler")
 		} else {
 			ack = h.processor(msg)
 		}
 
 		if ack {
 			sess.MarkMessage(msg, "")
-			log.Infof("Ack message topic:%q partition:%d offset:%d\n", msg.Topic, msg.Partition, msg.Offset)
+			log.Infof("Ack message %s", MsgAddressPrintable(msg))
 		}
 	}
 	return nil

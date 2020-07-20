@@ -45,21 +45,21 @@ func NewConsumer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Co
 	c.consumer, err = sarama.NewConsumer(c.endpoint.Brokers, c.config)
 	if err != nil {
 		c.Close()
-		log.Errorf("unable to create new Kafka consumer with err: %v", err)
+		log.Errorf("unable to create new Kafka consumer. err: %v", err)
 		return nil
 	}
 
 	topics, err := c.consumer.Topics()
 	if err != nil {
 		c.Close()
-		log.Errorf("unable to list topics with err: %v", err)
+		log.Errorf("unable to list topics. err: %v", err)
 		return nil
 	}
 
 	partitions, err := c.consumer.Partitions(c.address.Topic)
 	if err != nil {
 		c.Close()
-		log.Errorf("unable to list partitions with err: %v", err)
+		log.Errorf("unable to list partitions. err: %v", err)
 		return nil
 	}
 
@@ -70,7 +70,7 @@ func NewConsumer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Co
 	c.partitionConsumer, err = c.consumer.ConsumePartition(c.address.Topic, c.address.Partition, sarama.OffsetNewest)
 	if err != nil {
 		c.Close()
-		log.Errorf("unable to consume partition with err: %v", err)
+		log.Errorf("unable to consume partition. err: %v", err)
 		return nil
 	}
 
@@ -99,7 +99,7 @@ func (c *Consumer) Close() {
 func (c *Consumer) Recv() *sarama.ConsumerMessage {
 	msg := <-c.partitionConsumer.Messages()
 	if msg != nil {
-		log.Printf("Got message topic:%q partition:%d offset:%d data:%s\n", msg.Topic, msg.Partition, msg.Offset, string(msg.Value))
+		log.Infof("Got message %s", MsgAddressPrintable(msg))
 	}
 	return msg
 }
