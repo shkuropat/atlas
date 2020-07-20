@@ -97,6 +97,12 @@ func (f *File) Write(p []byte) (int, error) {
 		return int(n), err
 	}
 	f.chunks = append(f.chunks, object)
+	if len(f.chunks) > 1000 {
+		// TODO compact
+		// there is limitation in 10K chunks in
+		// err = f.mi.client.ComposeObject(dst, sources)
+		// need to implement compaction
+	}
 	log.Infof("put chunk %s/%s size %d", bucket, object, n)
 
 	return int(n), err

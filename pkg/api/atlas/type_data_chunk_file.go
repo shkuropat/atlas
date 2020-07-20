@@ -167,11 +167,12 @@ func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 		offset,
 		dataChunk.Header.GetLast(),
 	)
-	if compression == CompressionNone {
-		fmt.Printf("%s\n", string(dataChunk.GetBytes()))
-	} else {
-		fmt.Printf("got %d %s compressed bytes\n", _len, compression)
-	}
+	// Dump content
+	//if compression == CompressionNone {
+	//	fmt.Printf("%s\n", string(dataChunk.GetBytes()))
+	//} else {
+	//	fmt.Printf("got %d %s compressed bytes\n", _len, compression)
+	//}
 }
 
 // recvDataChunk
