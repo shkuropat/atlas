@@ -25,6 +25,9 @@ import (
 	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
+// MessageProcessorFunc specifies message processor function
+type MessageProcessorFunc func(context.Context, *sarama.ConsumerMessage) bool
+
 // ConsumerGroup
 type ConsumerGroup struct {
 	endpoint *atlas.KafkaEndpoint
@@ -33,7 +36,7 @@ type ConsumerGroup struct {
 
 	consumerGroupHandler sarama.ConsumerGroupHandler
 	ctx                  context.Context
-	messageProcessor     func(*sarama.ConsumerMessage) bool
+	messageProcessor     MessageProcessorFunc
 }
 
 // NewConsumerGroup creates new consumer group
@@ -77,7 +80,7 @@ func (c *ConsumerGroup) SetConsumerGroupHandler(handler sarama.ConsumerGroupHand
 }
 
 // SetMessageProcessor
-func (c *ConsumerGroup) SetMessageProcessor(processor func(*sarama.ConsumerMessage) bool) {
+func (c *ConsumerGroup) SetMessageProcessor(processor MessageProcessorFunc) {
 	c.messageProcessor = processor
 }
 
@@ -143,12 +146,12 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 // Implements sarama.ConsumerGroupHandler interface
 type DefaultConsumerGroupHandler struct {
 	ctx       context.Context
-	processor func(*sarama.ConsumerMessage) bool
+	processor MessageProcessorFunc
 	ack       bool
 }
 
 // newDefaultConsumerGroupHandler
-func newDefaultConsumerGroupHandler(ctx context.Context, processor func(*sarama.ConsumerMessage) bool, ack bool) *DefaultConsumerGroupHandler {
+func newDefaultConsumerGroupHandler(ctx context.Context, processor MessageProcessorFunc, ack bool) *DefaultConsumerGroupHandler {
 	return &DefaultConsumerGroupHandler{
 		ctx:       ctx,
 		processor: processor,
