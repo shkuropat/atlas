@@ -32,6 +32,7 @@ type ConsumerGroup struct {
 	groupID  string
 
 	consumerGroupHandler sarama.ConsumerGroupHandler
+	ctx                  context.Context
 	messageProcessor     func(*sarama.ConsumerMessage) bool
 }
 
@@ -61,6 +62,12 @@ func (c *ConsumerGroup) SetAddress(address *atlas.KafkaAddress) *ConsumerGroup {
 // SetTopic - sets address in simplified form - specified Topic and Partition 0
 func (c *ConsumerGroup) SetTopic(topic string) *ConsumerGroup {
 	c.address = atlas.NewKafkaAddress(topic, 0)
+	return c
+}
+
+// SetContext - sets context to be used by MessageProcessor
+func (c *ConsumerGroup) SetContext(ctx context.Context) *ConsumerGroup {
+	c.ctx = ctx
 	return c
 }
 
@@ -112,7 +119,7 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 		// Default handler can still use external c.messageProcessor
 		handler := c.consumerGroupHandler
 		if handler == nil {
-			handler = newDefaultConsumerGroupHandler(ack, c.messageProcessor)
+			handler = newDefaultConsumerGroupHandler(c.ctx, c.messageProcessor, ack)
 		}
 
 		// Consume joins a cluster of consumers for a given list of topics
@@ -135,15 +142,17 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 //
 // Implements sarama.ConsumerGroupHandler interface
 type DefaultConsumerGroupHandler struct {
-	ack       bool
+	ctx       context.Context
 	processor func(*sarama.ConsumerMessage) bool
+	ack       bool
 }
 
 // newDefaultConsumerGroupHandler
-func newDefaultConsumerGroupHandler(ack bool, processor func(*sarama.ConsumerMessage) bool) *DefaultConsumerGroupHandler {
+func newDefaultConsumerGroupHandler(ctx context.Context, processor func(*sarama.ConsumerMessage) bool, ack bool) *DefaultConsumerGroupHandler {
 	return &DefaultConsumerGroupHandler{
-		ack:       ack,
+		ctx:       ctx,
 		processor: processor,
+		ack:       ack,
 	}
 }
 
@@ -186,7 +195,7 @@ func (h *DefaultConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSess
 		if h.processor == nil {
 			log.Warnf("no message processor specified with DefaultConsumerGroupHandler")
 		} else {
-			ack = h.processor(msg)
+			ack = h.processor(h.ctx, msg)
 		}
 
 		if ack {
