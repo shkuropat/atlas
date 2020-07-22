@@ -50,13 +50,18 @@ func (m *Command) GetName() string {
 	return m.GetHeader().GetName()
 }
 
-// SetBytes
+// SetBytes sets payload bytes
 func (m *Command) SetBytes(bytes []byte) {
 	m.Bytes = bytes
 }
 
-// Marshal
-func (m *Command) Marshal(msg proto.Message) error {
+// UnmarshalFrom unmarshal commands from bytes
+func (m *Command) UnmarshalFrom(bytes []byte) error {
+	return proto.Unmarshal(bytes, m)
+}
+
+// SetPayload marshals data as command's payload
+func (m *Command) SetPayload(msg proto.Message) error {
 	if bytes, err := proto.Marshal(msg); err == nil {
 		m.SetBytes(bytes)
 		return nil
@@ -65,7 +70,7 @@ func (m *Command) Marshal(msg proto.Message) error {
 	}
 }
 
-// Unmarshal
-func (m *Command) Unmarshal(msg proto.Message) error {
+// GetPayload unmarshals command's payload
+func (m *Command) GetPayload(msg proto.Message) error {
 	return proto.Unmarshal(m.GetBytes(), msg)
 }
