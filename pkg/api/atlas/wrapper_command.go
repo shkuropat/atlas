@@ -14,7 +14,11 @@
 
 package atlas
 
-import "github.com/golang/protobuf/proto"
+import (
+	"fmt"
+	"github.com/golang/protobuf/proto"
+	"strings"
+)
 
 func NewCommand(
 	commandType CommandType,
@@ -73,4 +77,32 @@ func (m *Command) SetPayload(msg proto.Message) error {
 // GetPayload unmarshals command's payload
 func (m *Command) GetPayload(msg proto.Message) error {
 	return proto.Unmarshal(m.GetBytes(), msg)
+}
+
+// AddAddresses
+func (m *Command) AddAddresses(addresses ...*S3Address) {
+	m.Addresses = append(m.Addresses, addresses...)
+}
+
+// Printable
+func (m *Command) Printable() string {
+	if m == nil {
+		return "nil"
+	}
+
+	var parts []string
+	if _type := m.GetType(); _type > 0 {
+		parts = append(parts, "type:"+fmt.Sprintf("%d", _type))
+	}
+	if name := m.GetName(); name != "" {
+		parts = append(parts, "name:"+name)
+	}
+	if len(m.GetAddresses()) > 0 {
+		parts = append(parts, "addresses:")
+		for _, address := range m.GetAddresses() {
+			parts = append(parts, address.Printable())
+		}
+	}
+
+	return strings.Join(parts, " ")
 }

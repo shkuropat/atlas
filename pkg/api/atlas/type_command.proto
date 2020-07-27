@@ -17,6 +17,7 @@ syntax = "proto3";
 package atlas;
 
 import "type_metadata.proto";
+import "type_s3_address.proto";
 
 enum CommandType {
     // Due to first enum value has to be zero in proto3
@@ -40,4 +41,6 @@ message Command {
 
     // May contain any arbitrary sequence of bytes no longer than 2^32
     bytes bytes = 200;
+
+    repeated S3Address addresses = 700;
 }
