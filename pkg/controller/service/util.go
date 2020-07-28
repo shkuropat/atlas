@@ -12,13 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+package controller_service
 
-package atlas;
+import (
+	"context"
 
-import "type_report_request.proto";
-import "type_report_reply.proto";
+	"github.com/dgrijalva/jwt-go"
+	log "github.com/sirupsen/logrus"
 
-service ReportsPlane {
-    rpc Reports (stream ReportRequest) returns (stream ReportReply) {}
+	"github.com/binarly-io/atlas/pkg/auth/service"
+)
+
+// fetchMetadata
+func fetchMetadata(ctx context.Context) jwt.MapClaims {
+	claims, err := service_auth.GetClaims(ctx)
+	if err != nil {
+		log.Warnf("unable to get claims with err: %v", err)
+		return nil
+	}
+
+	log.Infof("Claims:")
+	for name, value := range claims {
+		log.Infof("%s: %v", name, value)
+	}
+
+	return claims
 }

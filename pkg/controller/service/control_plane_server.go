@@ -15,14 +15,12 @@
 package controller_service
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/auth/service"
 	"github.com/binarly-io/atlas/pkg/controller"
 )
 
@@ -75,20 +73,4 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 
 	metadata := fetchMetadata(DataChunksServer.Context())
 	return DataChunksHandler(DataChunksServer, metadata)
-}
-
-// fetchMetadata
-func fetchMetadata(ctx context.Context) jwt.MapClaims {
-	claims, err := service_auth.GetClaims(ctx)
-	if err != nil {
-		log.Warnf("unable to get claims with err: %v", err)
-		return nil
-	}
-
-	log.Infof("Claims:")
-	for name, value := range claims {
-		log.Infof("%s: %v", name, value)
-	}
-
-	return claims
 }
