@@ -35,7 +35,7 @@ func NewReportsPlaneServer() *ReportsPlaneServer {
 var ReportsHandler func(atlas.ReportsPlane_ReportsServer, jwt.MapClaims) error
 
 // Reports gRPC call
-func (s *ControlPlaneServer) Reports(ReportsServer atlas.ReportsPlane_ReportsServer) error {
+func (s *ReportsPlaneServer) Reports(ReportsServer atlas.ReportsPlane_ReportsServer) error {
 	log.Info("Reports() - start")
 	defer log.Info("Reports() - end")
 
@@ -45,7 +45,4 @@ func (s *ControlPlaneServer) Reports(ReportsServer atlas.ReportsPlane_ReportsSer
 
 	metadata := fetchMetadata(ReportsServer.Context())
 	return ReportsHandler(ReportsServer, metadata)
-
-	// controller.CommandsExchangeEndlessLoop(CommandsServer)
-	// return nil
 }
