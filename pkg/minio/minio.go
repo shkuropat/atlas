@@ -29,6 +29,7 @@ import (
 
 var errorNotConnected = fmt.Errorf("minio is not connected")
 
+// MinIO
 type MinIO struct {
 	Endpoint        string
 	Secure          bool
@@ -258,4 +259,30 @@ func (m *MinIO) RemoveBucket(bucketName string) error {
 		return errorNotConnected
 	}
 	return m.client.RemoveBucket(bucketName)
+}
+
+// List n objects from a bucket with a prefix.
+func (m *MinIO) List(bucket, prefix string, n int) ([]minio.ObjectInfo, error) {
+	var res []minio.ObjectInfo
+
+	// Done channel controls 'ListObjects' go routine
+	doneCh := make(chan struct{}, 1)
+	defer close(doneCh)
+
+	i := 0
+	for object := range m.client.ListObjects(bucket, prefix, false, doneCh) {
+		if object.Err != nil {
+			continue
+		}
+		res = append(res, object)
+		i++
+
+		if (n > 0) && (i >= n) {
+			// Number of objects to list is limited and limit reached
+			// Indicate ListObjects go-routine to exit and stop feeding the objectInfo channel.
+			doneCh <- struct{}{}
+		}
+	}
+
+	return res, nil
 }
