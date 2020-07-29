@@ -15,9 +15,12 @@
 package atlas
 
 // EnsureMetadata
-func (m *Report) EnsureMetadata() {
+func (m *Report) EnsureMetadata() *Metadata {
 	if m.MetadataOptional == nil {
 		m.MetadataOptional = new(Report_Metadata)
 	}
-	m.MetadataOptional.(*Report_Metadata).Metadata = &Metadata{}
+	if m.MetadataOptional.(*Report_Metadata).Metadata == nil {
+		m.MetadataOptional.(*Report_Metadata).Metadata = new(Metadata)
+	}
+	return m.MetadataOptional.(*Report_Metadata).Metadata
 }
