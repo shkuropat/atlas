@@ -121,8 +121,10 @@ func (m *Command) GetPayload(msg proto.Message) error {
 }
 
 // AddAddresses
-func (m *Command) AddAddresses(addresses ...*S3Address) {
+func (m *Command) AddAddresses(addresses ...*S3Address) *Command {
 	m.Addresses = append(m.Addresses, addresses...)
+
+	return m
 }
 
 // Printable
