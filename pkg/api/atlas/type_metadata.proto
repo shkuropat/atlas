@@ -20,6 +20,11 @@ import "google/protobuf/timestamp.proto";
 import "type_uuid.proto";
 import "type_s3_address.proto";
 
+enum MetadataType {
+    // Due to first enum value has to be zero in proto3
+    METADATA_RESERVED = 0;
+}
+
 // Metadata describes metadata or the object
 message Metadata {
     oneof type_optional {

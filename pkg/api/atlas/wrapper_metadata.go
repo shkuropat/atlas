@@ -17,52 +17,12 @@ package atlas
 import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	log "github.com/sirupsen/logrus"
+	"time"
 )
 
 // NewMetadata
-func NewMetadata(
-	_type int32,
-	name string,
-	version int32,
-	uuid string,
-	uuidReference string,
-	seconds int64,
-	nanoSeconds int32,
-	description string,
-) *Metadata {
-	md := new(Metadata)
-
-	if _type > 0 {
-		md.SetType(_type)
-	}
-
-	if name != "" {
-		md.SetName(name)
-	}
-
-	if version > 0 {
-		md.SetVersion(version)
-	}
-
-	if uuid == "" {
-		md.SetUUID(CreateNewUUID())
-	} else {
-		md.SetUUID(uuid)
-	}
-
-	if uuidReference != "" {
-		md.SetUUIDReference(uuidReference)
-	}
-
-	if seconds > 0 {
-		md.SetTimestamp(seconds, nanoSeconds)
-	}
-
-	if description != "" {
-		md.SetDescription(description)
-	}
-
-	return md
+func NewMetadata() *Metadata {
+	return new(Metadata)
 }
 
 // HasType
@@ -71,11 +31,13 @@ func (m *Metadata) HasType() bool {
 }
 
 // SetType
-func (m *Metadata) SetType(_type int32) {
+func (m *Metadata) SetType(_type MetadataType) *Metadata {
 	if m.TypeOptional == nil {
 		m.TypeOptional = new(Metadata_Type)
 	}
-	m.TypeOptional.(*Metadata_Type).Type = _type
+	m.TypeOptional.(*Metadata_Type).Type = int32(_type)
+
+	return m
 }
 
 // HasName
@@ -84,11 +46,13 @@ func (m *Metadata) HasName() bool {
 }
 
 // SetName
-func (m *Metadata) SetName(name string) {
+func (m *Metadata) SetName(name string) *Metadata {
 	if m.NameOptional == nil {
 		m.NameOptional = new(Metadata_Name)
 	}
 	m.NameOptional.(*Metadata_Name).Name = name
+
+	return m
 }
 
 // HasVersion
@@ -97,11 +61,13 @@ func (m *Metadata) HasVersion() bool {
 }
 
 // SetVersion
-func (m *Metadata) SetVersion(version int32) {
+func (m *Metadata) SetVersion(version int32) *Metadata {
 	if m.VersionOptional == nil {
 		m.VersionOptional = new(Metadata_Version)
 	}
 	m.VersionOptional.(*Metadata_Version).Version = version
+
+	return m
 }
 
 // HasUUID
@@ -110,11 +76,18 @@ func (m *Metadata) HasUUID() bool {
 }
 
 // SetUUID
-func (m *Metadata) SetUUID(uuid string) {
+func (m *Metadata) SetUUID(uuid string) *Metadata {
 	if m.UuidOptional == nil {
 		m.UuidOptional = new(Metadata_Uuid)
 	}
 	m.UuidOptional.(*Metadata_Uuid).Uuid = NewUUID(uuid)
+
+	return m
+}
+
+// CreateUUID
+func (m *Metadata) CreateUUID() *Metadata {
+	return m.SetUUID(CreateNewUUID())
 }
 
 // HasUUIDReference
@@ -123,11 +96,13 @@ func (m *Metadata) HasUUIDReference() bool {
 }
 
 // SetUUIDReference
-func (m *Metadata) SetUUIDReference(uuid string) {
+func (m *Metadata) SetUUIDReference(uuid string) *Metadata {
 	if m.UuidReferenceOptional == nil {
 		m.UuidReferenceOptional = new(Metadata_UuidReference)
 	}
 	m.UuidReferenceOptional.(*Metadata_UuidReference).UuidReference = NewUUID(uuid)
+
+	return m
 }
 
 // HasTimestamp
@@ -136,13 +111,24 @@ func (m *Metadata) HasTimestamp() bool {
 }
 
 // SetTimestamp
-func (m *Metadata) SetTimestamp(seconds int64, nanos int32) {
+func (m *Metadata) SetTimestamp(seconds int64, nanos int32) *Metadata {
 	if m.TimestampOptional == nil {
 		m.TimestampOptional = new(Metadata_Ts)
 	}
 	m.TimestampOptional.(*Metadata_Ts).Ts = new(timestamp.Timestamp)
 	m.TimestampOptional.(*Metadata_Ts).Ts.Seconds = seconds
 	m.TimestampOptional.(*Metadata_Ts).Ts.Nanos = nanos
+
+	return m
+}
+
+// CreateTimestamp
+func (m *Metadata) CreateTimestamp() *Metadata {
+	now := time.Now()
+	seconds := now.Unix()           // seconds since 1970
+	nanoseconds := now.Nanosecond() // nanosecond offset within the second
+
+	return m.SetTimestamp(seconds, int32(nanoseconds))
 }
 
 // HasEncoding
@@ -151,15 +137,17 @@ func (m *Metadata) HasEncoding() bool {
 }
 
 // SetEncoding
-func (m *Metadata) SetEncoding(encoding string) {
+func (m *Metadata) SetEncoding(encoding string) *Metadata {
 	if encoding == "" {
-		return
+		return m
 	}
 
 	if m.EncodingOptional == nil {
 		m.EncodingOptional = new(Metadata_Encoding)
 	}
 	m.EncodingOptional.(*Metadata_Encoding).Encoding = encoding
+
+	return m
 }
 
 // HasCompression
@@ -168,11 +156,13 @@ func (m *Metadata) HasCompression() bool {
 }
 
 // SetCompression
-func (m *Metadata) SetCompression(compression string) {
+func (m *Metadata) SetCompression(compression string) *Metadata {
 	if m.CompressionOptional == nil {
 		m.CompressionOptional = new(Metadata_Compression)
 	}
 	m.CompressionOptional.(*Metadata_Compression).Compression = compression
+
+	return m
 }
 
 // HasFilename
@@ -181,15 +171,17 @@ func (m *Metadata) HasFilename() bool {
 }
 
 // SetFilename
-func (m *Metadata) SetFilename(filename string) {
+func (m *Metadata) SetFilename(filename string) *Metadata {
 	if filename == "" {
-		return
+		return m
 	}
 
 	if m.FilenameOptional == nil {
 		m.FilenameOptional = new(Metadata_Filename)
 	}
 	m.FilenameOptional.(*Metadata_Filename).Filename = filename
+
+	return m
 }
 
 // HasURL
@@ -198,15 +190,17 @@ func (m *Metadata) HasURL() bool {
 }
 
 // SetURL
-func (m *Metadata) SetURL(url string) {
+func (m *Metadata) SetURL(url string) *Metadata {
 	if url == "" {
-		return
+		return m
 	}
 
 	if m.UrlOptional == nil {
 		m.UrlOptional = new(Metadata_Url)
 	}
 	m.UrlOptional.(*Metadata_Url).Url = url
+
+	return m
 }
 
 // HasS3Address
@@ -215,15 +209,17 @@ func (m *Metadata) HasS3Address() bool {
 }
 
 // SetS3Address
-func (m *Metadata) SetS3Address(s3address *S3Address) {
+func (m *Metadata) SetS3Address(s3address *S3Address) *Metadata {
 	if s3address == nil {
-		return
+		return m
 	}
 
 	if m.S3AddressOptional == nil {
 		m.S3AddressOptional = new(Metadata_S3Address)
 	}
 	m.S3AddressOptional.(*Metadata_S3Address).S3Address = s3address
+
+	return m
 }
 
 // HasDescription
@@ -232,11 +228,13 @@ func (m *Metadata) HasDescription() bool {
 }
 
 // SetDescription
-func (m *Metadata) SetDescription(description string) {
+func (m *Metadata) SetDescription(description string) *Metadata {
 	if m.DescriptionOptional == nil {
 		m.DescriptionOptional = new(Metadata_Description)
 	}
 	m.DescriptionOptional.(*Metadata_Description).Description = description
+
+	return m
 }
 
 // HasLen
@@ -245,11 +243,13 @@ func (m *Metadata) HasLen() bool {
 }
 
 // SetLen
-func (m *Metadata) SetLen(len int64) {
+func (m *Metadata) SetLen(len int64) *Metadata {
 	if m.LenOptional == nil {
 		m.LenOptional = new(Metadata_Len)
 	}
 	m.LenOptional.(*Metadata_Len).Len = len
+
+	return m
 }
 
 // HasOffset
@@ -258,11 +258,13 @@ func (m *Metadata) HasOffset() bool {
 }
 
 // SetOffset
-func (m *Metadata) SetOffset(offset int64) {
+func (m *Metadata) SetOffset(offset int64) *Metadata {
 	if m.OffsetOptional == nil {
 		m.OffsetOptional = new(Metadata_Offset)
 	}
 	m.OffsetOptional.(*Metadata_Offset).Offset = offset
+
+	return m
 }
 
 // HasLast
@@ -271,11 +273,13 @@ func (m *Metadata) HasLast() bool {
 }
 
 // SetLast
-func (m *Metadata) SetLast(last bool) {
+func (m *Metadata) SetLast(last bool) *Metadata {
 	if m.LastOptional == nil {
 		m.LastOptional = new(Metadata_Last)
 	}
 	m.LastOptional.(*Metadata_Last).Last = last
+
+	return m
 }
 
 // Log

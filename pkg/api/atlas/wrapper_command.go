@@ -20,27 +20,9 @@ import (
 	"strings"
 )
 
-func NewCommand(
-	commandType CommandType,
-	name string,
-	version int32,
-	uuid string,
-	uuidReference string,
-	seconds int64,
-	nanoSeconds int32,
-	description string,
-) *Command {
+func NewCommand() *Command {
 	return &Command{
-		Header: NewMetadata(
-			int32(commandType),
-			name,
-			version,
-			uuid,
-			uuidReference,
-			seconds,
-			nanoSeconds,
-			description,
-		),
+		Header: NewMetadata(),
 	}
 }
 
@@ -49,14 +31,73 @@ func (m *Command) GetType() CommandType {
 	return CommandType(m.GetHeader().GetType())
 }
 
+// SetType
+func (m *Command) SetType(_type CommandType) *Command {
+	m.GetHeader().SetType(MetadataType(_type))
+	return m
+}
+
 // GetName gets command name
 func (m *Command) GetName() string {
 	return m.GetHeader().GetName()
 }
 
+// SetName
+func (m *Command) SetName(name string) *Command {
+	m.GetHeader().SetName(name)
+	return m
+}
+
+// GetUUID
+func (m *Command) GetUUID() string {
+	if uuid := m.GetHeader().GetUuid(); uuid == nil {
+		return ""
+	} else {
+		return uuid.GetStringValue()
+	}
+}
+
+// SetUUID
+func (m *Command) SetUUID(uuid string) *Command {
+	m.GetHeader().SetUUID(uuid)
+	return m
+}
+
+// CreateUUID
+func (m *Command) CreateUUID() *Command {
+	return m.SetUUID(CreateNewUUID())
+}
+
+// GetUUIDReference
+func (m *Command) GetUUIDReference() string {
+	if uuid := m.GetHeader().GetUuidReference(); uuid == nil {
+		return ""
+	} else {
+		return uuid.GetStringValue()
+	}
+}
+
+// SetUUIDReference
+func (m *Command) SetUUIDReference(uuid string) *Command {
+	m.GetHeader().SetUUIDReference(uuid)
+	return m
+}
+
+// GetDescription
+func (m *Command) GetDescription() string {
+	return m.GetHeader().GetDescription()
+}
+
+// SetDescription
+func (m *Command) SetDescription(description string) *Command {
+	m.GetHeader().SetDescription(description)
+	return m
+}
+
 // SetBytes sets payload bytes
-func (m *Command) SetBytes(bytes []byte) {
+func (m *Command) SetBytes(bytes []byte) *Command {
 	m.Bytes = bytes
+	return m
 }
 
 // UnmarshalFrom unmarshal commands from bytes
