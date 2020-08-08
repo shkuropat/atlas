@@ -26,5 +26,5 @@ func (m *S3Address) Printable() string {
 	if m != nil {
 		return m.Bucket + "/" + m.Object
 	}
-	return "nil"
+	return ""
 }
