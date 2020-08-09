@@ -61,6 +61,12 @@ func (c *CallMetadata) GetName() string {
 	return c.Internal.GetName()
 }
 
+// SetCallID
+func (c *CallMetadata) SetCallID(callID *atlas.UUID) *CallMetadata {
+	c.Internal.SetUUID(callID.GetStringValue())
+	return c
+}
+
 // GetCallID
 func (c *CallMetadata) GetCallID() *atlas.UUID {
 	return c.Internal.GetUuid()
