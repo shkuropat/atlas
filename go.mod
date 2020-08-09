@@ -3,12 +3,14 @@ module github.com/binarly-io/atlas
 go 1.13
 
 require (
+	github.com/MakeNowJust/heredoc v1.0.0 // indirect
 	github.com/Shopify/sarama v1.26.1
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-cmd/cmd v1.2.1 // indirect
 	github.com/golang/protobuf v1.4.0
 	github.com/google/uuid v1.1.1
+	github.com/mailru/go-clickhouse v1.3.0 // indirect
 	github.com/minio/minio-go/v6 v6.0.57
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect

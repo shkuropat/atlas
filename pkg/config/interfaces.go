@@ -26,3 +26,7 @@ type MinIOEndpointConfig interface {
 type KafkaEndpointConfig interface {
 	GetKafkaEndpoint() *atlas.KafkaEndpoint
 }
+
+type ClickHouseEndpointConfig interface {
+	GetClickHouseEndpoint() string
+}
