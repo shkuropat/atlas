@@ -27,64 +27,6 @@ import (
 	"github.com/binarly-io/atlas/pkg/config"
 )
 
-type ActionType uint8
-
-const (
-	ActionRequestStart         ActionType = 1
-	ActionRequestStartName     string     = "ActionRequestStart"
-	ActionSaveData             ActionType = 2
-	ActionSaveDataName         string     = "ActionSaveData"
-	ActionSaveDataError        ActionType = 3
-	ActionSaveDataErrorName    string     = "ActionSaveDataError"
-	ActionProcessData          ActionType = 4
-	ActionProcessDataName      string     = "ActionProcessData"
-	ActionProcessDataError     ActionType = 5
-	ActionProcessDataErrorName string     = "ActionProcessDataError"
-	ActionRequestCompleted     ActionType = 6
-	ActionRequestCompletedName string     = "ActionRequestCompleted"
-	ActionRequestError         ActionType = 7
-	ActionRequestErrorName     string     = "ActionRequestError"
-)
-
-var actionName = map[ActionType]string{
-	ActionRequestStart:     ActionRequestStartName,
-	ActionSaveData:         ActionSaveDataName,
-	ActionSaveDataError:    ActionSaveDataErrorName,
-	ActionProcessData:      ActionProcessDataName,
-	ActionProcessDataError: ActionProcessDataErrorName,
-	ActionRequestCompleted: ActionRequestCompletedName,
-	ActionRequestError:     ActionRequestErrorName,
-}
-
-var actionValue = map[string]ActionType{
-	ActionRequestStartName:     ActionRequestStart,
-	ActionSaveDataName:         ActionSaveData,
-	ActionSaveDataErrorName:    ActionSaveDataError,
-	ActionProcessDataName:      ActionProcessData,
-	ActionProcessDataErrorName: ActionProcessDataError,
-	ActionRequestCompletedName: ActionRequestCompleted,
-	ActionRequestErrorName:     ActionRequestError,
-}
-
-type EndpointIDType uint16
-
-const (
-	EndpointDataChunks     EndpointIDType = 1
-	EndpointDataChunksName string         = "EndpointDataChunks"
-	EndpointReports        EndpointIDType = 2
-	EndpointReportsName    string         = "EndpointReports"
-)
-
-var endpointName = map[EndpointIDType]string{
-	EndpointDataChunks: EndpointDataChunksName,
-	EndpointReports:    EndpointReportsName,
-}
-
-var endpointValue = map[string]EndpointIDType{
-	EndpointDataChunksName: EndpointDataChunks,
-	EndpointReportsName:    EndpointReports,
-}
-
 // JournalClickHouse
 type JournalClickHouse struct {
 	start      time.Time
