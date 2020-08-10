@@ -64,11 +64,15 @@ var (
 // RegisterActionType
 func RegisterActionType(_type ActionType, name string) error {
 	// Check availability
-	if _, ok := actionName[_type]; ok {
-		return ErrActionTypeBusy
+	if n, ok := actionName[_type]; ok {
+		if n != name {
+			return ErrActionTypeBusy
+		}
 	}
-	if _, ok := actionValue[name]; ok {
-		return ErrActionTypeBusy
+	if v, ok := actionValue[name]; ok {
+		if v != _type {
+			return ErrActionTypeBusy
+		}
 	}
 
 	// Register

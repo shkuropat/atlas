@@ -43,11 +43,15 @@ var (
 // RegisterEndpointID
 func RegisterEndpointID(id EndpointIDType, name string) error {
 	// Check availability
-	if _, ok := endpointName[id]; ok {
-		return ErrEndpointIDBusy
+	if n, ok := endpointName[id]; ok {
+		if n != name {
+			return ErrEndpointIDBusy
+		}
 	}
-	if _, ok := endpointValue[name]; ok {
-		return ErrEndpointIDBusy
+	if v, ok := endpointValue[name]; ok {
+		if v != id {
+			return ErrEndpointIDBusy
+		}
 	}
 
 	// Register

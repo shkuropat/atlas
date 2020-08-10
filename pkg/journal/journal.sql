@@ -45,3 +45,4 @@ CREATE TABLE api_journal
 )
 ENGINE = MergeTree
 ORDER BY d
+;
