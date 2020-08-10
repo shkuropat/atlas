@@ -85,10 +85,11 @@ func (j *JournalClickHouse) SaveData(
 	dataS3Address *atlas.S3Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
+	data []byte,
 ) {
 	e := NewJournalEntry().
 		SetCallAction(callMetadata.GetCallID(), ActionSaveData).
-		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata)
+		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata, data)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -115,7 +116,7 @@ func (j *JournalClickHouse) ProcessData(
 ) {
 	e := NewJournalEntry().
 		SetCallAction(callMetadata.GetCallID(), ActionProcessData).
-		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata)
+		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata, nil)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}

@@ -56,11 +56,12 @@ func (e *JournalEntry) SetAction(action ActionType) *JournalEntry {
 }
 
 // SetObject
-func (e *JournalEntry) SetObject(_type uint8, address *atlas.S3Address, size uint64, metadata *atlas.Metadata) *JournalEntry {
+func (e *JournalEntry) SetObject(_type uint8, address *atlas.S3Address, size uint64, metadata *atlas.Metadata, data []byte) *JournalEntry {
 	e.SetObjectType(_type)
 	e.SetObjectAddress(address)
 	e.SetObjectSize(size)
 	e.SetObjectMetadata(metadata)
+	e.SetObjectData(data)
 	return e
 }
 

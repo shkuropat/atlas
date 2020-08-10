@@ -41,6 +41,7 @@ func (j *NopJournal) SaveData(
 	dataS3Address *atlas.S3Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
+	data []byte,
 ) {
 
 }

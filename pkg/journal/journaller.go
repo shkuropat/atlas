@@ -28,6 +28,7 @@ type Journaller interface {
 		dataS3Address *atlas.S3Address,
 		dataSize int64,
 		dataMetadata *atlas.Metadata,
+		data []byte,
 	)
 
 	SaveDataError(
