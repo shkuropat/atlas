@@ -29,7 +29,7 @@ type CallMetadata struct {
 // NewCallMetadata
 func NewCallMetadata() *CallMetadata {
 	return &CallMetadata{
-		Internal: atlas.NewMetadata().CreateUUID().CreateTimestamp(),
+		Internal: atlas.NewMetadata().CreateID().CreateTimestamp(),
 	}
 }
 
@@ -63,22 +63,22 @@ func (c *CallMetadata) GetName() string {
 
 // SetCallID
 func (c *CallMetadata) SetCallID(callID *atlas.UUID) *CallMetadata {
-	c.Internal.SetUUID(callID.GetStringValue())
+	c.Internal.SetID(callID)
 	return c
 }
 
 // SetCallIDFromString
 func (c *CallMetadata) SetCallIDFromString(callID string) *CallMetadata {
-	c.Internal.SetUUID(callID)
+	c.Internal.SetIDFromString(callID)
 	return c
 }
 
 // GetCallID
 func (c *CallMetadata) GetCallID() *atlas.UUID {
-	return c.Internal.GetUuid()
+	return c.Internal.GetId()
 }
 
 // GetCallIDAsString
 func (c *CallMetadata) GetCallIDAsString() string {
-	return c.Internal.GetUuid().GetStringValue()
+	return c.Internal.GetId().GetStringValue()
 }
