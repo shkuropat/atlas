@@ -93,6 +93,12 @@ func (m *Command) GetReferenceIDAsString() string {
 	}
 }
 
+// SetReferenceID
+func (m *Command) SetReferenceID(id *UUID) *Command {
+	m.GetHeader().SetReferenceID(id)
+	return m
+}
+
 // SetReferenceIDFromString
 func (m *Command) SetReferenceIDFromString(id string) *Command {
 	m.GetHeader().SetReferenceIDFromString(id)
