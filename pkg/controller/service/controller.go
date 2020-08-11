@@ -28,7 +28,7 @@ func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
 		cmd := <-incomingQueue
 		log.Infof("Got cmd %v", cmd)
 		if cmd.GetType() == atlas.CommandType_COMMAND_ECHO_REQUEST {
-			command := atlas.NewCommand().SetType(atlas.CommandType_COMMAND_ECHO_REPLY).CreateUUID().SetDescription("desc")
+			command := atlas.NewCommand().SetType(atlas.CommandType_COMMAND_ECHO_REPLY).CreateID().SetDescription("desc")
 			outgoingQueue <- command
 		}
 	}

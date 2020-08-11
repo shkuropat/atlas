@@ -108,7 +108,7 @@ func SendBytes(client atlas.ControlPlaneClient, data []byte, options *DataExchan
 
 func SendEchoRequest(outgoingQueue chan *atlas.Command) {
 	for i := 0; i < 5; i++ {
-		command := atlas.NewCommand().SetType(atlas.CommandType_COMMAND_ECHO_REQUEST).CreateUUID().SetDescription("desc")
+		command := atlas.NewCommand().SetType(atlas.CommandType_COMMAND_ECHO_REQUEST).CreateID().SetDescription("desc")
 		outgoingQueue <- command
 
 		log.Infof("Wait before send new Echo Request")
@@ -126,8 +126,8 @@ func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
 		if cmd.GetType() == atlas.CommandType_COMMAND_ECHO_REQUEST {
 			command := atlas.NewCommand().
 				SetType(atlas.CommandType_COMMAND_ECHO_REPLY).
-				CreateUUID().
-				SetUUIDReference("reference: " + cmd.GetHeader().GetUuid().StringValue).
+				CreateID().
+				SetReferenceIDFromString("reference: " + cmd.GetHeader().GetId().GetStringValue()).
 				SetDescription("desc")
 			outgoingQueue <- command
 		}
