@@ -9,10 +9,10 @@ CREATE TABLE api_journal
   endpoint_id UInt16,
 
   /* source_id specifies source which is call is being journalled */
-  source_id Nullable(UUID),
+  source_id String,
 
   /* call_id specifies ID of this particular call */
-  call_id UUID,
+  call_id String,
 
   /* action_id specifies action */
   action_id UInt8,

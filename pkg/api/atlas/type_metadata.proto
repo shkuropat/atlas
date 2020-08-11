@@ -18,6 +18,7 @@ package atlas;
 
 import "google/protobuf/timestamp.proto";
 import "type_uuid.proto";
+import "type_user_id.proto";
 import "type_s3_address.proto";
 
 enum MetadataType {
@@ -44,63 +45,68 @@ message Metadata {
         int32 version = 300;
     }
 
-    oneof uuid_optional {
-        // Unique identified of the object
-        UUID uuid = 400;
+    oneof user_id_optional {
+        // User identifier
+        UserID user_id = 400;
     }
 
-    oneof uuid_reference_optional {
+    oneof id_optional {
+        // Unique identified of the object
+        UUID id = 500;
+    }
+
+    oneof reference_id_optional {
         // Unique identifier of the reference object, if necessary
-        UUID uuid_reference = 500;
+        UUID reference_id = 600;
     }
 
     oneof timestamp_optional {
         // Timestamp is optional
-        google.protobuf.Timestamp ts = 600;
+        google.protobuf.Timestamp ts = 700;
     }
 
     oneof encoding_optional {
         // Encoding is optional
-        string encoding = 700;
+        string encoding = 800;
     }
 
     oneof compression_optional {
         // Compression is optional
-        string compression = 800;
+        string compression = 900;
     }
 
     oneof filename_optional {
         // Filename is optional
-        string filename = 900;
+        string filename = 1000;
     }
 
     oneof url_optional {
         // URL is optional
-        string url = 1000;
+        string url = 1100;
     }
 
     oneof s3address_optional {
         // S3 address is optional
-        S3Address s3address = 1100;
+        S3Address s3address = 1200;
     }
 
     oneof description_optional {
         // Description is optional
-        string description = 1200;
+        string description = 1300;
     }
 
     oneof len_optional {
         // Len is optional
-        int64 len = 1300;
+        int64 len = 1400;
     }
 
     oneof offset_optional {
         // Offset is optional
-        int64 offset = 1400;
+        int64 offset = 1500;
     }
 
     oneof last_optional {
         // Last is optional
-        bool last = 1500;
+        bool last = 1600;
     }
 }

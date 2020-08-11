@@ -14,18 +14,21 @@
 
 package atlas
 
-// NewS3Address
-func NewS3Address(bucket, object string) *S3Address {
-	return &S3Address{
-		Bucket: bucket,
-		Object: object,
+import "github.com/google/uuid"
+
+// NewUserIDFromString
+func NewUserIDFromString(id string) *UserID {
+	return &UserID{
+		StringValue: id,
 	}
 }
 
-// Printable
-func (m *S3Address) Printable() string {
-	if m != nil {
-		return m.Bucket + "/" + m.Object
-	}
-	return ""
+// SetFromString
+func (id *UserID) SetFromString(userId string) {
+	id.StringValue = userId
+}
+
+// CreateUserID
+func CreateUserID() *UserID {
+	return NewUserIDFromString(uuid.New().String())
 }

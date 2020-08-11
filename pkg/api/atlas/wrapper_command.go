@@ -48,38 +48,54 @@ func (m *Command) SetName(name string) *Command {
 	return m
 }
 
-// GetUUID
-func (m *Command) GetUUID() string {
-	if uuid := m.GetHeader().GetUuid(); uuid == nil {
+// GetID
+func (m *Command) GetID() *UUID {
+	return m.GetHeader().GetId()
+}
+
+// GetIDAsString
+func (m *Command) GetIDAsString() string {
+	if id := m.GetHeader().GetId(); id == nil {
 		return ""
 	} else {
-		return uuid.GetStringValue()
+		return id.GetStringValue()
 	}
 }
 
-// SetUUID
-func (m *Command) SetUUID(uuid string) *Command {
-	m.GetHeader().SetUUID(uuid)
+// SetID
+func (m *Command) SetID(id *UUID) *Command {
+	m.GetHeader().SetID(id)
 	return m
 }
 
-// CreateUUID
-func (m *Command) CreateUUID() *Command {
-	return m.SetUUID(CreateNewUUID())
+// SetIDFromString
+func (m *Command) SetIDFromString(id string) *Command {
+	m.GetHeader().SetID(NewUUIDFromString(id))
+	return m
 }
 
-// GetUUIDReference
-func (m *Command) GetUUIDReference() string {
-	if uuid := m.GetHeader().GetUuidReference(); uuid == nil {
+// CreateID
+func (m *Command) CreateID() *Command {
+	return m.SetID(CreateUUID())
+}
+
+// GetReferenceID
+func (m *Command) GetReferenceID() *UUID {
+	return m.GetHeader().GetReferenceId()
+}
+
+// GetReferenceIDAsString
+func (m *Command) GetReferenceIDAsString() string {
+	if id := m.GetReferenceID(); id == nil {
 		return ""
 	} else {
-		return uuid.GetStringValue()
+		return id.GetStringValue()
 	}
 }
 
-// SetUUIDReference
-func (m *Command) SetUUIDReference(uuid string) *Command {
-	m.GetHeader().SetUUIDReference(uuid)
+// SetReferenceIDFromString
+func (m *Command) SetReferenceIDFromString(id string) *Command {
+	m.GetHeader().SetReferenceIDFromString(id)
 	return m
 }
 

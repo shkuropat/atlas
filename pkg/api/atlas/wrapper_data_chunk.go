@@ -14,6 +14,7 @@
 
 package atlas
 
+// NewDataChunk
 func NewDataChunk(transportMD, payloadMD *Metadata, offset *int64, last bool, data []byte) *DataChunk {
 	dc := &DataChunk{
 		Header: NewMetadata().SetType(MetadataType(DataChunkType_DATA_CHUNK_TYPE_DATA)),

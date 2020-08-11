@@ -16,9 +16,13 @@ package atlas
 
 // DataChunkFileOptions
 type DataChunkFileOptions struct {
-	Header     *Metadata
-	Metadata   *Metadata
-	Compress   bool
+	Header   *Metadata
+	Metadata *Metadata
+
+	// Compress outgoing data
+	Compress bool
+
+	// Decompress incoming data
 	Decompress bool
 }
 

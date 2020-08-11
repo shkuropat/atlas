@@ -89,6 +89,7 @@ func (j *JournalClickHouse) SaveData(
 ) {
 	e := NewJournalEntry().
 		SetCallAction(callMetadata.GetCallID(), ActionSaveData).
+		SetSource(dataMetadata.GetUserId()).
 		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata, data)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -116,6 +117,7 @@ func (j *JournalClickHouse) ProcessData(
 ) {
 	e := NewJournalEntry().
 		SetCallAction(callMetadata.GetCallID(), ActionProcessData).
+		SetSource(dataMetadata.GetUserId()).
 		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata, nil)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -177,9 +179,9 @@ func (j *JournalClickHouse) insert(entry *JournalEntry) error {
 			/* endpoint_id */
 			?,
 			/* source_id */
-			NULL,
+			?,
 			/* call_id */
-			toUUID(?),
+			?,
 			/* action_id */
 			?,
 			/* duration */
@@ -212,6 +214,7 @@ func (j *JournalClickHouse) insert(entry *JournalEntry) error {
 	}
 
 	d := time.Now()
+	sourceID := entry.Source.GetStringValue()
 	callID := entry.Call.GetStringValue()
 	actionID := entry.Action
 	duration := d.Sub(j.start).Nanoseconds()
@@ -227,6 +230,7 @@ func (j *JournalClickHouse) insert(entry *JournalEntry) error {
 	if _, err := stmt.Exec(
 		d,
 		j.endpointID,
+		sourceID,
 		callID,
 		actionID,
 		duration,

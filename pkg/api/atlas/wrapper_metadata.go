@@ -70,39 +70,69 @@ func (m *Metadata) SetVersion(version int32) *Metadata {
 	return m
 }
 
-// HasUUID
-func (m *Metadata) HasUUID() bool {
-	return m.UuidOptional != nil
+// HasUserID
+func (m *Metadata) HasUserID() bool {
+	return m.UserIdOptional != nil
 }
 
-// SetUUID
-func (m *Metadata) SetUUID(uuid string) *Metadata {
-	if m.UuidOptional == nil {
-		m.UuidOptional = new(Metadata_Uuid)
+// SetUserID
+func (m *Metadata) SetUserID(id *UserID) *Metadata {
+	if m.UserIdOptional == nil {
+		m.UserIdOptional = new(Metadata_UserId)
 	}
-	m.UuidOptional.(*Metadata_Uuid).Uuid = NewUUID(uuid)
+	m.UserIdOptional.(*Metadata_UserId).UserId = id
 
 	return m
 }
 
-// CreateUUID
-func (m *Metadata) CreateUUID() *Metadata {
-	return m.SetUUID(CreateNewUUID())
+// SetUserIDFromString
+func (m *Metadata) SetUserIDFromString(id string) *Metadata {
+	return m.SetUserID(NewUserIDFromString(id))
+}
+
+// HasID
+func (m *Metadata) HasID() bool {
+	return m.IdOptional != nil
+}
+
+// SetID
+func (m *Metadata) SetID(id *UUID) *Metadata {
+	if m.IdOptional == nil {
+		m.IdOptional = new(Metadata_Id)
+	}
+	m.IdOptional.(*Metadata_Id).Id = id
+
+	return m
+}
+
+// SetIDFromString
+func (m *Metadata) SetIDFromString(id string) *Metadata {
+	return m.SetID(NewUUIDFromString(id))
+}
+
+// CreateID
+func (m *Metadata) CreateID() *Metadata {
+	return m.SetID(CreateUUID())
 }
 
 // HasUUIDReference
-func (m *Metadata) HasUUIDReference() bool {
-	return m.UuidReferenceOptional != nil
+func (m *Metadata) HasReferenceID() bool {
+	return m.ReferenceIdOptional != nil
 }
 
-// SetUUIDReference
-func (m *Metadata) SetUUIDReference(uuid string) *Metadata {
-	if m.UuidReferenceOptional == nil {
-		m.UuidReferenceOptional = new(Metadata_UuidReference)
+// SetReferenceID
+func (m *Metadata) SetReferenceID(id *UUID) *Metadata {
+	if m.ReferenceIdOptional == nil {
+		m.ReferenceIdOptional = new(Metadata_ReferenceId)
 	}
-	m.UuidReferenceOptional.(*Metadata_UuidReference).UuidReference = NewUUID(uuid)
+	m.ReferenceIdOptional.(*Metadata_ReferenceId).ReferenceId = id
 
 	return m
+}
+
+// SetReferenceID
+func (m *Metadata) SetReferenceIDFromString(id string) *Metadata {
+	return m.SetReferenceID(NewUUIDFromString(id))
 }
 
 // HasTimestamp

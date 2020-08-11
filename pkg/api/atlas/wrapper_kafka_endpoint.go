@@ -14,6 +14,7 @@
 
 package atlas
 
+// NewKafkaEndpoint
 func NewKafkaEndpoint(brokers []string) *KafkaEndpoint {
 	return &KafkaEndpoint{
 		Brokers: brokers,

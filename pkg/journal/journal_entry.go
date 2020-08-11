@@ -20,7 +20,7 @@ import (
 
 type JournalEntry struct {
 	Endpoint       uint16
-	Source         *atlas.UUID
+	Source         *atlas.UserID
 	Call           *atlas.UUID
 	Action         ActionType
 	ObjectType     uint8
@@ -40,6 +40,12 @@ func NewJournalEntry() *JournalEntry {
 func (e *JournalEntry) SetCallAction(call *atlas.UUID, action ActionType) *JournalEntry {
 	e.SetCall(call)
 	e.SetAction(action)
+	return e
+}
+
+// Source
+func (e *JournalEntry) SetSource(user *atlas.UserID) *JournalEntry {
+	e.Source = user
 	return e
 }
 

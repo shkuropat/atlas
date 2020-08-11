@@ -12,20 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package atlas
+syntax = "proto3";
 
-// NewS3Address
-func NewS3Address(bucket, object string) *S3Address {
-	return &S3Address{
-		Bucket: bucket,
-		Object: object,
-	}
-}
+package atlas;
 
-// Printable
-func (m *S3Address) Printable() string {
-	if m != nil {
-		return m.Bucket + "/" + m.Object
-	}
-	return ""
+message UserID {
+    string string_value = 100;
 }
