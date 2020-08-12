@@ -18,10 +18,10 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-type JournalEntry struct {
+type Entry struct {
 	Endpoint       uint16
-	Source         *atlas.UserID
-	Call           *atlas.UUID
+	SourceID       *atlas.UserID
+	ContextID      *atlas.UUID
 	Action         ActionType
 	ObjectType     uint8
 	ObjectAddress  *atlas.S3Address
@@ -31,38 +31,38 @@ type JournalEntry struct {
 	Error          error
 }
 
-// NewJournalEntry
-func NewJournalEntry() *JournalEntry {
-	return &JournalEntry{}
+// NewEntry
+func NewEntry() *Entry {
+	return &Entry{}
 }
 
-// SetCallAction
-func (e *JournalEntry) SetCallAction(call *atlas.UUID, action ActionType) *JournalEntry {
-	e.SetCall(call)
+// SetCtxAction
+func (e *Entry) SetCtxIDAction(ctxID *atlas.UUID, action ActionType) *Entry {
+	e.SetCtxID(ctxID)
 	e.SetAction(action)
 	return e
 }
 
-// Source
-func (e *JournalEntry) SetSource(user *atlas.UserID) *JournalEntry {
-	e.Source = user
+// SetSourceID
+func (e *Entry) SetSourceID(userID *atlas.UserID) *Entry {
+	e.SourceID = userID
 	return e
 }
 
-// SetCall
-func (e *JournalEntry) SetCall(call *atlas.UUID) *JournalEntry {
-	e.Call = call
+// SetCtxID
+func (e *Entry) SetCtxID(ctxID *atlas.UUID) *Entry {
+	e.ContextID = ctxID
 	return e
 }
 
 // SetAction
-func (e *JournalEntry) SetAction(action ActionType) *JournalEntry {
+func (e *Entry) SetAction(action ActionType) *Entry {
 	e.Action = action
 	return e
 }
 
 // SetObject
-func (e *JournalEntry) SetObject(_type uint8, address *atlas.S3Address, size uint64, metadata *atlas.Metadata, data []byte) *JournalEntry {
+func (e *Entry) SetObject(_type uint8, address *atlas.S3Address, size uint64, metadata *atlas.Metadata, data []byte) *Entry {
 	e.SetObjectType(_type)
 	e.SetObjectAddress(address)
 	e.SetObjectSize(size)
@@ -72,37 +72,37 @@ func (e *JournalEntry) SetObject(_type uint8, address *atlas.S3Address, size uin
 }
 
 // SetObjectType
-func (e *JournalEntry) SetObjectType(_type uint8) *JournalEntry {
+func (e *Entry) SetObjectType(_type uint8) *Entry {
 	e.ObjectType = _type
 	return e
 }
 
 // SetObjectAddress
-func (e *JournalEntry) SetObjectAddress(address *atlas.S3Address) *JournalEntry {
+func (e *Entry) SetObjectAddress(address *atlas.S3Address) *Entry {
 	e.ObjectAddress = address
 	return e
 }
 
 // SetObjectSize
-func (e *JournalEntry) SetObjectSize(size uint64) *JournalEntry {
+func (e *Entry) SetObjectSize(size uint64) *Entry {
 	e.ObjectSize = size
 	return e
 }
 
 // SetObjectMetadata
-func (e *JournalEntry) SetObjectMetadata(metadata *atlas.Metadata) *JournalEntry {
+func (e *Entry) SetObjectMetadata(metadata *atlas.Metadata) *Entry {
 	e.ObjectMetadata = metadata
 	return e
 }
 
 // SetObjectData
-func (e *JournalEntry) SetObjectData(data []byte) *JournalEntry {
+func (e *Entry) SetObjectData(data []byte) *Entry {
 	e.ObjectData = data
 	return e
 }
 
 // SetError
-func (e *JournalEntry) SetError(err error) *JournalEntry {
+func (e *Entry) SetError(err error) *Entry {
 	e.Error = err
 	return e
 }

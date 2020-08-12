@@ -17,6 +17,7 @@ package journal
 import (
 	"database/sql"
 	"fmt"
+	"github.com/binarly-io/atlas/pkg/context"
 	"time"
 
 	"github.com/MakeNowJust/heredoc"
@@ -71,8 +72,8 @@ func NewJournalClickHouse(dsn string, endpointID EndpointIDType) (*JournalClickH
 }
 
 // RequestStart journals beginning of the request processing
-func (j *JournalClickHouse) RequestStart(callMetadata *CallMetadata) {
-	e := NewJournalEntry().SetCallAction(callMetadata.GetCallID(), ActionRequestStart)
+func (j *JournalClickHouse) RequestStart(ctx *context.Context) {
+	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestStart)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -80,16 +81,16 @@ func (j *JournalClickHouse) RequestStart(callMetadata *CallMetadata) {
 
 // SaveData journals data saved successfully
 func (j *JournalClickHouse) SaveData(
-	callMetadata *CallMetadata,
+	ctx *context.Context,
 
 	dataS3Address *atlas.S3Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 	data []byte,
 ) {
-	e := NewJournalEntry().
-		SetCallAction(callMetadata.GetCallID(), ActionSaveData).
-		SetSource(dataMetadata.GetUserId()).
+	e := NewEntry().
+		SetCtxIDAction(ctx.GetID(), ActionSaveData).
+		SetSourceID(dataMetadata.GetUserId()).
 		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata, data)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -98,10 +99,10 @@ func (j *JournalClickHouse) SaveData(
 
 // SaveDataError journals data not saved due to an error
 func (j *JournalClickHouse) SaveDataError(
-	callMetadata *CallMetadata,
+	ctx *context.Context,
 	callErr error,
 ) {
-	e := NewJournalEntry().SetCallAction(callMetadata.GetCallID(), ActionSaveDataError).SetError(callErr)
+	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionSaveDataError).SetError(callErr)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -109,15 +110,15 @@ func (j *JournalClickHouse) SaveDataError(
 
 // ProcessData journals data processed successfully
 func (j *JournalClickHouse) ProcessData(
-	callMetadata *CallMetadata,
+	ctx *context.Context,
 
 	dataS3Address *atlas.S3Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 ) {
-	e := NewJournalEntry().
-		SetCallAction(callMetadata.GetCallID(), ActionProcessData).
-		SetSource(dataMetadata.GetUserId()).
+	e := NewEntry().
+		SetCtxIDAction(ctx.GetID(), ActionProcessData).
+		SetSourceID(dataMetadata.GetUserId()).
 		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata, nil)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -126,11 +127,11 @@ func (j *JournalClickHouse) ProcessData(
 
 // ProcessDataError journals data not processed due to an error
 func (j *JournalClickHouse) ProcessDataError(
-	callMetadata *CallMetadata,
+	ctx *context.Context,
 	callErr error,
 ) {
-	e := NewJournalEntry().
-		SetCallAction(callMetadata.GetCallID(), ActionProcessDataError).SetError(callErr)
+	e := NewEntry().
+		SetCtxIDAction(ctx.GetID(), ActionProcessDataError).SetError(callErr)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -138,9 +139,9 @@ func (j *JournalClickHouse) ProcessDataError(
 
 // RequestCompleted journals request completed successfully
 func (j *JournalClickHouse) RequestCompleted(
-	callMetadata *CallMetadata,
+	ctx *context.Context,
 ) {
-	e := NewJournalEntry().SetCallAction(callMetadata.GetCallID(), ActionRequestCompleted)
+	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestCompleted)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -148,23 +149,23 @@ func (j *JournalClickHouse) RequestCompleted(
 
 // RequestError journals request error
 func (j *JournalClickHouse) RequestError(
-	callMetadata *CallMetadata,
+	ctx *context.Context,
 	callErr error,
 ) {
-	e := NewJournalEntry().SetCallAction(callMetadata.GetCallID(), ActionRequestError).SetError(callErr)
+	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestError).SetError(callErr)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
 }
 
 // insert
-func (j *JournalClickHouse) insert(entry *JournalEntry) error {
+func (j *JournalClickHouse) insert(entry *Entry) error {
 	sql := heredoc.Doc(`
 		INSERT INTO api_journal (
 			d, 
 			endpoint_id,
 			source_id,
-			call_id,
+			context_id,
 			action_id,
 			duration,
 			type, 
@@ -180,7 +181,7 @@ func (j *JournalClickHouse) insert(entry *JournalEntry) error {
 			?,
 			/* source_id */
 			?,
-			/* call_id */
+			/* context_id */
 			?,
 			/* action_id */
 			?,
@@ -214,8 +215,8 @@ func (j *JournalClickHouse) insert(entry *JournalEntry) error {
 	}
 
 	d := time.Now()
-	sourceID := entry.Source.GetStringValue()
-	callID := entry.Call.GetStringValue()
+	sourceID := entry.SourceID.GetStringValue()
+	contextID := entry.ContextID.GetStringValue()
 	actionID := entry.Action
 	duration := d.Sub(j.start).Nanoseconds()
 	_type := entry.ObjectType
@@ -231,7 +232,7 @@ func (j *JournalClickHouse) insert(entry *JournalEntry) error {
 		d,
 		j.endpointID,
 		sourceID,
-		callID,
+		contextID,
 		actionID,
 		duration,
 		_type,

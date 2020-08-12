@@ -16,14 +16,15 @@ package journal
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/context"
 )
 
 // Journaller
 type Journaller interface {
-	RequestStart(callMetadata *CallMetadata)
+	RequestStart(ctx *context.Context)
 
 	SaveData(
-		callMetadata *CallMetadata,
+		ctx *context.Context,
 
 		dataS3Address *atlas.S3Address,
 		dataSize int64,
@@ -32,12 +33,12 @@ type Journaller interface {
 	)
 
 	SaveDataError(
-		callMetadata *CallMetadata,
+		ctx *context.Context,
 		callErr error,
 	)
 
 	ProcessData(
-		callMetadata *CallMetadata,
+		ctx *context.Context,
 
 		dataS3Address *atlas.S3Address,
 		dataSize int64,
@@ -45,16 +46,16 @@ type Journaller interface {
 	)
 
 	ProcessDataError(
-		callMetadata *CallMetadata,
+		ctx *context.Context,
 		callErr error,
 	)
 
 	RequestCompleted(
-		callMetadata *CallMetadata,
+		ctx *context.Context,
 	)
 
 	RequestError(
-		callMetadata *CallMetadata,
+		ctx *context.Context,
 		callErr error,
 	)
 }

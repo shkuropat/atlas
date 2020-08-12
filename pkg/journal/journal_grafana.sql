@@ -90,7 +90,7 @@ SELECT
   MAX(duration)
 FROM $table
 WHERE $timeFilter
-GROUP BY t, call_id
+GROUP BY t, context_id
 ORDER BY t
 
 -- DataChunks endpoint MAX duration
@@ -100,7 +100,7 @@ SELECT
 FROM $table
 WHERE $timeFilter
   AND endpoint_id=1
-GROUP BY t, call_id
+GROUP BY t, context_id
 ORDER BY t
 
 -- Reports endpoint MAX duration
@@ -110,7 +110,7 @@ SELECT
 FROM $table
 WHERE $timeFilter
   AND endpoint_id=2
-GROUP BY t, call_id
+GROUP BY t, context_id
 ORDER BY t
 
 SELECT

@@ -11,8 +11,8 @@ CREATE TABLE api_journal
   /* source_id specifies source which is call is being journalled */
   source_id String,
 
-  /* call_id specifies ID of this particular call */
-  call_id String,
+  /* context_id specifies ID of the context */
+  context_id String,
 
   /* action_id specifies action */
   action_id UInt8,
