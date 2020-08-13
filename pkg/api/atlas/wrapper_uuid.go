@@ -16,19 +16,34 @@ package atlas
 
 import "github.com/google/uuid"
 
-// NewUUIDFromString
-func NewUUIDFromString(uuid string) *UUID {
-	return &UUID{
-		StringValue: uuid,
-	}
-}
-
-// SetFromString
-func (id *UUID) SetFromString(uuid string) {
-	id.StringValue = uuid
+// NewUUID
+func NewUUID() *UUID {
+	return &UUID{}
 }
 
 // CreateUUID
 func CreateUUID() *UUID {
-	return NewUUIDFromString(uuid.New().String())
+	return NewUUID().SetString(uuid.New().String())
+}
+
+// SetBytes
+func (m *UUID) SetBytes(bytes []byte) *UUID {
+	m.Data = bytes
+	return m
+}
+
+// GetBytes
+func (m *UUID) GetBytes() []byte {
+	return m.Data
+}
+
+// SetString
+func (m *UUID) SetString(str string) *UUID {
+	m.Data = []byte(str)
+	return m
+}
+
+// GetString
+func (m *UUID) GetString() string {
+	return string(m.Data)
 }

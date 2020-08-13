@@ -103,7 +103,7 @@
           "dateTimeType": "DATETIME",
           "datetimeLoading": false,
           "format": "time_series",
-          "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+          "formattedQuery": "SELECT $timeSeries as t, COUNT() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
           "intervalFactor": 1,
           "query": "SELECT\n  $timeSeries as t,\n  JSONExtractBool(data, 'BootguardInfoParsed') AS BootguardInfoParsed,\n  JSONExtractBool(data, 'KMFound') AS KMFound,\n  JSONExtractBool(data, 'KMSignatureVerificationOk') AS KMSignatureVerificationOk,\n  JSONExtractBool(data, 'BPMFound') AS BPMFound,\n  JSONExtractBool(data, 'BPMKeyHashEqKMKeyHash') AS BPMKeyHashEqKMKeyHash,\n  JSONExtractBool(data, 'BPMSignatureVerificationOk') AS BPMSignatureVerificationOk,\n  JSONExtractBool(data, 'BGProtectedRangesFound') AS BGProtectedRangesFound,\n  JSONExtractBool(data, 'BGProtectedRangesHashVerificationOk') AS BGProtectedRangesHashVerificationOk,\n  JSONExtractBool(data, 'VendorProtectedRangesFound') AS VendorProtectedRangesFound,\n  JSONExtractBool(data, 'VendorProtectedRangesHashVerificationOk') AS VendorProtectedRangesHashVerificationOk,\n  JSONExtractRaw(data, 'BGErrors') AS BGErrors\nFROM $table\nWHERE $timeFilter\nAND LENGTH(data) > 0\n",
           "rawQuery": "SELECT   (intDiv(toUInt32(d), 1) * 1) * 1000 as t,   MAX(duration) FROM atlas.api_journal WHERE d BETWEEN toDateTime(1597071542) AND toDateTime(1597072081)   AND endpoint_id=2 GROUP BY t, context_id ORDER BY t",
@@ -128,10 +128,109 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
+        "h": 5,
+        "w": 21,
+        "x": 0,
+        "y": 7
+      },
+      "hiddenSeries": false,
+      "id": 22,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "database": "atlas",
+          "dateColDataType": "",
+          "dateLoading": false,
+          "dateTimeColDataType": "d",
+          "dateTimeType": "DATETIME",
+          "datetimeLoading": false,
+          "format": "time_series",
+          "formattedQuery": "SELECT $timeSeries as t, COUNT() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+          "intervalFactor": 1,
+          "query": "SELECT\n    $timeSeries as t,\n    COUNT(DISTINCT(source_id))\nFROM $table\nWHERE $timeFilter\n  AND LENGTH(source_id) > 0\nGROUP BY t\nORDER BY t",
+          "rawQuery": false,
+          "refId": "A",
+          "round": "0s",
+          "table": "api_journal",
+          "tableLoading": false
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Sources count",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "k8s-clickhouse-journal",
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 7
+        "y": 12
       },
       "hiddenSeries": false,
       "id": 2,
@@ -230,7 +329,7 @@
         "h": 7,
         "w": 10,
         "x": 11,
-        "y": 7
+        "y": 12
       },
       "hiddenSeries": false,
       "id": 4,
@@ -329,7 +428,7 @@
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 14
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 6,
@@ -428,7 +527,7 @@
         "h": 7,
         "w": 10,
         "x": 11,
-        "y": 14
+        "y": 19
       },
       "hiddenSeries": false,
       "id": 8,
@@ -527,7 +626,7 @@
         "h": 8,
         "w": 11,
         "x": 0,
-        "y": 21
+        "y": 26
       },
       "hiddenSeries": false,
       "id": 18,
@@ -626,7 +725,7 @@
         "h": 8,
         "w": 10,
         "x": 11,
-        "y": 21
+        "y": 26
       },
       "hiddenSeries": false,
       "id": 20,
@@ -725,7 +824,7 @@
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 29
+        "y": 34
       },
       "hiddenSeries": false,
       "id": 10,
@@ -824,7 +923,7 @@
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 36
+        "y": 41
       },
       "hiddenSeries": false,
       "id": 12,
@@ -923,7 +1022,7 @@
         "h": 8,
         "w": 11,
         "x": 0,
-        "y": 43
+        "y": 48
       },
       "hiddenSeries": false,
       "id": 14,
@@ -1019,8 +1118,8 @@
     "list": []
   },
   "time": {
-    "from": "2020-08-10T14:59:03.197Z",
-    "to": "2020-08-10T15:08:00.816Z"
+    "from": "now-30m",
+    "to": "now"
   },
   "timepicker": {
     "refresh_intervals": [
@@ -1039,5 +1138,5 @@
   "timezone": "utc",
   "title": "Atlas",
   "uid": "N1ZAidSGz",
-  "version": 8
+  "version": 10
 }

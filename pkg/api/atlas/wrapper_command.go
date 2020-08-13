@@ -58,7 +58,7 @@ func (m *Command) GetIDAsString() string {
 	if id := m.GetHeader().GetId(); id == nil {
 		return ""
 	} else {
-		return id.GetStringValue()
+		return id.GetString()
 	}
 }
 
@@ -70,7 +70,7 @@ func (m *Command) SetID(id *UUID) *Command {
 
 // SetIDFromString
 func (m *Command) SetIDFromString(id string) *Command {
-	m.GetHeader().SetID(NewUUIDFromString(id))
+	m.GetHeader().SetID(NewUUID().SetString(id))
 	return m
 }
 
@@ -89,7 +89,7 @@ func (m *Command) GetReferenceIDAsString() string {
 	if id := m.GetReferenceID(); id == nil {
 		return ""
 	} else {
-		return id.GetStringValue()
+		return id.GetString()
 	}
 }
 

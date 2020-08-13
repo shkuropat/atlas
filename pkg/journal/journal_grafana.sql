@@ -1,7 +1,7 @@
 -- All API endpoint calls count
 SELECT
   $timeSeries as t,
-  count()
+  COUNT()
 FROM $table
 WHERE $timeFilter
   AND action_id=1
@@ -11,7 +11,7 @@ ORDER BY t
 -- All API endpoint errors count
 SELECT
   $timeSeries as t,
-  count()
+  COUNT()
 FROM $table
 WHERE $timeFilter
   AND action_id=7
@@ -21,7 +21,7 @@ ORDER BY t
 -- DataChunks endpoint calls count
 SELECT
   $timeSeries as t,
-  count()
+  COUNT()
 FROM $table
 WHERE $timeFilter
   AND endpoint_id=1
@@ -32,7 +32,7 @@ ORDER BY t
 -- DataChunks endpoint errors count
 SELECT
   $timeSeries as t,
-  count()
+  COUNT()
 FROM $table
 WHERE $timeFilter
   AND endpoint_id=1
@@ -43,7 +43,7 @@ ORDER BY t
 -- Bootguard endpoint calls count
 SELECT
   $timeSeries as t,
-  count()
+  COUNT()
 FROM $table
 WHERE $timeFilter
   AND endpoint_id=10
@@ -54,7 +54,7 @@ ORDER BY t
 -- Bootguard endpoint errors count
 SELECT
   $timeSeries as t,
-  count()
+  COUNT()
 FROM $table
 WHERE $timeFilter
   AND endpoint_id=10
@@ -65,7 +65,7 @@ ORDER BY t
 -- Reports endpoint calls count
 SELECT
   $timeSeries as t,
-  count()
+  COUNT()
 FROM $table
 WHERE $timeFilter
   AND endpoint_id=2
@@ -76,7 +76,7 @@ ORDER BY t
 -- Reports endpoint errors count
 SELECT
   $timeSeries as t,
-  count()
+  COUNT()
 FROM $table
 WHERE $timeFilter
   AND endpoint_id=2
@@ -113,6 +113,7 @@ WHERE $timeFilter
 GROUP BY t, context_id
 ORDER BY t
 
+-- Bootguard Results Table - ALL
 SELECT
   $timeSeries as t,
   JSONExtractBool(data, 'BootguardInfoParsed') AS BootguardInfoParsed,
@@ -128,4 +129,26 @@ SELECT
   JSONExtractRaw(data, 'BGErrors') AS BGErrors
 FROM $table
 WHERE $timeFilter
-AND LENGTH(data) > 0
+  AND LENGTH(data) > 0
+
+-- Sources count
+SELECT
+  $timeSeries as t,
+  COUNT(DISTINCT(source_id))
+FROM $table
+WHERE $timeFilter
+  AND LENGTH(source_id) > 0
+GROUP BY t
+ORDER BY t
+
+-- TOP 5 active sources
+SELECT
+  COUNT() as t,
+  source_id as source
+FROM $table
+WHERE $timeFilter
+  AND LENGTH(source_id) > 0
+GROUP BY source_id
+ORDER BY t DESC
+LIMIT 5
+

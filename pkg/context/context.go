@@ -80,5 +80,5 @@ func (c *Context) GetID() *atlas.UUID {
 
 // GetIDAsString
 func (c *Context) GetIDAsString() string {
-	return c.Metadata.GetId().GetStringValue()
+	return c.Metadata.GetId().GetString()
 }

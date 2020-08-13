@@ -215,8 +215,8 @@ func (j *JournalClickHouse) insert(entry *Entry) error {
 	}
 
 	d := time.Now()
-	sourceID := entry.SourceID.GetStringValue()
-	contextID := entry.ContextID.GetStringValue()
+	sourceID := entry.SourceID.GetString()
+	contextID := entry.ContextID.GetString()
 	actionID := entry.Action
 	duration := d.Sub(j.start).Nanoseconds()
 	_type := entry.ObjectType

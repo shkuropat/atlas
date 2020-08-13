@@ -17,5 +17,6 @@ syntax = "proto3";
 package atlas;
 
 message UserID {
-    string string_value = 100;
+    // May contain any arbitrary sequence of bytes no longer than 2^32
+    bytes data = 100;
 }

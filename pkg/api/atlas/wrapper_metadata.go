@@ -87,7 +87,7 @@ func (m *Metadata) SetUserID(id *UserID) *Metadata {
 
 // SetUserIDFromString
 func (m *Metadata) SetUserIDFromString(id string) *Metadata {
-	return m.SetUserID(NewUserIDFromString(id))
+	return m.SetUserID(NewUserID().SetString(id))
 }
 
 // HasID
@@ -107,7 +107,7 @@ func (m *Metadata) SetID(id *UUID) *Metadata {
 
 // SetIDFromString
 func (m *Metadata) SetIDFromString(id string) *Metadata {
-	return m.SetID(NewUUIDFromString(id))
+	return m.SetID(NewUUID().SetString(id))
 }
 
 // CreateID
@@ -132,7 +132,7 @@ func (m *Metadata) SetReferenceID(id *UUID) *Metadata {
 
 // SetReferenceID
 func (m *Metadata) SetReferenceIDFromString(id string) *Metadata {
-	return m.SetReferenceID(NewUUIDFromString(id))
+	return m.SetReferenceID(NewUUID().SetString(id))
 }
 
 // HasTimestamp

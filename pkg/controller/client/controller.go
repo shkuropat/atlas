@@ -127,7 +127,7 @@ func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
 			command := atlas.NewCommand().
 				SetType(atlas.CommandType_COMMAND_ECHO_REPLY).
 				CreateID().
-				SetReferenceIDFromString("reference: " + cmd.GetHeader().GetId().GetStringValue()).
+				SetReferenceIDFromString("reference: " + cmd.GetHeader().GetId().GetString()).
 				SetDescription("desc")
 			outgoingQueue <- command
 		}

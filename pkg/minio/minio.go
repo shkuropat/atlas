@@ -92,7 +92,7 @@ func (m *MinIO) PutA(addr *atlas.S3Address, reader io.Reader) (int64, error) {
 func (m *MinIO) PutUUIDFile(bucketName string, reader io.Reader) (string, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
-		Object: atlas.CreateUUID().GetStringValue(),
+		Object: atlas.CreateUUID().GetString(),
 	}
 	n, err := m.PutA(target, reader)
 	return target.Object, n, err
@@ -114,7 +114,7 @@ func (m *MinIO) FPut(bucketName, objectName, fileName string) (int64, error) {
 
 // FPutUUIDFile
 func (m *MinIO) FPutUUIDFile(bucketName, fileName string) (string, int64, error) {
-	objectName := atlas.CreateUUID().GetStringValue()
+	objectName := atlas.CreateUUID().GetString()
 	n, err := m.FPut(bucketName, objectName, fileName)
 
 	return objectName, n, err
