@@ -34,7 +34,10 @@ func (m *UserID) SetBytes(bytes []byte) *UserID {
 
 // GetBytes
 func (m *UserID) GetBytes() []byte {
-	return m.Data
+	if m != nil {
+		return m.Data
+	}
+	return nil
 }
 
 // SetString
@@ -45,5 +48,8 @@ func (m *UserID) SetString(str string) *UserID {
 
 // GetString
 func (m *UserID) GetString() string {
-	return string(m.Data)
+	if m != nil {
+		return string(m.Data)
+	}
+	return ""
 }

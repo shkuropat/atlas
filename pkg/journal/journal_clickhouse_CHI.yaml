@@ -1,4 +1,66 @@
+#
+# AWS resizable disk example
+#
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gp2-resizable
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+reclaimPolicy: Delete
+#volumeBindingMode: Immediate
+allowVolumeExpansion: true
+---
 apiVersion: "clickhouse.altinity.com/v1"
 kind: "ClickHouseInstallation"
 metadata:
   name: "journal"
+spec:
+  configuration:
+    clusters:
+      - name: "cluster"
+        layout:
+          shardsCount: 1
+          replicasCount: 1
+  defaults:
+    templates:
+      # Templates are specified as default for all clusters
+      podTemplate: pod-template
+      dataVolumeClaimTemplate: data-volume-template
+      logVolumeClaimTemplate: log-volume-template
+
+  templates:
+
+    podTemplates:
+      - name: pod-template
+        spec:
+          containers:
+            - name: clickhouse
+              image: yandex/clickhouse-server:latest
+              # Container has explicitly specified resource limits
+              resources:
+                requests:
+                  memory: "1024Mi"
+                  cpu: "500m"
+                limits:
+                  memory: "1024Mi"
+                  cpu: "500m"
+
+    volumeClaimTemplates:
+      - name: data-volume-template
+        spec:
+          storageClassName: gp2-resizable
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+      - name: log-volume-template
+        spec:
+          storageClassName: gp2-resizable
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi

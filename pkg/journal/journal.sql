@@ -1,4 +1,6 @@
-CREATE TABLE api_journal
+CREATE DATABASE atlas;
+
+CREATE TABLE atlas.api_journal
 (
   /* d is an ordering/grouping key */
   d DateTime,

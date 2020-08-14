@@ -34,7 +34,10 @@ func (m *UUID) SetBytes(bytes []byte) *UUID {
 
 // GetBytes
 func (m *UUID) GetBytes() []byte {
-	return m.Data
+	if m != nil {
+		return m.Data
+	}
+	return nil
 }
 
 // SetString
@@ -45,5 +48,8 @@ func (m *UUID) SetString(str string) *UUID {
 
 // GetString
 func (m *UUID) GetString() string {
-	return string(m.Data)
+	if m != nil {
+		return string(m.Data)
+	}
+	return ""
 }
