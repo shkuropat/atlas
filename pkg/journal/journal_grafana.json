@@ -106,7 +106,7 @@
           "formattedQuery": "SELECT $timeSeries as t, COUNT() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
           "intervalFactor": 1,
           "query": "SELECT\n  $timeSeries as t,\n  JSONExtractBool(data, 'BootguardInfoParsed') AS BootguardInfoParsed,\n  JSONExtractBool(data, 'KMFound') AS KMFound,\n  JSONExtractBool(data, 'KMSignatureVerificationOk') AS KMSignatureVerificationOk,\n  JSONExtractBool(data, 'BPMFound') AS BPMFound,\n  JSONExtractBool(data, 'BPMKeyHashEqKMKeyHash') AS BPMKeyHashEqKMKeyHash,\n  JSONExtractBool(data, 'BPMSignatureVerificationOk') AS BPMSignatureVerificationOk,\n  JSONExtractBool(data, 'BGProtectedRangesFound') AS BGProtectedRangesFound,\n  JSONExtractBool(data, 'BGProtectedRangesHashVerificationOk') AS BGProtectedRangesHashVerificationOk,\n  JSONExtractBool(data, 'VendorProtectedRangesFound') AS VendorProtectedRangesFound,\n  JSONExtractBool(data, 'VendorProtectedRangesHashVerificationOk') AS VendorProtectedRangesHashVerificationOk,\n  JSONExtractRaw(data, 'BGErrors') AS BGErrors\nFROM $table\nWHERE $timeFilter\nAND LENGTH(data) > 0\n",
-          "rawQuery": "SELECT   (intDiv(toUInt32(d), 1) * 1) * 1000 as t,   MAX(duration) FROM atlas.api_journal WHERE d BETWEEN toDateTime(1597071542) AND toDateTime(1597072081)   AND endpoint_id=2 GROUP BY t, context_id ORDER BY t",
+          "rawQuery": "SELECT   (intDiv(toUInt32(d), 2) * 2) * 1000 as t,   MAX(duration) FROM atlas.api_journal WHERE d >= toDateTime(1597429873)   AND endpoint_id=2 GROUP BY t, context_id ORDER BY t",
           "refId": "A",
           "round": "0s",
           "table": "api_journal",
@@ -128,8 +128,8 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 5,
-        "w": 21,
+        "h": 6,
+        "w": 11,
         "x": 0,
         "y": 7
       },
@@ -151,8 +151,8 @@
         "dataLinks": []
       },
       "percentage": false,
-      "pointradius": 2,
-      "points": false,
+      "pointradius": 5,
+      "points": true,
       "renderer": "flot",
       "seriesOverrides": [],
       "spaceLength": 10,
@@ -170,7 +170,7 @@
           "formattedQuery": "SELECT $timeSeries as t, COUNT() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
           "intervalFactor": 1,
           "query": "SELECT\n    $timeSeries as t,\n    COUNT(DISTINCT(source_id))\nFROM $table\nWHERE $timeFilter\n  AND LENGTH(source_id) > 0\nGROUP BY t\nORDER BY t",
-          "rawQuery": false,
+          "rawQuery": "SELECT   (intDiv(toUInt32(d), 2) * 2) * 1000 as t,   MAX(duration) FROM atlas.api_journal WHERE d >= toDateTime(1597429818)   AND endpoint_id=2 GROUP BY t, context_id ORDER BY t",
           "refId": "A",
           "round": "0s",
           "table": "api_journal",
@@ -219,6 +219,72 @@
       }
     },
     {
+      "columns": [],
+      "datasource": "k8s-clickhouse-journal",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 6,
+        "w": 10,
+        "x": 11,
+        "y": 7
+      },
+      "id": 24,
+      "options": {},
+      "pageSize": null,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "Time",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "pattern": "Time",
+          "type": "hidden"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "string",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "database": "atlas",
+          "dateColDataType": "",
+          "dateLoading": false,
+          "dateTimeColDataType": "d",
+          "dateTimeType": "DATETIME",
+          "datetimeLoading": false,
+          "format": "time_series",
+          "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+          "interval": "",
+          "intervalFactor": 1,
+          "query": "SELECT\n  COUNT() as t,\n  source_id as source\nFROM $table\nWHERE $timeFilter\n  AND LENGTH(source_id) > 0\nGROUP BY source_id\nORDER BY t DESC\nLIMIT 5\n\n",
+          "rawQuery": "SELECT   (intDiv(toUInt32(d), 2) * 2) * 1000 as t,   MAX(duration) FROM atlas.api_journal WHERE d >= toDateTime(1597430045)   AND endpoint_id=2 GROUP BY t, context_id ORDER BY t",
+          "refId": "A",
+          "round": "0s",
+          "table": "api_journal",
+          "tableLoading": false
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "TOP active users",
+      "transform": "timeseries_to_columns",
+      "type": "table"
+    },
+    {
       "aliasColors": {},
       "bars": true,
       "dashLength": 10,
@@ -230,7 +296,7 @@
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 12
+        "y": 13
       },
       "hiddenSeries": false,
       "id": 2,
@@ -329,7 +395,7 @@
         "h": 7,
         "w": 10,
         "x": 11,
-        "y": 12
+        "y": 13
       },
       "hiddenSeries": false,
       "id": 4,
@@ -428,7 +494,7 @@
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 19
+        "y": 20
       },
       "hiddenSeries": false,
       "id": 6,
@@ -527,7 +593,7 @@
         "h": 7,
         "w": 10,
         "x": 11,
-        "y": 19
+        "y": 20
       },
       "hiddenSeries": false,
       "id": 8,
@@ -626,7 +692,7 @@
         "h": 8,
         "w": 11,
         "x": 0,
-        "y": 26
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 18,
@@ -725,7 +791,7 @@
         "h": 8,
         "w": 10,
         "x": 11,
-        "y": 26
+        "y": 27
       },
       "hiddenSeries": false,
       "id": 20,
@@ -824,7 +890,7 @@
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 34
+        "y": 35
       },
       "hiddenSeries": false,
       "id": 10,
@@ -923,7 +989,7 @@
         "h": 7,
         "w": 11,
         "x": 0,
-        "y": 41
+        "y": 42
       },
       "hiddenSeries": false,
       "id": 12,
@@ -1022,7 +1088,7 @@
         "h": 8,
         "w": 11,
         "x": 0,
-        "y": 48
+        "y": 49
       },
       "hiddenSeries": false,
       "id": 14,
@@ -1110,7 +1176,7 @@
       }
     }
   ],
-  "refresh": false,
+  "refresh": "5s",
   "schemaVersion": 21,
   "style": "dark",
   "tags": [],
@@ -1138,5 +1204,5 @@
   "timezone": "utc",
   "title": "Atlas",
   "uid": "N1ZAidSGz",
-  "version": 10
+  "version": 4
 }
