@@ -16,12 +16,16 @@ package minio
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"github.com/minio/minio-go/v6"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
+	"net"
+	"net/http"
 	"os"
+	"time"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/config"
@@ -40,7 +44,13 @@ type MinIO struct {
 }
 
 // NewMinIO
-func NewMinIO(endpoint string, secure bool, accessKeyID, secretAccessKey string) (*MinIO, error) {
+func NewMinIO(
+	endpoint string,
+	secure bool,
+	insecureSkipVerify bool,
+	accessKeyID,
+	secretAccessKey string,
+) (*MinIO, error) {
 	var err error
 	min := &MinIO{
 		Endpoint:        endpoint,
@@ -49,7 +59,26 @@ func NewMinIO(endpoint string, secure bool, accessKeyID, secretAccessKey string)
 		SecretAccessKey: secretAccessKey,
 	}
 	min.client, err = minio.New(endpoint, accessKeyID, secretAccessKey, secure)
-
+	if secure && insecureSkipVerify {
+		// All this dance is for TLSClientConfig - set InsecureSkipVerify: true
+		transport := &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+				DualStack: true,
+			}).DialContext,
+			ForceAttemptHTTP2:     true,
+			MaxIdleConns:          100,
+			IdleConnTimeout:       90 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+			TLSClientConfig: &tls.Config{
+				InsecureSkipVerify: true,
+			},
+		}
+		min.client.SetCustomTransport(transport)
+	}
 	if err != nil {
 		log.Errorf("ERROR call minio.New() %v", err.Error())
 	}
@@ -62,6 +91,7 @@ func NewMinIOFromConfig(cfg config.MinIOEndpointConfig) (*MinIO, error) {
 	return NewMinIO(
 		cfg.GetMinIOEndpoint(),
 		cfg.GetMinIOSecure(),
+		cfg.GetMinInsecureSkipVerify(),
 		cfg.GetMinIOAccessKeyID(),
 		cfg.GetMinIOSecretAccessKey(),
 	)
