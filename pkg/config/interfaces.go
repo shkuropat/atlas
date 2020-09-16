@@ -21,7 +21,7 @@ type MinIOEndpointConfig interface {
 	GetMinIOAccessKeyID() string
 	GetMinIOSecretAccessKey() string
 	GetMinIOSecure() bool
-	GetMinInsecureSkipVerify() bool
+	GetMinIOInsecureSkipVerify() bool
 }
 
 type KafkaEndpointConfig interface {

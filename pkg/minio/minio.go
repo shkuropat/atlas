@@ -91,7 +91,7 @@ func NewMinIOFromConfig(cfg config.MinIOEndpointConfig) (*MinIO, error) {
 	return NewMinIO(
 		cfg.GetMinIOEndpoint(),
 		cfg.GetMinIOSecure(),
-		cfg.GetMinInsecureSkipVerify(),
+		cfg.GetMinIOInsecureSkipVerify(),
 		cfg.GetMinIOAccessKeyID(),
 		cfg.GetMinIOSecretAccessKey(),
 	)
