@@ -79,9 +79,7 @@ func init() {
 	proto.RegisterType((*DiffTask)(nil), "atlas.DiffTask")
 }
 
-func init() {
-	proto.RegisterFile("type_diff_task.proto", fileDescriptor_1e0411a244925965)
-}
+func init() { proto.RegisterFile("type_diff_task.proto", fileDescriptor_1e0411a244925965) }
 
 var fileDescriptor_1e0411a244925965 = []byte{
 	// 138 bytes of a gzipped FileDescriptorProto

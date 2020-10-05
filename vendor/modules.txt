@@ -1,5 +1,7 @@
 # cloud.google.com/go v0.34.0
 cloud.google.com/go/compute/metadata
+# github.com/MakeNowJust/heredoc v1.0.0
+github.com/MakeNowJust/heredoc
 # github.com/Shopify/sarama v1.26.1
 github.com/Shopify/sarama
 # github.com/coreos/go-oidc v2.2.1+incompatible
@@ -16,6 +18,8 @@ github.com/eapache/go-xerial-snappy
 github.com/eapache/queue
 # github.com/fsnotify/fsnotify v1.4.7
 github.com/fsnotify/fsnotify
+# github.com/go-cmd/cmd v1.2.1
+github.com/go-cmd/cmd
 # github.com/golang/protobuf v1.4.0
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/ptypes
@@ -50,17 +54,24 @@ github.com/klauspost/compress/huff0
 github.com/klauspost/compress/snappy
 github.com/klauspost/compress/zstd
 github.com/klauspost/compress/zstd/internal/xxhash
+# github.com/klauspost/cpuid v1.2.3
+github.com/klauspost/cpuid
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/magiconair/properties v1.8.0
 github.com/magiconair/properties
-# github.com/minio/minio-go/v6 v6.0.55
+# github.com/mailru/go-clickhouse v1.3.0
+github.com/mailru/go-clickhouse
+# github.com/minio/md5-simd v1.1.0
+github.com/minio/md5-simd
+# github.com/minio/minio-go/v6 v6.0.57
 github.com/minio/minio-go/v6
 github.com/minio/minio-go/v6/pkg/credentials
 github.com/minio/minio-go/v6/pkg/encrypt
 github.com/minio/minio-go/v6/pkg/s3utils
 github.com/minio/minio-go/v6/pkg/set
 github.com/minio/minio-go/v6/pkg/signer
+github.com/minio/minio-go/v6/pkg/tags
 # github.com/minio/sha256-simd v0.1.1
 github.com/minio/sha256-simd
 # github.com/mitchellh/go-homedir v1.1.0
@@ -81,6 +92,8 @@ github.com/pquerna/cachecontrol
 github.com/pquerna/cachecontrol/cacheobject
 # github.com/rcrowley/go-metrics v0.0.0-20190826022208-cac0b30c2563
 github.com/rcrowley/go-metrics
+# github.com/satori/go.uuid v1.1.0
+github.com/satori/go.uuid
 # github.com/sirupsen/logrus v1.5.0
 github.com/sirupsen/logrus
 # github.com/spf13/afero v1.1.2

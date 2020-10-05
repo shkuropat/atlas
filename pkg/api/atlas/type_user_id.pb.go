@@ -64,9 +64,7 @@ func init() {
 	proto.RegisterType((*UserID)(nil), "atlas.UserID")
 }
 
-func init() {
-	proto.RegisterFile("type_user_id.proto", fileDescriptor_df8c113849595fd9)
-}
+func init() { proto.RegisterFile("type_user_id.proto", fileDescriptor_df8c113849595fd9) }
 
 var fileDescriptor_df8c113849595fd9 = []byte{
 	// 83 bytes of a gzipped FileDescriptorProto

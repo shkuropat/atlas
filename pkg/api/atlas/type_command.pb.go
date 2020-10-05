@@ -140,9 +140,7 @@ func init() {
 	proto.RegisterType((*Command)(nil), "atlas.Command")
 }
 
-func init() {
-	proto.RegisterFile("type_command.proto", fileDescriptor_e84d1630985fc0a4)
-}
+func init() { proto.RegisterFile("type_command.proto", fileDescriptor_e84d1630985fc0a4) }
 
 var fileDescriptor_e84d1630985fc0a4 = []byte{
 	// 358 bytes of a gzipped FileDescriptorProto

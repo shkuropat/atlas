@@ -535,9 +535,7 @@ func init() {
 	proto.RegisterType((*Metadata)(nil), "atlas.Metadata")
 }
 
-func init() {
-	proto.RegisterFile("type_metadata.proto", fileDescriptor_6b5234c8ffbbe006)
-}
+func init() { proto.RegisterFile("type_metadata.proto", fileDescriptor_6b5234c8ffbbe006) }
 
 var fileDescriptor_6b5234c8ffbbe006 = []byte{
 	// 556 bytes of a gzipped FileDescriptorProto

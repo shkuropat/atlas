@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package context
+package rpc_context
 
 import (
 	"github.com/dgrijalva/jwt-go"
@@ -20,65 +20,65 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-// Context
-type Context struct {
+// RPCContext
+type RPCContext struct {
 	Metadata *atlas.Metadata
 	Claims   jwt.MapClaims
 }
 
-// NewContext
-func NewContext() *Context {
-	return &Context{
+// New
+func New() *RPCContext {
+	return &RPCContext{
 		Metadata: atlas.NewMetadata().CreateID().CreateTimestamp(),
 	}
 }
 
 // SetClaims
-func (c *Context) SetClaims(claims jwt.MapClaims) *Context {
+func (c *RPCContext) SetClaims(claims jwt.MapClaims) *RPCContext {
 	c.Claims = claims
 	return c
 }
 
 // SetType
-func (c *Context) SetType(_type atlas.MetadataType) *Context {
+func (c *RPCContext) SetType(_type atlas.MetadataType) *RPCContext {
 	c.Metadata.SetType(_type)
 	return c
 }
 
 // GetType
-func (c *Context) GetType() int32 {
+func (c *RPCContext) GetType() int32 {
 	return c.Metadata.GetType()
 }
 
 // SetName
-func (c *Context) SetName(name string) *Context {
+func (c *RPCContext) SetName(name string) *RPCContext {
 	c.Metadata.SetName(name)
 	return c
 }
 
 // GetName
-func (c *Context) GetName() string {
+func (c *RPCContext) GetName() string {
 	return c.Metadata.GetName()
 }
 
 // SetID
-func (c *Context) SetID(id *atlas.UUID) *Context {
+func (c *RPCContext) SetID(id *atlas.UUID) *RPCContext {
 	c.Metadata.SetID(id)
 	return c
 }
 
 // SetIDFromString
-func (c *Context) SetCallIDFromString(id string) *Context {
+func (c *RPCContext) SetCallIDFromString(id string) *RPCContext {
 	c.Metadata.SetIDFromString(id)
 	return c
 }
 
 // GetID
-func (c *Context) GetID() *atlas.UUID {
+func (c *RPCContext) GetID() *atlas.UUID {
 	return c.Metadata.GetId()
 }
 
 // GetIDAsString
-func (c *Context) GetIDAsString() string {
+func (c *RPCContext) GetIDAsString() string {
 	return c.Metadata.GetId().GetString()
 }

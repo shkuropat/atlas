@@ -15,6 +15,7 @@
 package controller_service
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
@@ -74,3 +75,20 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 	metadata := fetchMetadata(DataChunksServer.Context())
 	return DataChunksHandler(DataChunksServer, metadata)
 }
+
+// FileStatusHandler is a user-provided handler for FileStatus call
+var FileStatusHandler func(*atlas.FileFingerprint, jwt.MapClaims) (*atlas.FileStatus1, error)
+
+// FileStatus gRPC call
+func (s *ControlPlaneServer) FileStatus(ctx context.Context, req *atlas.FileFingerprint) (*atlas.FileStatus1, error) {
+	log.Info("FileStatus() - start")
+	defer log.Info("FileStatus() - end")
+
+	if FileStatusHandler == nil {
+		return nil, fmt.Errorf("no FileStatusHandler provided")
+	}
+
+	metadata := fetchMetadata(ctx)
+	return FileStatusHandler(req, metadata)
+}
+

@@ -16,7 +16,7 @@ package journal
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/context"
+	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
 // NopJournal
@@ -30,14 +30,14 @@ func NewJournalNOP() (*NopJournal, error) {
 
 // RequestStart journals beginning of the request processing
 func (j *NopJournal) RequestStart(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 ) {
 
 }
 
 // SaveData journals data saved successfully
 func (j *NopJournal) SaveData(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 
 	dataS3Address *atlas.S3Address,
 	dataSize int64,
@@ -49,7 +49,7 @@ func (j *NopJournal) SaveData(
 
 // SaveDataError journals data not saved due to an error
 func (j *NopJournal) SaveDataError(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
 
@@ -57,7 +57,7 @@ func (j *NopJournal) SaveDataError(
 
 // ProcessData journals data processed successfully
 func (j *NopJournal) ProcessData(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 
 	dataS3Address *atlas.S3Address,
 	dataSize int64,
@@ -68,7 +68,7 @@ func (j *NopJournal) ProcessData(
 
 // ProcessDataError journals data not processed due to an error
 func (j *NopJournal) ProcessDataError(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
 
@@ -76,14 +76,14 @@ func (j *NopJournal) ProcessDataError(
 
 // RequestCompleted journals request completed successfully
 func (j *NopJournal) RequestCompleted(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 ) {
 
 }
 
 // RequestError journals request error
 func (j *NopJournal) RequestError(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
 

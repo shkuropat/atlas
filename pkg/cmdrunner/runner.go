@@ -51,8 +51,8 @@ func (r *Runner) Run(options *Options) exe.Status {
 		r.name,
 		r.args...,
 	)
-	quitTick := r.startTicker(options)
-	quitTimeout := r.startTimeout(options)
+	stopTickerChan := r.startTicker(options)
+	stopTimeoutChan := r.startTimeout(options)
 	log.Infof("wait for cmd to complete")
 
 	// Start and wait for command to complete
@@ -60,8 +60,8 @@ func (r *Runner) Run(options *Options) exe.Status {
 	r.cmd.Start()
 	<-r.cmd.Done()
 
-	r.stopTicker(quitTick)
-	r.stopTimeout(quitTimeout)
+	r.stopTicker(stopTickerChan)
+	r.stopTimeout(stopTimeoutChan)
 	r.status = r.cmd.Status()
 
 	r.WriteOutput(options.GetStdoutWriter(), options.GetStderrWriter())
@@ -69,7 +69,7 @@ func (r *Runner) Run(options *Options) exe.Status {
 	return r.status
 }
 
-// WriteOutput
+// WriteOutput writes output into provided stdout and stderr writers from run app's stdout and stderr
 func (r *Runner) WriteOutput(stdout, stderr io.Writer) {
 	log.Infof("WriteOutput() - start")
 	defer log.Infof("WriteOutput() - end")
@@ -84,75 +84,86 @@ func (r *Runner) WriteOutput(stdout, stderr io.Writer) {
 	}
 }
 
-// startTicker
+// startTicker starts goroutine which prints last line of stdout every `tick`
+// Returns chan where to send quit/stop request
 func (r *Runner) startTicker(options *Options) chan bool {
-	if options.HasTick() {
-		quit := make(chan bool)
-		// Print last line of stdout every `tick`
-		log.Infof("ticker start")
-		ticker := time.NewTicker(options.GetTick())
-		go func() {
-			for {
-				select {
-				case <-quit:
-					log.Infof("ticker stop")
-					ticker.Stop()
-					return // func
-				case <-ticker.C:
-					log.Infof("ticker tick")
-					status := r.cmd.Status()
-					n := len(status.Stdout)
-					if n > 0 {
-						log.Infof("runtime:%f:%s", status.Runtime, status.Stdout[n-1])
-					}
-				}
-			}
-		}()
-		return quit
+	if !options.HasTick() {
+		// No tick specified, unable to start ticker
+		return nil
 	}
 
-	return nil
-}
+	log.Infof("ticker start")
 
-// stopTicker
-func (r *Runner) stopTicker(quit chan bool) {
-	if quit == nil {
-		return
-	}
-
-	quit <- true
-}
-
-// startTimeout
-func (r *Runner) startTimeout(options *Options) chan bool {
-	if options.HasTimeout() {
-		quit := make(chan bool)
-		// Stop command after specified `timeout`
-		log.Infof("timeout start")
-		go func() {
+	// Chan to receive quit request
+	quit := make(chan bool)
+	ticker := time.NewTicker(options.GetTick())
+	go func() {
+		for {
 			select {
+			case <-ticker.C:
+				// Time to log last line from stdout
+				log.Infof("ticker tick")
+				status := r.cmd.Status()
+				n := len(status.Stdout)
+				if n > 0 {
+					log.Infof("runtime:%f:%s", status.Runtime, status.Stdout[n-1])
+				}
 			case <-quit:
-				log.Infof("timeout stop")
-				return // func
-			case <-time.After(options.GetTimeout()):
-				log.Warnf("timout trigger")
-				_ = r.cmd.Stop()
+				// Quit request arrived
+				log.Infof("ticker stop")
+				ticker.Stop()
 				return // func
 			}
-		}()
-		return quit
-	}
+		}
+	}()
 
-	return nil
+	return quit
 }
 
-// stopTimeout
-func (r *Runner) stopTimeout(quit chan bool) {
+// stop sends quit request to specified chan
+func (r *Runner) stop(quit chan bool) {
 	if quit == nil {
 		return
 	}
 
 	quit <- true
+}
+
+// stopTicker sends quit request to specified chan
+func (r *Runner) stopTicker(quit chan bool) {
+	r.stop(quit)
+}
+
+// startTimeout starts goroutine which stops command after specified `timeout`
+func (r *Runner) startTimeout(options *Options) chan bool {
+	if !options.HasTimeout() {
+		return nil
+	}
+
+	log.Infof("timeout start")
+
+	// Chan to receive quit request
+	quit := make(chan bool)
+	go func() {
+		select {
+		case <-time.After(options.GetTimeout()):
+			// Time to stop the command
+			log.Warnf("timout trigger")
+			_ = r.cmd.Stop()
+			return // func
+		case <-quit:
+			// Quit request arrived
+			log.Infof("timeout stop")
+			return // func
+		}
+	}()
+
+	return quit
+}
+
+// stopTimeout sends quit request to specified chan
+func (r *Runner) stopTimeout(quit chan bool) {
+	r.stop(quit)
 }
 
 // GetStdoutReader

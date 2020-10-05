@@ -12,32 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ainit
+syntax = "proto3";
 
-import (
-	"context"
-	"os"
-	"os/signal"
-	"syscall"
-)
+package atlas;
 
-// ContextInit
-func ContextInit() context.Context {
-	// Set OS signals and termination context
-	ctx, cancelFunc := context.WithCancel(context.Background())
-	stopChan := make(chan os.Signal, 2)
-	signal.Notify(stopChan, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		<-stopChan
-		cancelFunc()
-		<-stopChan
-		os.Exit(1)
-	}()
-
-	return ctx
+enum FileStatusType {
+    // Due to first enum value has to be zero in proto3
+    FILE_STATUS_RESERVED         = 0;
+    FILE_STATUS_UNSPECIFIED      = 100;
+    FILE_STATUS_NOT_FOUND        = 200;
+    FILE_STATUS_FOUND            = 300;
 }
 
-// ContextWait
-func ContextWait(ctx context.Context) {
-	<-ctx.Done()
+message FileStatus1 {
+    FileStatusType status = 100;
 }

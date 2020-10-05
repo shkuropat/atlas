@@ -64,9 +64,7 @@ func init() {
 	proto.RegisterType((*UUID)(nil), "atlas.UUID")
 }
 
-func init() {
-	proto.RegisterFile("type_uuid.proto", fileDescriptor_999f4f27d257c4c8)
-}
+func init() { proto.RegisterFile("type_uuid.proto", fileDescriptor_999f4f27d257c4c8) }
 
 var fileDescriptor_999f4f27d257c4c8 = []byte{
 	// 78 bytes of a gzipped FileDescriptorProto

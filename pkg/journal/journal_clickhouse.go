@@ -17,7 +17,6 @@ package journal
 import (
 	"database/sql"
 	"fmt"
-	"github.com/binarly-io/atlas/pkg/context"
 	"time"
 
 	"github.com/MakeNowJust/heredoc"
@@ -26,6 +25,7 @@ import (
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/config"
+	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
 // JournalClickHouse
@@ -72,7 +72,7 @@ func NewJournalClickHouse(dsn string, endpointID EndpointIDType) (*JournalClickH
 }
 
 // RequestStart journals beginning of the request processing
-func (j *JournalClickHouse) RequestStart(ctx *context.Context) {
+func (j *JournalClickHouse) RequestStart(ctx *rpc_context.RPCContext) {
 	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestStart)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -81,7 +81,7 @@ func (j *JournalClickHouse) RequestStart(ctx *context.Context) {
 
 // SaveData journals data saved successfully
 func (j *JournalClickHouse) SaveData(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 
 	dataS3Address *atlas.S3Address,
 	dataSize int64,
@@ -99,7 +99,7 @@ func (j *JournalClickHouse) SaveData(
 
 // SaveDataError journals data not saved due to an error
 func (j *JournalClickHouse) SaveDataError(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
 	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionSaveDataError).SetError(callErr)
@@ -110,7 +110,7 @@ func (j *JournalClickHouse) SaveDataError(
 
 // ProcessData journals data processed successfully
 func (j *JournalClickHouse) ProcessData(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 
 	dataS3Address *atlas.S3Address,
 	dataSize int64,
@@ -127,7 +127,7 @@ func (j *JournalClickHouse) ProcessData(
 
 // ProcessDataError journals data not processed due to an error
 func (j *JournalClickHouse) ProcessDataError(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
 	e := NewEntry().
@@ -139,7 +139,7 @@ func (j *JournalClickHouse) ProcessDataError(
 
 // RequestCompleted journals request completed successfully
 func (j *JournalClickHouse) RequestCompleted(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 ) {
 	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestCompleted)
 	if err := j.insert(e); err != nil {
@@ -149,7 +149,7 @@ func (j *JournalClickHouse) RequestCompleted(
 
 // RequestError journals request error
 func (j *JournalClickHouse) RequestError(
-	ctx *context.Context,
+	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
 	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestError).SetError(callErr)

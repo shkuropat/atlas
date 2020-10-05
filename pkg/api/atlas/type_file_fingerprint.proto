@@ -12,14 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package ainit
+syntax = "proto3";
 
-import (
-	"github.com/binarly-io/atlas/pkg/config"
-	"github.com/binarly-io/atlas/pkg/logger"
-)
+package atlas;
 
-func Init(conf *config.Config) {
-	logger.InitLog()
-	config.InitConfig(conf)
+enum DigestType {
+    // Due to first enum value has to be zero in proto3
+    DIGEST_RESERVED         = 0;
+    DIGEST_UNSPECIFIED      = 100;
+    DIGEST_MD5              = 200;
+    DIGEST_SHA256           = 300;
+}
+
+message Domain {
+    string name = 100;
+}
+
+message FileFingerprint {
+    Domain domain = 100;
+
+    DigestType digest_type = 200;
+
+    bytes digest = 300;
 }

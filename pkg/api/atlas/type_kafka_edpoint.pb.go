@@ -63,9 +63,7 @@ func init() {
 	proto.RegisterType((*KafkaEndpoint)(nil), "atlas.KafkaEndpoint")
 }
 
-func init() {
-	proto.RegisterFile("type_kafka_edpoint.proto", fileDescriptor_93eebabfa985a8d4)
-}
+func init() { proto.RegisterFile("type_kafka_edpoint.proto", fileDescriptor_93eebabfa985a8d4) }
 
 var fileDescriptor_93eebabfa985a8d4 = []byte{
 	// 93 bytes of a gzipped FileDescriptorProto

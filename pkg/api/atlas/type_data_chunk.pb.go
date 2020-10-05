@@ -168,9 +168,7 @@ func init() {
 	proto.RegisterType((*DataChunk)(nil), "atlas.DataChunk")
 }
 
-func init() {
-	proto.RegisterFile("type_data_chunk.proto", fileDescriptor_c69e33da091858ca)
-}
+func init() { proto.RegisterFile("type_data_chunk.proto", fileDescriptor_c69e33da091858ca) }
 
 var fileDescriptor_c69e33da091858ca = []byte{
 	// 277 bytes of a gzipped FileDescriptorProto

@@ -71,9 +71,7 @@ func init() {
 	proto.RegisterType((*S3Address)(nil), "atlas.S3Address")
 }
 
-func init() {
-	proto.RegisterFile("type_s3_address.proto", fileDescriptor_3606c6ec6b03573f)
-}
+func init() { proto.RegisterFile("type_s3_address.proto", fileDescriptor_3606c6ec6b03573f) }
 
 var fileDescriptor_3606c6ec6b03573f = []byte{
 	// 104 bytes of a gzipped FileDescriptorProto

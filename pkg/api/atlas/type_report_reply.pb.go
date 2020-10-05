@@ -180,9 +180,7 @@ func init() {
 	proto.RegisterType((*ReportReply)(nil), "atlas.ReportReply")
 }
 
-func init() {
-	proto.RegisterFile("type_report_reply.proto", fileDescriptor_1cc6247b54b5cf0c)
-}
+func init() { proto.RegisterFile("type_report_reply.proto", fileDescriptor_1cc6247b54b5cf0c) }
 
 var fileDescriptor_1cc6247b54b5cf0c = []byte{
 	// 292 bytes of a gzipped FileDescriptorProto
