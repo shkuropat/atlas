@@ -19,8 +19,8 @@ package atlas;
 import "type_command.proto";
 import "type_data_chunk.proto";
 import "type_metric.proto";
-import "type_file_fingerprint.proto";
-import "type_file_status.proto";
+import "type_status_request.proto";
+import "type_status_reply.proto";
 
 service ControlPlane {
 	// Bi-directional Commands stream
@@ -39,5 +39,5 @@ service ControlPlane {
 	rpc Metrics (stream Metric) returns (Metric) {}
 
 	// FileStatus checks status of the file on server
-	rpc FileStatus(FileFingerprint) returns (FileStatus1) {}
+	rpc FileStatus(StatusRequest) returns (StatusReply) {}
 }

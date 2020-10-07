@@ -77,10 +77,10 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 }
 
 // FileStatusHandler is a user-provided handler for FileStatus call
-var FileStatusHandler func(*atlas.FileFingerprint, jwt.MapClaims) (*atlas.FileStatus1, error)
+var FileStatusHandler func(*atlas.StatusRequest, jwt.MapClaims) (*atlas.StatusReply, error)
 
 // FileStatus gRPC call
-func (s *ControlPlaneServer) FileStatus(ctx context.Context, req *atlas.FileFingerprint) (*atlas.FileStatus1, error) {
+func (s *ControlPlaneServer) FileStatus(ctx context.Context, req *atlas.StatusRequest) (*atlas.StatusReply, error) {
 	log.Info("FileStatus() - start")
 	defer log.Info("FileStatus() - end")
 

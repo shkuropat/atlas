@@ -20,6 +20,7 @@ import "google/protobuf/timestamp.proto";
 import "type_uuid.proto";
 import "type_user_id.proto";
 import "type_s3_address.proto";
+import "type_digest.proto";
 
 enum MetadataType {
     // Due to first enum value has to be zero in proto3
@@ -90,23 +91,27 @@ message Metadata {
         S3Address s3address = 1200;
     }
 
+    oneof digest_optional {
+        Digest digest = 1300;
+    }
+
     oneof description_optional {
         // Description is optional
-        string description = 1300;
+        string description = 1400;
     }
 
     oneof len_optional {
         // Len is optional
-        int64 len = 1400;
+        int64 len = 1500;
     }
 
     oneof offset_optional {
         // Offset is optional
-        int64 offset = 1500;
+        int64 offset = 1600;
     }
 
     oneof last_optional {
         // Last is optional
-        bool last = 1600;
+        bool last = 1700;
     }
 }

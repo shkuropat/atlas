@@ -35,6 +35,10 @@ type JournalClickHouse struct {
 	connect    *sql.DB
 }
 
+const(
+	defaultObjectType ObjectType = 1
+)
+
 // NewJournalClickHouseConfig
 func NewJournalClickHouseConfig(cfg config.ClickHouseEndpointConfig, endpointID EndpointIDType) (*JournalClickHouse, error) {
 	dsn := cfg.GetClickHouseEndpoint()
@@ -73,7 +77,7 @@ func NewJournalClickHouse(dsn string, endpointID EndpointIDType) (*JournalClickH
 
 // RequestStart journals beginning of the request processing
 func (j *JournalClickHouse) RequestStart(ctx *rpc_context.RPCContext) {
-	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestStart)
+	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestStart)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -89,9 +93,9 @@ func (j *JournalClickHouse) SaveData(
 	data []byte,
 ) {
 	e := NewEntry().
-		SetCtxIDAction(ctx.GetID(), ActionSaveData).
+		SetBaseInfo(ctx.GetID(), ActionSaveData).
 		SetSourceID(dataMetadata.GetUserId()).
-		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata, data)
+		SetObject(defaultObjectType, dataS3Address, uint64(dataSize), dataMetadata, data)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -102,7 +106,9 @@ func (j *JournalClickHouse) SaveDataError(
 	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
-	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionSaveDataError).SetError(callErr)
+	e := NewEntry().
+		SetBaseInfo(ctx.GetID(), ActionSaveDataError).
+		SetError(callErr)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -117,9 +123,9 @@ func (j *JournalClickHouse) ProcessData(
 	dataMetadata *atlas.Metadata,
 ) {
 	e := NewEntry().
-		SetCtxIDAction(ctx.GetID(), ActionProcessData).
+		SetBaseInfo(ctx.GetID(), ActionProcessData).
 		SetSourceID(dataMetadata.GetUserId()).
-		SetObject(1, dataS3Address, uint64(dataSize), dataMetadata, nil)
+		SetObject(defaultObjectType, dataS3Address, uint64(dataSize), dataMetadata, nil)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -131,7 +137,8 @@ func (j *JournalClickHouse) ProcessDataError(
 	callErr error,
 ) {
 	e := NewEntry().
-		SetCtxIDAction(ctx.GetID(), ActionProcessDataError).SetError(callErr)
+		SetBaseInfo(ctx.GetID(), ActionProcessDataError).
+		SetError(callErr)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -141,7 +148,7 @@ func (j *JournalClickHouse) ProcessDataError(
 func (j *JournalClickHouse) RequestCompleted(
 	ctx *rpc_context.RPCContext,
 ) {
-	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestCompleted)
+	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestCompleted)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -152,7 +159,9 @@ func (j *JournalClickHouse) RequestError(
 	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
-	e := NewEntry().SetCtxIDAction(ctx.GetID(), ActionRequestError).SetError(callErr)
+	e := NewEntry().
+		SetBaseInfo(ctx.GetID(), ActionRequestError).
+		SetError(callErr)
 	if err := j.insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -172,6 +181,7 @@ func (j *JournalClickHouse) insert(entry *Entry) error {
 			size,
 			address,
 			name,
+			digest,
 			data, 
 			error
 		) VALUES (
@@ -194,6 +204,8 @@ func (j *JournalClickHouse) insert(entry *Entry) error {
 			/* address */
 			?,
 			/* name */
+			?,
+			/* digest */
 			?,
 			/* data */
 			?,
@@ -223,6 +235,7 @@ func (j *JournalClickHouse) insert(entry *Entry) error {
 	size := entry.ObjectSize
 	address := entry.ObjectAddress.Printable()
 	name := entry.ObjectMetadata.GetFilename()
+	digest := entry.ObjectMetadata.GetDigest().GetData()
 	data := string(entry.ObjectData)
 	var e string
 	if entry.Error != nil {
@@ -239,6 +252,7 @@ func (j *JournalClickHouse) insert(entry *Entry) error {
 		size,
 		address,
 		name,
+		digest,
 		data,
 		e,
 	); err != nil {

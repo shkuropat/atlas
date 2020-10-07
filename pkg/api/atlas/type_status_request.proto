@@ -16,14 +16,10 @@ syntax = "proto3";
 
 package atlas;
 
-enum FileStatusType {
-    // Due to first enum value has to be zero in proto3
-    FILE_STATUS_RESERVED         = 0;
-    FILE_STATUS_UNSPECIFIED      = 100;
-    FILE_STATUS_NOT_FOUND        = 200;
-    FILE_STATUS_FOUND            = 300;
-}
+import "type_domain.proto";
+import "type_digest.proto";
 
-message FileStatus1 {
-    FileStatusType status = 100;
+message StatusRequest {
+    Domain domain = 100;
+    Digest digest = 200;
 }

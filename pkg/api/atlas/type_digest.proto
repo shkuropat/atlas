@@ -24,14 +24,7 @@ enum DigestType {
     DIGEST_SHA256           = 300;
 }
 
-message Domain {
-    string name = 100;
-}
-
-message FileFingerprint {
-    Domain domain = 100;
-
-    DigestType digest_type = 200;
-
-    bytes digest = 300;
+message Digest {
+    DigestType type = 100;
+    bytes data = 200;
 }

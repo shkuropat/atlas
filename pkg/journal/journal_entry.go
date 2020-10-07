@@ -18,16 +18,22 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
+// Entry defines journal entry structure
 type Entry struct {
+	// Base info tells about the origin of the action
 	Endpoint       uint16
 	SourceID       *atlas.UserID
 	ContextID      *atlas.UUID
 	Action         ActionType
-	ObjectType     uint8
+
+	// Object info tells about object, if any
+	ObjectType     ObjectType
 	ObjectAddress  *atlas.S3Address
 	ObjectSize     uint64
 	ObjectMetadata *atlas.Metadata
 	ObjectData     []byte
+
+	// Error info tells about error, if any
 	Error          error
 }
 
@@ -36,8 +42,8 @@ func NewEntry() *Entry {
 	return &Entry{}
 }
 
-// SetCtxAction
-func (e *Entry) SetCtxIDAction(ctxID *atlas.UUID, action ActionType) *Entry {
+// SetBaseInfo
+func (e *Entry) SetBaseInfo(ctxID *atlas.UUID, action ActionType) *Entry {
 	e.SetCtxID(ctxID)
 	e.SetAction(action)
 	return e
@@ -62,8 +68,14 @@ func (e *Entry) SetAction(action ActionType) *Entry {
 }
 
 // SetObject
-func (e *Entry) SetObject(_type uint8, address *atlas.S3Address, size uint64, metadata *atlas.Metadata, data []byte) *Entry {
-	e.SetObjectType(_type)
+func (e *Entry) SetObject(
+	objectType ObjectType,
+	address *atlas.S3Address,
+	size uint64,
+	metadata *atlas.Metadata,
+	data []byte,
+) *Entry {
+	e.SetObjectType(objectType)
 	e.SetObjectAddress(address)
 	e.SetObjectSize(size)
 	e.SetObjectMetadata(metadata)
@@ -72,8 +84,8 @@ func (e *Entry) SetObject(_type uint8, address *atlas.S3Address, size uint64, me
 }
 
 // SetObjectType
-func (e *Entry) SetObjectType(_type uint8) *Entry {
-	e.ObjectType = _type
+func (e *Entry) SetObjectType(objectType ObjectType) *Entry {
+	e.ObjectType = objectType
 	return e
 }
 

@@ -115,7 +115,7 @@ func (m *Metadata) CreateID() *Metadata {
 	return m.SetID(CreateUUID())
 }
 
-// HasUUIDReference
+// HasReferenceID
 func (m *Metadata) HasReferenceID() bool {
 	return m.ReferenceIdOptional != nil
 }
@@ -130,7 +130,7 @@ func (m *Metadata) SetReferenceID(id *UUID) *Metadata {
 	return m
 }
 
-// SetReferenceID
+// SetReferenceIDFromString
 func (m *Metadata) SetReferenceIDFromString(id string) *Metadata {
 	return m.SetReferenceID(NewUUID().SetString(id))
 }
@@ -248,6 +248,25 @@ func (m *Metadata) SetS3Address(s3address *S3Address) *Metadata {
 		m.S3AddressOptional = new(Metadata_S3Address)
 	}
 	m.S3AddressOptional.(*Metadata_S3Address).S3Address = s3address
+
+	return m
+}
+
+// HasDigest
+func (m *Metadata) HasDigest() bool {
+	return m.DigestOptional != nil
+}
+
+// SetDigest
+func (m *Metadata) SetDigest(digest *Digest) *Metadata {
+	if digest == nil {
+		return m
+	}
+
+	if m.DigestOptional == nil {
+		m.DigestOptional = new(Metadata_Digest)
+	}
+	m.DigestOptional.(*Metadata_Digest).Digest = digest
 
 	return m
 }

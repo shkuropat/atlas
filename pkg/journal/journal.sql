@@ -5,7 +5,9 @@ CREATE TABLE atlas.api_journal
   /* d is an ordering/grouping key */
   d DateTime,
 
+  /**********************/
   /**** Call section ****/
+  /**********************/
 
   /* endpoint_id specifies api endpoint being called (a.k.a. API function) */
   endpoint_id UInt16,
@@ -22,7 +24,9 @@ CREATE TABLE atlas.api_journal
   /* duration is a nanoseconds duration since start, if applicable */
   duration Int64,
 
+  /************************/
   /**** Object section ****/
+  /************************/
 
   /* type specifies object type, if any */
   type UInt8,
@@ -36,10 +40,15 @@ CREATE TABLE atlas.api_journal
   /* name specifies object name, if any */
   name String,
 
+  /* digest specifies object digestm if any*/
+  digest String,
+
   /* data specifies object data, if any */
   data String,
 
+  /***********************/
   /**** Error section ****/
+  /***********************/
 
   /* error specifies error, if any */
   error String
