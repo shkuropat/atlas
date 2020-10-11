@@ -77,6 +77,11 @@ func NewJournalClickHouse(dsn string, endpointID EndpointIDType) (*JournalClickH
 	}, nil
 }
 
+// NewEntry
+func (j *JournalClickHouse) NewEntry(ctxID *atlas.UUID, action ActionType) *Entry {
+	return NewEntry().SetBaseInfo(ctxID, action)
+}
+
 // RequestStart journals beginning of the request processing
 func (j *JournalClickHouse) RequestStart(ctx *rpc_context.RPCContext) {
 	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestStart)
