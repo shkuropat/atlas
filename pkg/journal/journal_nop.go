@@ -36,6 +36,36 @@ func (j *NopJournal) RequestStart(
 
 }
 
+// RequestCompleted journals request completed successfully
+func (j *NopJournal) RequestCompleted(
+	ctx *rpc_context.RPCContext,
+) {
+
+}
+
+// RequestError journals request error
+func (j *NopJournal) RequestError(
+	ctx *rpc_context.RPCContext,
+	callErr error,
+) {
+
+}
+
+// NewEntry
+func (j *NopJournal) NewEntry(ctxID *atlas.UUID, action ActionType) *Entry {
+	return nil
+}
+
+// Insert
+func (j *NopJournal) Insert(entry *Entry) error {
+	return nil
+}
+
+// FindAll
+func (j *NopJournal) FindAll(entry *Entry) ([]ClickHouseEntry, error) {
+	return nil, nil
+}
+
 // SaveData journals data saved successfully
 func (j *NopJournal) SaveData(
 	ctx *rpc_context.RPCContext,
@@ -69,21 +99,6 @@ func (j *NopJournal) ProcessData(
 
 // ProcessDataError journals data not processed due to an error
 func (j *NopJournal) ProcessDataError(
-	ctx *rpc_context.RPCContext,
-	callErr error,
-) {
-
-}
-
-// RequestCompleted journals request completed successfully
-func (j *NopJournal) RequestCompleted(
-	ctx *rpc_context.RPCContext,
-) {
-
-}
-
-// RequestError journals request error
-func (j *NopJournal) RequestError(
 	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {

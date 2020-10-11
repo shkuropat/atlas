@@ -52,6 +52,11 @@ func (j *DefaultJournal) Insert(entry *Entry) error {
 	return nil
 }
 
+// FindAll
+func (j *DefaultJournal) FindAll(entry *Entry) ([]ClickHouseEntry, error) {
+	return nil, nil
+}
+
 // SaveData journals data saved successfully
 func (j *DefaultJournal) SaveData(
 	ctx *rpc_context.RPCContext,
