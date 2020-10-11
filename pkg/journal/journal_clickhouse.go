@@ -177,16 +177,17 @@ func (j *JournalClickHouse) ProcessDataError(
 func (j *JournalClickHouse) Insert(entry *Entry) error {
 	e := NewClickHouseEntry().Accept(j, entry)
 
-	sql := heredoc.Doc(fmt.Sprintf(`
+	sql := heredoc.Doc(
+		fmt.Sprintf(`
 			INSERT INTO api_journal (
 				%s
 			) VALUES (
 				%s
 			)
 			`,
-		e.Fields(),
-		e.StmtParamsPlaceholder(),
-	),
+			e.Fields(),
+			e.StmtParamsPlaceholder(),
+		),
 	)
 
 	tx, err := j.connect.Begin()
@@ -218,11 +219,12 @@ func (j *JournalClickHouse) Insert(entry *Entry) error {
 func (j *JournalClickHouse) FindAll(entry *Entry) ([]ClickHouseEntry, error) {
 	e := NewClickHouseEntrySearch().Accept(entry)
 	placeholder, args := e.StmtSearchParamsPlaceholderAndArgs()
-	sql := heredoc.Doc(fmt.Sprintf(`
+	sql := heredoc.Doc(
+		fmt.Sprintf(`
 			SELECT * FROM api_journal WHERE (1 == 1) %s 
 			`,
-		placeholder,
-	),
+			placeholder,
+		),
 	)
 
 	stmt, err := j.connect.Prepare(sql)

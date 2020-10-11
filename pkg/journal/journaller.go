@@ -36,6 +36,7 @@ type Journaller interface {
 
 	NewEntry(ctxID *atlas.UUID, action ActionType) *Entry
 	Insert(entry *Entry) error
+	FindAll(entry *Entry) ([]ClickHouseEntry, error)
 
 	//
 	// In-request actions
