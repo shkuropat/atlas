@@ -15,7 +15,7 @@
 package journal
 
 import (
-	"database/sql"
+	databasesql "database/sql"
 	"fmt"
 	"time"
 
@@ -32,11 +32,13 @@ import (
 type JournalClickHouse struct {
 	start      time.Time
 	endpointID EndpointIDType
-	connect    *sql.DB
+	connect    *databasesql.DB
+
+	DefaultJournal
 }
 
-const(
-	defaultObjectType ObjectType = 1
+const (
+	defaultObjectType ObjectType = ObjectTypeUnknown
 )
 
 // NewJournalClickHouseConfig
@@ -57,7 +59,7 @@ func NewJournalClickHouse(dsn string, endpointID EndpointIDType) (*JournalClickH
 
 	log.Infof("connect to ClickHouse %s", dsn)
 
-	connect, err := sql.Open("clickhouse", dsn)
+	connect, err := databasesql.Open("clickhouse", dsn)
 	if err != nil {
 		log.Errorf("unable to open ClickHouse err: %v", err)
 		return nil, err
@@ -78,7 +80,29 @@ func NewJournalClickHouse(dsn string, endpointID EndpointIDType) (*JournalClickH
 // RequestStart journals beginning of the request processing
 func (j *JournalClickHouse) RequestStart(ctx *rpc_context.RPCContext) {
 	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestStart)
-	if err := j.insert(e); err != nil {
+	if err := j.Insert(e); err != nil {
+		log.Warnf("unable to insert journal entry")
+	}
+}
+
+// RequestCompleted journals request completed successfully
+func (j *JournalClickHouse) RequestCompleted(
+	ctx *rpc_context.RPCContext,
+) {
+	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestCompleted)
+	if err := j.Insert(e); err != nil {
+		log.Warnf("unable to insert journal entry")
+	}
+}
+
+// RequestError journals request error
+func (j *JournalClickHouse) RequestError(
+	ctx *rpc_context.RPCContext,
+	callErr error,
+) {
+	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestError).
+		SetError(callErr)
+	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
 }
@@ -96,7 +120,7 @@ func (j *JournalClickHouse) SaveData(
 		SetBaseInfo(ctx.GetID(), ActionSaveData).
 		SetSourceID(dataMetadata.GetUserId()).
 		SetObject(defaultObjectType, dataS3Address, uint64(dataSize), dataMetadata, data)
-	if err := j.insert(e); err != nil {
+	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
 }
@@ -109,7 +133,7 @@ func (j *JournalClickHouse) SaveDataError(
 	e := NewEntry().
 		SetBaseInfo(ctx.GetID(), ActionSaveDataError).
 		SetError(callErr)
-	if err := j.insert(e); err != nil {
+	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
 }
@@ -126,7 +150,7 @@ func (j *JournalClickHouse) ProcessData(
 		SetBaseInfo(ctx.GetID(), ActionProcessData).
 		SetSourceID(dataMetadata.GetUserId()).
 		SetObject(defaultObjectType, dataS3Address, uint64(dataSize), dataMetadata, nil)
-	if err := j.insert(e); err != nil {
+	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
 }
@@ -139,81 +163,27 @@ func (j *JournalClickHouse) ProcessDataError(
 	e := NewEntry().
 		SetBaseInfo(ctx.GetID(), ActionProcessDataError).
 		SetError(callErr)
-	if err := j.insert(e); err != nil {
+	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
 }
 
-// RequestCompleted journals request completed successfully
-func (j *JournalClickHouse) RequestCompleted(
-	ctx *rpc_context.RPCContext,
-) {
-	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestCompleted)
-	if err := j.insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
-}
+// Insert
+func (j *JournalClickHouse) Insert(entry *Entry) error {
+	e := NewClickHouseEntry().Accept(j, entry)
 
-// RequestError journals request error
-func (j *JournalClickHouse) RequestError(
-	ctx *rpc_context.RPCContext,
-	callErr error,
-) {
-	e := NewEntry().
-		SetBaseInfo(ctx.GetID(), ActionRequestError).
-		SetError(callErr)
-	if err := j.insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
-}
-
-// insert
-func (j *JournalClickHouse) insert(entry *Entry) error {
-	sql := heredoc.Doc(`
-		INSERT INTO api_journal (
-			d, 
-			endpoint_id,
-			source_id,
-			context_id,
-			action_id,
-			duration,
-			type, 
-			size,
-			address,
-			name,
-			digest,
-			data, 
-			error
-		) VALUES (
-			/* d */
-			?,
-			/* endpoint_id */
-			?,
-			/* source_id */
-			?,
-			/* context_id */
-			?,
-			/* action_id */
-			?,
-			/* duration */
-			?,
-			/* type */
-			?,
-			/* size */
-			?,
-			/* address */
-			?,
-			/* name */
-			?,
-			/* digest */
-			?,
-			/* data */
-			?,
-			/* error */
-			?
-		)
-		`,
+	sql := heredoc.Doc(fmt.Sprintf(`
+			INSERT INTO api_journal (
+				%s
+			) VALUES (
+				%s
+			)
+			`,
+		e.Fields(),
+		e.StmtParamsPlaceholder(),
+	),
 	)
+
 	tx, err := j.connect.Begin()
 	if err != nil {
 		log.Errorf("unable to begin tx. err: %v", err)
@@ -226,36 +196,7 @@ func (j *JournalClickHouse) insert(entry *Entry) error {
 		return err
 	}
 
-	d := time.Now()
-	sourceID := entry.SourceID.GetString()
-	contextID := entry.ContextID.GetString()
-	actionID := entry.Action
-	duration := d.Sub(j.start).Nanoseconds()
-	_type := entry.ObjectType
-	size := entry.ObjectSize
-	address := entry.ObjectAddress.Printable()
-	name := entry.ObjectMetadata.GetFilename()
-	digest := entry.ObjectMetadata.GetDigest().GetData()
-	data := string(entry.ObjectData)
-	var e string
-	if entry.Error != nil {
-		e = entry.Error.Error()
-	}
-	if _, err := stmt.Exec(
-		d,
-		j.endpointID,
-		sourceID,
-		contextID,
-		actionID,
-		duration,
-		_type,
-		size,
-		address,
-		name,
-		digest,
-		data,
-		e,
-	); err != nil {
+	if _, err := stmt.Exec(e.AsUntypedSlice()...); err != nil {
 		log.Errorf("exec failed. err: %v", err)
 		return err
 	}
@@ -266,4 +207,53 @@ func (j *JournalClickHouse) insert(entry *Entry) error {
 	}
 
 	return nil
+}
+
+// FindAll
+func (j *JournalClickHouse) FindAll(entry *Entry) ([]ClickHouseEntry, error) {
+	e := NewClickHouseEntrySearch().Accept(entry)
+	placeholder, args := e.StmtSearchParamsPlaceholderAndArgs()
+	sql := heredoc.Doc(fmt.Sprintf(`
+			SELECT * FROM api_journal WHERE (1 == 1) %s 
+			`,
+		placeholder,
+	),
+	)
+
+	stmt, err := j.connect.Prepare(sql)
+	if err != nil {
+		log.Errorf("unable to prepare stmt. err: %v", err)
+		return nil, err
+	}
+
+	rows, err := stmt.Query(args...)
+	if err != nil {
+		log.Errorf("unable to query stmt. err: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var res []ClickHouseEntry
+	for rows.Next() {
+		var ce ClickHouseEntry
+		if err := rows.Scan(
+			&ce.d,
+			&ce.endpointID,
+			&ce.sourceID,
+			&ce.contextID,
+			&ce.actionID,
+			&ce.duration,
+			&ce._type,
+			&ce.size,
+			&ce.address,
+			&ce.name,
+			&ce.digest,
+			&ce.data,
+			&ce.error,
+		); err == nil {
+			res = append(res, ce)
+		}
+	}
+
+	return res, nil
 }

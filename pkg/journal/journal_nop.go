@@ -21,6 +21,7 @@ import (
 
 // NopJournal
 type NopJournal struct {
+	DefaultJournal
 }
 
 // NewJournalNOP

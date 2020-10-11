@@ -19,16 +19,16 @@ import "fmt"
 type ObjectType uint8
 
 const (
-	ObjectType1     ObjectType = 1
-	ObjectType1Name string     = "ObjectType1"
+	ObjectTypeUnknown     ObjectType = 0
+	ObjectTypeUnknownName string     = "UNKNOWN"
 )
 
 var (
 	objectTypeName = map[ObjectType]string{
-		ObjectType1: ObjectType1Name,
+		ObjectTypeUnknown: ObjectTypeUnknownName,
 	}
 	objectTypeValue = map[string]ObjectType{
-		ObjectType1Name: ObjectType1,
+		ObjectTypeUnknownName: ObjectTypeUnknown,
 	}
 )
 

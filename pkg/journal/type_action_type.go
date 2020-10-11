@@ -19,6 +19,8 @@ import "fmt"
 type ActionType uint8
 
 const (
+	ActionUnknown              ActionType = 0
+	ActionUnknownName          string     = "UNKNOWN"
 	ActionRequestStart         ActionType = 1
 	ActionRequestStartName     string     = "ActionRequestStart"
 	ActionSaveData             ActionType = 2
@@ -37,6 +39,7 @@ const (
 
 var (
 	actionName = map[ActionType]string{
+		ActionUnknown:          ActionUnknownName,
 		ActionRequestStart:     ActionRequestStartName,
 		ActionSaveData:         ActionSaveDataName,
 		ActionSaveDataError:    ActionSaveDataErrorName,
@@ -47,6 +50,7 @@ var (
 	}
 
 	actionValue = map[string]ActionType{
+		ActionUnknownName:          ActionUnknown,
 		ActionRequestStartName:     ActionRequestStart,
 		ActionSaveDataName:         ActionSaveData,
 		ActionSaveDataErrorName:    ActionSaveDataError,

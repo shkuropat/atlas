@@ -21,10 +21,10 @@ import (
 // Entry defines journal entry structure
 type Entry struct {
 	// Base info tells about the origin of the action
-	Endpoint       uint16
-	SourceID       *atlas.UserID
-	ContextID      *atlas.UUID
-	Action         ActionType
+	Endpoint  EndpointIDType
+	SourceID  *atlas.UserID
+	ContextID *atlas.UUID
+	Action    ActionType
 
 	// Object info tells about object, if any
 	ObjectType     ObjectType
@@ -34,7 +34,7 @@ type Entry struct {
 	ObjectData     []byte
 
 	// Error info tells about error, if any
-	Error          error
+	Error error
 }
 
 // NewEntry
@@ -117,4 +117,9 @@ func (e *Entry) SetObjectData(data []byte) *Entry {
 func (e *Entry) SetError(err error) *Entry {
 	e.Error = err
 	return e
+}
+
+// InsertInto
+func (e *Entry) InsertInto(j Journaller) {
+	j.Insert(e)
 }

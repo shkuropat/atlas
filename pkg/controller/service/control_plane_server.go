@@ -91,4 +91,3 @@ func (s *ControlPlaneServer) FileStatus(ctx context.Context, req *atlas.StatusRe
 	metadata := fetchMetadata(ctx)
 	return FileStatusHandler(req, metadata)
 }
-

@@ -19,20 +19,28 @@ import "fmt"
 type EndpointIDType uint16
 
 const (
+	EndpointUnknown        EndpointIDType = 0
+	EndpointUnknownName    string         = "UNKNOWN"
 	EndpointDataChunks     EndpointIDType = 1
 	EndpointDataChunksName string         = "EndpointDataChunks"
 	EndpointReports        EndpointIDType = 2
 	EndpointReportsName    string         = "EndpointReports"
+	EndpointFileStatus     EndpointIDType = 3
+	EndpointFileStatusName string         = "EndpointRFileStatus"
 )
 
 var (
 	endpointName = map[EndpointIDType]string{
+		EndpointUnknown:    EndpointUnknownName,
 		EndpointDataChunks: EndpointDataChunksName,
 		EndpointReports:    EndpointReportsName,
+		EndpointFileStatus: EndpointFileStatusName,
 	}
 	endpointValue = map[string]EndpointIDType{
+		EndpointUnknownName:    EndpointUnknown,
 		EndpointDataChunksName: EndpointDataChunks,
 		EndpointReportsName:    EndpointReports,
+		EndpointFileStatusName: EndpointFileStatus,
 	}
 )
 
