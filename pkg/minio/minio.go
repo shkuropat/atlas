@@ -16,16 +16,18 @@ package minio
 
 import (
 	"context"
+	"crypto/sha256"
 	"crypto/tls"
 	"fmt"
-	"github.com/minio/minio-go/v6"
-	log "github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/minio/minio-go/v6"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/config"
@@ -184,6 +186,11 @@ func (m *MinIO) FGet(bucketName, objectName, fileName string) error {
 	return m.client.FGetObjectWithContext(ctx, bucketName, objectName, fileName, opts)
 }
 
+// FGetA
+func (m *MinIO) FGetA(addr *atlas.S3Address, fileName string) error {
+	return m.FGet(addr.Bucket, addr.Object, fileName)
+}
+
 // FGetTempFile
 func (m *MinIO) FGetTempFile(bucketName, objectName, dir, pattern string) (string, error) {
 	r, err := m.Get(bucketName, objectName)
@@ -207,11 +214,6 @@ func (m *MinIO) FGetTempFile(bucketName, objectName, dir, pattern string) (strin
 	}
 
 	return f.Name(), nil
-}
-
-// FGetA
-func (m *MinIO) FGetA(addr *atlas.S3Address, fileName string) error {
-	return m.FGet(addr.Bucket, addr.Object, fileName)
 }
 
 // FGetTempFileA
@@ -246,6 +248,39 @@ func (m *MinIO) Copy(dstBucketName, dstObjectName, srcBucketName, srcObjectName 
 	}
 
 	return m.client.CopyObject(dst, src)
+}
+
+// Digest
+func (m *MinIO) Digest(bucketName, objectName string, _type atlas.DigestType) (*atlas.Digest, error) {
+	reader, err := m.Get(bucketName, objectName)
+	if err != nil {
+		return nil, err
+	}
+
+	switch _type {
+	case atlas.DigestType_DIGEST_SHA256:
+		break
+	default:
+		return nil, fmt.Errorf("unable to calc digest - unknown digest type %v", _type)
+	}
+
+	h := sha256.New()
+	_, err = io.Copy(h, reader)
+	if err != nil {
+		return nil, err
+	}
+	digest := h.Sum(nil)
+
+	res := &atlas.Digest{}
+	res.Type = _type
+	res.Data = digest
+
+	return res, nil
+}
+
+// DigestA
+func (m *MinIO) DigestA(addr *atlas.S3Address, _type atlas.DigestType) (*atlas.Digest, error) {
+	return m.Digest(addr.Bucket, addr.Object, _type)
 }
 
 // CopyA
