@@ -76,18 +76,34 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 	return DataChunksHandler(DataChunksServer, metadata)
 }
 
-// FileStatusHandler is a user-provided handler for FileStatus call
-var FileStatusHandler func(*atlas.StatusRequest, jwt.MapClaims) (*atlas.StatusReply, error)
+// EntityStatusHandler is a user-provided handler for EntityStatus call
+var EntityStatusHandler func(*atlas.StatusRequest, jwt.MapClaims) (*atlas.StatusReply, error)
 
-// FileStatus gRPC call
-func (s *ControlPlaneServer) FileStatus(ctx context.Context, req *atlas.StatusRequest) (*atlas.StatusReply, error) {
-	log.Info("FileStatus() - start")
-	defer log.Info("FileStatus() - end")
+// EntityStatus gRPC call
+func (s *ControlPlaneServer) EntityStatus(ctx context.Context, req *atlas.StatusRequest) (*atlas.StatusReply, error) {
+	log.Info("EntityStatus() - start")
+	defer log.Info("EntityStatus() - end")
 
-	if FileStatusHandler == nil {
-		return nil, fmt.Errorf("no FileStatusHandler provided")
+	if EntityStatusHandler == nil {
+		return nil, fmt.Errorf("no EntityStatusHandler provided")
 	}
 
 	metadata := fetchMetadata(ctx)
-	return FileStatusHandler(req, metadata)
+	return EntityStatusHandler(req, metadata)
+}
+
+// EntityStatusMultiHandler is a user-provided handler for FileStatus call
+var EntityStatusMultiHandler func(*atlas.StatusRequestMulti, jwt.MapClaims) (*atlas.StatusReply, error)
+
+// EntityStatusMulti gRPC call
+func (s *ControlPlaneServer) EntityStatusMulti(ctx context.Context, req *atlas.StatusRequestMulti) (*atlas.StatusReply, error) {
+	log.Info("EntityStatusMulti() - start")
+	defer log.Info("EntityStatusMulti() - end")
+
+	if EntityStatusMultiHandler == nil {
+		return nil, fmt.Errorf("no EntityStatusMultiHandler provided")
+	}
+
+	metadata := fetchMetadata(ctx)
+	return EntityStatusMultiHandler(req, metadata)
 }

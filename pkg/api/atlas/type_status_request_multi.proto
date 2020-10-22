@@ -16,15 +16,10 @@ syntax = "proto3";
 
 package atlas;
 
-enum StatusType {
-    // Due to first enum value has to be zero in proto3
-    STATUS_RESERVED         = 0;
-    STATUS_UNSPECIFIED      = 100;
-    STATUS_NOT_FOUND        = 200;
-    STATUS_FOUND_PARTIALLY  = 300;
-    STATUS_FOUND            = 400;
-}
+import "type_domain.proto";
+import "type_status_request.proto";
 
-message StatusReply {
-    StatusType status = 100;
+message StatusRequestMulti {
+    Domain domain = 100;
+    repeated StatusRequest entities = 200;
 }

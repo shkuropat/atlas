@@ -16,10 +16,10 @@ syntax = "proto3";
 
 package atlas;
 
-import "type_domain.proto";
+import "type_entity.proto";
 import "type_digest.proto";
 
 message StatusRequest {
-    Domain domain = 100;
+    Entity entity = 100;
     Digest digest = 200;
 }

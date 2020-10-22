@@ -20,6 +20,7 @@ import "type_command.proto";
 import "type_data_chunk.proto";
 import "type_metric.proto";
 import "type_status_request.proto";
+import "type_status_request_multi.proto";
 import "type_status_reply.proto";
 
 service ControlPlane {
@@ -38,6 +39,9 @@ service ControlPlane {
 	// Some commands may be followed by metrics stream.
 	rpc Metrics (stream Metric) returns (Metric) {}
 
-	// FileStatus checks status of the file on server
-	rpc FileStatus(StatusRequest) returns (StatusReply) {}
+	// EntityStatus checks status of the entity on the server
+	rpc EntityStatus(StatusRequest) returns (StatusReply) {}
+
+	// EntityStatusMulti checks status of the multiple entities on server
+	rpc EntityStatusMultiple(StatusRequestMulti) returns (StatusReply) {}
 }

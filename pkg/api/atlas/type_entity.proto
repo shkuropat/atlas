@@ -16,15 +16,6 @@ syntax = "proto3";
 
 package atlas;
 
-enum StatusType {
-    // Due to first enum value has to be zero in proto3
-    STATUS_RESERVED         = 0;
-    STATUS_UNSPECIFIED      = 100;
-    STATUS_NOT_FOUND        = 200;
-    STATUS_FOUND_PARTIALLY  = 300;
-    STATUS_FOUND            = 400;
-}
-
-message StatusReply {
-    StatusType status = 100;
+message Entity {
+    string name = 100;
 }
