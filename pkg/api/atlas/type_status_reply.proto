@@ -23,6 +23,7 @@ enum StatusType {
     STATUS_NOT_FOUND        = 200;
     STATUS_FOUND_PARTIALLY  = 300;
     STATUS_FOUND            = 400;
+    STATUS_FOUND_ALL        = 500;
 }
 
 message StatusReply {
