@@ -37,6 +37,9 @@ CREATE TABLE atlas.api_journal
   /* address specifies object address, if any */
   address String,
 
+  /* domain specifies object domain, if any */
+  domain String,
+
   /* name specifies object name, if any */
   name String,
 

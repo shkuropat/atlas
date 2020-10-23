@@ -32,6 +32,7 @@ type ClickHouseEntry struct {
 	_type   uint8
 	size    uint64
 	address string
+	domain  string
 	name    string
 	digest  string
 	data    string
@@ -55,6 +56,7 @@ func (ce *ClickHouseEntry) Accept(j *JournalClickHouse, entry *Entry) *ClickHous
 	ce._type = uint8(entry.ObjectType)
 	ce.size = entry.ObjectSize
 	ce.address = entry.ObjectAddress.Printable()
+	ce.domain = entry.ObjectMetadata.GetDomain().GetName()
 	ce.name = entry.ObjectMetadata.GetFilename()
 	ce.digest = string(entry.ObjectMetadata.GetDigest().GetData())
 	ce.data = string(entry.ObjectData)
@@ -77,6 +79,7 @@ func (ce *ClickHouseEntry) Fields() string {
 		type, 
 		size,
 		address,
+		domain,
 		name,
 		digest,
 		data, 
@@ -105,6 +108,8 @@ func (ce *ClickHouseEntry) StmtParamsPlaceholder() string {
 		?,
 		/* address */
 		?,
+		/* domain */
+		?,
 		/* name */
 		?,
 		/* digest */
@@ -128,6 +133,7 @@ func (ce *ClickHouseEntry) AsUntypedSlice() []interface{} {
 		ce._type,
 		ce.size,
 		ce.address,
+		ce.domain,
 		ce.name,
 		ce.digest,
 		ce.data,
@@ -148,6 +154,7 @@ type ClickHouseEntrySearch struct {
 	_type   *uint8
 	size    *uint64
 	address *string
+	domain  *string
 	name    *string
 	digest  *string
 	data    *string
@@ -188,6 +195,10 @@ func (ce *ClickHouseEntrySearch) Accept(entry *Entry) *ClickHouseEntrySearch {
 	if entry.ObjectAddress.Printable() != "" {
 		address := entry.ObjectAddress.Printable()
 		ce.address = &address
+	}
+	if entry.ObjectMetadata.GetDomain().GetName() != "" {
+		domain := entry.ObjectMetadata.GetDomain().GetName()
+		ce.domain = &domain
 	}
 	if entry.ObjectMetadata.GetFilename() != "" {
 		name := entry.ObjectMetadata.GetFilename()
@@ -251,6 +262,10 @@ func (ce *ClickHouseEntrySearch) StmtSearchParamsPlaceholderAndArgs() (string, [
 	if ce.address != nil {
 		params = append(params, "(address == ?)")
 		args = append(args, *ce.address)
+	}
+	if ce.domain != nil {
+		params = append(params, "(domain == ?)")
+		args = append(args, *ce.domain)
 	}
 	if ce.name != nil {
 		params = append(params, "(name == ?)")

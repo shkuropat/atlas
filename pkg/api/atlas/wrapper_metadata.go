@@ -252,6 +252,25 @@ func (m *Metadata) SetS3Address(s3address *S3Address) *Metadata {
 	return m
 }
 
+// HasDomain
+func (m *Metadata) HasDomain() bool {
+	return m.DomainOptional != nil
+}
+
+// SetDomain
+func (m *Metadata) SetDomain(domain *Domain) *Metadata {
+	if domain == nil {
+		return m
+	}
+
+	if m.DomainOptional == nil {
+		m.DomainOptional = new(Metadata_Domain)
+	}
+	m.DomainOptional.(*Metadata_Domain).Domain = domain
+
+	return m
+}
+
 // HasDigest
 func (m *Metadata) HasDigest() bool {
 	return m.DigestOptional != nil
