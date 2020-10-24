@@ -122,12 +122,18 @@ func (m *MinIO) PutA(addr *atlas.S3Address, reader io.Reader) (int64, error) {
 
 // PutUUIDFile
 func (m *MinIO) PutUUIDFile(bucketName string, reader io.Reader) (string, int64, error) {
+	target, n, err := m.PutUUIDFileA(bucketName, reader)
+	return target.Object, n, err
+}
+
+// PutUUIDFileA
+func (m *MinIO) PutUUIDFileA(bucketName string, reader io.Reader) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
 		Object: atlas.CreateUUID().GetString(),
 	}
 	n, err := m.PutA(target, reader)
-	return target.Object, n, err
+	return target, n, err
 }
 
 // FPut
@@ -144,17 +150,25 @@ func (m *MinIO) FPut(bucketName, objectName, fileName string) (int64, error) {
 	return m.client.FPutObjectWithContext(ctx, bucketName, objectName, fileName, options)
 }
 
-// FPutUUIDFile
-func (m *MinIO) FPutUUIDFile(bucketName, fileName string) (string, int64, error) {
-	objectName := atlas.CreateUUID().GetString()
-	n, err := m.FPut(bucketName, objectName, fileName)
-
-	return objectName, n, err
-}
-
 // FPutA
 func (m *MinIO) FPutA(addr *atlas.S3Address, fileName string) (int64, error) {
 	return m.FPut(addr.Bucket, addr.Object, fileName)
+}
+
+// FPutUUIDFile
+func (m *MinIO) FPutUUIDFile(bucketName, fileName string) (string, int64, error) {
+	target, n, err := m.FPutUUIDFileA(bucketName, fileName)
+	return target.Object, n, err
+}
+
+// FPutUUIDFileA
+func (m *MinIO) FPutUUIDFileA(bucketName, fileName string) (*atlas.S3Address, int64, error) {
+	target := &atlas.S3Address{
+		Bucket: bucketName,
+		Object: atlas.CreateUUID().GetString(),
+	}
+	n, err := m.FPutA(target, fileName)
+	return target, n, err
 }
 
 // Get
