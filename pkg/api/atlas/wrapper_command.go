@@ -149,6 +149,35 @@ func (m *Command) AddAddresses(addresses ...*S3Address) *Command {
 	return m
 }
 
+// AddCommands
+func (m *Command) AddCommands(commands ...*Command) *Command {
+	m.Commands = append(m.Commands, commands...)
+
+	return m
+}
+
+// ShiftCommands
+func (m *Command) ShiftCommands() *Command {
+	var cmd *Command = nil
+	if len(m.Commands) > 0 {
+		cmd = m.Commands[0]
+		m.Commands = m.Commands[1:]
+	}
+
+	return cmd
+}
+
+// Shift
+func (m *Command) Shift() *Command {
+	root := m.ShiftCommands()
+	if root == nil {
+		return nil
+	}
+
+	root.Commands = m.Commands
+	return root
+}
+
 // Printable
 func (m *Command) Printable() string {
 	if m == nil {

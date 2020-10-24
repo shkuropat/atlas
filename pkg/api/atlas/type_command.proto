@@ -37,10 +37,15 @@ enum CommandType {
 }
 
 message Command {
+    // Header of the command
     Metadata header = 100;
 
-    // May contain any arbitrary sequence of bytes no longer than 2^32
+    // Command may contain any arbitrary sequence of bytes no longer than 2^32
     bytes bytes = 200;
 
-    repeated S3Address addresses = 700;
+    // Command may contain multiple addresses
+    repeated S3Address addresses = 300;
+
+    // Command may contain recursive chain of commands
+    repeated Command commands = 400;
 }
