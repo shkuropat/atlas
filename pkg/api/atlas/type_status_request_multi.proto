@@ -19,7 +19,16 @@ package atlas;
 import "type_domain.proto";
 import "type_status_request.proto";
 
+enum StatusRequestMode {
+    RESERVED        = 0;
+    UNSPECIFIED     = 100;
+    ALL             = 200;
+    FIRST_FOUND     = 300;
+    FIRST_NOT_FOUND = 400;
+}
+
 message StatusRequestMulti {
     Domain domain = 100;
-    repeated StatusRequest entities = 200;
+    StatusRequestMode mode = 200;
+    repeated StatusRequest entities = 300;
 }
