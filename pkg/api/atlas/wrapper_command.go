@@ -149,6 +149,13 @@ func (m *Command) AddAddresses(addresses ...*S3Address) *Command {
 	return m
 }
 
+// AddCommand
+func (m *Command) AddCommand(command *Command) *Command {
+	m.Commands = append(m.Commands, command)
+
+	return m
+}
+
 // AddCommands
 func (m *Command) AddCommands(commands ...*Command) *Command {
 	m.Commands = append(m.Commands, commands...)
