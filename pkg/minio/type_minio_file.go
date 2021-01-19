@@ -15,11 +15,8 @@
 package minio
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/google/uuid"
-	"github.com/minio/minio-go/v6"
 	log "github.com/sirupsen/logrus"
 	"io"
 )
@@ -27,11 +24,7 @@ import (
 // File
 // Inspired by os.File handler and is expected to be used in the same context.
 type File struct {
-	mi        *MinIO
-	s3address *atlas.S3Address
-
-	// Slice of data chunks targeted as a new object
-	chunks []string
+	Accessor
 }
 
 // OpenFile
@@ -39,26 +32,13 @@ func OpenFile(mi *MinIO, s3address *atlas.S3Address) (*File, error) {
 	log.Tracef("minio.OpenFile() - start")
 	defer log.Tracef("minio.OpenFile() - end")
 
-	// Sanity check
-	if (mi == nil) || (s3address == nil) {
-		return nil, fmt.Errorf("minio.OpenFile() requires full object address to be specfied")
+	if accessor, err := NewAccessor(mi, s3address); err != nil {
+		return nil, err
+	} else {
+		return &File{
+			Accessor: *accessor,
+		}, nil
 	}
-
-	// TODO ping MinIO?
-
-	// All seems to be good, create file
-	return &File{
-		mi:        mi,
-		s3address: s3address,
-	}, nil
-}
-
-// Close
-func (f *File) Close() error {
-	log.Tracef("minio.File.Close() - start")
-	defer log.Tracef("minio.File.Close() - end")
-
-	return f.compose()
 }
 
 // Read
@@ -83,29 +63,7 @@ func (f *File) Write(p []byte) (int, error) {
 	log.Tracef("minio.File.Write() - start")
 	defer log.Tracef("minio.File.Write() - end")
 
-	uuid, err := uuid.NewUUID()
-	if err != nil {
-		log.Errorf("unable to put create UUID. err:%v", err)
-		return 0, err
-	}
-
-	bucket := f.s3address.Bucket
-	object := uuid.String()
-	n, err := f.mi.Put(bucket, object, bytes.NewBuffer(p))
-	if err != nil {
-		log.Errorf("unable to put chunk. err:%v", err)
-		return int(n), err
-	}
-	f.chunks = append(f.chunks, object)
-	if len(f.chunks) > 1000 {
-		// TODO compact
-		// there is limitation in 10K chunks in
-		// err = f.mi.client.ComposeObject(dst, sources)
-		// need to implement compaction
-	}
-	log.Infof("put chunk %s/%s size %d", bucket, object, n)
-
-	return int(n), err
+	return f.writeChunk(p)
 }
 
 // WriteTo writes data to dst
@@ -120,50 +78,4 @@ func (f *File) WriteTo(dst io.Writer) (int64, error) {
 	}
 
 	return io.Copy(dst, r)
-}
-
-// compose object out of chunks, if any
-func (f *File) compose() error {
-	// Compose single object out of slice of chunks targeted to be the object
-	log.Tracef("minio.File.compose() - start")
-	defer log.Tracef("minio.File.compose() - end")
-
-	// We need to have at least 1 chunk to compose object from
-	if len(f.chunks) < 1 {
-		return nil
-	}
-
-	log.Infof("compose object out of %d chunks", len(f.chunks))
-
-	// Slice of sources.
-	sources := make([]minio.SourceInfo, 0)
-	for _, chunk := range f.chunks {
-		sources = append(sources, minio.NewSourceInfo(f.s3address.Bucket, chunk, nil))
-	}
-
-	// Create destination info
-	dst, err := minio.NewDestinationInfo(f.s3address.Bucket, f.s3address.Object, nil, nil)
-	if err != nil {
-		log.Errorf("unable to make DestinationInfo() err:%v", err)
-		return err
-	}
-
-	// Compose object by concatenating multiple source files.
-	err = f.mi.client.ComposeObject(dst, sources)
-	if err != nil {
-		log.Errorf("unable to ComposeObject() err:%v", err)
-		return err
-	}
-	log.Infof("composed object %s/%s", f.s3address.Bucket, f.s3address.Object)
-
-	for _, chunk := range f.chunks {
-		if err = f.mi.client.RemoveObject(f.s3address.Bucket, chunk); err != nil {
-			log.Errorf("unable to RemoveObject() %s/%s err:%v", f.s3address.Bucket, chunk, err)
-		}
-	}
-
-	// Chunks are obsoleted from this moment
-	f.chunks = nil
-
-	return nil
 }

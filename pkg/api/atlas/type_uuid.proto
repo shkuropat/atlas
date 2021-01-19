@@ -12,11 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * UUID represents unique identifier.
+ * May contain any arbitrary sequence of bytes.
+ */
 syntax = "proto3";
 
 package atlas;
 
+// UUID represents unique identifier.
 message UUID {
-    // May contain any arbitrary sequence of bytes no longer than 2^32
+    // Any arbitrary sequence of bytes no longer than 2^32
     bytes data = 100;
 }

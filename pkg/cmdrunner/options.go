@@ -23,15 +23,21 @@ import (
 
 // Options
 type Options struct {
-	Timeout      time.Duration
-	Tick         time.Duration
-	Buffered     bool
-	Streaming    bool
+	// Command has timeout to complete, otherwise it will be stopped
+	Timeout time.Duration
+	// Command logs it output each tick
+	Tick time.Duration
+	// Refers to github.com/go-cmd/cmd.Options.Buffered
+	Buffered bool
+	// Refers to github.com/go-cmd/cmd.Options.Streaming
+	Streaming bool
+	// Where to write stdout
 	StdoutWriter io.Writer
+	// Where to write stderr
 	StderrWriter io.Writer
 }
 
-// GetTimout
+// GetTimeout gets timeout from options
 func (opts *Options) GetTimeout() time.Duration {
 	if opts == nil {
 		return 0
@@ -40,7 +46,7 @@ func (opts *Options) GetTimeout() time.Duration {
 	return opts.Timeout
 }
 
-// HasTimeout
+// HasTimeout checks whether timeout is specified
 func (opts *Options) HasTimeout() bool {
 	if opts == nil {
 		return false
@@ -49,7 +55,7 @@ func (opts *Options) HasTimeout() bool {
 	return opts.GetTimeout() > 0
 }
 
-// GetTick
+// GetTick gets tick from options
 func (opts *Options) GetTick() time.Duration {
 	if opts == nil {
 		return 0
@@ -58,7 +64,7 @@ func (opts *Options) GetTick() time.Duration {
 	return opts.Tick
 }
 
-// HasTick
+// HasTick checks whether tick is specified
 func (opts *Options) HasTick() bool {
 	if opts == nil {
 		return false
@@ -67,14 +73,16 @@ func (opts *Options) HasTick() bool {
 	return opts.GetTick() > 0
 }
 
-// GetOptions
+// GetOptions cast options to github.com/go-cmd/cmd.Options
 func (opts *Options) GetOptions() exe.Options {
 	if opts == nil {
+		// Use default options
 		return exe.Options{
 			Buffered: true,
 		}
 	}
 
+	// Cast options to github.com/go-cmd/cmd.Options
 	return exe.Options{
 		Buffered:  opts.Buffered,
 		Streaming: opts.Streaming,

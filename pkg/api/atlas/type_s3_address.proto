@@ -12,11 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * S3Address represents S3 and MinIO address
+ */
 syntax = "proto3";
 
 package atlas;
 
+// S3Address represents S3 and MinIO address
 message S3Address {
+    // Bucket name
     string bucket = 100;
+    // Object name
     string object = 200;
 }

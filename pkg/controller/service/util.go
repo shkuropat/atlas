@@ -23,7 +23,7 @@ import (
 	"github.com/binarly-io/atlas/pkg/auth/service"
 )
 
-// fetchMetadata
+// fetchMetadata fetches claims from incoming gRPC request context
 func fetchMetadata(ctx context.Context) jwt.MapClaims {
 	claims, err := service_auth.GetClaims(ctx)
 	if err != nil {

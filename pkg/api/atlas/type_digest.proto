@@ -12,19 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Digest represents abstract digest of multiple types.
+ */
 syntax = "proto3";
 
 package atlas;
 
+// DigestType represents all types of digests in the system.
 enum DigestType {
     // Due to first enum value has to be zero in proto3
-    DIGEST_RESERVED         = 0;
-    DIGEST_UNSPECIFIED      = 100;
-    DIGEST_MD5              = 200;
-    DIGEST_SHA256           = 300;
+    DIGEST_RESERVED = 0;
+    // Unspecified means we do not know its type
+    DIGEST_UNSPECIFIED = 100;
+    // MD5 digest
+    DIGEST_MD5 = 200;
+    // SHA256 digest
+    DIGEST_SHA256 = 300;
 }
 
+// Digest represents abstract digest.
 message Digest {
+    // Type of the digest. MD5 or SHA256 or something else
     DigestType type = 100;
+    // Data. Any arbitrary sequence of bytes no longer than 2^32
     bytes data = 200;
 }

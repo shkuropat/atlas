@@ -12,13 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package atlas
+package config
 
-// DataChunkTransport defines transport level interface
-// Has the following functions:
-//   Send(*DataChunk) error
-//   Recv() (*DataChunk, error)
-type DataChunkTransport interface {
-	Send(*DataChunk) error
-	Recv() (*DataChunk, error)
+import (
+	"fmt"
+	"os"
+	"strings"
+)
+
+// joinFilePaths
+func joinFilePaths(paths []string, filename string) []string {
+	res := []string{}
+	for _, path := range paths {
+		res = append(res, fmt.Sprintf("%s%c%s", path, os.PathSeparator, filename))
+	}
+
+	return res
+}
+
+// getFilePathsString
+func getFilePathsString(paths []string, filename string) string {
+	return strings.Join(joinFilePaths(paths, filename), string(os.PathListSeparator))
 }

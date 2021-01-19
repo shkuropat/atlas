@@ -26,8 +26,8 @@ type Transport struct {
 
 // NewTransport
 func NewTransport(producer *Producer, consumer *Consumer, close bool) *Transport {
-	log.Infof("NewTransport() - start")
-	defer log.Infof("NewTransport() - end")
+	log.Infof("kafka.NewTransport() - start")
+	defer log.Infof("kafka.NewTransport() - end")
 
 	return &Transport{
 		producer: producer,
@@ -38,8 +38,8 @@ func NewTransport(producer *Producer, consumer *Consumer, close bool) *Transport
 
 // Close
 func (t *Transport) Close() {
-	log.Infof("Transport.Close() - start")
-	defer log.Infof("Transport.Close() - end")
+	log.Infof("kafka.Transport.Close() - start")
+	defer log.Infof("kafka.Transport.Close() - end")
 
 	if !t.close {
 		return

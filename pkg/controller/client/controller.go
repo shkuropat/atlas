@@ -43,21 +43,9 @@ func SendFile(client atlas.ControlPlaneClient, filename string, options *DataExc
 		return 0, err
 	}
 
-	if options == nil {
-		options = &DataExchangeOptions{}
-	}
-	if options.Metadata == nil {
-		options.Metadata = new(atlas.Metadata)
-	}
-	options.Metadata.SetFilename(filepath.Base(filename))
-	result := DataExchange(client, f, options)
-	if result.Err == nil {
-		log.Infof("DONE send file %s size %d", filename, result.Send.Sent)
-	} else {
-		log.Warnf("FAILED send file %s size %d err %v", filename, result.Send.Sent, result.Err)
-	}
-
-	return result.Send.Sent, result.Err
+	options = options.Ensure()
+	options.EnsureMetadata().SetFilename(filepath.Base(filename))
+	return SendReader(client, f, options)
 }
 
 // SendStdin sends STDIN from client to service and receives response back (if any)
@@ -65,21 +53,9 @@ func SendStdin(client atlas.ControlPlaneClient, options *DataExchangeOptions) (i
 	log.Info("SendStdin() - start")
 	defer log.Info("SendStdin() - end")
 
-	if options == nil {
-		options = &DataExchangeOptions{}
-	}
-	if options.Metadata == nil {
-		options.Metadata = new(atlas.Metadata)
-	}
-	options.Metadata.SetFilename(os.Stdin.Name())
-	result := DataExchange(client, os.Stdin, options)
-	if result.Err == nil {
-		log.Infof("DONE send %s size %d", os.Stdin.Name(), result.Send.Sent)
-	} else {
-		log.Warnf("FAILED send %s size %d err %v", os.Stdin.Name(), result.Send.Sent, result.Err)
-	}
-
-	return result.Send.Sent, result.Err
+	options = options.Ensure()
+	options.EnsureMetadata().SetFilename(os.Stdin.Name())
+	return SendReader(client, os.Stdin, options)
 }
 
 // SendReader
@@ -89,12 +65,12 @@ func SendReader(client atlas.ControlPlaneClient, r io.Reader, options *DataExcha
 
 	result := DataExchange(client, r, options)
 	if result.Err == nil {
-		log.Infof("DONE send %s size %d", "io.Reader", result.Send.Sent)
+		log.Infof("DONE send %s size %d", "io.Reader", result.Send.Len)
 	} else {
-		log.Warnf("FAILED send %s size %d err %v", "io.Reader", result.Send.Sent, result.Err)
+		log.Warnf("FAILED send %s size %d err %v", "io.Reader", result.Send.Len, result.Err)
 	}
 
-	return result.Send.Sent, result.Err
+	return result.Send.Len, result.Err
 }
 
 // SendBytes
@@ -102,10 +78,10 @@ func SendBytes(client atlas.ControlPlaneClient, data []byte, options *DataExchan
 	log.Info("SendBytes() - start")
 	defer log.Info("SendBytes() - end")
 
-	r := bytes.NewReader(data)
-	return SendReader(client, r, options)
+	return SendReader(client, bytes.NewReader(data), options)
 }
 
+// SendEchoRequest
 func SendEchoRequest(outgoingQueue chan *atlas.Command) {
 	for i := 0; i < 5; i++ {
 		command := atlas.NewCommand().SetType(atlas.CommandType_COMMAND_ECHO_REQUEST).CreateID().SetDescription("desc")
@@ -116,6 +92,7 @@ func SendEchoRequest(outgoingQueue chan *atlas.Command) {
 	}
 }
 
+// IncomingCommandsHandler
 func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
 	log.Infof("IncomingCommandsHandler() - start")
 	defer log.Infof("IncomingCommandsHandler() - end")

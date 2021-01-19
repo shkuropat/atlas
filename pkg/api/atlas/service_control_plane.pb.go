@@ -59,21 +59,22 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type ControlPlaneClient interface {
-	// Bi-directional Commands stream
-	//
+	//*
+	// Bi-directional Commands stream.
 	// Commands are sent from service to client and from client to server
 	Commands(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_CommandsClient, error)
-	// Bi-directional Data stream
-	//
+	//*
+	// Bi-directional Data stream.
 	// Some commands may be followed by data load. Be it logs, dumps, etc.
 	DataChunks(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_DataChunksClient, error)
-	// Metrics stream
-	//
-	// Some commands may be followed by metrics stream.
+	//*
+	// Uni-directional Metrics stream from client to server.
 	Metrics(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_MetricsClient, error)
-	// EntityStatus checks status of the entity on the server
+	//*
+	// EntityStatus checks status of the entity on the server.
 	EntityStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error)
-	// EntityStatusMulti checks status of the multiple entities on server
+	//*
+	// EntityStatusMulti checks status of the multiple entities on server.
 	EntityStatusMultiple(ctx context.Context, in *StatusRequestMulti, opts ...grpc.CallOption) (*StatusReply, error)
 }
 
@@ -201,21 +202,22 @@ func (c *controlPlaneClient) EntityStatusMultiple(ctx context.Context, in *Statu
 
 // ControlPlaneServer is the server API for ControlPlane service.
 type ControlPlaneServer interface {
-	// Bi-directional Commands stream
-	//
+	//*
+	// Bi-directional Commands stream.
 	// Commands are sent from service to client and from client to server
 	Commands(ControlPlane_CommandsServer) error
-	// Bi-directional Data stream
-	//
+	//*
+	// Bi-directional Data stream.
 	// Some commands may be followed by data load. Be it logs, dumps, etc.
 	DataChunks(ControlPlane_DataChunksServer) error
-	// Metrics stream
-	//
-	// Some commands may be followed by metrics stream.
+	//*
+	// Uni-directional Metrics stream from client to server.
 	Metrics(ControlPlane_MetricsServer) error
-	// EntityStatus checks status of the entity on the server
+	//*
+	// EntityStatus checks status of the entity on the server.
 	EntityStatus(context.Context, *StatusRequest) (*StatusReply, error)
-	// EntityStatusMulti checks status of the multiple entities on server
+	//*
+	// EntityStatusMulti checks status of the multiple entities on server.
 	EntityStatusMultiple(context.Context, *StatusRequestMulti) (*StatusReply, error)
 }
 

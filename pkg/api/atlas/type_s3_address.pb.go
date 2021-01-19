@@ -20,8 +20,11 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// S3Address represents S3 and MinIO address
 type S3Address struct {
-	Bucket               string   `protobuf:"bytes,100,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Bucket name
+	Bucket string `protobuf:"bytes,100,opt,name=bucket,proto3" json:"bucket,omitempty"`
+	// Object name
 	Object               string   `protobuf:"bytes,200,opt,name=object,proto3" json:"object,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

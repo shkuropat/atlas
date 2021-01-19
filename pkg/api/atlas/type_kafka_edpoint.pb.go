@@ -20,7 +20,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// KafkaEndpoint represents Kafka cluster access endpoint
 type KafkaEndpoint struct {
+	// Multiple brokers of Kafka's cluster
 	Brokers              []string `protobuf:"bytes,100,rep,name=brokers,proto3" json:"brokers,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

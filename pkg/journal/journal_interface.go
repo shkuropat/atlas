@@ -19,20 +19,15 @@ import (
 	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
-// Journaller
-type Journaller interface {
+// Journal
+type Journal interface {
 	//
 	// Common requests section
 	//
 
 	RequestStart(ctx *rpc_context.RPCContext)
-	RequestCompleted(
-		ctx *rpc_context.RPCContext,
-	)
-	RequestError(
-		ctx *rpc_context.RPCContext,
-		callErr error,
-	)
+	RequestEnd(ctx *rpc_context.RPCContext)
+	RequestError(ctx *rpc_context.RPCContext, callErr error)
 
 	NewEntry(ctxID *atlas.UUID, action ActionType) *Entry
 	Insert(entry *Entry) error
@@ -44,7 +39,6 @@ type Journaller interface {
 
 	SaveData(
 		ctx *rpc_context.RPCContext,
-
 		dataS3Address *atlas.S3Address,
 		dataSize int64,
 		dataMetadata *atlas.Metadata,
@@ -62,7 +56,6 @@ type Journaller interface {
 
 	ProcessData(
 		ctx *rpc_context.RPCContext,
-
 		dataS3Address *atlas.S3Address,
 		dataSize int64,
 		dataMetadata *atlas.Metadata,

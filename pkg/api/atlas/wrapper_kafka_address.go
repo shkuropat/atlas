@@ -14,6 +14,8 @@
 
 package atlas
 
+import "fmt"
+
 // NewKafkaAddress
 func NewKafkaAddress(topic string, partition int32) *KafkaAddress {
 	return &KafkaAddress{
@@ -29,4 +31,11 @@ func (m *KafkaAddress) GetTopics() []string {
 	}
 
 	return nil
+}
+
+func (m *KafkaAddress) Printable() string {
+	if m != nil {
+		return fmt.Sprintf("%s/%d", m.Topic, m.Partition)
+	}
+	return ""
 }

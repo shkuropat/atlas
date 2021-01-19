@@ -29,8 +29,8 @@ type CommandTransport struct {
 
 // NewCommandTransport
 func NewCommandTransport(producer *Producer, consumer *Consumer, close bool) *CommandTransport {
-	log.Infof("NewCommandTransport() - start")
-	defer log.Infof("NewCommandTransport() - end")
+	log.Infof("kafka.NewCommandTransport() - start")
+	defer log.Infof("kafka.NewCommandTransport() - end")
 
 	return &CommandTransport{
 		Transport{

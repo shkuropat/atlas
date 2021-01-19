@@ -21,6 +21,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// MetadataType presents type of all metadata in the system
 type MetadataType int32
 
 const (
@@ -44,7 +45,7 @@ func (MetadataType) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_6b5234c8ffbbe006, []int{0}
 }
 
-// Metadata describes metadata or the object
+// Metadata describes metadata of the object
 type Metadata struct {
 	// Types that are valid to be assigned to TypeOptional:
 	//	*Metadata_Type

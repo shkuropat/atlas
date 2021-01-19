@@ -12,11 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * KafkaAddress represents Kafka address within Kafka endpoint (cluster access endpoint).
+ * Full Kafka address would be KafkaEndpoint + KafkaAddress
+ */
 syntax = "proto3";
 
 package atlas;
 
+// KafkaAddress represents Kafka address within Kafka endpoint (cluster).
 message KafkaAddress {
+    // Topic within Kafka
     string topic = 100;
-    int32 partition = 200;
+    // Partition within Kafka topic
+    int32  partition = 200;
 }

@@ -23,6 +23,8 @@ const (
 	ObjectTypeUnknownName string     = "UNKNOWN"
 )
 
+// TODO extract dictionary as external entry
+
 var (
 	objectTypeName = map[ObjectType]string{
 		ObjectTypeUnknown: ObjectTypeUnknownName,

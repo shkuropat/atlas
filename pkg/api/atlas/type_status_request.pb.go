@@ -20,8 +20,11 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// StatusRequest represents status request of the object(s)
 type StatusRequest struct {
-	Entity               *Entity  `protobuf:"bytes,100,opt,name=entity,proto3" json:"entity,omitempty"`
+	// Entity which status is requested
+	Entity *Entity `protobuf:"bytes,100,opt,name=entity,proto3" json:"entity,omitempty"`
+	// Digest of entity to get status about
 	Digest               *Digest  `protobuf:"bytes,200,opt,name=digest,proto3" json:"digest,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

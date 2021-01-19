@@ -15,85 +15,47 @@
 package clickhouse
 
 import (
-	"fmt"
-	"strconv"
 	"time"
 
 	_ "github.com/mailru/go-clickhouse"
 )
 
 const (
-	// http://user:password@host:8123/
-	dsnURLPattern  = "http://%s%s:%s/"
 	defaultTimeout = 10 * time.Second
-
-	usernameReplacer = "*"
-	passwordReplacer = "*"
-
-	dsnUsernamePasswordPairPattern             = "%s:%s@"
-	dsnUsernamePasswordPairUsernameOnlyPattern = "%s@"
 )
 
 // ConnParams
 type ConnParams struct {
-	hostname string
+	// username which to connect with
 	username string
+	// password which to connect with
 	password string
-	port     int
 
-	dsn                  string
+	// hostname where to connect to
+	hostname string
+	// port where to connect to
+	port int
+
+	// Ready-to-use DSN string
+	dsn string
+	// DSN string with hiddent credentials. Can be used in logs, etc
 	dsnHiddenCredentials string
 
+	// Timeout to be used with connection
 	timeout time.Duration
 }
 
 // NewConnParams
-func NewConnParams(hostname, username, password string, port int) *ConnParams {
-	params := &ConnParams{
-		hostname: hostname,
-		username: username,
-		password: password,
-		port:     port,
-
-		timeout: defaultTimeout,
+func NewConnParams(username, password string, hostname string, port int) *ConnParams {
+	return &ConnParams{
+		username:             username,
+		password:             password,
+		hostname:             hostname,
+		port:                 port,
+		timeout:              defaultTimeout,
+		dsn:                  makeDSN(username, password, hostname, port, false),
+		dsnHiddenCredentials: makeDSN(username, password, hostname, port, true),
 	}
-
-	params.dsn = params.makeDSN(false)
-	params.dsnHiddenCredentials = params.makeDSN(true)
-
-	return params
-}
-
-// makeUserPassPair makes "username:password" pair for connection
-func (c *ConnParams) makeUserPassPair(hidden bool) string {
-
-	// In case of hidden username+password pair we'd just return replacement
-	if hidden {
-		return fmt.Sprintf(dsnUsernamePasswordPairPattern, usernameReplacer, passwordReplacer)
-	}
-
-	// We may have neither username nor password
-	if c.username == "" && c.password == "" {
-		return ""
-	}
-
-	// Password may be omitted
-	if c.password == "" {
-		return fmt.Sprintf(dsnUsernamePasswordPairUsernameOnlyPattern, c.username)
-	}
-
-	// Expecting both username and password to be in place
-	return fmt.Sprintf(dsnUsernamePasswordPairPattern, c.username, c.password)
-}
-
-// makeDSN makes ClickHouse DSN
-func (c *ConnParams) makeDSN(hideCredentials bool) string {
-	return fmt.Sprintf(
-		dsnURLPattern,
-		c.makeUserPassPair(hideCredentials),
-		c.hostname,
-		strconv.Itoa(c.port),
-	)
 }
 
 // GetDSN

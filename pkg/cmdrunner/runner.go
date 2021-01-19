@@ -55,7 +55,7 @@ func (r *Runner) Run(options *Options) exe.Status {
 	stopTimeoutChan := r.startTimeout(options)
 	log.Infof("wait for cmd to complete")
 
-	// Start and wait for command to complete
+	// Start command and wait for it to complete
 	log.Infof("Starting command:\n%s %s", r.name, strings.Join(r.args, " "))
 	r.cmd.Start()
 	<-r.cmd.Done()
@@ -112,11 +112,10 @@ func (r *Runner) startTicker(options *Options) chan bool {
 				// Quit request arrived
 				log.Infof("ticker stop")
 				ticker.Stop()
-				return // func
+				return
 			}
 		}
 	}()
-
 	return quit
 }
 
@@ -126,7 +125,7 @@ func (r *Runner) stop(quit chan bool) {
 		return
 	}
 
-	quit <- true
+	close(quit)
 }
 
 // stopTicker sends quit request to specified chan
@@ -154,10 +153,9 @@ func (r *Runner) startTimeout(options *Options) chan bool {
 		case <-quit:
 			// Quit request arrived
 			log.Infof("timeout stop")
-			return // func
+			return
 		}
 	}()
-
 	return quit
 }
 

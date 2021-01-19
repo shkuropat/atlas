@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * StatusRequest represents status request of the object(s)
+ */
 syntax = "proto3";
 
 package atlas;
@@ -19,7 +22,10 @@ package atlas;
 import "type_entity.proto";
 import "type_digest.proto";
 
+// StatusRequest represents status request of the object(s)
 message StatusRequest {
+    // Entity which status is requested
     Entity entity = 100;
+    // Digest of entity to get status about
     Digest digest = 200;
 }

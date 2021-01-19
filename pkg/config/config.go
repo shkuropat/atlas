@@ -15,8 +15,6 @@
 package config
 
 import (
-	"fmt"
-	"os"
 	"runtime"
 	"strings"
 
@@ -29,21 +27,6 @@ var (
 	// ConfigFile defines path to config file to be used
 	ConfigFile string
 )
-
-// joinFilePaths
-func joinFilePaths(paths []string, filename string) []string {
-	res := []string{}
-	for _, path := range paths {
-		res = append(res, fmt.Sprintf("%s%c%s", path, os.PathSeparator, filename))
-	}
-
-	return res
-}
-
-// getFilePathsString
-func getFilePathsString(paths []string, filename string) string {
-	return strings.Join(joinFilePaths(paths, filename), string(os.PathListSeparator))
-}
 
 const (
 	root = "root"
@@ -79,7 +62,7 @@ func (c *Config) SetEnvVarPrefix(prefix string) *Config {
 	return c
 }
 
-// etConfigFile
+// SetConfigFile
 func (c *Config) SetConfigFile(file string) *Config {
 	c.configFile = file
 	return c

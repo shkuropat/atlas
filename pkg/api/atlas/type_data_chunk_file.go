@@ -16,11 +16,14 @@ package atlas
 
 import (
 	"fmt"
+	"github.com/binarly-io/atlas/pkg/util"
 	"io"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 )
+
+const defaultMaxWriteChunkSize = 1024
 
 // DataChunkFile is a handler to set of DataChunk(s)
 // Inspired by os.File handler and is expected to be used in the same context.
@@ -31,7 +34,8 @@ import (
 //	- io.Closer
 // and thus can be used in any functions, which operate these interfaces, such as io.Copy()
 type DataChunkFile struct {
-	transport DataChunkTransport
+	// transport provides functions to send/receive DataChunks
+	transport DataChunkTransporter
 
 	// Header is mandatory
 	Header *Metadata
@@ -42,7 +46,7 @@ type DataChunkFile struct {
 
 	// initialOffset of these chunks
 	initialOffset int64
-	// currentOffset of the current chunk within file
+	// currentOffset of the current chunk within current chunk set (file)
 	currentOffset int64
 	// offset of the current chunk within "all chunks" = initialOffset + currentOffset
 	offset int64
@@ -51,16 +55,17 @@ type DataChunkFile struct {
 	MaxWriteChunkSize int
 
 	// Receive part
-	buf []byte
-	err error
+	recvBuf []byte
+	recvErr error
 
 	// Log part
-	printed time.Time
+	// lastTimeDataChunkLogged specifies when last time data chunk was logged
+	lastTimeDataChunkLogged time.Time
 }
 
 // OpenDataChunkFile opens set of DataChunk(s)
 // Inspired by os.OpenFile()
-func OpenDataChunkFile(transport DataChunkTransport) (*DataChunkFile, error) {
+func OpenDataChunkFile(transport DataChunkTransporter) (*DataChunkFile, error) {
 	return &DataChunkFile{
 		transport: transport,
 	}, nil
@@ -90,15 +95,19 @@ func (f *DataChunkFile) HasPayloadMetadata() bool {
 	return f.PayloadMetadata != nil
 }
 
-// ensureBuf ensures DataChunkFile has buf in place
-func (f *DataChunkFile) ensureBuf() {
-	if f.buf == nil {
-		f.buf = []byte{}
+// ensureRecvBuf ensures DataChunkFile has buf in place
+func (f *DataChunkFile) ensureRecvBuf() {
+	if f.recvBuf == nil {
+		f.recvBuf = make([]byte, 0)
 	}
 }
 
-// close
+// close does internal job to complete DataChunkFile
 func (f *DataChunkFile) close() {
+	if f == nil {
+		return
+	}
+
 	f.Header = nil
 	f.TransportMetadata = nil
 	f.PayloadMetadata = nil
@@ -107,8 +116,11 @@ func (f *DataChunkFile) close() {
 	f.currentOffset = 0
 	f.offset = 0
 
-	f.buf = nil
-	f.err = nil
+	f.recvBuf = nil
+	f.recvErr = nil
+
+	// TODO flush outgoing transport
+	// TODO should incoming transport be drained?
 }
 
 // acceptHeader accepts header from DataChunk into file
@@ -134,6 +146,9 @@ func (f *DataChunkFile) acceptPayloadMetadata(dataChunk *DataChunk) {
 
 // acceptAllMetadata accepts all metadata from from DataChunk into file
 func (f *DataChunkFile) acceptAllMetadata(dataChunk *DataChunk) {
+	if dataChunk == nil {
+		return
+	}
 	f.acceptTransportMetadata(dataChunk)
 	f.acceptPayloadMetadata(dataChunk)
 	f.acceptHeader(dataChunk)
@@ -141,25 +156,21 @@ func (f *DataChunkFile) acceptAllMetadata(dataChunk *DataChunk) {
 
 // logDataChunk logs DataChunk
 func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
-	// Should this chunk be logged
-	print := false
-	now := time.Now()
-	interval := 30 * time.Second
-	if f.printed.IsZero() {
-		// No chunks printed before
-		print = true
-	} else if dataChunk.Header.GetLast() {
-		// Print last chunk
-		print = true
-	} else if now.After(f.printed.Add(interval)) {
-		// Print every X seconds
-		print = true
-	} else if log.GetLevel() == log.TraceLevel {
-		// Print in case of trace
-		print = true
+	if dataChunk == nil {
+		return
 	}
 
-	if !print {
+	now := time.Now()
+	interval := 30 * time.Second
+	switch {
+	case
+		f.lastTimeDataChunkLogged.IsZero(),                 // No chunks logged before, log the first one
+		dataChunk.Header.GetLast(),                         // Log the last one to complete transfer logging
+		now.After(f.lastTimeDataChunkLogged.Add(interval)), // Log every X seconds
+		log.GetLevel() == log.TraceLevel:                   // In case of trace all chunks should be logged
+		// Should log this DataChunk
+	default:
+		// Should not log this DataChunk
 		return
 	}
 
@@ -174,7 +185,7 @@ func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 	compression := CompressionNone
 	if f.HasTransportMetadata() {
 		if f.TransportMetadata.HasCompression() {
-			compression = f.TransportMetadata.GetCompression()
+			compression = ParseCompressionType(f.TransportMetadata.GetCompression())
 		}
 	}
 
@@ -200,7 +211,7 @@ func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 	//	fmt.Printf("got %d %s compressed bytes\n", _len, compression)
 	//}
 
-	f.printed = now
+	f.lastTimeDataChunkLogged = now
 }
 
 // recvDataChunk
@@ -208,56 +219,46 @@ func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
 	log.Tracef("DataChunkFile.recvDataChunk() - start")
 	defer log.Tracef("DataChunkFile.recvDataChunk() - end")
 
-	// Whether this chunk is the last one within this DataChunkFile
+	// Recv DataChunk
 	dataChunk, err := f.transport.Recv()
-	if dataChunk != nil {
-		f.acceptAllMetadata(dataChunk)
-		f.logDataChunk(dataChunk)
-	}
+	f.acceptAllMetadata(dataChunk)
+	f.logDataChunk(dataChunk)
 
-	if err == nil {
+	switch err {
+	case nil:
 		// All went well, ready to receive more data
-	} else if err == io.EOF {
+	case io.EOF:
 		// Correct EOF arrived
-		log.Infof("DataChunkTransport.Recv() get EOF")
-	} else {
+		log.Infof("DataChunkFile.Recv() get EOF")
+	default:
 		// Stream is somehow broken
-		log.Infof("DataChunkTransport.Recv() got err: %v", err)
+		log.Infof("DataChunkFile.Recv() got err: %v", err)
 	}
 
 	return dataChunk, err
 }
 
-// recvDataChunkAndAppendBuf
-func (f *DataChunkFile) recvDataChunkAndAppendBuf() {
+// recvDataChunkIntoBuf
+func (f *DataChunkFile) recvDataChunkIntoBuf() {
 	dataChunk, err := f.recvDataChunk()
 	if dataChunk != nil {
 		if len(dataChunk.GetBytes()) > 0 {
-			f.ensureBuf()
-			f.buf = append(f.buf, dataChunk.GetBytes()...)
+			// TODO
+			f.recvBuf = append(f.recvBuf, dataChunk.GetBytes()...)
 		}
 
 		if dataChunk.Header.GetLast() {
-			f.err = io.EOF
+			f.recvErr = io.EOF
 		}
 	}
 
 	if err != nil {
-		f.err = err
+		f.recvErr = err
 	}
 }
 
-// sendDataChunk
-func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
-	log.Tracef("DataChunkFile.sendDataChunk() - start")
-	defer log.Tracef("DataChunkFile.sendDataChunk() - end")
-
-	if (len(p) > f.MaxWriteChunkSize) && (f.MaxWriteChunkSize > 0) {
-		return 0, fmt.Errorf("attempt to sendDataChunk() with oversized chunk: %d > %d", len(p), f.MaxWriteChunkSize)
-	}
-
-	n = len(p)
-
+// newDataChunk
+func (f *DataChunkFile) newDataChunk(data []byte) *DataChunk {
 	var transportMD *Metadata
 	var payloadMD *Metadata
 	if f.currentOffset == 0 {
@@ -266,22 +267,40 @@ func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
 		payloadMD = f.PayloadMetadata
 		log.Tracef("Attaching metadata. transport=%v payload=%v", transportMD, payloadMD)
 	}
+	// Offset of current chunk
 	f.offset = f.initialOffset + f.currentOffset
-	chunk := NewDataChunk(transportMD, payloadMD, &f.offset, false, p)
+	return NewDataChunk(transportMD, payloadMD, &f.offset, false, data)
+}
+
+// sendDataChunk
+func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
+	log.Tracef("DataChunkFile.sendDataChunk() - start")
+	defer log.Tracef("DataChunkFile.sendDataChunk() - end")
+
+	if len(p) == 0 {
+		return 0, nil
+	}
+
+	if (len(p) > f.MaxWriteChunkSize) && (f.MaxWriteChunkSize > 0) {
+		return 0, fmt.Errorf("attempt to sendDataChunk() with oversized chunk: %d > %d", len(p), f.MaxWriteChunkSize)
+	}
+
+	n = len(p)
+	chunk := f.newDataChunk(p)
 	err = f.transport.Send(chunk)
 	if err != nil {
 		// We have some kind of error and were not able to send the data
 		n = 0
 		if err == io.EOF {
 			// Not sure, probably this is not an error, after all
-			log.Infof("Send() received EOF")
+			log.Infof("sendDataChunk.Send() received EOF")
 		} else {
-			log.Errorf("failed to Send() %v", err)
+			log.Errorf("sendDataChunk.Send() FAILED %v", err)
 		}
 	}
 
+	// Adjust offset of next chunk to be sent after this one
 	f.currentOffset += int64(n)
-
 	return
 }
 
@@ -299,21 +318,21 @@ func (f *DataChunkFile) Write(p []byte) (n int, err error) {
 	defer log.Tracef("DataChunkFile.Write() - end")
 
 	if (len(p) < f.MaxWriteChunkSize) || (f.MaxWriteChunkSize <= 0) {
-		// No need to chunk, can send as one piece
+		// No need to split into chunks, can send all data as one piece
 		return f.sendDataChunk(p)
 	}
 
-	// This piece is too big, need to chunk
+	// This piece is too big, need to split into several chunks
 	n = 0
 	for offset := 0; offset < len(p); offset += f.MaxWriteChunkSize {
-		if sent, e := f.sendDataChunk(p[offset:f.MaxWriteChunkSize]); e != nil {
+		if sent, e := f.sendDataChunk(p[offset:util.Min(offset+f.MaxWriteChunkSize, len(p))]); e != nil {
 			return n, e
 		} else {
 			n += sent
 		}
 	}
 
-	return
+	return n, nil
 }
 
 // Implements io.WriterTo
@@ -329,25 +348,7 @@ func (f *DataChunkFile) WriteTo(dst io.Writer) (n int64, err error) {
 	log.Tracef("DataChunkFile.WriteTo() - start")
 	defer log.Tracef("DataChunkFile.WriteTo() - end")
 
-	n = 0
-	for {
-		var dataChunk *DataChunk
-		dataChunk, err = f.recvDataChunk()
-		if dataChunk != nil {
-			n += int64(len(dataChunk.GetBytes()))
-
-			// TODO need to handle write errors
-			_, _ = dst.Write(dataChunk.GetBytes())
-
-			if dataChunk.Header.GetLast() {
-				return
-			}
-		}
-
-		if err != nil {
-			return
-		}
-	}
+	return cp(dst, f, util.IfPositiveValue(f.MaxWriteChunkSize, defaultMaxWriteChunkSize))
 }
 
 // Implements io.Reader
@@ -382,23 +383,25 @@ func (f *DataChunkFile) Read(p []byte) (n int, err error) {
 	log.Tracef("DataChunkFile.Read() - start")
 	defer log.Tracef("DataChunkFile.Read() - end")
 
-	if len(f.buf) == 0 {
-		// No buffered dara available, need to get some
-		f.recvDataChunkAndAppendBuf()
+	if len(f.recvBuf) == 0 {
+		// No buffered data available, need to get some
+		f.recvDataChunkIntoBuf()
 	}
 
 	n = 0
-	if len(f.buf) > 0 {
+	if len(f.recvBuf) > 0 {
 		// Have some buffered data, copy it out
-		n = copy(p, f.buf)
-		f.buf = f.buf[n:]
-
-		if len(f.buf) > 0 {
-			return n, nil
-		}
+		n = copy(p, f.recvBuf)
+		f.recvBuf = f.recvBuf[n:]
 	}
 
-	return n, f.err
+	if len(f.recvBuf) > 0 {
+		// Still have some data in recvBuf for next read, so not even EOF should be reported right now
+		return n, nil
+	}
+
+	// No more data in recvBuf left
+	return n, f.recvErr
 }
 
 // Implements io.ReaderFrom
@@ -414,36 +417,7 @@ func (f *DataChunkFile) ReadFrom(src io.Reader) (n int64, err error) {
 	log.Tracef("DataChunkFile.ReadFrom() - start")
 	defer log.Tracef("DataChunkFile.ReadFrom() - end")
 
-	bufSize := 1024
-	if f.MaxWriteChunkSize > 0 {
-		bufSize = f.MaxWriteChunkSize
-	}
-
-	n = 0
-	p := make([]byte, bufSize)
-	for {
-		read, readErr := src.Read(p)
-		n += int64(read)
-		if read > 0 {
-			// We've got some data and it has to be processed no matter what
-			// Write these bytes to data stream
-			_, writeErr := f.Write(p[:read])
-			if writeErr != nil {
-				err = writeErr
-				return
-			}
-		}
-
-		if readErr != nil {
-			// We have some kind of an error
-			if readErr == io.EOF {
-				// However, EOF is not an error on read
-				readErr = nil
-			}
-			// In case of an error or EOF, break the read loop
-			return
-		}
-	}
+	return cp(f, src, util.IfPositiveValue(f.MaxWriteChunkSize, defaultMaxWriteChunkSize))
 }
 
 // Implements io.Closer
@@ -455,6 +429,10 @@ func (f *DataChunkFile) ReadFrom(src io.Reader) (n int64, err error) {
 func (f *DataChunkFile) Close() error {
 	log.Tracef("DataChunkFile.Close() - start")
 	defer log.Tracef("DataChunkFile.Close() - end")
+	if f == nil {
+		return nil
+	}
+
 	defer f.close()
 
 	if f.currentOffset == 0 {

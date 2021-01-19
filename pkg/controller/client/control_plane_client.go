@@ -54,7 +54,7 @@ func DataExchange(
 	log.Infof("DataExchange() - start")
 	defer log.Infof("DataExchange() - end")
 
-	result := &DataExchangeResult{}
+	result := NewDataExchangeResult()
 
 	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
@@ -94,8 +94,7 @@ func DataExchange(
 
 	if src != nil {
 		// We have something to send
-		result.Send.Sent,
-			result.Err = f.ReadFrom(src)
+		result.Send.Len, result.Err = f.ReadFrom(src)
 		if result.Err != nil {
 			log.Warnf("SendDataChunkFile() failed with err %v", result.Err)
 			return result
@@ -104,9 +103,7 @@ func DataExchange(
 
 	if options.GetWaitReply() {
 		// We should wait for reply
-		result.Receive.Received,
-			result.Receive.Data,
-			result.Err = f.WriteToBuf()
+		result.Receive.Len, result.Receive.Data, result.Err = f.WriteToBuf()
 		if result.Err != nil {
 			log.Warnf("RecvDataChunkFileIntoBuf() failed with err %v", result.Err)
 			return result

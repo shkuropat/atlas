@@ -30,7 +30,7 @@ func NewHealthServer() *HealthServer {
 
 func (h *HealthServer) Check(ctx context.Context, args *atlas_health.HealthCheckRequest) (*atlas_health.HealthCheckResponse, error) {
 	return &atlas_health.HealthCheckResponse{
-		Status: atlas_health.HealthCheckResponse_SERVING,
+		Status: atlas_health.ServingStatus_SERVING,
 	}, nil
 }
 

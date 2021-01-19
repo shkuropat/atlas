@@ -12,10 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Domain represents abstract domain.
+ */
 syntax = "proto3";
 
 package atlas;
 
+// Entity represents abstract entity.
 message Entity {
+    // Entity name
     string name = 100;
 }

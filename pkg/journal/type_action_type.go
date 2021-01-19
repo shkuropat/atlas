@@ -37,6 +37,8 @@ const (
 	ActionRequestErrorName     string     = "ActionRequestError"
 )
 
+// TODO extract dictionary as external entry
+
 var (
 	actionName = map[ActionType]string{
 		ActionUnknown:          ActionUnknownName,

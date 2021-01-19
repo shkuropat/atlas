@@ -12,10 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * KafkaEndpoint represents Kafka endpoint (cluster access endpoint).
+ * Full Kafka address would be KafkaEndpoint + KafkaAddress
+ */
 syntax = "proto3";
 
 package atlas;
 
+// KafkaEndpoint represents Kafka cluster access endpoint
 message KafkaEndpoint {
+    // Multiple brokers of Kafka's cluster
     repeated string brokers = 100;
 }

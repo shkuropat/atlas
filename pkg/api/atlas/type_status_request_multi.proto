@@ -20,15 +20,16 @@ import "type_domain.proto";
 import "type_status_request.proto";
 
 enum StatusRequestMode {
-    RESERVED        = 0;
-    UNSPECIFIED     = 100;
-    ALL             = 200;
-    FIRST_FOUND     = 300;
+    RESERVED = 0;
+    UNSPECIFIED = 100;
+    ALL = 200;
+    FIRST_FOUND = 300;
     FIRST_NOT_FOUND = 400;
 }
 
 message StatusRequestMulti {
-    Domain domain = 100;
-    StatusRequestMode mode = 200;
+    Domain            domain = 100;
+    StatusRequestMode mode   = 200;
+
     repeated StatusRequest entities = 300;
 }

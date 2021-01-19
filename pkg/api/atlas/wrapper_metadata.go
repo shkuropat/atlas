@@ -27,6 +27,9 @@ func NewMetadata() *Metadata {
 
 // HasType
 func (m *Metadata) HasType() bool {
+	if m == nil {
+		return false
+	}
 	return m.TypeOptional != nil
 }
 
@@ -42,6 +45,9 @@ func (m *Metadata) SetType(_type MetadataType) *Metadata {
 
 // HasName
 func (m *Metadata) HasName() bool {
+	if m == nil {
+		return false
+	}
 	return m.NameOptional != nil
 }
 
@@ -57,6 +63,9 @@ func (m *Metadata) SetName(name string) *Metadata {
 
 // HasVersion
 func (m *Metadata) HasVersion() bool {
+	if m == nil {
+		return false
+	}
 	return m.VersionOptional != nil
 }
 
@@ -72,6 +81,9 @@ func (m *Metadata) SetVersion(version int32) *Metadata {
 
 // HasUserID
 func (m *Metadata) HasUserID() bool {
+	if m == nil {
+		return false
+	}
 	return m.UserIdOptional != nil
 }
 
@@ -92,6 +104,9 @@ func (m *Metadata) SetUserIDFromString(id string) *Metadata {
 
 // HasID
 func (m *Metadata) HasID() bool {
+	if m == nil {
+		return false
+	}
 	return m.IdOptional != nil
 }
 
@@ -117,6 +132,9 @@ func (m *Metadata) CreateID() *Metadata {
 
 // HasReferenceID
 func (m *Metadata) HasReferenceID() bool {
+	if m == nil {
+		return false
+	}
 	return m.ReferenceIdOptional != nil
 }
 
@@ -137,6 +155,9 @@ func (m *Metadata) SetReferenceIDFromString(id string) *Metadata {
 
 // HasTimestamp
 func (m *Metadata) HasTimestamp() bool {
+	if m == nil {
+		return false
+	}
 	return m.TimestampOptional != nil
 }
 
@@ -163,6 +184,9 @@ func (m *Metadata) CreateTimestamp() *Metadata {
 
 // HasEncoding
 func (m *Metadata) HasEncoding() bool {
+	if m == nil {
+		return false
+	}
 	return m.EncodingOptional != nil
 }
 
@@ -182,6 +206,9 @@ func (m *Metadata) SetEncoding(encoding string) *Metadata {
 
 // HasCompression
 func (m *Metadata) HasCompression() bool {
+	if m == nil {
+		return false
+	}
 	return m.CompressionOptional != nil
 }
 
@@ -197,6 +224,9 @@ func (m *Metadata) SetCompression(compression string) *Metadata {
 
 // HasFilename
 func (m *Metadata) HasFilename() bool {
+	if m == nil {
+		return false
+	}
 	return m.FilenameOptional != nil
 }
 
@@ -216,6 +246,9 @@ func (m *Metadata) SetFilename(filename string) *Metadata {
 
 // HasURL
 func (m *Metadata) HasURL() bool {
+	if m == nil {
+		return false
+	}
 	return m.UrlOptional != nil
 }
 
@@ -235,6 +268,9 @@ func (m *Metadata) SetURL(url string) *Metadata {
 
 // HasS3Address
 func (m *Metadata) HasS3Address() bool {
+	if m == nil {
+		return false
+	}
 	return m.S3AddressOptional != nil
 }
 
@@ -254,6 +290,9 @@ func (m *Metadata) SetS3Address(s3address *S3Address) *Metadata {
 
 // HasDomain
 func (m *Metadata) HasDomain() bool {
+	if m == nil {
+		return false
+	}
 	return m.DomainOptional != nil
 }
 
@@ -273,6 +312,9 @@ func (m *Metadata) SetDomain(domain *Domain) *Metadata {
 
 // HasDigest
 func (m *Metadata) HasDigest() bool {
+	if m == nil {
+		return false
+	}
 	return m.DigestOptional != nil
 }
 
@@ -292,6 +334,9 @@ func (m *Metadata) SetDigest(digest *Digest) *Metadata {
 
 // HasDescription
 func (m *Metadata) HasDescription() bool {
+	if m == nil {
+		return false
+	}
 	return m.DescriptionOptional != nil
 }
 
@@ -307,6 +352,9 @@ func (m *Metadata) SetDescription(description string) *Metadata {
 
 // HasLen
 func (m *Metadata) HasLen() bool {
+	if m == nil {
+		return false
+	}
 	return m.LenOptional != nil
 }
 
@@ -322,6 +370,9 @@ func (m *Metadata) SetLen(len int64) *Metadata {
 
 // HasOffset
 func (m *Metadata) HasOffset() bool {
+	if m == nil {
+		return false
+	}
 	return m.OffsetOptional != nil
 }
 
@@ -337,6 +388,9 @@ func (m *Metadata) SetOffset(offset int64) *Metadata {
 
 // HasLast
 func (m *Metadata) HasLast() bool {
+	if m == nil {
+		return false
+	}
 	return m.LastOptional != nil
 }
 
@@ -352,5 +406,8 @@ func (m *Metadata) SetLast(last bool) *Metadata {
 
 // Log
 func (m *Metadata) Log() {
+	if m == nil {
+		return
+	}
 	log.Infof("metadata: %s", m.String())
 }

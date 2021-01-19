@@ -12,20 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * StatusReply represents status of object(s)
+ */
 syntax = "proto3";
 
 package atlas;
 
+// StatusType represents all types of statuses
 enum StatusType {
     // Due to first enum value has to be zero in proto3
-    STATUS_RESERVED         = 0;
-    STATUS_UNSPECIFIED      = 100;
-    STATUS_NOT_FOUND        = 200;
-    STATUS_FOUND_PARTIALLY  = 300;
-    STATUS_FOUND            = 400;
-    STATUS_FOUND_ALL        = 500;
+    STATUS_RESERVED = 0;
+    // Unspecified means we do not know its type
+    STATUS_UNSPECIFIED = 100;
+    // Object not found
+    STATUS_NOT_FOUND = 200;
+    // Not all objects requested were found
+    STATUS_FOUND_PARTIALLY = 300;
+    // Object found
+    STATUS_FOUND = 400;
+    // All objects found
+    STATUS_FOUND_ALL = 500;
 }
 
+// StatusReply represents status of object(s)
 message StatusReply {
+    // Status of the object.
     StatusType status = 100;
 }

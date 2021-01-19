@@ -20,14 +20,18 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// DigestType represents all types of digests in the system.
 type DigestType int32
 
 const (
 	// Due to first enum value has to be zero in proto3
-	DigestType_DIGEST_RESERVED    DigestType = 0
+	DigestType_DIGEST_RESERVED DigestType = 0
+	// Unspecified means we do not know its type
 	DigestType_DIGEST_UNSPECIFIED DigestType = 100
-	DigestType_DIGEST_MD5         DigestType = 200
-	DigestType_DIGEST_SHA256      DigestType = 300
+	// MD5 digest
+	DigestType_DIGEST_MD5 DigestType = 200
+	// SHA256 digest
+	DigestType_DIGEST_SHA256 DigestType = 300
 )
 
 var DigestType_name = map[int32]string{
@@ -52,12 +56,15 @@ func (DigestType) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_e1d7af31d4a49ad9, []int{0}
 }
 
+// Digest represents abstract digest.
 type Digest struct {
-	Type                 DigestType `protobuf:"varint,100,opt,name=type,proto3,enum=atlas.DigestType" json:"type,omitempty"`
-	Data                 []byte     `protobuf:"bytes,200,opt,name=data,proto3" json:"data,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
+	// Type of the digest. MD5 or SHA256 or something else
+	Type DigestType `protobuf:"varint,100,opt,name=type,proto3,enum=atlas.DigestType" json:"type,omitempty"`
+	// Data. Any arbitrary sequence of bytes no longer than 2^32
+	Data                 []byte   `protobuf:"bytes,200,opt,name=data,proto3" json:"data,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Digest) Reset()         { *m = Digest{} }

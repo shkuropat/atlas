@@ -16,6 +16,7 @@ package journal
 
 import "fmt"
 
+// EndpointIDType represents endpoint id for which journal is created. Be it data endpoint or commands endpoint.
 type EndpointIDType uint16
 
 const (
@@ -29,13 +30,17 @@ const (
 	EndpointFileStatusName string         = "EndpointRFileStatus"
 )
 
+// TODO extract dictionary as external entry
+
 var (
+	// map type to name
 	endpointName = map[EndpointIDType]string{
 		EndpointUnknown:    EndpointUnknownName,
 		EndpointDataChunks: EndpointDataChunksName,
 		EndpointReports:    EndpointReportsName,
 		EndpointFileStatus: EndpointFileStatusName,
 	}
+	// map name to type
 	endpointValue = map[string]EndpointIDType{
 		EndpointUnknownName:    EndpointUnknown,
 		EndpointDataChunksName: EndpointDataChunks,
@@ -48,7 +53,7 @@ var (
 	ErrEndpointIDBusy = fmt.Errorf("busy")
 )
 
-// RegisterEndpointID
+// RegisterEndpointID registers new EndpointID with specified name
 func RegisterEndpointID(id EndpointIDType, name string) error {
 	// Check availability
 	if n, ok := endpointName[id]; ok {

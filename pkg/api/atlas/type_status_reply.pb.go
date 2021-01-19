@@ -20,16 +20,22 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// StatusType represents all types of statuses
 type StatusType int32
 
 const (
 	// Due to first enum value has to be zero in proto3
-	StatusType_STATUS_RESERVED        StatusType = 0
-	StatusType_STATUS_UNSPECIFIED     StatusType = 100
-	StatusType_STATUS_NOT_FOUND       StatusType = 200
+	StatusType_STATUS_RESERVED StatusType = 0
+	// Unspecified means we do not know its type
+	StatusType_STATUS_UNSPECIFIED StatusType = 100
+	// Object not found
+	StatusType_STATUS_NOT_FOUND StatusType = 200
+	// Not all objects requested were found
 	StatusType_STATUS_FOUND_PARTIALLY StatusType = 300
-	StatusType_STATUS_FOUND           StatusType = 400
-	StatusType_STATUS_FOUND_ALL       StatusType = 500
+	// Object found
+	StatusType_STATUS_FOUND StatusType = 400
+	// All objects found
+	StatusType_STATUS_FOUND_ALL StatusType = 500
 )
 
 var StatusType_name = map[int32]string{
@@ -58,7 +64,9 @@ func (StatusType) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_80bf857677dab50f, []int{0}
 }
 
+// StatusReply represents status of object(s)
 type StatusReply struct {
+	// Status of the object.
 	Status               StatusType `protobuf:"varint,100,opt,name=status,proto3,enum=atlas.StatusType" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`

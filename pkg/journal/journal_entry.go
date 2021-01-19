@@ -120,6 +120,6 @@ func (e *Entry) SetError(err error) *Entry {
 }
 
 // InsertInto
-func (e *Entry) InsertInto(j Journaller) {
+func (e *Entry) InsertInto(j Journal) {
 	j.Insert(e)
 }

@@ -15,20 +15,32 @@
 // https://kubernetes.io/blog/2018/10/01/health-checking-grpc-servers-on-kubernetes/
 // https://github.com/grpc-ecosystem/grpc-health-probe/
 
+/**
+ * Heath Check represents possibility to check server's availability
+ */
 syntax = "proto3";
 
 package grpc.health.v1;
 
+// HealthCheckRequest represents health check request
 message HealthCheckRequest {
+    // Which service to check
     string service = 1;
 }
 
+// ServingStatus represents status of the service
+enum ServingStatus {
+    // Unknown status
+    UNKNOWN = 0;
+    // Service is serving
+    SERVING = 1;
+    // Service is not serving
+    NOT_SERVING = 2;
+}
+
+// HealthCheckResponse represents response for health check request
 message HealthCheckResponse {
-    enum ServingStatus {
-        UNKNOWN = 0;
-        SERVING = 1;
-        NOT_SERVING = 2;
-    }
+    // Whether service is serving requests
     ServingStatus status = 1;
 }
 

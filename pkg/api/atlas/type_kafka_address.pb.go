@@ -20,8 +20,11 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// KafkaAddress represents Kafka address within Kafka endpoint (cluster).
 type KafkaAddress struct {
-	Topic                string   `protobuf:"bytes,100,opt,name=topic,proto3" json:"topic,omitempty"`
+	// Topic within Kafka
+	Topic string `protobuf:"bytes,100,opt,name=topic,proto3" json:"topic,omitempty"`
+	// Partition within Kafka topic
 	Partition            int32    `protobuf:"varint,200,opt,name=partition,proto3" json:"partition,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

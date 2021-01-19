@@ -12,14 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * DiffTask represents request for diff between two objects.
+ */
 syntax = "proto3";
 
 package atlas;
 
-import "type_s3_address.proto";
+import "type_address.proto";
 
+// DiffTask represents request for diff between two objects.
 message DiffTask {
-    S3Address a = 100;
-    S3Address b = 200;
-    S3Address meta = 300;
+    // "A" party for diff
+    Address a = 100;
+    // "B" party for diff
+    Address b = 200;
+    // TODO
+    Address meta = 300;
 }

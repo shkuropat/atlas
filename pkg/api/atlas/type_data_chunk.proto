@@ -14,34 +14,42 @@
 
 syntax = "proto3";
 
+/**
+ * DataChunk represents one chunk (block,single piece) of data send used by DataChunks() function in Control Plane
+ */
 package atlas;
 
 import "type_metadata.proto";
 
+// DataChunkType represents all data chunk types
 enum DataChunkType {
     // Due to first enum value has to be zero in proto3
-    DATA_CHUNK_TYPE_RESERVED    = 0;
+    DATA_CHUNK_TYPE_RESERVED = 0;
+    // Unspecified means data chunk type is unknown
     DATA_CHUNK_TYPE_UNSPECIFIED = 100;
-    DATA_CHUNK_TYPE_DATA        = 200;
+    // Data chunk
+    DATA_CHUNK_TYPE_DATA = 200;
 }
 
 // DataChunk is a chunk of data transferred as a single piece.
-// Can be part of bigger data, transferred by chunks
+// Can be part of bigger data, transferred by smaller chunks.
 message DataChunk {
     // Header describes this chunk
     Metadata header = 100;
 
-    // Bytes is the purpose of the whole data chunk type
-    // May contain any arbitrary sequence of bytes no longer than 2^32
+    // Bytes is the purpose of the whole data chunk type.
+    // May contain any arbitrary sequence of bytes no longer than 2^32.
     bytes bytes = 200;
 
+    // Optional components of the DataChunk
+
     oneof transport_metadata_optional {
-        // Transport metadata describes transport-level
+        // Optional. Transport metadata describes transport-level.
         Metadata transport_metadata = 300;
     }
 
     oneof payload_metadata_optional {
-        // Payload metadata of the whole data
+        // Optional. Payload metadata of the whole data
         Metadata payload_metadata = 400;
     }
 }

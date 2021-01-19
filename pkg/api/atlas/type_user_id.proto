@@ -12,11 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * UsedID represents unique identifier of the user.
+ * May contain any arbitrary sequence of bytes.
+ */
 syntax = "proto3";
 
 package atlas;
 
+// Unique identifier of the user.
 message UserID {
-    // May contain any arbitrary sequence of bytes no longer than 2^32
+    // Any arbitrary sequence of bytes no longer than 2^32
     bytes data = 100;
 }

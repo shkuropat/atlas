@@ -137,13 +137,13 @@ func (m *Command) SetPayload(msg proto.Message) error {
 	}
 }
 
-// GetPayload unmarshals command's payload
+// GetPayload unmarshalls command's payload
 func (m *Command) GetPayload(msg proto.Message) error {
 	return proto.Unmarshal(m.GetBytes(), msg)
 }
 
 // AddAddresses
-func (m *Command) AddAddresses(addresses ...*S3Address) *Command {
+func (m *Command) AddAddresses(addresses ...*Address) *Command {
 	m.Addresses = append(m.Addresses, addresses...)
 
 	return m

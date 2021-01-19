@@ -20,8 +20,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// UUID represents unique identifier.
 type UUID struct {
-	// May contain any arbitrary sequence of bytes no longer than 2^32
+	// Any arbitrary sequence of bytes no longer than 2^32
 	Data                 []byte   `protobuf:"bytes,100,opt,name=data,proto3" json:"data,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

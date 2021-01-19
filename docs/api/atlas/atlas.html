@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Protocol Documentation</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Ubuntu:400,700,400italic"/>
+    <style>
+      body {
+        width: 60em;
+        margin: 1em auto;
+        color: #222;
+        font-family: "Ubuntu", sans-serif;
+        padding-bottom: 4em;
+      }
+
+      h1 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      h2 {
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+        margin: 1.5em 0;
+      }
+
+      h3 {
+        font-weight: normal;
+        border-bottom: 1px solid #aaa;
+        padding-bottom: 0.5ex;
+      }
+
+      a {
+        text-decoration: none;
+        color: #567e25;
+      }
+
+      table {
+        width: 100%;
+        font-size: 80%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        font-weight: 700;
+        background-color: #dcdcdc;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #fbfbfb;
+      }
+
+      td {
+        border: 1px solid #ccc;
+        padding: 0.5ex 2ex;
+      }
+
+      td p {
+        text-indent: 1em;
+        margin: 0;
+      }
+
+      td p:nth-child(1) {
+        text-indent: 0;  
+      }
+
+       
+      .field-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .field-table td:nth-child(3) {  
+        width: 6em;
+      }
+      .field-table td:nth-child(4) {  
+        width: auto;
+      }
+
+       
+      .extension-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(3) {  
+        width: 10em;
+      }
+      .extension-table td:nth-child(4) {  
+        width: 5em;
+      }
+      .extension-table td:nth-child(5) {  
+        width: auto;
+      }
+
+       
+      .enum-table td:nth-child(1) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(2) {  
+        width: 10em;
+      }
+      .enum-table td:nth-child(3) {  
+        width: auto;
+      }
+
+       
+      .scalar-value-types-table tr {
+        height: 3em;
+      }
+
+       
+      #toc-container ul {
+        list-style-type: none;
+        padding-left: 1em;
+        line-height: 180%;
+        margin: 0;
+      }
+      #toc > li > a {
+        font-weight: bold;
+      }
+
+       
+      .file-heading {
+        width: 100%;
+        display: table;
+        border-bottom: 1px solid #aaa;
+        margin: 4em 0 1.5em 0;
+      }
+      .file-heading h2 {
+        border: none;
+        display: table-cell;
+      }
+      .file-heading a {
+        text-align: right;
+        display: table-cell;
+      }
+
+       
+      .badge {
+        width: 1.6em;
+        height: 1.6em;
+        display: inline-block;
+
+        line-height: 1.6em;
+        text-align: center;
+        font-weight: bold;
+        font-size: 60%;
+
+        color: #89ba48;
+        background-color: #dff0c8;
+
+        margin: 0.5ex 1em 0.5ex -1em;
+        border: 1px solid #fbfbfb;
+        border-radius: 1ex;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" type="text/css" href="stylesheet.css"/>
+  </head>
+
+  <body>
+
+    <h1 id="title">Protocol Documentation</h1>
+
+    <h2>Table of Contents</h2>
+
+    <div id="toc-container">
+      <ul id="toc">
+        
+          
+          <li>
+            <a href="#service_control_plane.proto">service_control_plane.proto</a>
+            <ul>
+              
+              
+              
+              
+                <li>
+                  <a href="#atlas.ControlPlane"><span class="badge">S</span>ControlPlane</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#service_reports_plane.proto">service_reports_plane.proto</a>
+            <ul>
+              
+              
+              
+              
+                <li>
+                  <a href="#atlas.ReportsPlane"><span class="badge">S</span>ReportsPlane</a>
+                </li>
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_address.proto">type_address.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Address"><span class="badge">M</span>Address</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.AddressType"><span class="badge">E</span>AddressType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_command.proto">type_command.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Command"><span class="badge">M</span>Command</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.CommandType"><span class="badge">E</span>CommandType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_data_chunk.proto">type_data_chunk.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.DataChunk"><span class="badge">M</span>DataChunk</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.DataChunkType"><span class="badge">E</span>DataChunkType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_diff_task.proto">type_diff_task.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.DiffTask"><span class="badge">M</span>DiffTask</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_digest.proto">type_digest.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Digest"><span class="badge">M</span>Digest</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.DigestType"><span class="badge">E</span>DigestType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_domain.proto">type_domain.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Domain"><span class="badge">M</span>Domain</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_entity.proto">type_entity.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Entity"><span class="badge">M</span>Entity</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_kafka_address.proto">type_kafka_address.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.KafkaAddress"><span class="badge">M</span>KafkaAddress</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_kafka_edpoint.proto">type_kafka_edpoint.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.KafkaEndpoint"><span class="badge">M</span>KafkaEndpoint</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_metadata.proto">type_metadata.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Metadata"><span class="badge">M</span>Metadata</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.MetadataType"><span class="badge">E</span>MetadataType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_metric.proto">type_metric.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Metric"><span class="badge">M</span>Metric</a>
+                </li>
+              
+                <li>
+                  <a href="#atlas.Metrics"><span class="badge">M</span>Metrics</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.MetricType"><span class="badge">E</span>MetricType</a>
+                </li>
+              
+                <li>
+                  <a href="#atlas.MetricsType"><span class="badge">E</span>MetricsType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_report.proto">type_report.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Report"><span class="badge">M</span>Report</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.ReportType"><span class="badge">E</span>ReportType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_report_reply.proto">type_report_reply.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.ReportReply"><span class="badge">M</span>ReportReply</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.ReportReplyType"><span class="badge">E</span>ReportReplyType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_report_request.proto">type_report_request.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.ReportRequest"><span class="badge">M</span>ReportRequest</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.ReportRequestType"><span class="badge">E</span>ReportRequestType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_s3_address.proto">type_s3_address.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.S3Address"><span class="badge">M</span>S3Address</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_status_reply.proto">type_status_reply.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.StatusReply"><span class="badge">M</span>StatusReply</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.StatusType"><span class="badge">E</span>StatusType</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_status_request_multi.proto">type_status_request_multi.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.StatusRequestMulti"><span class="badge">M</span>StatusRequestMulti</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#atlas.StatusRequestMode"><span class="badge">E</span>StatusRequestMode</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_status_request.proto">type_status_request.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.StatusRequest"><span class="badge">M</span>StatusRequest</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_user_id.proto">type_user_id.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.UserID"><span class="badge">M</span>UserID</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#type_uuid.proto">type_uuid.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.UUID"><span class="badge">M</span>UUID</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+        <li><a href="#scalar-value-types">Scalar Value Types</a></li>
+      </ul>
+    </div>
+
+    
+      
+      <div class="file-heading">
+        <h2 id="service_control_plane.proto">service_control_plane.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Control Plane.</p><p>Control Plane represents communication between server and client(s).</p><p>Communication is logically structured into the following areas:</p><p>- Commands. Commands flow into both directions, thus server can send commands to clients and clients can send</p><p>commands to server. Commands is usually a long-live connection, in order for clients and server</p><p>to receive commands with minimal delay. However, nothing prevents clients to connect to server</p><p>from time to time as necessary and exchange commands.</p><p>- DataChunks. DataChunks flow into both directions, thus server can send data stream to clients and clients</p><p>can send data stream to Server. Some commands can be followed by bulk data steamed from client and/or server.</p><p>- Metrics. Metrics are sent from client to server in order for server to keep track of client's activities.</p><p>- Status. Status requests are sent from client to server in order to check status of the entity(es). Status calls</p><p>are usually used for "check status and send updates" logic.</p>
+
+      
+
+      
+
+      
+
+      
+        <h3 id="atlas.ControlPlane">ControlPlane</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Commands</td>
+                <td><a href="#atlas.Command">Command</a> stream</td>
+                <td><a href="#atlas.Command">Command</a> stream</td>
+                <td><p>Bi-directional Commands stream.
+Commands are sent from service to client and from client to server</p></td>
+              </tr>
+            
+              <tr>
+                <td>DataChunks</td>
+                <td><a href="#atlas.DataChunk">DataChunk</a> stream</td>
+                <td><a href="#atlas.DataChunk">DataChunk</a> stream</td>
+                <td><p>Bi-directional Data stream.
+Some commands may be followed by data load. Be it logs, dumps, etc.</p></td>
+              </tr>
+            
+              <tr>
+                <td>Metrics</td>
+                <td><a href="#atlas.Metric">Metric</a> stream</td>
+                <td><a href="#atlas.Metric">Metric</a></td>
+                <td><p>Uni-directional Metrics stream from client to server.</p></td>
+              </tr>
+            
+              <tr>
+                <td>EntityStatus</td>
+                <td><a href="#atlas.StatusRequest">StatusRequest</a></td>
+                <td><a href="#atlas.StatusReply">StatusReply</a></td>
+                <td><p>EntityStatus checks status of the entity on the server.</p></td>
+              </tr>
+            
+              <tr>
+                <td>EntityStatusMultiple</td>
+                <td><a href="#atlas.StatusRequestMulti">StatusRequestMulti</a></td>
+                <td><a href="#atlas.StatusReply">StatusReply</a></td>
+                <td><p>EntityStatusMulti checks status of the multiple entities on server.</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="service_reports_plane.proto">service_reports_plane.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+
+      
+
+      
+
+      
+        <h3 id="atlas.ReportsPlane">ReportsPlane</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>Reports</td>
+                <td><a href="#atlas.ReportRequest">ReportRequest</a> stream</td>
+                <td><a href="#atlas.ReportReply">ReportReply</a> stream</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+
+        
+    
+      
+      <div class="file-heading">
+        <h2 id="type_address.proto">type_address.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Address is an abstraction over domain-specific addresses.</p><p>Represents all types of addresses in the system.</p>
+
+      
+        <h3 id="atlas.Address">Address</h3>
+        <p>Address describes general address</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#atlas.AddressType">AddressType</a></td>
+                  <td></td>
+                  <td><p>Type of the address. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>s3</td>
+                  <td><a href="#atlas.S3Address">S3Address</a></td>
+                  <td></td>
+                  <td><p>S3 address option </p></td>
+                </tr>
+              
+                <tr>
+                  <td>kafka</td>
+                  <td><a href="#atlas.KafkaAddress">KafkaAddress</a></td>
+                  <td></td>
+                  <td><p>Kafka address option </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.AddressType">AddressType</h3>
+        <p>AddressType represents all types of domain-specific addresses in the system</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ADDRESS_RESERVED</td>
+                <td>0</td>
+                <td><p>Due to first enum value has to be zero in proto3</p></td>
+              </tr>
+            
+              <tr>
+                <td>ADDRESS_S3</td>
+                <td>100</td>
+                <td><p>S3 and MinIO address</p></td>
+              </tr>
+            
+              <tr>
+                <td>ADDRESS_KAFKA</td>
+                <td>200</td>
+                <td><p>Kafka address</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_command.proto">type_command.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Command is a command used for commands exchange by Control Plane.</p>
+
+      
+        <h3 id="atlas.Command">Command</h3>
+        <p>Command represents a command used by Control Plane to exchange commands between server and client(s).</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>header</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p>Header of the command </p></td>
+                </tr>
+              
+                <tr>
+                  <td>bytes</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Optional. Any arbitrary sequence of bytes no longer than 2^32 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>addresses</td>
+                  <td><a href="#atlas.Address">Address</a></td>
+                  <td>repeated</td>
+                  <td><p>Optional. Multiple addresses. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>commands</td>
+                  <td><a href="#atlas.Command">Command</a></td>
+                  <td>repeated</td>
+                  <td><p>Optional. Recursive chain of commands </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.CommandType">CommandType</h3>
+        <p>CommandType represents all commands in the system</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>COMMAND_RESERVED</td>
+                <td>0</td>
+                <td><p>Due to first enum value has to be zero in proto3</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p>Unspecified</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_ECHO_REQUEST</td>
+                <td>200</td>
+                <td><p>Echo request expects echo reply as an answer</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_ECHO_REPLY</td>
+                <td>300</td>
+                <td><p>Echo reply is an answer to echo request</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_CONFIG_REQUEST</td>
+                <td>400</td>
+                <td><p>Request for configuration from the other party</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_CONFIG</td>
+                <td>500</td>
+                <td><p>Configuration</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_METRICS_SCHEDULE</td>
+                <td>600</td>
+                <td><p>Metrics schedule sends schedule by which metrics should be sent.</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_METRICS_REQUEST</td>
+                <td>700</td>
+                <td><p>Metrics request is an explicit request for metrics to be sent</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_METRICS</td>
+                <td>800</td>
+                <td><p>One-time metrics</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_DATA_SCHEDULE</td>
+                <td>900</td>
+                <td><p>Schedule to send data</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_DATA_REQUEST</td>
+                <td>1000</td>
+                <td><p>Explicit data request</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_DATA</td>
+                <td>1100</td>
+                <td><p>Data are coming</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_ADDRESS</td>
+                <td>1200</td>
+                <td><p>Address is coming</p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_EXTRACT</td>
+                <td>1300</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>COMMAND_EXTRACT_EXECUTABLES</td>
+                <td>1400</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_data_chunk.proto">type_data_chunk.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="atlas.DataChunk">DataChunk</h3>
+        <p>DataChunk is a chunk of data transferred as a single piece.</p><p>Can be part of bigger data, transferred by smaller chunks.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>header</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p>Header describes this chunk </p></td>
+                </tr>
+              
+                <tr>
+                  <td>bytes</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Bytes is the purpose of the whole data chunk type.
+May contain any arbitrary sequence of bytes no longer than 2^32. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>transport_metadata</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p>Optional. Transport metadata describes transport-level. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>payload_metadata</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p>Optional. Payload metadata of the whole data </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.DataChunkType">DataChunkType</h3>
+        <p>DataChunkType represents all data chunk types</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>DATA_CHUNK_TYPE_RESERVED</td>
+                <td>0</td>
+                <td><p>Due to first enum value has to be zero in proto3</p></td>
+              </tr>
+            
+              <tr>
+                <td>DATA_CHUNK_TYPE_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p>Unspecified means data chunk type is unknown</p></td>
+              </tr>
+            
+              <tr>
+                <td>DATA_CHUNK_TYPE_DATA</td>
+                <td>200</td>
+                <td><p>Data chunk</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_diff_task.proto">type_diff_task.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>DiffTask represents request for diff between two objects.</p>
+
+      
+        <h3 id="atlas.DiffTask">DiffTask</h3>
+        <p>DiffTask represents request for diff between two objects.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>a</td>
+                  <td><a href="#atlas.Address">Address</a></td>
+                  <td></td>
+                  <td><p>&#34;A&#34; party for diff </p></td>
+                </tr>
+              
+                <tr>
+                  <td>b</td>
+                  <td><a href="#atlas.Address">Address</a></td>
+                  <td></td>
+                  <td><p>&#34;B&#34; party for diff </p></td>
+                </tr>
+              
+                <tr>
+                  <td>meta</td>
+                  <td><a href="#atlas.Address">Address</a></td>
+                  <td></td>
+                  <td><p>TODO </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_digest.proto">type_digest.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Digest represents abstract digest of multiple types.</p>
+
+      
+        <h3 id="atlas.Digest">Digest</h3>
+        <p>Digest represents abstract digest.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#atlas.DigestType">DigestType</a></td>
+                  <td></td>
+                  <td><p>Type of the digest. MD5 or SHA256 or something else </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Data. Any arbitrary sequence of bytes no longer than 2^32 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.DigestType">DigestType</h3>
+        <p>DigestType represents all types of digests in the system.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>DIGEST_RESERVED</td>
+                <td>0</td>
+                <td><p>Due to first enum value has to be zero in proto3</p></td>
+              </tr>
+            
+              <tr>
+                <td>DIGEST_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p>Unspecified means we do not know its type</p></td>
+              </tr>
+            
+              <tr>
+                <td>DIGEST_MD5</td>
+                <td>200</td>
+                <td><p>MD5 digest</p></td>
+              </tr>
+            
+              <tr>
+                <td>DIGEST_SHA256</td>
+                <td>300</td>
+                <td><p>SHA256 digest</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_domain.proto">type_domain.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Domain represents abstract domain.</p>
+
+      
+        <h3 id="atlas.Domain">Domain</h3>
+        <p>Domain represents abstract domain.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Domain name </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_entity.proto">type_entity.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Domain represents abstract domain.</p>
+
+      
+        <h3 id="atlas.Entity">Entity</h3>
+        <p>Entity represents abstract entity.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Entity name </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_kafka_address.proto">type_kafka_address.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>KafkaAddress represents Kafka address within Kafka endpoint (cluster access endpoint).</p><p>Full Kafka address would be KafkaEndpoint + KafkaAddress</p>
+
+      
+        <h3 id="atlas.KafkaAddress">KafkaAddress</h3>
+        <p>KafkaAddress represents Kafka address within Kafka endpoint (cluster).</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>topic</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Topic within Kafka </p></td>
+                </tr>
+              
+                <tr>
+                  <td>partition</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Partition within Kafka topic </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_kafka_edpoint.proto">type_kafka_edpoint.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>KafkaEndpoint represents Kafka endpoint (cluster access endpoint).</p><p>Full Kafka address would be KafkaEndpoint + KafkaAddress</p>
+
+      
+        <h3 id="atlas.KafkaEndpoint">KafkaEndpoint</h3>
+        <p>KafkaEndpoint represents Kafka cluster access endpoint</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>brokers</td>
+                  <td><a href="#string">string</a></td>
+                  <td>repeated</td>
+                  <td><p>Multiple brokers of Kafka&#39;s cluster </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_metadata.proto">type_metadata.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Metadata defines all possible metadata for objects.</p><p>For example, for stream of dataChunks, is used to represent:</p><p>- chunk header,</p><p>- data descriptions,</p><p>- data encoding descriptions,</p><p>- etc.</p><p>Can also be used as metadata description for any other objects.</p><p>Since protobuf has ability not to send 'optional' fields, metadata can have full set of fields, describing</p><p>all possible metadata options and have only few of them which are really used sent to the correspondent.</p>
+
+      
+        <h3 id="atlas.Metadata">Metadata</h3>
+        <p>Metadata describes metadata of the object</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Optional. Type of the object.
+Object has to have either type or name, one of the is mandatory.
+Object can be typed/identified either by type or by name. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Name of the object.
+Object has to have either type or name, one of the is mandatory.
+Object can be typed/identified either by type or by name. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>version</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Optional. Version of the object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#atlas.UserID">UserID</a></td>
+                  <td></td>
+                  <td><p>Optional. User identifier. Used to specify related user (owner, sender, etc) </p></td>
+                </tr>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#atlas.UUID">UUID</a></td>
+                  <td></td>
+                  <td><p>Optional. Unique identifier of the object. Used to reference this object from outside. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reference_id</td>
+                  <td><a href="#atlas.UUID">UUID</a></td>
+                  <td></td>
+                  <td><p>Optional. Unique identifier of the reference object, if necessary. Used to reference to another object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ts</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p>Optional. Timestamp. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>encoding</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Encoding represents encoding algo/type of the object.
+TODO may be we should switch to enum here </p></td>
+                </tr>
+              
+                <tr>
+                  <td>compression</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Compression represents compression algo/type of the object.
+TODO may be we should switch to enum here </p></td>
+                </tr>
+              
+                <tr>
+                  <td>filename</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Filename represents filename of the object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>url</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. URL represents URL of the object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>s3address</td>
+                  <td><a href="#atlas.S3Address">S3Address</a></td>
+                  <td></td>
+                  <td><p>Optional. S3address represents S3/MinIO address of the object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>domain</td>
+                  <td><a href="#atlas.Domain">Domain</a></td>
+                  <td></td>
+                  <td><p>Optional. Domain represents domain of the object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>digest</td>
+                  <td><a href="#atlas.Digest">Digest</a></td>
+                  <td></td>
+                  <td><p>Optional. Digest represents digest of the object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>description</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Description represents string human-readable description of the object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>len</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Optional. Len represents length of the object. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>offset</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>Optional. Offset represents offset of the object within the stream. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>last</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p>Optional. Last identifies last object within the stream. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.MetadataType">MetadataType</h3>
+        <p>MetadataType presents type of all metadata in the system</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>METADATA_RESERVED</td>
+                <td>0</td>
+                <td><p>Due to first enum value has to be zero in proto3</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_metric.proto">type_metric.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Metrics come from client to server in order to track client's activities.</p>
+
+      
+        <h3 id="atlas.Metric">Metric</h3>
+        <p>Metric is one metric tuple</p><p>(metric identifier [optional], timestamp [optional], description [optional], metric value)</p><p>Metric can be classified either by type or by name.</p><p>Identifier can be omitted, in case either both sides understand what they are talking about or</p><p>identifier is provided in parent's (outer) data type, such as Metric</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#atlas.MetricType">MetricType</a></td>
+                  <td></td>
+                  <td><p>Optional. Type of the metric </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Name of the metric </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ts</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p>Optional. Timestamp. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>description</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Description represents human-readable description on what it is. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>string_value</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>OneOf. string value of the metric </p></td>
+                </tr>
+              
+                <tr>
+                  <td>double_value</td>
+                  <td><a href="#double">double</a></td>
+                  <td></td>
+                  <td><p>OneOf. double value of the metric </p></td>
+                </tr>
+              
+                <tr>
+                  <td>int32_value</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>OneOf. int32 value of the metric </p></td>
+                </tr>
+              
+                <tr>
+                  <td>uint32_value</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p>OneOf. uint32 value of the metric </p></td>
+                </tr>
+              
+                <tr>
+                  <td>int64_value</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td></td>
+                  <td><p>OneOf. int64 value of the metric </p></td>
+                </tr>
+              
+                <tr>
+                  <td>uint64_value</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p>OneOf. uint64 value of the metric </p></td>
+                </tr>
+              
+                <tr>
+                  <td>bytes_value</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>OneOf. bytes value of the metric </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="atlas.Metrics">Metrics</h3>
+        <p>Metrics is a set of Metric tuples.</p><p>Metric can be classified either by type or by name.</p><p>MetricType can be specified once for the whole set of metrics, instead of specifying in each one of them.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>header</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p>Header represents metadata of the set of metrics </p></td>
+                </tr>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p>Optional. Type of metrics set.
+Object can be typed/identified either by type or by name. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Optional. Name of metrics set.
+Object can be typed/identified either by type or by name. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>metrics</td>
+                  <td><a href="#atlas.Metric">Metric</a></td>
+                  <td>repeated</td>
+                  <td><p>Metrics is the purpose of the whole Metrics data type, is expected to be present at all time. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.MetricType">MetricType</h3>
+        <p>MetricType represents all metric types in the system.</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>METRIC_TYPE_RESERVED</td>
+                <td>0</td>
+                <td><p>Due to first enum value has to be zero in proto3</p></td>
+              </tr>
+            
+              <tr>
+                <td>METRIC_TYPE_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p>Unspecified means we do not know its type</p></td>
+              </tr>
+            
+              <tr>
+                <td>METRIC_TYPE_CPU</td>
+                <td>200</td>
+                <td><p>CPU usage metric</p></td>
+              </tr>
+            
+              <tr>
+                <td>METRIC_TYPE_RAM</td>
+                <td>300</td>
+                <td><p>RAM usage metric</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+        <h3 id="atlas.MetricsType">MetricsType</h3>
+        <p>MetricsType represents areas of metrics accumulation - such as resource utilization, etc</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>METRICS_TYPE_RESERVED</td>
+                <td>0</td>
+                <td><p>Due to first enum value has to be zero in proto3</p></td>
+              </tr>
+            
+              <tr>
+                <td>METRICS_TYPE_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p>Unspecified means we do not know its type</p></td>
+              </tr>
+            
+              <tr>
+                <td>METRICS_TYPE_RESOURCE_UTILIZATION</td>
+                <td>200</td>
+                <td><p>Resource utilization, such as CPU, RAM, etc</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_report.proto">type_report.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="atlas.Report">Report</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>metadata</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p>Payload metadata of the whole data </p></td>
+                </tr>
+              
+                <tr>
+                  <td>bytes</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Bytes is the purpose of the whole data chunk type
+May contain any arbitrary sequence of bytes no longer than 2^32 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.ReportType">ReportType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>REPORT_TYPE_RESERVED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>REPORT_TYPE_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_report_reply.proto">type_report_reply.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="atlas.ReportReply">ReportReply</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#atlas.ReportReplyType">ReportReplyType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ts</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p>Timestamp is optional </p></td>
+                </tr>
+              
+                <tr>
+                  <td>description</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Description is optional </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reports</td>
+                  <td><a href="#atlas.Report">Report</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.ReportReplyType">ReportReplyType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>REPORT_REPLY_TYPE_RESERVED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>REPORT_REPLY_TYPE_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_report_request.proto">type_report_request.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="atlas.ReportRequest">ReportRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>type</td>
+                  <td><a href="#atlas.ReportRequestType">ReportRequestType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ts</td>
+                  <td><a href="#google.protobuf.Timestamp">google.protobuf.Timestamp</a></td>
+                  <td></td>
+                  <td><p>Timestamp is optional </p></td>
+                </tr>
+              
+                <tr>
+                  <td>description</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Description is optional </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.ReportRequestType">ReportRequestType</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>REPORT_REQUEST_TYPE_RESERVED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>REPORT_REQUEST_TYPE_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_s3_address.proto">type_s3_address.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>S3Address represents S3 and MinIO address</p>
+
+      
+        <h3 id="atlas.S3Address">S3Address</h3>
+        <p>S3Address represents S3 and MinIO address</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>bucket</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Bucket name </p></td>
+                </tr>
+              
+                <tr>
+                  <td>object</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Object name </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_status_reply.proto">type_status_reply.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>StatusReply represents status of object(s)</p>
+
+      
+        <h3 id="atlas.StatusReply">StatusReply</h3>
+        <p>StatusReply represents status of object(s)</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#atlas.StatusType">StatusType</a></td>
+                  <td></td>
+                  <td><p>Status of the object. </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.StatusType">StatusType</h3>
+        <p>StatusType represents all types of statuses</p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>STATUS_RESERVED</td>
+                <td>0</td>
+                <td><p>Due to first enum value has to be zero in proto3</p></td>
+              </tr>
+            
+              <tr>
+                <td>STATUS_UNSPECIFIED</td>
+                <td>100</td>
+                <td><p>Unspecified means we do not know its type</p></td>
+              </tr>
+            
+              <tr>
+                <td>STATUS_NOT_FOUND</td>
+                <td>200</td>
+                <td><p>Object not found</p></td>
+              </tr>
+            
+              <tr>
+                <td>STATUS_FOUND_PARTIALLY</td>
+                <td>300</td>
+                <td><p>Not all objects requested were found</p></td>
+              </tr>
+            
+              <tr>
+                <td>STATUS_FOUND</td>
+                <td>400</td>
+                <td><p>Object found</p></td>
+              </tr>
+            
+              <tr>
+                <td>STATUS_FOUND_ALL</td>
+                <td>500</td>
+                <td><p>All objects found</p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_status_request_multi.proto">type_status_request_multi.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="atlas.StatusRequestMulti">StatusRequestMulti</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>domain</td>
+                  <td><a href="#atlas.Domain">Domain</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mode</td>
+                  <td><a href="#atlas.StatusRequestMode">StatusRequestMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>entities</td>
+                  <td><a href="#atlas.StatusRequest">StatusRequest</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+        <h3 id="atlas.StatusRequestMode">StatusRequestMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>RESERVED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>UNSPECIFIED</td>
+                <td>100</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ALL</td>
+                <td>200</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FIRST_FOUND</td>
+                <td>300</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>FIRST_NOT_FOUND</td>
+                <td>400</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_status_request.proto">type_status_request.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>StatusRequest represents status request of the object(s)</p>
+
+      
+        <h3 id="atlas.StatusRequest">StatusRequest</h3>
+        <p>StatusRequest represents status request of the object(s)</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entity</td>
+                  <td><a href="#atlas.Entity">Entity</a></td>
+                  <td></td>
+                  <td><p>Entity which status is requested </p></td>
+                </tr>
+              
+                <tr>
+                  <td>digest</td>
+                  <td><a href="#atlas.Digest">Digest</a></td>
+                  <td></td>
+                  <td><p>Digest of entity to get status about </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_user_id.proto">type_user_id.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>UsedID represents unique identifier of the user.</p><p>May contain any arbitrary sequence of bytes.</p>
+
+      
+        <h3 id="atlas.UserID">UserID</h3>
+        <p>Unique identifier of the user.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Any arbitrary sequence of bytes no longer than 2^32 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="type_uuid.proto">type_uuid.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>UUID represents unique identifier.</p><p>May contain any arbitrary sequence of bytes.</p>
+
+      
+        <h3 id="atlas.UUID">UUID</h3>
+        <p>UUID represents unique identifier.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Any arbitrary sequence of bytes no longer than 2^32 </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+
+    <h2 id="scalar-value-types">Scalar Value Types</h2>
+    <table class="scalar-value-types-table">
+      <thead>
+        <tr><td>.proto Type</td><td>Notes</td><td>C++</td><td>Java</td><td>Python</td><td>Go</td><td>C#</td><td>PHP</td><td>Ruby</td></tr>
+      </thead>
+      <tbody>
+        
+          <tr id="double">
+            <td>double</td>
+            <td></td>
+            <td>double</td>
+            <td>double</td>
+            <td>float</td>
+            <td>float64</td>
+            <td>double</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="float">
+            <td>float</td>
+            <td></td>
+            <td>float</td>
+            <td>float</td>
+            <td>float</td>
+            <td>float32</td>
+            <td>float</td>
+            <td>float</td>
+            <td>Float</td>
+          </tr>
+        
+          <tr id="int32">
+            <td>int32</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="int64">
+            <td>int64</td>
+            <td>Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="uint32">
+            <td>uint32</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int/long</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="uint64">
+            <td>uint64</td>
+            <td>Uses variable-length encoding.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint32">
+            <td>sint32</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sint64">
+            <td>sint64</td>
+            <td>Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="fixed32">
+            <td>fixed32</td>
+            <td>Always four bytes. More efficient than uint32 if values are often greater than 2^28.</td>
+            <td>uint32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>uint32</td>
+            <td>uint</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="fixed64">
+            <td>fixed64</td>
+            <td>Always eight bytes. More efficient than uint64 if values are often greater than 2^56.</td>
+            <td>uint64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>uint64</td>
+            <td>ulong</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="sfixed32">
+            <td>sfixed32</td>
+            <td>Always four bytes.</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>int</td>
+            <td>int32</td>
+            <td>int</td>
+            <td>integer</td>
+            <td>Bignum or Fixnum (as required)</td>
+          </tr>
+        
+          <tr id="sfixed64">
+            <td>sfixed64</td>
+            <td>Always eight bytes.</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>int/long</td>
+            <td>int64</td>
+            <td>long</td>
+            <td>integer/string</td>
+            <td>Bignum</td>
+          </tr>
+        
+          <tr id="bool">
+            <td>bool</td>
+            <td></td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>boolean</td>
+            <td>bool</td>
+            <td>bool</td>
+            <td>boolean</td>
+            <td>TrueClass/FalseClass</td>
+          </tr>
+        
+          <tr id="string">
+            <td>string</td>
+            <td>A string must always contain UTF-8 encoded or 7-bit ASCII text.</td>
+            <td>string</td>
+            <td>String</td>
+            <td>str/unicode</td>
+            <td>string</td>
+            <td>string</td>
+            <td>string</td>
+            <td>String (UTF-8)</td>
+          </tr>
+        
+          <tr id="bytes">
+            <td>bytes</td>
+            <td>May contain any arbitrary sequence of bytes.</td>
+            <td>string</td>
+            <td>ByteString</td>
+            <td>str</td>
+            <td>[]byte</td>
+            <td>ByteString</td>
+            <td>string</td>
+            <td>String (ASCII-8BIT)</td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </body>
+</html>
+

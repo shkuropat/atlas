@@ -16,37 +16,91 @@ echo "      SRC_ROOT=${SRC_ROOT}"
 echo ""
 echo ""
 
+# Check whether required binaries available
 PROTOC="${PROTOC:-protoc}"
+PROTOC_GEN_DOC="${PROTOC_GEN_DOC:-protoc-gen-doc}"
 
 # Check protoc is available
-if [[ "${PROTOC}" > /dev/null ]]; then
+"${PROTOC}" --help > /dev/null
+if [[ $? ]]; then
     :
 else
     echo "${PROTOC} is not available. Abort"
     exit 1
 fi
 
+# Check protoc-gen-doc is available
+"${PROTOC_GEN_DOC}" --help > /dev/null
+if [[ $? ]]; then
+    :
+else
+    echo "${PROTOC_GEN_DOC} is not available. Abort"
+    exit 1
+fi
+
+
+# Setup folders
 PROTO_ROOT="${PKG_ROOT}/api"
 
-function generate_from_proto() {
-    FOLDER="${1}"
+function generate_grpc_code() {
+    PROTO_FILES_FOLDER="${1}"
 
-    if [[ -z "${FOLDER}" ]]; then
+    if [[ -z "${PROTO_FILES_FOLDER}" ]]; then
         echo "need to specify folder where to look for .proto files to generate code from "
         exit 1
     fi
 
-    echo "Generate code from .proto files in ${FOLDER}"
+    echo "Generate code from .proto files in ${PROTO_FILES_FOLDER}"
 
     echo "Clean previously generated files"
-    rm -f "${FOLDER}"/*.pb.go
+    rm -f "${PROTO_FILES_FOLDER}"/*.pb.go
 
-    echo "Compile .proto files"
+    echo "Compile .proto files in ${PROTO_FILES_FOLDER}"
     # --go_out requires list of plugins to be used
-    "${PROTOC}" -I "${FOLDER}" --go_out=plugins=grpc:"${FOLDER}" "${FOLDER}"/*.proto
+    "${PROTOC}" \
+        -I "${PROTO_FILES_FOLDER}" \
+        --go_out=plugins=grpc:"${PROTO_FILES_FOLDER}" \
+        "${PROTO_FILES_FOLDER}"/*.proto
 
-    #protoc -I "${SRC_ROOT}" --go_out="${SRC_ROOT}" ./atlas.proto
+    #protoc -I "${PROTO_FILES_FOLDER}" --go_out=plugins=grpc:"${PROTO_FILES_FOLDER}" "${PROTO_FILES_FOLDER}"/*.proto
 }
 
-generate_from_proto "${PROTO_ROOT}"/atlas
-generate_from_proto "${PROTO_ROOT}"/health
+BUILD_DOCS_HTML="yes"
+BUILD_DOCS_MD="yes"
+
+function generate_docs() {
+    AREA="${1}"
+    PACKAGE_NAME="${2}"
+    PROTO_FILES_FOLDER="${3}"
+
+    DOC_FILES_FOLDER="${DOCS_ROOT}/${AREA}/${PACKAGE_NAME}"
+    echo "Prepare folder for docs ${DOC_FILES_FOLDER}"
+    mkdir -p "${DOC_FILES_FOLDER}"
+
+    if [[ "${BUILD_DOCS_HTML}" == "yes" ]]; then
+        DOC_FILE_NAME_HTML="${PACKAGE_NAME}.html"
+
+        rm -f "${DOC_FILES_FOLDER}/${DOC_FILE_NAME_HTML}"
+        "${PROTOC}" \
+          -I "${PROTO_FILES_FOLDER}" \
+          --doc_out="${DOC_FILES_FOLDER}" \
+          --doc_opt=html,"${DOC_FILE_NAME_HTML}" \
+          "${PROTO_FILES_FOLDER}"/*.proto
+    fi
+
+    if [[ "${BUILD_DOCS_MD}" == "yes" ]]; then
+        DOC_FILE_NAME_MD="${PACKAGE_NAME}.md"
+        rm -f "${DOC_FILES_FOLDER}/${DOC_FILE_NAME_MD}"
+        "${PROTOC}" \
+            -I "${PROTO_FILES_FOLDER}" \
+            --doc_out="${DOC_FILES_FOLDER}" \
+            --doc_opt=markdown,"${DOC_FILE_NAME_MD}" \
+            "${PROTO_FILES_FOLDER}"/*.proto
+    fi
+}
+
+generate_grpc_code "${PROTO_ROOT}"/atlas
+generate_grpc_code "${PROTO_ROOT}"/health
+
+generate_docs api atlas "${PROTO_ROOT}"/atlas
+generate_docs api health "${PROTO_ROOT}"/health

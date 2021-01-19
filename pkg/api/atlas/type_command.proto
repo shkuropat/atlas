@@ -12,42 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Command is a command used for commands exchange by Control Plane.
+ */
 syntax = "proto3";
 
 package atlas;
 
 import "type_metadata.proto";
-import "type_s3_address.proto";
+import "type_address.proto";
 
+// CommandType represents all commands in the system
 enum CommandType {
     // Due to first enum value has to be zero in proto3
-    COMMAND_RESERVED            = 0;
-    COMMAND_UNSPECIFIED         = 100;
-    COMMAND_ECHO_REQUEST        = 200;
-    COMMAND_ECHO_REPLY          = 300;
-    COMMAND_CONFIG_REQUEST      = 400;
-    COMMAND_CONFIG              = 500;
-    COMMAND_METRICS_SCHEDULE    = 600;
-    COMMAND_METRICS_REQUEST     = 700;
-    COMMAND_METRICS             = 800;
-    COMMAND_DATA_SCHEDULE       = 900;
-    COMMAND_DATA_REQUEST        = 1000;
-    COMMAND_DATA                = 1100;
-    COMMAND_ADDRESS             = 1200;
-    COMMAND_EXTRACT             = 1300;
+    COMMAND_RESERVED = 0;
+    // Unspecified
+    COMMAND_UNSPECIFIED = 100;
+    // Echo request expects echo reply as an answer
+    COMMAND_ECHO_REQUEST = 200;
+    // Echo reply is an answer to echo request
+    COMMAND_ECHO_REPLY = 300;
+    // Request for configuration from the other party
+    COMMAND_CONFIG_REQUEST = 400;
+    // Configuration
+    COMMAND_CONFIG = 500;
+    // Metrics schedule sends schedule by which metrics should be sent.
+    COMMAND_METRICS_SCHEDULE = 600;
+    // Metrics request is an explicit request for metrics to be sent
+    COMMAND_METRICS_REQUEST = 700;
+    // One-time metrics
+    COMMAND_METRICS = 800;
+    // Schedule to send data
+    COMMAND_DATA_SCHEDULE = 900;
+    // Explicit data request
+    COMMAND_DATA_REQUEST = 1000;
+    // Data are coming
+    COMMAND_DATA = 1100;
+    // Address is coming
+    COMMAND_ADDRESS = 1200;
+    COMMAND_EXTRACT = 1300;
     COMMAND_EXTRACT_EXECUTABLES = 1400;
 }
 
+// Command represents a command used by Control Plane to exchange commands between server and client(s).
 message Command {
     // Header of the command
     Metadata header = 100;
 
-    // Command may contain any arbitrary sequence of bytes no longer than 2^32
+    // Optional. Any arbitrary sequence of bytes no longer than 2^32
     bytes bytes = 200;
 
-    // Command may contain multiple addresses
-    repeated S3Address addresses = 300;
+    // Optional. Multiple addresses.
+    repeated Address addresses = 300;
 
-    // Command may contain recursive chain of commands
+    // Optional. Recursive chain of commands
     repeated Command commands = 400;
 }

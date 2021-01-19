@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Metrics come from client to server in order to track client's activities.
+ */
 syntax = "proto3";
 
 package atlas;
@@ -19,71 +22,94 @@ package atlas;
 import "google/protobuf/timestamp.proto";
 import "type_metadata.proto";
 
+// MetricType represents all metric types in the system.
 enum MetricType {
+    // Due to first enum value has to be zero in proto3
     METRIC_TYPE_RESERVED    = 0;
+    // Unspecified means we do not know its type
     METRIC_TYPE_UNSPECIFIED = 100;
+    // CPU usage metric
     METRIC_TYPE_CPU         = 200;
+    // RAM usage metric
     METRIC_TYPE_RAM         = 300;
 }
 
-// Metric is one metric tuple (metric identifier [optional], timestamp [optional], description [optional], metric value)
+// Metric is one metric tuple
+// (metric identifier [optional], timestamp [optional], description [optional], metric value)
+// Metric can be classified either by type or by name.
+// Identifier can be omitted, in case either both sides understand what they are talking about or
+// identifier is provided in parent's (outer) data type, such as Metric
 message Metric {
     oneof type_optional {
-        // Metric can be classified either by type or by name
-        // Identifier can be omitted, in case either both sides understand what they are talking about or
-        // identifier is provided in parent's (outer) data type, such as Metric
+        // Optional. Type of the metric
         MetricType type = 100;
+    }
+
+    oneof name_optional {
+        // Optional. Name of the metric
         string     name = 110;
     }
 
     oneof timestamp_optional {
-        // Timestamp is optional
+        // Optional. Timestamp.
         google.protobuf.Timestamp ts = 200;
     }
 
     oneof description_optional {
-        // Description is optional
+        // Optional. Description represents human-readable description on what it is.
         string description = 300;
     }
 
     oneof value {
-        // Value is the purpose of the whole Metric data type, is expected to be present all the time (however,
-        // there is an option to omit value), and can be of any type
+        // Value is the purpose of the whole Metric data type,
+        // is expected to be present all the time, and can be of any type
+
+        // OneOf. string value of the metric
         string string_value = 400;
+        // OneOf. double value of the metric
         double double_value = 410;
+        // OneOf. int32 value of the metric
         int32  int32_value  = 420;
+        // OneOf. uint32 value of the metric
         uint32 uint32_value = 430;
+        // OneOf. int64 value of the metric
         int64  int64_value  = 440;
+        // OneOf. uint64 value of the metric
         uint64 uint64_value = 450;
+        // OneOf. bytes value of the metric
         bytes  bytes_value  = 460;
     }
 }
 
+// MetricsType represents areas of metrics accumulation - such as resource utilization, etc
 enum MetricsType {
     // Due to first enum value has to be zero in proto3
     METRICS_TYPE_RESERVED             = 0;
+    // Unspecified means we do not know its type
     METRICS_TYPE_UNSPECIFIED          = 100;
     // Resource utilization, such as CPU, RAM, etc
     METRICS_TYPE_RESOURCE_UTILIZATION = 200;
 }
 
-// Metrics is a set of Metric tuples
+// Metrics is a set of Metric tuples.
+// Metric can be classified either by type or by name.
+// MetricType can be specified once for the whole set of metrics, instead of specifying in each one of them.
 message Metrics {
+    // Header represents metadata of the set of metrics
     Metadata header = 100;
 
-    // MetricType can be specified once for the whole set of metrics, instead of specifying in each one of them
     oneof type_optional {
-        // Type of the object
-        // Object can be typed/identified either by type or by name
+        // Optional. Type of metrics set.
+        // Object can be typed/identified either by type or by name.
         int32 type = 200;
     }
 
     oneof name_optional {
-        // Name of the object
-        // Object can be typed/identified either by type or by name
+        // Optional. Name of metrics set.
+        // Object can be typed/identified either by type or by name.
         string name = 300;
     }
 
-    // Metrics is the purpose of the whole Metrics data type, is expected to be present all the time
+    // Metrics is the purpose of the whole Metrics data type, is expected to be present at all time.
     repeated Metric metrics = 400;
 }

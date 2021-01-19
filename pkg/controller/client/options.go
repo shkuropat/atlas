@@ -18,10 +18,14 @@ import "github.com/binarly-io/atlas/pkg/api/atlas"
 
 // DataExchangeOptions
 type DataExchangeOptions struct {
-	Compress   bool
+	// Compress specifies whether to compress data on send
+	Compress bool
+	// Decompress specifies whether to decompress data on receive
 	Decompress bool
-	WaitReply  bool
-	Metadata   *atlas.Metadata
+	// WaitReply specifies whether to wait for answer/reply
+	WaitReply bool
+	// Metadata describes data stream
+	Metadata *atlas.Metadata
 }
 
 // GetCompress
@@ -55,6 +59,26 @@ func (opts *DataExchangeOptions) GetWaitReply() bool {
 func (opts *DataExchangeOptions) GetMetadata() *atlas.Metadata {
 	if opts == nil {
 		return nil
+	}
+
+	return opts.Metadata
+}
+
+// Ensure
+func (opts *DataExchangeOptions) Ensure() *DataExchangeOptions {
+	if opts == nil {
+		return &DataExchangeOptions{}
+	}
+	return opts
+}
+
+// EnsureMetadata
+func (opts *DataExchangeOptions) EnsureMetadata() *atlas.Metadata {
+	if opts == nil {
+		return nil
+	}
+	if opts.Metadata == nil {
+		opts.Metadata = new(atlas.Metadata)
 	}
 
 	return opts.Metadata

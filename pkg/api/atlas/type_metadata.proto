@@ -12,6 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Metadata defines all possible metadata for objects.
+ * For example, for stream of dataChunks, is used to represent:
+ *   - chunk header,
+ *   - data descriptions,
+ *   - data encoding descriptions,
+ *   - etc.
+ * Can also be used as metadata description for any other objects.
+ * Since protobuf has ability not to send 'optional' fields, metadata can have full set of fields, describing
+ * all possible metadata options and have only few of them which are really used sent to the correspondent.
+ */
 syntax = "proto3";
 
 package atlas;
@@ -23,101 +34,107 @@ import "type_s3_address.proto";
 import "type_domain.proto";
 import "type_digest.proto";
 
+// MetadataType presents type of all metadata in the system
 enum MetadataType {
     // Due to first enum value has to be zero in proto3
     METADATA_RESERVED = 0;
 }
 
-// Metadata describes metadata or the object
+// Metadata describes metadata of the object
 message Metadata {
     oneof type_optional {
-        // Type of the object
-        // Object can be typed/identified either by type or by name
+        // Optional. Type of the object.
+        // Object has to have either type or name, one of the is mandatory.
+        // Object can be typed/identified either by type or by name.
         int32 type = 100;
     }
 
     oneof name_optional {
-        // Name of the object
-        // Object can be typed/identified either by type or by name
+        // Optional. Name of the object.
+        // Object has to have either type or name, one of the is mandatory.
+        // Object can be typed/identified either by type or by name.
         string name = 200;
     }
 
     oneof version_optional {
-        // Version of the object
+        // Optional. Version of the object.
         int32 version = 300;
     }
 
     oneof user_id_optional {
-        // User identifier
+        // Optional. User identifier. Used to specify related user (owner, sender, etc)
         UserID user_id = 400;
     }
 
     oneof id_optional {
-        // Unique identified of the object
+        // Optional. Unique identifier of the object. Used to reference this object from outside.
         UUID id = 500;
     }
 
     oneof reference_id_optional {
-        // Unique identifier of the reference object, if necessary
+        // Optional. Unique identifier of the reference object, if necessary. Used to reference to another object.
         UUID reference_id = 600;
     }
 
     oneof timestamp_optional {
-        // Timestamp is optional
+        // Optional. Timestamp.
         google.protobuf.Timestamp ts = 700;
     }
 
     oneof encoding_optional {
-        // Encoding is optional
+        // Optional. Encoding represents encoding algo/type of the object.
+        // TODO may be we should switch to enum here
         string encoding = 800;
     }
 
     oneof compression_optional {
-        // Compression is optional
+        // Optional. Compression represents compression algo/type of the object.
+        // TODO may be we should switch to enum here
         string compression = 900;
     }
 
     oneof filename_optional {
-        // Filename is optional
+        // Optional. Filename represents filename of the object.
         string filename = 1000;
     }
 
     oneof url_optional {
-        // URL is optional
+        // Optional. URL represents URL of the object.
         string url = 1100;
     }
 
     oneof s3address_optional {
-        // S3 address is optional
+        // Optional. S3address represents S3/MinIO address of the object.
         S3Address s3address = 1200;
     }
 
     oneof domain_optional {
-        // Domain is optional
+        // Optional. Domain represents domain of the object.
         Domain domain = 1300;
     }
 
     oneof digest_optional {
+        // Optional. Digest represents digest of the object.
         Digest digest = 1400;
     }
 
     oneof description_optional {
-        // Description is optional
+        // Optional. Description represents string human-readable description of the object.
         string description = 1500;
     }
 
     oneof len_optional {
-        // Len is optional
+        // Optional. Len represents length of the object.
         int64 len = 1600;
     }
 
     oneof offset_optional {
-        // Offset is optional
+        // Optional. Offset represents offset of the object within the stream.
         int64 offset = 1700;
     }
 
     oneof last_optional {
-        // Last is optional
+        // Optional. Last identifies last object within the stream.
         bool last = 1800;
     }
 }

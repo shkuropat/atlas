@@ -97,3 +97,7 @@ func (dc *DataChunk) SetPayloadMetadata(metadata *Metadata) {
 	}
 	dc.PayloadMetadataOptional.(*DataChunk_PayloadMetadata).PayloadMetadata = metadata
 }
+
+func (dc *DataChunk) GetOffset() int64 {
+	return dc.GetHeader().GetOffset()
+}

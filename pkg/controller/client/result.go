@@ -19,15 +19,23 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-// DataExchangeResult
+// DataExchangeResult represents result of data exchange
 type DataExchangeResult struct {
-	Err  error
+	// Err is an error
+	Err error
+	// Send describes outgoing result
 	Send struct {
-		Sent int64
+		Len int64
 	}
+	// Receive describes incoming result
 	Receive struct {
-		Received int64
+		Len      int64
 		Data     *bytes.Buffer
 		Metadata *atlas.Metadata
 	}
+}
+
+// NewDataExchangeResult
+func NewDataExchangeResult() *DataExchangeResult {
+	return &DataExchangeResult{}
 }

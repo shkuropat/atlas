@@ -8,6 +8,7 @@ SRC_ROOT="$(realpath "${CUR_DIR}/..")"
 MANIFESTS_ROOT="${SRC_ROOT}/deploy"
 PKG_ROOT="${SRC_ROOT}/pkg"
 CONFIG_DIR="${SRC_ROOT}/config"
+DOCS_ROOT="${SRC_ROOT}/docs"
 
 REPO="github.com/binarly-io/atlas"
 

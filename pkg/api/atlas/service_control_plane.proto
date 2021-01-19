@@ -12,6 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * Control Plane.
+
+ * Control Plane represents communication between server and client(s).
+ * Communication is logically structured into the following areas:
+ *
+ *   - Commands. Commands flow into both directions, thus server can send commands to clients and clients can send
+ *     commands to server. Commands is usually a long-live connection, in order for clients and server
+ *     to receive commands with minimal delay. However, nothing prevents clients to connect to server
+ *     from time to time as necessary and exchange commands.
+ *
+ *   - DataChunks. DataChunks flow into both directions, thus server can send data stream to clients and clients
+ *     can send data stream to Server. Some commands can be followed by bulk data steamed from client and/or server.
+ *
+ *   - Metrics. Metrics are sent from client to server in order for server to keep track of client's activities.
+ *
+ *   - Status. Status requests are sent from client to server in order to check status of the entity(es). Status calls
+ *     are usually used for "check status and send updates" logic.
+ */
 syntax = "proto3";
 
 package atlas;
@@ -24,24 +43,30 @@ import "type_status_request_multi.proto";
 import "type_status_reply.proto";
 
 service ControlPlane {
-	// Bi-directional Commands stream
-	//
-	// Commands are sent from service to client and from client to server
+	/**
+	 * Bi-directional Commands stream.
+	 * Commands are sent from service to client and from client to server
+	 */
 	rpc Commands (stream Command) returns (stream Command) {}
 
-	// Bi-directional Data stream
-	//
-	// Some commands may be followed by data load. Be it logs, dumps, etc.
+	/**
+	 * Bi-directional Data stream.
+	 * Some commands may be followed by data load. Be it logs, dumps, etc.
+	 */
 	rpc DataChunks (stream DataChunk) returns (stream DataChunk) {}
 
-	// Metrics stream
-	//
-	// Some commands may be followed by metrics stream.
+	/**
+	 * Uni-directional Metrics stream from client to server.
+	 */
 	rpc Metrics (stream Metric) returns (Metric) {}
 
-	// EntityStatus checks status of the entity on the server
+	/**
+	 * EntityStatus checks status of the entity on the server.
+	 */
 	rpc EntityStatus(StatusRequest) returns (StatusReply) {}
 
-	// EntityStatusMulti checks status of the multiple entities on server
+	/**
+	 * EntityStatusMulti checks status of the multiple entities on server.
+	 */
 	rpc EntityStatusMultiple(StatusRequestMulti) returns (StatusReply) {}
 }

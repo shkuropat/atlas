@@ -20,13 +20,11 @@ import (
 )
 
 // MsgAddressPrintable
-func MsgAddressPrintable(_msg interface{}) string {
-	switch _msg.(type) {
+func MsgAddressPrintable(message interface{}) string {
+	switch msg := message.(type) {
 	case *sarama.ConsumerMessage:
-		msg := _msg.(*sarama.ConsumerMessage)
 		return fmt.Sprintf("topic:%s partition:%d offset:%d", msg.Topic, msg.Partition, msg.Offset)
 	case *sarama.ProducerMessage:
-		msg := _msg.(*sarama.ProducerMessage)
 		return fmt.Sprintf("topic:%s partition:%d offset:%d", msg.Topic, msg.Partition, msg.Offset)
 	default:
 		return fmt.Sprintf("unknown type to print msg address")

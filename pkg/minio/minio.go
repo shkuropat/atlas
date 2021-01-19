@@ -68,7 +68,6 @@ func NewMinIO(
 			DialContext: (&net.Dialer{
 				Timeout:   30 * time.Second,
 				KeepAlive: 30 * time.Second,
-				DualStack: true,
 			}).DialContext,
 			ForceAttemptHTTP2:     true,
 			MaxIdleConns:          100,
@@ -120,14 +119,14 @@ func (m *MinIO) PutA(addr *atlas.S3Address, reader io.Reader) (int64, error) {
 	return m.Put(addr.Bucket, addr.Object, reader)
 }
 
-// PutUUIDFile
-func (m *MinIO) PutUUIDFile(bucketName string, reader io.Reader) (string, int64, error) {
-	target, n, err := m.PutUUIDFileA(bucketName, reader)
+// PutUUID
+func (m *MinIO) PutUUID(bucketName string, reader io.Reader) (string, int64, error) {
+	target, n, err := m.PutUUIDA(bucketName, reader)
 	return target.Object, n, err
 }
 
-// PutUUIDFileA
-func (m *MinIO) PutUUIDFileA(bucketName string, reader io.Reader) (*atlas.S3Address, int64, error) {
+// PutUUIDA
+func (m *MinIO) PutUUIDA(bucketName string, reader io.Reader) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
 		Object: atlas.CreateUUID().GetString(),
@@ -155,14 +154,14 @@ func (m *MinIO) FPutA(addr *atlas.S3Address, fileName string) (int64, error) {
 	return m.FPut(addr.Bucket, addr.Object, fileName)
 }
 
-// FPutUUIDFile
-func (m *MinIO) FPutUUIDFile(bucketName, fileName string) (string, int64, error) {
-	target, n, err := m.FPutUUIDFileA(bucketName, fileName)
+// FPutUUID
+func (m *MinIO) FPutUUID(bucketName, fileName string) (string, int64, error) {
+	target, n, err := m.FPutUUIDA(bucketName, fileName)
 	return target.Object, n, err
 }
 
-// FPutUUIDFileA
-func (m *MinIO) FPutUUIDFileA(bucketName, fileName string) (*atlas.S3Address, int64, error) {
+// FPutUUIDA
+func (m *MinIO) FPutUUIDA(bucketName, fileName string) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
 		Object: atlas.CreateUUID().GetString(),
