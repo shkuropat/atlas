@@ -37,6 +37,9 @@ type JournalClickHouse struct {
 	DefaultJournal
 }
 
+// Validate interface compatibility
+var _ Journal = &JournalClickHouse{}
+
 const (
 	defaultObjectType ObjectType = ObjectTypeUnknown
 )
@@ -91,7 +94,7 @@ func (j *JournalClickHouse) RequestStart(ctx *rpc_context.RPCContext) {
 }
 
 // RequestCompleted journals request completed successfully
-func (j *JournalClickHouse) RequestCompleted(
+func (j *JournalClickHouse) RequestEnd(
 	ctx *rpc_context.RPCContext,
 ) {
 	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestCompleted)

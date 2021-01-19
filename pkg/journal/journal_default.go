@@ -23,6 +23,9 @@ import (
 type DefaultJournal struct {
 }
 
+// Validate interface compatibility
+var _ Journal = &DefaultJournal{}
+
 // RequestStart journals beginning of the request processing
 func (j *DefaultJournal) RequestStart(
 	ctx *rpc_context.RPCContext,
@@ -30,7 +33,7 @@ func (j *DefaultJournal) RequestStart(
 }
 
 // RequestCompleted journals request completed successfully
-func (j *DefaultJournal) RequestCompleted(
+func (j *DefaultJournal) RequestEnd(
 	ctx *rpc_context.RPCContext,
 ) {
 }

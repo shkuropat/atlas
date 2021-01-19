@@ -24,6 +24,9 @@ type NopJournal struct {
 	DefaultJournal
 }
 
+// Validate interface compatibility
+var _ Journal = &NopJournal{}
+
 // NewJournalNOP
 func NewJournalNOP() (*NopJournal, error) {
 	return &NopJournal{}, nil
@@ -37,7 +40,7 @@ func (j *NopJournal) RequestStart(
 }
 
 // RequestCompleted journals request completed successfully
-func (j *NopJournal) RequestCompleted(
+func (j *NopJournal) RequestEnd(
 	ctx *rpc_context.RPCContext,
 ) {
 
