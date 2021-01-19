@@ -14,7 +14,13 @@
 
 package atlas
 
-func NewAddress() *Address {
+func NewAddress(a interface{}) *Address {
+	if a, ok := a.(isAddress_Address); ok {
+		return &Address{
+			Address: a,
+		}
+	}
+
 	return &Address{}
 }
 
