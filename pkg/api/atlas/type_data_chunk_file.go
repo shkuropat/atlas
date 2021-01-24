@@ -196,7 +196,7 @@ func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 	}
 
 	// How many bytes do we have in this chunk?
-	_len := len(dataChunk.GetBytes())
+	_len := len(dataChunk.GetData())
 	log.Infof("got DataChunk. filename:%s, compression:%s, chunk len:%d, chunk offset:%s, last chunk:%v",
 		filename,
 		compression,
@@ -242,9 +242,9 @@ func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
 func (f *DataChunkFile) recvDataChunkIntoBuf() {
 	dataChunk, err := f.recvDataChunk()
 	if dataChunk != nil {
-		if len(dataChunk.GetBytes()) > 0 {
+		if len(dataChunk.GetData()) > 0 {
 			// TODO
-			f.recvBuf = append(f.recvBuf, dataChunk.GetBytes()...)
+			f.recvBuf = append(f.recvBuf, dataChunk.GetData()...)
 		}
 
 		if dataChunk.Header.GetLast() {
@@ -269,7 +269,11 @@ func (f *DataChunkFile) newDataChunk(data []byte) *DataChunk {
 	}
 	// Offset of current chunk
 	f.offset = f.initialOffset + f.currentOffset
-	return NewDataChunk(transportMD, payloadMD, &f.offset, false, data)
+	return NewDataChunk().
+		SetTransportMetadata(transportMD).
+		SetPayloadMetadata(payloadMD).
+		SetOffset(f.offset).
+		SetData(data)
 }
 
 // sendDataChunk
@@ -304,6 +308,17 @@ func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
 	return
 }
 
+// chunkSize calculates chunk size for data buf of length bufLen
+func (f *DataChunkFile) chunkSize(bufLen int) int {
+	if f.MaxWriteChunkSize <= 0 {
+		// Max chunk size is not specified, return the whole buf length
+		return bufLen
+	}
+
+	// Max chunk size is specified, need not to overlap it
+	return util.Min(f.MaxWriteChunkSize, bufLen)
+}
+
 // Implements io.Writer
 //
 // Write writes len(p) bytes from p to the underlying data stream.
@@ -317,18 +332,12 @@ func (f *DataChunkFile) Write(p []byte) (n int, err error) {
 	log.Tracef("DataChunkFile.Write() - start")
 	defer log.Tracef("DataChunkFile.Write() - end")
 
-	if (len(p) < f.MaxWriteChunkSize) || (f.MaxWriteChunkSize <= 0) {
-		// No need to split into chunks, can send all data as one piece
-		return f.sendDataChunk(p)
-	}
-
-	// This piece is too big, need to split into several chunks
-	n = 0
-	for offset := 0; offset < len(p); offset += f.MaxWriteChunkSize {
-		if sent, e := f.sendDataChunk(p[offset:util.Min(offset+f.MaxWriteChunkSize, len(p))]); e != nil {
+	for len(p) > 0 {
+		if sent, e := f.sendDataChunk(p[:f.chunkSize(len(p))]); e != nil {
 			return n, e
 		} else {
 			n += sent
+			p = p[sent:]
 		}
 	}
 
@@ -443,7 +452,7 @@ func (f *DataChunkFile) Close() error {
 	// Some data were sent via this stream, need to finalize transmission with finalizer packet
 
 	// Send "last" data chunk
-	chunk := NewDataChunk(nil, nil, nil, true, nil)
+	chunk := NewDataChunk().SetLast(true)
 	err := f.transport.Send(chunk)
 	if err != nil {
 		if err == io.EOF {

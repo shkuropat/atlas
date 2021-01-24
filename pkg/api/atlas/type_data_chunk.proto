@@ -37,9 +37,9 @@ message DataChunk {
     // Header describes this chunk
     Metadata header = 100;
 
-    // Bytes is the purpose of the whole data chunk type.
+    // Data is the purpose of the whole data chunk type.
     // May contain any arbitrary sequence of bytes no longer than 2^32.
-    bytes bytes = 200;
+    bytes data = 200;
 
     // Optional components of the DataChunk
 

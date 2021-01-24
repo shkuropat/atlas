@@ -292,7 +292,7 @@ Can be part of bigger data, transferred by smaller chunks.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | header | [Metadata](#atlas.Metadata) |  | Header describes this chunk |
-| bytes | [bytes](#bytes) |  | Bytes is the purpose of the whole data chunk type. May contain any arbitrary sequence of bytes no longer than 2^32. |
+| data | [bytes](#bytes) |  | Data is the purpose of the whole data chunk type. May contain any arbitrary sequence of bytes no longer than 2^32. |
 | transport_metadata | [Metadata](#atlas.Metadata) |  | Optional. Transport metadata describes transport-level. |
 | payload_metadata | [Metadata](#atlas.Metadata) |  | Optional. Payload metadata of the whole data |
 

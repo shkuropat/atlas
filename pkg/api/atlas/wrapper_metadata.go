@@ -34,11 +34,11 @@ func (m *Metadata) HasType() bool {
 }
 
 // SetType
-func (m *Metadata) SetType(_type MetadataType) *Metadata {
+func (m *Metadata) SetType(_type int32) *Metadata {
 	if m.TypeOptional == nil {
 		m.TypeOptional = new(Metadata_Type)
 	}
-	m.TypeOptional.(*Metadata_Type).Type = int32(_type)
+	m.TypeOptional.(*Metadata_Type).Type = _type
 
 	return m
 }

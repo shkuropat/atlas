@@ -15,39 +15,21 @@
 package atlas
 
 // NewDataChunk
-func NewDataChunk(transportMD, payloadMD *Metadata, offset *int64, last bool, data []byte) *DataChunk {
-	dc := &DataChunk{
-		Header: NewMetadata().SetType(MetadataType(DataChunkType_DATA_CHUNK_TYPE_DATA)),
-		Bytes:  data,
+func NewDataChunk() *DataChunk {
+	return &DataChunk{
+		Header: NewMetadata().SetType(int32(DataChunkType_DATA_CHUNK_TYPE_DATA)),
 	}
-
-	if transportMD != nil {
-		dc.SetTransportMetadata(transportMD)
-	}
-
-	if payloadMD != nil {
-		dc.SetPayloadMetadata(payloadMD)
-	}
-
-	if offset != nil {
-		dc.Header.SetOffset(*offset)
-	}
-
-	if last {
-		dc.Header.SetLast(last)
-	}
-
-	return dc
 }
 
 // ensureTransportMetadata
-func (dc *DataChunk) ensureTransportMetadata() {
+func (dc *DataChunk) ensureTransportMetadata() *DataChunk {
 	if dc.TransportMetadataOptional == nil {
 		dc.TransportMetadataOptional = new(DataChunk_TransportMetadata)
 	}
 	if dc.TransportMetadataOptional.(*DataChunk_TransportMetadata).TransportMetadata == nil {
 		dc.TransportMetadataOptional.(*DataChunk_TransportMetadata).TransportMetadata = new(Metadata)
 	}
+	return dc
 }
 
 // HasTransportMetadata
@@ -62,21 +44,23 @@ func (dc *DataChunk) HasTransportMetadata() bool {
 }
 
 // SetTransportMetadata
-func (dc *DataChunk) SetTransportMetadata(metadata *Metadata) {
+func (dc *DataChunk) SetTransportMetadata(metadata *Metadata) *DataChunk {
 	if dc.TransportMetadataOptional == nil {
 		dc.TransportMetadataOptional = new(DataChunk_TransportMetadata)
 	}
 	dc.TransportMetadataOptional.(*DataChunk_TransportMetadata).TransportMetadata = metadata
+	return dc
 }
 
 // ensurePayloadMetadata
-func (dc *DataChunk) ensurePayloadMetadata() {
+func (dc *DataChunk) ensurePayloadMetadata() *DataChunk {
 	if dc.PayloadMetadataOptional == nil {
 		dc.PayloadMetadataOptional = new(DataChunk_PayloadMetadata)
 	}
 	if dc.PayloadMetadataOptional.(*DataChunk_PayloadMetadata).PayloadMetadata == nil {
 		dc.PayloadMetadataOptional.(*DataChunk_PayloadMetadata).PayloadMetadata = new(Metadata)
 	}
+	return dc
 }
 
 // HasPayloadMetadata
@@ -91,13 +75,51 @@ func (dc *DataChunk) HasPayloadMetadata() bool {
 }
 
 // SetPayloadMetadata
-func (dc *DataChunk) SetPayloadMetadata(metadata *Metadata) {
+func (dc *DataChunk) SetPayloadMetadata(metadata *Metadata) *DataChunk {
 	if dc.PayloadMetadataOptional == nil {
 		dc.PayloadMetadataOptional = new(DataChunk_PayloadMetadata)
 	}
 	dc.PayloadMetadataOptional.(*DataChunk_PayloadMetadata).PayloadMetadata = metadata
+	return dc
 }
 
+// SetData
+func (dc *DataChunk) SetData(data []byte) *DataChunk {
+	if dc != nil {
+		dc.Data = data
+	}
+	return nil
+}
+
+// SetType
+func (dc *DataChunk) SetType(_type DataChunkType) *DataChunk {
+	dc.GetHeader().SetType(int32(_type))
+	return dc
+}
+
+// GetType
+func (dc *DataChunk) GetType() DataChunkType {
+	return DataChunkType(dc.GetHeader().GetType())
+}
+
+// SetOffset
+func (dc *DataChunk) SetOffset(offset int64) *DataChunk {
+	dc.GetHeader().SetOffset(offset)
+	return dc
+}
+
+// GetOffset
 func (dc *DataChunk) GetOffset() int64 {
 	return dc.GetHeader().GetOffset()
+}
+
+// SetLast
+func (dc *DataChunk) SetLast(last bool) *DataChunk {
+	dc.GetHeader().SetLast(last)
+	return dc
+}
+
+// GetLast
+func (dc *DataChunk) GetLast() bool {
+	return dc.GetHeader().GetLast()
 }
