@@ -33,7 +33,7 @@ func (m *Command) GetType() CommandType {
 
 // SetType
 func (m *Command) SetType(_type CommandType) *Command {
-	m.GetHeader().SetType(MetadataType(_type))
+	m.GetHeader().SetType(int32(_type))
 	return m
 }
 
