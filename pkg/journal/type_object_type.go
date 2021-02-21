@@ -16,7 +16,7 @@ package journal
 
 import "fmt"
 
-type ObjectType uint8
+type ObjectType uint32
 
 const (
 	ObjectTypeUnknown     ObjectType = 0

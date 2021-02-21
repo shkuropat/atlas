@@ -23,13 +23,13 @@ import (
 type ClickHouseEntry struct {
 	// Call section
 	d          time.Time
-	endpointID uint16
+	endpointID uint32
 	sourceID   string
 	contextID  string
-	actionID   uint8
+	actionID   uint32
 	duration   uint64
 	// Object section
-	_type   uint8
+	_type   uint32
 	size    uint64
 	address string
 	domain  string
@@ -48,12 +48,12 @@ func NewClickHouseEntry() *ClickHouseEntry {
 // Accept
 func (ce *ClickHouseEntry) Accept(j *JournalClickHouse, entry *Entry) *ClickHouseEntry {
 	ce.d = time.Now()
-	ce.endpointID = uint16(j.endpointID)
+	ce.endpointID = uint32(j.endpointID)
 	ce.sourceID = entry.SourceID.GetString()
 	ce.contextID = entry.ContextID.GetString()
-	ce.actionID = uint8(entry.Action)
+	ce.actionID = uint32(entry.Action)
 	ce.duration = uint64(ce.d.Sub(j.start).Nanoseconds())
-	ce._type = uint8(entry.ObjectType)
+	ce._type = uint32(entry.ObjectType)
 	ce.size = entry.ObjectSize
 	ce.address = entry.ObjectAddress.Printable()
 	ce.domain = entry.ObjectMetadata.GetDomain().GetName()
@@ -145,13 +145,13 @@ func (ce *ClickHouseEntry) AsUntypedSlice() []interface{} {
 type ClickHouseEntrySearch struct {
 	// Call section
 	d          *time.Time
-	endpointID *uint16
+	endpointID *uint32
 	sourceID   *string
 	contextID  *string
-	actionID   *uint8
+	actionID   *uint32
 	duration   *uint64
 	// Object section
-	_type   *uint8
+	_type   *uint32
 	size    *uint64
 	address *string
 	domain  *string
@@ -180,12 +180,12 @@ func (ce *ClickHouseEntrySearch) Accept(entry *Entry) *ClickHouseEntrySearch {
 		ce.contextID = &contextID
 	}
 	if entry.Action != ActionUnknown {
-		actionID := uint8(entry.Action)
+		actionID := uint32(entry.Action)
 		ce.actionID = &actionID
 	}
 	ce.duration = nil
 	if entry.ObjectType != ObjectTypeUnknown {
-		_type := uint8(entry.ObjectType)
+		_type := uint32(entry.ObjectType)
 		ce._type = &_type
 	}
 	if entry.ObjectSize > 0 {

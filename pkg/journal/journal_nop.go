@@ -73,7 +73,7 @@ func (j *NopJournal) FindAll(entry *Entry) ([]ClickHouseEntry, error) {
 func (j *NopJournal) SaveData(
 	ctx *rpc_context.RPCContext,
 
-	dataS3Address *atlas.S3Address,
+	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 	data []byte,
@@ -93,7 +93,7 @@ func (j *NopJournal) SaveDataError(
 func (j *NopJournal) ProcessData(
 	ctx *rpc_context.RPCContext,
 
-	dataS3Address *atlas.S3Address,
+	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 ) {

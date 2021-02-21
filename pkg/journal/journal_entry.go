@@ -28,7 +28,7 @@ type Entry struct {
 
 	// Object info tells about object, if any
 	ObjectType     ObjectType
-	ObjectAddress  *atlas.S3Address
+	ObjectAddress  *atlas.Address
 	ObjectSize     uint64
 	ObjectMetadata *atlas.Metadata
 	ObjectData     []byte
@@ -70,7 +70,7 @@ func (e *Entry) SetAction(action ActionType) *Entry {
 // SetObject
 func (e *Entry) SetObject(
 	objectType ObjectType,
-	address *atlas.S3Address,
+	address *atlas.Address,
 	size uint64,
 	metadata *atlas.Metadata,
 	data []byte,
@@ -90,7 +90,7 @@ func (e *Entry) SetObjectType(objectType ObjectType) *Entry {
 }
 
 // SetObjectAddress
-func (e *Entry) SetObjectAddress(address *atlas.S3Address) *Entry {
+func (e *Entry) SetObjectAddress(address *atlas.Address) *Entry {
 	e.ObjectAddress = address
 	return e
 }

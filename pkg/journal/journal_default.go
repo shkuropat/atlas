@@ -64,7 +64,7 @@ func (j *DefaultJournal) FindAll(entry *Entry) ([]ClickHouseEntry, error) {
 func (j *DefaultJournal) SaveData(
 	ctx *rpc_context.RPCContext,
 
-	dataS3Address *atlas.S3Address,
+	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 	data []byte,
@@ -82,7 +82,7 @@ func (j *DefaultJournal) SaveDataError(
 func (j *DefaultJournal) ProcessData(
 	ctx *rpc_context.RPCContext,
 
-	dataS3Address *atlas.S3Address,
+	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 ) {

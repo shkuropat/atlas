@@ -10,7 +10,7 @@ CREATE TABLE atlas.api_journal
   /**********************/
 
   /* endpoint_id specifies api endpoint being called (a.k.a. API function) */
-  endpoint_id UInt16,
+  endpoint_id UInt32,
 
   /* source_id specifies source which is call is being journalled */
   source_id String,
@@ -19,7 +19,7 @@ CREATE TABLE atlas.api_journal
   context_id String,
 
   /* action_id specifies action */
-  action_id UInt8,
+  action_id UInt32,
 
   /* duration is a nanoseconds duration since start, if applicable */
   duration Int64,
@@ -29,7 +29,7 @@ CREATE TABLE atlas.api_journal
   /************************/
 
   /* type specifies object type, if any */
-  type UInt8,
+  type UInt32,
 
   /* size specifies object size, if any */
   size UInt64,

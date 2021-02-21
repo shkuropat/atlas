@@ -119,7 +119,7 @@ func (j *JournalClickHouse) RequestError(
 func (j *JournalClickHouse) SaveData(
 	ctx *rpc_context.RPCContext,
 
-	dataS3Address *atlas.S3Address,
+	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 	data []byte,
@@ -127,7 +127,7 @@ func (j *JournalClickHouse) SaveData(
 	e := NewEntry().
 		SetBaseInfo(ctx.GetID(), ActionSaveData).
 		SetSourceID(dataMetadata.GetUserId()).
-		SetObject(defaultObjectType, dataS3Address, uint64(dataSize), dataMetadata, data)
+		SetObject(ObjectType(dataMetadata.GetType()), dataAddress, uint64(dataSize), dataMetadata, data)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -150,14 +150,14 @@ func (j *JournalClickHouse) SaveDataError(
 func (j *JournalClickHouse) ProcessData(
 	ctx *rpc_context.RPCContext,
 
-	dataS3Address *atlas.S3Address,
+	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 ) {
 	e := NewEntry().
 		SetBaseInfo(ctx.GetID(), ActionProcessData).
 		SetSourceID(dataMetadata.GetUserId()).
-		SetObject(defaultObjectType, dataS3Address, uint64(dataSize), dataMetadata, nil)
+		SetObject(ObjectType(dataMetadata.GetType()), dataAddress, uint64(dataSize), dataMetadata, nil)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}

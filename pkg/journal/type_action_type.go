@@ -16,7 +16,7 @@ package journal
 
 import "fmt"
 
-type ActionType uint8
+type ActionType uint32
 
 const (
 	ActionUnknown              ActionType = 0
