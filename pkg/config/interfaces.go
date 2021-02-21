@@ -22,10 +22,12 @@ type MinIOEndpointConfig interface {
 	GetMinIOSecretAccessKey() string
 	GetMinIOSecure() bool
 	GetMinIOInsecureSkipVerify() bool
+	GetMinIOBucket() string
 }
 
 type KafkaEndpointConfig interface {
 	GetKafkaEndpoint() *atlas.KafkaEndpoint
+	GetKafkaTopic() string
 }
 
 type ClickHouseEndpointConfig interface {
