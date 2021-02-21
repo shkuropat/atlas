@@ -23,8 +23,9 @@ import (
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
 type ConfigClickHouse struct {
-	Enabled    bool   `mapstructure:"enabled"`
-	ClickHouse string `mapstructure:"clickhouse"`
+	Enabled bool `mapstructure:"enabled"`
+	// DSN in the form: http://clickhouse_operator:clickhouse_operator_password@clickhouse-journal.clickhouse:8123/atlas
+	DSN string `mapstructure:"dsn"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
@@ -42,7 +43,7 @@ func (c *ConfigClickHouse) String() string {
 	b := &bytes.Buffer{}
 
 	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "ClickHouse: %v\n", c.ClickHouse)
+	_, _ = fmt.Fprintf(b, "DSN: %v\n", c.DSN)
 
 	return b.String()
 }
