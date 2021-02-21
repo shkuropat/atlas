@@ -23,13 +23,11 @@ import (
 	conf "github.com/spf13/viper"
 )
 
-// configFile defines what app's config file should be used. In case it is specified, bootstrapConfig is not used
-var configFile string
-
-// SetConfigFile sets configFile
-func SetConfigFile(file string) {
-	configFile = file
-}
+// AppConfigFile defines what app's config file should be used.
+// In case it is specified, BootstrapConfig is not used, because there is not need to search for app's config file
+// It has to be exported var in order to be used in cases such as:
+// rootCmd.PersistentFlags().StringVar(&config.ConfigFile, "config", "", fmt.Sprintf("config file (default: %s)", defaultConfigFile))
+var AppConfigFile string
 
 const (
 	// What PathSet is to be specified
@@ -146,10 +144,10 @@ func InitConfig(bootstrapConfig *BootstrapConfig) {
 		bootstrapConfig = NewBootstrapConfig()
 	}
 
-	if configFile != "" {
-		// Look for explicitly specified config file
-		conf.SetConfigFile(configFile)
-		log.Infof("InitConfig() - looking for explicitly specified config: %s", configFile)
+	if AppConfigFile != "" {
+		// Look for explicitly specified app's config file
+		conf.SetConfigFile(AppConfigFile)
+		log.Infof("InitConfig() - looking for explicitly specified config: %s", AppConfigFile)
 	} else {
 		// Config file is not explicitly specified, we need to find it
 		// We need to search for config file in pre-defined set of paths, such as /etc/, /home/, etc
