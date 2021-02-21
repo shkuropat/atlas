@@ -27,6 +27,7 @@ type MinIOEndpointConfig interface {
 
 type KafkaEndpointConfig interface {
 	GetKafkaEndpoint() *atlas.KafkaEndpoint
+	GetKafkaAddress() *atlas.KafkaAddress
 	GetKafkaTopic() string
 }
 
