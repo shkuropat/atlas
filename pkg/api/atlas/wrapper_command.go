@@ -20,10 +20,20 @@ import (
 	"strings"
 )
 
+// NewCommand creates new Command with pre-allocated header
 func NewCommand() *Command {
 	return &Command{
 		Header: NewMetadata(),
 	}
+}
+
+// NewCommandUnmarshalFrom creates new Command from bytes
+func NewCommandUnmarshalFrom(bytes []byte) (*Command, error) {
+	cmd := &Command{}
+	if err := cmd.UnmarshalFrom(bytes); err != nil {
+		return nil, err
+	}
+	return cmd, nil
 }
 
 // GetType gets command type
@@ -159,22 +169,21 @@ func (m *Command) AddCommand(command *Command) *Command {
 // AddCommands
 func (m *Command) AddCommands(commands ...*Command) *Command {
 	m.Commands = append(m.Commands, commands...)
-
 	return m
 }
 
-// ShiftCommands
+// ShiftCommands fetches first (0-indexed) command from available commands
 func (m *Command) ShiftCommands() *Command {
 	var cmd *Command = nil
 	if len(m.Commands) > 0 {
 		cmd = m.Commands[0]
 		m.Commands = m.Commands[1:]
 	}
-
 	return cmd
 }
 
-// Shift
+// Shift fetches first (0-indexed) command from available commands and attaches all the rest commands (if any) as
+// commands of the fetched one, so commands can be Shift-ed from this returned command
 func (m *Command) Shift() *Command {
 	root := m.ShiftCommands()
 	if root == nil {

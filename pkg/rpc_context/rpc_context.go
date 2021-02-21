@@ -41,7 +41,7 @@ func (c *RPCContext) SetClaims(claims jwt.MapClaims) *RPCContext {
 
 // SetType
 func (c *RPCContext) SetType(_type atlas.MetadataType) *RPCContext {
-	c.Metadata.SetType(_type)
+	c.Metadata.SetType(int32(_type))
 	return c
 }
 

@@ -18,14 +18,28 @@ import "github.com/binarly-io/atlas/pkg/api/atlas"
 
 // DataExchangeOptions
 type DataExchangeOptions struct {
-	// Compress specifies whether to compress data on send
-	Compress bool
-	// Decompress specifies whether to decompress data on receive
-	Decompress bool
-	// WaitReply specifies whether to wait for answer/reply
-	WaitReply bool
-	// Metadata describes data stream
-	Metadata *atlas.Metadata
+	// compress specifies whether to compress data on send
+	compress bool
+	// decompress specifies whether to decompress data on receive
+	decompress bool
+	// waitReply specifies whether to wait for answer/reply
+	waitReply bool
+	// metadata describes data stream
+	metadata *atlas.Metadata
+}
+
+// NewDataExchangeOptions
+func NewDataExchangeOptions() *DataExchangeOptions {
+	return new(DataExchangeOptions)
+}
+
+// SetCompress
+func (opts *DataExchangeOptions) SetCompress(compress bool) *DataExchangeOptions {
+	if opts == nil {
+		return nil
+	}
+	opts.compress = compress
+	return opts
 }
 
 // GetCompress
@@ -33,8 +47,16 @@ func (opts *DataExchangeOptions) GetCompress() bool {
 	if opts == nil {
 		return false
 	}
+	return opts.compress
+}
 
-	return opts.Compress
+// SetDecompress
+func (opts *DataExchangeOptions) SetDecompress(decompress bool) *DataExchangeOptions {
+	if opts == nil {
+		return nil
+	}
+	opts.decompress = decompress
+	return opts
 }
 
 // GetDecompress
@@ -42,8 +64,16 @@ func (opts *DataExchangeOptions) GetDecompress() bool {
 	if opts == nil {
 		return false
 	}
+	return opts.decompress
+}
 
-	return opts.Decompress
+// SetWaitReply
+func (opts *DataExchangeOptions) SetWaitReply(waitReply bool) *DataExchangeOptions {
+	if opts == nil {
+		return nil
+	}
+	opts.waitReply = waitReply
+	return opts
 }
 
 // GetWaitReply
@@ -51,8 +81,16 @@ func (opts *DataExchangeOptions) GetWaitReply() bool {
 	if opts == nil {
 		return false
 	}
+	return opts.waitReply
+}
 
-	return opts.WaitReply
+// SetMetadata
+func (opts *DataExchangeOptions) SetMetadata(meta *atlas.Metadata) *DataExchangeOptions {
+	if opts == nil {
+		return nil
+	}
+	opts.metadata = meta
+	return opts
 }
 
 // GetMetadata
@@ -60,8 +98,7 @@ func (opts *DataExchangeOptions) GetMetadata() *atlas.Metadata {
 	if opts == nil {
 		return nil
 	}
-
-	return opts.Metadata
+	return opts.metadata
 }
 
 // Ensure
@@ -77,9 +114,8 @@ func (opts *DataExchangeOptions) EnsureMetadata() *atlas.Metadata {
 	if opts == nil {
 		return nil
 	}
-	if opts.Metadata == nil {
-		opts.Metadata = new(atlas.Metadata)
+	if opts.metadata == nil {
+		opts.metadata = new(atlas.Metadata)
 	}
-
-	return opts.Metadata
+	return opts.metadata
 }

@@ -50,7 +50,7 @@ func (t *DataChunkTransport) Send(dataChunk *atlas.DataChunk) error {
 	log.Tracef("minio.DataChunkTransport.Send() - start")
 	defer log.Tracef("minio.DataChunkTransport.Send() - end")
 
-	_, err := t.writeChunk(dataChunk.GetBytes())
+	_, err := t.writeChunk(dataChunk.GetData())
 	return err
 }
 

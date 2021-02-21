@@ -19,7 +19,7 @@ import (
 	"github.com/binarly-io/atlas/pkg/logger"
 )
 
-func Init(conf *config.Config) {
+func Init(bootstrapConfig *config.BootstrapConfig) {
 	logger.InitLog()
-	config.InitConfig(conf)
+	config.InitConfig(bootstrapConfig)
 }

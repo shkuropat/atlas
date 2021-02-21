@@ -74,14 +74,16 @@ func (c *ConsumerGroup) SetContext(ctx context.Context) *ConsumerGroup {
 	return c
 }
 
-// SetConsumerGroupHandler
-func (c *ConsumerGroup) SetConsumerGroupHandler(handler sarama.ConsumerGroupHandler) {
+// SetConsumerGroupHandler sets handler which performs setup, cleanup and message processing activities
+func (c *ConsumerGroup) SetConsumerGroupHandler(handler sarama.ConsumerGroupHandler) *ConsumerGroup {
 	c.consumerGroupHandler = handler
+	return c
 }
 
-// SetMessageProcessor
-func (c *ConsumerGroup) SetMessageProcessor(processor MessageProcessorFunc) {
+// SetMessageProcessor sets MessageProcessor - function which will be called for each message received
+func (c *ConsumerGroup) SetMessageProcessor(processor MessageProcessorFunc) *ConsumerGroup {
 	c.messageProcessor = processor
+	return c
 }
 
 // ConsumeLoop runs an endless loop of kafka consumer
