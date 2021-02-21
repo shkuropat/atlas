@@ -81,11 +81,11 @@ func DataExchange(
 
 	f, err := atlas.OpenDataChunkFileWOptions(
 		DataChunksClient,
-		&atlas.DataChunkFileOptions{
-			Metadata:   options.GetMetadata(),
-			Compress:   options.GetCompress(),
-			Decompress: options.GetDecompress(),
-		})
+		atlas.NewDataChunkFileOptions().
+			SetMetadata(options.GetMetadata()).
+			SetCompress(options.GetCompress()).
+			SetDecompress(options.GetDecompress()),
+	)
 	if err != nil {
 		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
 		result.Err = err

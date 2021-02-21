@@ -26,12 +26,35 @@ type DataChunkFileOptions struct {
 	Decompress bool
 }
 
+// NewDataChunkFileOptions
+func NewDataChunkFileOptions() *DataChunkFileOptions {
+	return new(DataChunkFileOptions)
+}
+
+// SetHeader
+func (opts *DataChunkFileOptions) SetHeader(header *Metadata) *DataChunkFileOptions {
+	if opts == nil {
+		return nil
+	}
+	opts.Header = header
+	return opts
+}
+
 // GetHeader
 func (opts *DataChunkFileOptions) GetHeader() *Metadata {
 	if opts == nil {
 		return nil
 	}
 	return opts.Header
+}
+
+// SetMetadata
+func (opts *DataChunkFileOptions) SetMetadata(meta *Metadata) *DataChunkFileOptions {
+	if opts == nil {
+		return nil
+	}
+	opts.Metadata = meta
+	return opts
 }
 
 // GetMetadata
@@ -42,12 +65,30 @@ func (opts *DataChunkFileOptions) GetMetadata() *Metadata {
 	return opts.Metadata
 }
 
+// SetCompress
+func (opts *DataChunkFileOptions) SetCompress(compress bool) *DataChunkFileOptions {
+	if opts == nil {
+		return nil
+	}
+	opts.Compress = compress
+	return opts
+}
+
 // GetCompress
 func (opts *DataChunkFileOptions) GetCompress() bool {
 	if opts == nil {
 		return false
 	}
 	return opts.Compress
+}
+
+// SetDecompress
+func (opts *DataChunkFileOptions) SetDecompress(decompress bool) *DataChunkFileOptions {
+	if opts == nil {
+		return nil
+	}
+	opts.Decompress = decompress
+	return opts
 }
 
 // GetDecompress
