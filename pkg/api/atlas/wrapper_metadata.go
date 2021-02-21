@@ -266,24 +266,24 @@ func (m *Metadata) SetURL(url string) *Metadata {
 	return m
 }
 
-// HasS3Address
-func (m *Metadata) HasS3Address() bool {
+// HasAddress
+func (m *Metadata) HasAddress() bool {
 	if m == nil {
 		return false
 	}
-	return m.S3AddressOptional != nil
+	return m.AddressOptional != nil
 }
 
-// SetS3Address
-func (m *Metadata) SetS3Address(s3address *S3Address) *Metadata {
-	if s3address == nil {
+// SetAddress
+func (m *Metadata) SetAddress(address *Address) *Metadata {
+	if address == nil {
 		return m
 	}
 
-	if m.S3AddressOptional == nil {
-		m.S3AddressOptional = new(Metadata_S3Address)
+	if m.AddressOptional == nil {
+		m.AddressOptional = new(Metadata_Address)
 	}
-	m.S3AddressOptional.(*Metadata_S3Address).S3Address = s3address
+	m.AddressOptional.(*Metadata_Address).Address = address
 
 	return m
 }

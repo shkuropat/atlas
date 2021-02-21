@@ -20,7 +20,6 @@ syntax = "proto3";
 package atlas;
 
 import "type_metadata.proto";
-import "type_address.proto";
 
 // CommandType represents all commands in the system
 enum CommandType {
@@ -62,8 +61,8 @@ message Command {
     // Optional. Any arbitrary sequence of bytes no longer than 2^32
     bytes bytes = 200;
 
-    // Optional. Multiple addresses.
-    repeated Address addresses = 300;
+    // Optional. Multiple command's subjects.
+    repeated Metadata subjects = 300;
 
     // Optional. Recursive chain of commands
     repeated Command commands = 400;

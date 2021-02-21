@@ -30,7 +30,7 @@ package atlas;
 import "google/protobuf/timestamp.proto";
 import "type_uuid.proto";
 import "type_user_id.proto";
-import "type_s3_address.proto";
+import "type_address.proto";
 import "type_domain.proto";
 import "type_digest.proto";
 
@@ -103,9 +103,9 @@ message Metadata {
         string url = 1100;
     }
 
-    oneof s3address_optional {
-        // Optional. S3address represents S3/MinIO address of the object.
-        S3Address s3address = 1200;
+    oneof address_optional {
+        // Optional. address represents external address of the object.
+        Address address = 1200;
     }
 
     oneof domain_optional {

@@ -233,7 +233,7 @@ Command represents a command used by Control Plane to exchange commands between 
 | ----- | ---- | ----- | ----------- |
 | header | [Metadata](#atlas.Metadata) |  | Header of the command |
 | bytes | [bytes](#bytes) |  | Optional. Any arbitrary sequence of bytes no longer than 2^32 |
-| addresses | [Address](#atlas.Address) | repeated | Optional. Multiple addresses. |
+| subjects | [Metadata](#atlas.Metadata) | repeated | Optional. Multiple command&#39;s subjects. |
 | commands | [Command](#atlas.Command) | repeated | Optional. Recursive chain of commands |
 
 
@@ -563,7 +563,7 @@ Metadata describes metadata of the object
 | compression | [string](#string) |  | Optional. Compression represents compression algo/type of the object. TODO may be we should switch to enum here |
 | filename | [string](#string) |  | Optional. Filename represents filename of the object. |
 | url | [string](#string) |  | Optional. URL represents URL of the object. |
-| s3address | [S3Address](#atlas.S3Address) |  | Optional. S3address represents S3/MinIO address of the object. |
+| address | [Address](#atlas.Address) |  | Optional. address represents external address of the object. |
 | domain | [Domain](#atlas.Domain) |  | Optional. Domain represents domain of the object. |
 | digest | [Digest](#atlas.Digest) |  | Optional. Digest represents digest of the object. |
 | description | [string](#string) |  | Optional. Description represents string human-readable description of the object. |

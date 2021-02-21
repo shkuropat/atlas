@@ -152,17 +152,21 @@ func (m *Command) GetPayload(msg proto.Message) error {
 	return proto.Unmarshal(m.GetBytes(), msg)
 }
 
-// AddAddresses
-func (m *Command) AddAddresses(addresses ...*Address) *Command {
-	m.Addresses = append(m.Addresses, addresses...)
+// AddSubject
+func (m *Command) AddSubject(subject *Metadata) *Command {
+	m.Subjects = append(m.Subjects, subject)
+	return m
+}
 
+// AddSubjects
+func (m *Command) AddSubjects(subjects ...*Metadata) *Command {
+	m.Subjects = append(m.Subjects, subjects...)
 	return m
 }
 
 // AddCommand
 func (m *Command) AddCommand(command *Command) *Command {
 	m.Commands = append(m.Commands, command)
-
 	return m
 }
 
@@ -207,10 +211,10 @@ func (m *Command) Printable() string {
 	if name := m.GetName(); name != "" {
 		parts = append(parts, "name:"+name)
 	}
-	if len(m.GetAddresses()) > 0 {
-		parts = append(parts, "addresses:")
-		for _, address := range m.GetAddresses() {
-			parts = append(parts, address.Printable())
+	if len(m.GetSubjects()) > 0 {
+		parts = append(parts, "subjects:")
+		for _, subj := range m.GetSubjects() {
+			parts = append(parts, subj.String())
 		}
 	}
 
