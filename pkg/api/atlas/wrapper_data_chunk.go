@@ -14,6 +14,14 @@
 
 package atlas
 
+var DataChunkTypeEnum = NewEnum()
+
+func init() {
+	DataChunkTypeEnum.MustCastRegister("DATA_CHUNK_TYPE_RESERVED", DataChunkType_DATA_CHUNK_TYPE_RESERVED)
+	DataChunkTypeEnum.MustCastRegister("DATA_CHUNK_TYPE_UNSPECIFIED", DataChunkType_DATA_CHUNK_TYPE_UNSPECIFIED)
+	DataChunkTypeEnum.MustCastRegister("DATA_CHUNK_TYPE_DATA", DataChunkType_DATA_CHUNK_TYPE_DATA)
+}
+
 // NewDataChunk
 func NewDataChunk() *DataChunk {
 	return &DataChunk{

@@ -20,6 +20,26 @@ import (
 	"strings"
 )
 
+var CommandTypeEnum = NewEnum()
+
+func init() {
+	CommandTypeEnum.MustCastRegister("COMMAND_RESERVED", CommandType_COMMAND_RESERVED)
+	CommandTypeEnum.MustCastRegister("COMMAND_UNSPECIFIED", CommandType_COMMAND_UNSPECIFIED)
+	CommandTypeEnum.MustCastRegister("COMMAND_ECHO_REQUEST", CommandType_COMMAND_ECHO_REQUEST)
+	CommandTypeEnum.MustCastRegister("COMMAND_ECHO_REPLY", CommandType_COMMAND_ECHO_REPLY)
+	CommandTypeEnum.MustCastRegister("COMMAND_CONFIG_REQUEST", CommandType_COMMAND_CONFIG_REQUEST)
+	CommandTypeEnum.MustCastRegister("COMMAND_CONFIG", CommandType_COMMAND_CONFIG)
+	CommandTypeEnum.MustCastRegister("COMMAND_METRICS_SCHEDULE", CommandType_COMMAND_METRICS_SCHEDULE)
+	CommandTypeEnum.MustCastRegister("COMMAND_METRICS_REQUEST", CommandType_COMMAND_METRICS_REQUEST)
+	CommandTypeEnum.MustCastRegister("COMMAND_METRICS", CommandType_COMMAND_METRICS)
+	CommandTypeEnum.MustCastRegister("COMMAND_DATA_SCHEDULE", CommandType_COMMAND_DATA_SCHEDULE)
+	CommandTypeEnum.MustCastRegister("COMMAND_DATA_REQUEST", CommandType_COMMAND_DATA_REQUEST)
+	CommandTypeEnum.MustCastRegister("COMMAND_DATA", CommandType_COMMAND_DATA)
+	CommandTypeEnum.MustCastRegister("COMMAND_ADDRESS", CommandType_COMMAND_ADDRESS)
+	CommandTypeEnum.MustCastRegister("COMMAND_EXTRACT", CommandType_COMMAND_EXTRACT)
+	CommandTypeEnum.MustCastRegister("COMMAND_EXTRACT_EXECUTABLES", CommandType_COMMAND_EXTRACT_EXECUTABLES)
+}
+
 // NewCommand creates new Command with pre-allocated header
 func NewCommand() *Command {
 	return &Command{

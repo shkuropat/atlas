@@ -14,6 +14,14 @@
 
 package atlas
 
+var AddressTypeEnum = NewEnum()
+
+func init() {
+	AddressTypeEnum.MustCastRegister("ADDRESS_RESERVED", AddressType_ADDRESS_RESERVED)
+	AddressTypeEnum.MustCastRegister("ADDRESS_S3", AddressType_ADDRESS_S3)
+	AddressTypeEnum.MustCastRegister("ADDRESS_KAFKA", AddressType_ADDRESS_KAFKA)
+}
+
 func NewAddress(a interface{}) *Address {
 	if a, ok := a.(isAddress_Address); ok {
 		return &Address{
