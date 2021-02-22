@@ -64,7 +64,10 @@ func OpenDataChunkFileWOptions(
 		fWOpts.DataChunkFile.ensureTransportMetadata()
 		fWOpts.DataChunkFile.TransportMetadata.SetCompression(CompressionLZMA.String())
 	}
-	fWOpts.Compression, _ = NewDataChunkFileCompression(readCompression, fWOpts.DataChunkFile, writeCompression, fWOpts.DataChunkFile)
+	fWOpts.Compression, err = NewDataChunkFileCompression(readCompression, fWOpts.DataChunkFile, writeCompression, fWOpts.DataChunkFile)
+	if err != nil {
+		log.Errorf("UNABLE to setup compression options. Err: %v", err)
+	}
 
 	return fWOpts, nil
 }
@@ -93,8 +96,8 @@ func (f *DataChunkFileWithOptions) Close() error {
 
 // Write
 func (f *DataChunkFileWithOptions) Write(p []byte) (n int, err error) {
-	log.Tracef("DataChunkFileWithOptions.Write() - start")
-	defer log.Tracef("DataChunkFileWithOptions.Write() - end")
+	log.Tracef("DataChunkFileWithOptions.Write() - start: %d", len(p))
+	defer log.Tracef("DataChunkFileWithOptions.Write() - end  : %d", len(p))
 
 	if f.Compression.WriteEnabled() {
 		return f.Compression.Write(p)

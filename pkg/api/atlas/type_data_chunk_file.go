@@ -147,6 +147,7 @@ func (f *DataChunkFile) acceptPayloadMetadata(dataChunk *DataChunk) {
 // acceptAllMetadata accepts all metadata from from DataChunk into file
 func (f *DataChunkFile) acceptAllMetadata(dataChunk *DataChunk) {
 	if dataChunk == nil {
+		log.Warn("Attempt to acceptAllMetadata into nil dataChunk")
 		return
 	}
 	f.acceptTransportMetadata(dataChunk)
@@ -157,6 +158,7 @@ func (f *DataChunkFile) acceptAllMetadata(dataChunk *DataChunk) {
 // logDataChunk logs DataChunk
 func (f *DataChunkFile) logDataChunk(dataChunk *DataChunk) {
 	if dataChunk == nil {
+		log.Warn("Attempt to log nil dataChunk")
 		return
 	}
 
@@ -229,7 +231,6 @@ func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
 		// All went well, ready to receive more data
 	case io.EOF:
 		// Correct EOF arrived
-		log.Infof("DataChunkFile.Recv() get EOF")
 		if dataChunk == nil {
 			log.Infof("DataChunkFile.Recv() get EOF with no data")
 		} else {
@@ -245,19 +246,24 @@ func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
 
 // recvDataChunkIntoBuf
 func (f *DataChunkFile) recvDataChunkIntoBuf() {
+	log.Tracef("DataChunkFile.recvDataChunkIntoBuf() - start")
+	defer log.Tracef("DataChunkFile.recvDataChunkIntoBuf() - end")
+
 	dataChunk, err := f.recvDataChunk()
 	if dataChunk != nil {
+		log.Tracef("Got data len: %d", len(dataChunk.GetData()))
 		if len(dataChunk.GetData()) > 0 {
-			// TODO
 			f.recvBuf = append(f.recvBuf, dataChunk.GetData()...)
 		}
 
 		if dataChunk.Header.GetLast() {
+			log.Tracef("Got last packet, reporting EOF ")
 			f.recvErr = io.EOF
 		}
 	}
 
 	if err != nil {
+		log.Tracef("Got an err: %v", err)
 		f.recvErr = err
 	}
 }
