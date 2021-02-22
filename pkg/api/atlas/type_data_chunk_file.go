@@ -230,6 +230,11 @@ func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
 	case io.EOF:
 		// Correct EOF arrived
 		log.Infof("DataChunkFile.Recv() get EOF")
+		if dataChunk == nil {
+			log.Infof("DataChunkFile.Recv() get EOF with no data")
+		} else {
+			log.Infof("DataChunkFile.Recv() get EOF with %d bytes", len(dataChunk.Data))
+		}
 	default:
 		// Stream is somehow broken
 		log.Infof("DataChunkFile.Recv() got err: %v", err)
