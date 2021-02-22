@@ -17,7 +17,7 @@ package journal
 import "fmt"
 
 // EndpointIDType represents endpoint id for which journal is created. Be it data endpoint or commands endpoint.
-type EndpointIDType uint32
+type EndpointIDType int32
 
 const (
 	EndpointUnknown        EndpointIDType = 0
