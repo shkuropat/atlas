@@ -132,6 +132,14 @@ func (e *Enum) Register(name string, value int32) bool {
 	return true
 }
 
+// MustRegister
+func (e *Enum) MustRegister(name string, value int32) bool {
+	if e.Has(name) || e.Has(value) {
+		panic("MustRegister")
+	}
+	return e.Register(name, value)
+}
+
 // CastRegister
 func (e *Enum) CastRegister(name string, value interface{}) bool {
 	if e.Has(name) || e.Has(value) {
