@@ -15,11 +15,19 @@
 package atlas
 
 // AddReport
-func (m *ReportReply) AddReport(report *Report) {
+func (m *ReportReply) AddReport(report *Report) *ReportReply {
+	if m == nil {
+		return nil
+	}
 	m.Reports = append(m.Reports, report)
+	return m
 }
 
 // AddReports
-func (m *ReportReply) AddReports(reports ...*Report) {
+func (m *ReportReply) AddReports(reports ...*Report) *ReportReply {
+	if m == nil {
+		return nil
+	}
 	m.Reports = append(m.Reports, reports...)
+	return m
 }

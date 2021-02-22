@@ -96,7 +96,7 @@ func (dc *DataChunk) SetData(data []byte) *DataChunk {
 	if dc != nil {
 		dc.Data = data
 	}
-	return nil
+	return dc
 }
 
 // SetType

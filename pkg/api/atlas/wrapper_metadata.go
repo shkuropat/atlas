@@ -39,7 +39,6 @@ func (m *Metadata) SetType(_type int32) *Metadata {
 		m.TypeOptional = new(Metadata_Type)
 	}
 	m.TypeOptional.(*Metadata_Type).Type = _type
-
 	return m
 }
 
@@ -57,7 +56,6 @@ func (m *Metadata) SetName(name string) *Metadata {
 		m.NameOptional = new(Metadata_Name)
 	}
 	m.NameOptional.(*Metadata_Name).Name = name
-
 	return m
 }
 
@@ -75,7 +73,6 @@ func (m *Metadata) SetVersion(version int32) *Metadata {
 		m.VersionOptional = new(Metadata_Version)
 	}
 	m.VersionOptional.(*Metadata_Version).Version = version
-
 	return m
 }
 
@@ -93,7 +90,6 @@ func (m *Metadata) SetUserID(id *UserID) *Metadata {
 		m.UserIdOptional = new(Metadata_UserId)
 	}
 	m.UserIdOptional.(*Metadata_UserId).UserId = id
-
 	return m
 }
 
@@ -116,7 +112,6 @@ func (m *Metadata) SetID(id *UUID) *Metadata {
 		m.IdOptional = new(Metadata_Id)
 	}
 	m.IdOptional.(*Metadata_Id).Id = id
-
 	return m
 }
 
@@ -144,7 +139,6 @@ func (m *Metadata) SetReferenceID(id *UUID) *Metadata {
 		m.ReferenceIdOptional = new(Metadata_ReferenceId)
 	}
 	m.ReferenceIdOptional.(*Metadata_ReferenceId).ReferenceId = id
-
 	return m
 }
 
@@ -169,7 +163,6 @@ func (m *Metadata) SetTimestamp(seconds int64, nanos int32) *Metadata {
 	m.TimestampOptional.(*Metadata_Ts).Ts = new(timestamp.Timestamp)
 	m.TimestampOptional.(*Metadata_Ts).Ts.Seconds = seconds
 	m.TimestampOptional.(*Metadata_Ts).Ts.Nanos = nanos
-
 	return m
 }
 
@@ -178,7 +171,6 @@ func (m *Metadata) CreateTimestamp() *Metadata {
 	now := time.Now()
 	seconds := now.Unix()           // seconds since 1970
 	nanoseconds := now.Nanosecond() // nanosecond offset within the second
-
 	return m.SetTimestamp(seconds, int32(nanoseconds))
 }
 
@@ -200,7 +192,6 @@ func (m *Metadata) SetEncoding(encoding string) *Metadata {
 		m.EncodingOptional = new(Metadata_Encoding)
 	}
 	m.EncodingOptional.(*Metadata_Encoding).Encoding = encoding
-
 	return m
 }
 
@@ -218,7 +209,6 @@ func (m *Metadata) SetCompression(compression string) *Metadata {
 		m.CompressionOptional = new(Metadata_Compression)
 	}
 	m.CompressionOptional.(*Metadata_Compression).Compression = compression
-
 	return m
 }
 
@@ -240,7 +230,6 @@ func (m *Metadata) SetFilename(filename string) *Metadata {
 		m.FilenameOptional = new(Metadata_Filename)
 	}
 	m.FilenameOptional.(*Metadata_Filename).Filename = filename
-
 	return m
 }
 
@@ -262,7 +251,6 @@ func (m *Metadata) SetURL(url string) *Metadata {
 		m.UrlOptional = new(Metadata_Url)
 	}
 	m.UrlOptional.(*Metadata_Url).Url = url
-
 	return m
 }
 
@@ -284,7 +272,6 @@ func (m *Metadata) SetAddress(address *Address) *Metadata {
 		m.AddressOptional = new(Metadata_Address)
 	}
 	m.AddressOptional.(*Metadata_Address).Address = address
-
 	return m
 }
 
@@ -306,7 +293,6 @@ func (m *Metadata) SetDomain(domain *Domain) *Metadata {
 		m.DomainOptional = new(Metadata_Domain)
 	}
 	m.DomainOptional.(*Metadata_Domain).Domain = domain
-
 	return m
 }
 
@@ -328,7 +314,6 @@ func (m *Metadata) SetDigest(digest *Digest) *Metadata {
 		m.DigestOptional = new(Metadata_Digest)
 	}
 	m.DigestOptional.(*Metadata_Digest).Digest = digest
-
 	return m
 }
 
@@ -346,7 +331,6 @@ func (m *Metadata) SetDescription(description string) *Metadata {
 		m.DescriptionOptional = new(Metadata_Description)
 	}
 	m.DescriptionOptional.(*Metadata_Description).Description = description
-
 	return m
 }
 
@@ -364,7 +348,6 @@ func (m *Metadata) SetLen(len int64) *Metadata {
 		m.LenOptional = new(Metadata_Len)
 	}
 	m.LenOptional.(*Metadata_Len).Len = len
-
 	return m
 }
 
@@ -382,7 +365,6 @@ func (m *Metadata) SetOffset(offset int64) *Metadata {
 		m.OffsetOptional = new(Metadata_Offset)
 	}
 	m.OffsetOptional.(*Metadata_Offset).Offset = offset
-
 	return m
 }
 
@@ -400,7 +382,6 @@ func (m *Metadata) SetLast(last bool) *Metadata {
 		m.LastOptional = new(Metadata_Last)
 	}
 	m.LastOptional.(*Metadata_Last).Last = last
-
 	return m
 }
 
