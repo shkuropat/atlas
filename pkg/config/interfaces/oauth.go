@@ -1,4 +1,4 @@
-// Copyright 2020 The Atlas Authors. All rights reserved.
+// Copyright 2021 The Atlas Authors. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,25 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package config
+package interfaces
 
-import "github.com/binarly-io/atlas/pkg/api/atlas"
+import (
+	"github.com/binarly-io/atlas/pkg/config/parts"
+)
 
-type MinIOEndpointConfig interface {
-	GetMinIOEndpoint() string
-	GetMinIOAccessKeyID() string
-	GetMinIOSecretAccessKey() string
-	GetMinIOSecure() bool
-	GetMinIOInsecureSkipVerify() bool
-	GetMinIOBucket() string
+// ConfigOAuth
+type ConfigOAuth struct {
+	OAuth *parts.ConfigOAuth `mapstructure:"oauth"`
 }
 
-type KafkaEndpointConfig interface {
-	GetKafkaEndpoint() *atlas.KafkaEndpoint
-	GetKafkaAddress() *atlas.KafkaAddress
-	GetKafkaTopic() string
-}
-
-type ClickHouseEndpointConfig interface {
-	GetClickHouseEndpoint() string
+// ConfigOAuthNormalize
+func (c ConfigOAuth) ConfigOAuthNormalize() {
+	if c.OAuth == nil {
+		c.OAuth = parts.NewConfigOAuth()
+	}
 }

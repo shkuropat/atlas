@@ -31,10 +31,12 @@ type ConfigClickHouse struct {
 	// IMPORTANT
 }
 
+// NewConfigClickHouse
 func NewConfigClickHouse() *ConfigClickHouse {
 	return new(ConfigClickHouse)
 }
 
+// String
 func (c *ConfigClickHouse) String() string {
 	if c == nil {
 		return ""

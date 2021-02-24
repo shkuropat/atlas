@@ -29,10 +29,12 @@ type ConfigService struct {
 	// IMPORTANT
 }
 
+// NewConfigService
 func NewConfigService() *ConfigService {
 	return new(ConfigService)
 }
 
+// String
 func (c *ConfigService) String() string {
 	if c == nil {
 		return ""

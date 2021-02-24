@@ -30,10 +30,12 @@ type ConfigLog struct {
 	// IMPORTANT
 }
 
+// NewConfigLog
 func NewConfigLog() *ConfigLog {
 	return new(ConfigLog)
 }
 
+// String
 func (c *ConfigLog) String() string {
 	if c == nil {
 		return ""

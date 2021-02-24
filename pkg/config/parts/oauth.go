@@ -36,10 +36,12 @@ type ConfigOAuth struct {
 	// IMPORTANT
 }
 
+// NewConfigOAuth
 func NewConfigOAuth() *ConfigOAuth {
 	return new(ConfigOAuth)
 }
 
+// String
 func (c *ConfigOAuth) String() string {
 	if c == nil {
 		return ""

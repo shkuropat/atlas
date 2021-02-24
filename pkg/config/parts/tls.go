@@ -31,10 +31,12 @@ type ConfigTLS struct {
 	// IMPORTANT
 }
 
+// NewConfigTLS
 func NewConfigTLS() *ConfigTLS {
 	return new(ConfigTLS)
 }
 
+// String
 func (c *ConfigTLS) String() string {
 	if c == nil {
 		return ""

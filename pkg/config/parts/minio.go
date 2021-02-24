@@ -37,10 +37,12 @@ type ConfigMinIO struct {
 	// IMPORTANT
 }
 
+// NewConfigMinIO
 func NewConfigMinIO() *ConfigMinIO {
 	return new(ConfigMinIO)
 }
 
+// String
 func (c *ConfigMinIO) String() string {
 	if c == nil {
 		return ""
