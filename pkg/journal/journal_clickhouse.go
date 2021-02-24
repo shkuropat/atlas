@@ -24,7 +24,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/config"
+	"github.com/binarly-io/atlas/pkg/config/interfaces"
 	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
@@ -45,7 +45,7 @@ const (
 )
 
 // NewJournalClickHouseConfig
-func NewJournalClickHouseConfig(cfg config.ClickHouseEndpointConfig, endpointID EndpointIDType) (*JournalClickHouse, error) {
+func NewJournalClickHouseConfig(cfg interfaces.ClickHouseEndpointConfig, endpointID EndpointIDType) (*JournalClickHouse, error) {
 	dsn := cfg.GetClickHouseEndpoint()
 	if dsn == "" {
 		str := "ClickHouse address in Config is empty"

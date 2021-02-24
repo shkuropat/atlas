@@ -16,12 +16,12 @@ package kafka
 
 import (
 	"context"
-	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/config"
 
 	"github.com/Shopify/sarama"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/config/interfaces"
 	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
@@ -52,7 +52,7 @@ func NewConsumerGroup(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress
 // IMPORTANT - you have to specify topic to read from either with
 //	1. SetAddress
 //	2. SetTopic
-func NewConsumerGroupFromEndpoint(cfg config.KafkaEndpointConfig, groupID string) *ConsumerGroup {
+func NewConsumerGroupFromEndpoint(cfg interfaces.KafkaEndpointConfig, groupID string) *ConsumerGroup {
 	return NewConsumerGroup(cfg.GetKafkaEndpoint(), nil, groupID)
 }
 

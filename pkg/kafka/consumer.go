@@ -16,10 +16,10 @@ package kafka
 
 import (
 	"github.com/Shopify/sarama"
-	"github.com/binarly-io/atlas/pkg/config"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/config/interfaces"
 	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
@@ -78,7 +78,7 @@ func NewConsumer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Co
 }
 
 // NewConsumerConfig
-func NewConsumerConfig(cfg config.KafkaEndpointConfig, topic string) *Consumer {
+func NewConsumerConfig(cfg interfaces.KafkaEndpointConfig, topic string) *Consumer {
 	return NewConsumer(cfg.GetKafkaEndpoint(), atlas.NewKafkaAddress(topic, 0))
 }
 
