@@ -18,6 +18,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Transport
 type Transport struct {
 	producer *Producer
 	consumer *Consumer

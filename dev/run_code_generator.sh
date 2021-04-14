@@ -65,6 +65,33 @@ function generate_grpc_code() {
     #protoc -I "${PROTO_FILES_FOLDER}" --go_out=plugins=grpc:"${PROTO_FILES_FOLDER}" "${PROTO_FILES_FOLDER}"/*.proto
 }
 
+# Delete String() function from generated *.pb.go files
+# This function is not that human-friendly and it is better to introduce own function for each type
+function delete_string_function() {
+    PROTO_FILES_FOLDER="${1}"
+
+    if [[ -z "${PROTO_FILES_FOLDER}" ]]; then
+        echo "need to specify folder where to look for .pb.go files to process"
+        exit 1
+    fi
+
+    # /path/to/file:LINE_NUMBER:line
+    # /path/to/file:31:func (m *Address) String() string { return proto.CompactTextString(m) }
+    FILES_LINES=$(grep -n "String() string { return proto.CompactTextString(m) }" "${PROTO_FILES_FOLDER}"/*.pb.go | cut -f1,2 -d:)
+
+    for FILE_LINE in $FILES_LINES; do
+        # Cut filename from the grep-output line
+        FILE=$(echo "${FILE_LINE}" | cut -f1 -d:)
+        # Cut line number from the grep-output line
+        LINE=$(echo "${FILE_LINE}" | cut -f2 -d:)
+        #echo "${FILE}:${LINE}"
+        # Cut specified line from the file and rewrite the file
+        sed "${LINE}d" "${FILE}" > "${FILE}".new && mv "${FILE}".new "${FILE}"
+    done
+
+
+}
+
 BUILD_DOCS_HTML="yes"
 BUILD_DOCS_MD="yes"
 
@@ -101,6 +128,8 @@ function generate_docs() {
 
 generate_grpc_code "${PROTO_ROOT}"/atlas
 generate_grpc_code "${PROTO_ROOT}"/health
+
+delete_string_function "${PROTO_ROOT}"/atlas
 
 generate_docs api atlas "${PROTO_ROOT}"/atlas
 generate_docs api health "${PROTO_ROOT}"/health

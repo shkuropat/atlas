@@ -25,6 +25,7 @@ import (
 	"google.golang.org/grpc/credentials/oauth"
 )
 
+// getOAuthClient
 func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, error) {
 	log.Infof("Setup OAuth params:\nClientID:%s\nClientSecret:%s\nTokenURL:%s\n", clientID, clientSecret, tokenURL)
 
@@ -53,6 +54,7 @@ func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, err
 	}
 }
 
+// fetchToken
 func fetchToken(clientID, clientSecret, tokenURL string) *oauth2.Token {
 	token, _ := getOAuthClient(clientID, clientSecret, tokenURL)
 	return token
@@ -62,6 +64,7 @@ func fetchToken(clientID, clientSecret, tokenURL string) *oauth2.Token {
 	//	}
 }
 
+// SetupOAuth
 func SetupOAuth(clientID, clientSecret, tokenURL string) ([]grpc.DialOption, error) {
 	perRPCCredentials := oauth.NewOauthAccess(fetchToken(clientID, clientSecret, tokenURL))
 

@@ -23,15 +23,23 @@ import (
 type DataExchangeResult struct {
 	// Err is an error
 	Err error
+
 	// Send describes outgoing result
 	Send struct {
-		Len int64
+		Data struct {
+			Len int64
+		}
 	}
-	// Receive describes incoming result
-	Receive struct {
-		Len      int64
-		Data     *bytes.Buffer
-		Metadata *atlas.Metadata
+
+	// Recv describes incoming result
+	Recv struct {
+		Data struct {
+			Len      int64
+			Data     *bytes.Buffer
+			Metadata *atlas.Metadata
+		}
+		Status      *atlas.Status
+		StatusMulti *atlas.StatusMulti
 	}
 }
 

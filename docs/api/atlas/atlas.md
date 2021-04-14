@@ -3,121 +3,135 @@
 
 ## Table of Contents
 
+- [address_list.proto](#address_list.proto)
+    - [AddressList](#atlas.AddressList)
+  
+- [address_map.proto](#address_map.proto)
+    - [AddressMap](#atlas.AddressMap)
+    - [AddressMap.MapEntry](#atlas.AddressMap.MapEntry)
+  
+- [address.proto](#address.proto)
+    - [Address](#atlas.Address)
+  
+- [command.proto](#command.proto)
+    - [Command](#atlas.Command)
+  
+- [compression.proto](#compression.proto)
+    - [Compression](#atlas.Compression)
+  
+- [data_chunk_properties.proto](#data_chunk_properties.proto)
+    - [DataChunkProperties](#atlas.DataChunkProperties)
+  
+- [data_chunk.proto](#data_chunk.proto)
+    - [DataChunk](#atlas.DataChunk)
+  
+- [diff_task.proto](#diff_task.proto)
+    - [DiffTask](#atlas.DiffTask)
+  
+- [digest.proto](#digest.proto)
+    - [Digest](#atlas.Digest)
+  
+    - [DigestType](#atlas.DigestType)
+  
+- [domain.proto](#domain.proto)
+    - [Domain](#atlas.Domain)
+  
+- [encoding.proto](#encoding.proto)
+    - [Encoding](#atlas.Encoding)
+  
+- [filename.proto](#filename.proto)
+    - [Filename](#atlas.Filename)
+  
+- [kafka_address.proto](#kafka_address.proto)
+    - [KafkaAddress](#atlas.KafkaAddress)
+  
+- [kafka_endpoint.proto](#kafka_endpoint.proto)
+    - [KafkaEndpoint](#atlas.KafkaEndpoint)
+  
+- [metadata.proto](#metadata.proto)
+    - [Metadata](#atlas.Metadata)
+  
+- [metric.proto](#metric.proto)
+    - [Metric](#atlas.Metric)
+  
+    - [MetricType](#atlas.MetricType)
+  
+- [metrics.proto](#metrics.proto)
+    - [Metrics](#atlas.Metrics)
+  
+    - [MetricsType](#atlas.MetricsType)
+  
+- [presentation_options.proto](#presentation_options.proto)
+    - [PresentationOptions](#atlas.PresentationOptions)
+  
+- [report_multi.proto](#report_multi.proto)
+    - [ReportMulti](#atlas.ReportMulti)
+  
+- [report.proto](#report.proto)
+    - [Report](#atlas.Report)
+  
+- [report_request.proto](#report_request.proto)
+    - [ReportRequest](#atlas.ReportRequest)
+  
+- [s3_address.proto](#s3_address.proto)
+    - [S3Address](#atlas.S3Address)
+  
 - [service_control_plane.proto](#service_control_plane.proto)
     - [ControlPlane](#atlas.ControlPlane)
   
 - [service_reports_plane.proto](#service_reports_plane.proto)
     - [ReportsPlane](#atlas.ReportsPlane)
   
-- [type_address.proto](#type_address.proto)
-    - [Address](#atlas.Address)
+- [status_multi.proto](#status_multi.proto)
+    - [StatusMulti](#atlas.StatusMulti)
   
-    - [AddressType](#atlas.AddressType)
+- [status.proto](#status.proto)
+    - [Status](#atlas.Status)
   
-- [type_command.proto](#type_command.proto)
-    - [Command](#atlas.Command)
-  
-    - [CommandType](#atlas.CommandType)
-  
-- [type_data_chunk.proto](#type_data_chunk.proto)
-    - [DataChunk](#atlas.DataChunk)
-  
-    - [DataChunkType](#atlas.DataChunkType)
-  
-- [type_diff_task.proto](#type_diff_task.proto)
-    - [DiffTask](#atlas.DiffTask)
-  
-- [type_digest.proto](#type_digest.proto)
-    - [Digest](#atlas.Digest)
-  
-    - [DigestType](#atlas.DigestType)
-  
-- [type_domain.proto](#type_domain.proto)
-    - [Domain](#atlas.Domain)
-  
-- [type_entity.proto](#type_entity.proto)
-    - [Entity](#atlas.Entity)
-  
-- [type_kafka_address.proto](#type_kafka_address.proto)
-    - [KafkaAddress](#atlas.KafkaAddress)
-  
-- [type_kafka_edpoint.proto](#type_kafka_edpoint.proto)
-    - [KafkaEndpoint](#atlas.KafkaEndpoint)
-  
-- [type_metadata.proto](#type_metadata.proto)
-    - [Metadata](#atlas.Metadata)
-  
-    - [MetadataType](#atlas.MetadataType)
-  
-- [type_metric.proto](#type_metric.proto)
-    - [Metric](#atlas.Metric)
-    - [Metrics](#atlas.Metrics)
-  
-    - [MetricType](#atlas.MetricType)
-    - [MetricsType](#atlas.MetricsType)
-  
-- [type_report.proto](#type_report.proto)
-    - [Report](#atlas.Report)
-  
-    - [ReportType](#atlas.ReportType)
-  
-- [type_report_reply.proto](#type_report_reply.proto)
-    - [ReportReply](#atlas.ReportReply)
-  
-    - [ReportReplyType](#atlas.ReportReplyType)
-  
-- [type_report_request.proto](#type_report_request.proto)
-    - [ReportRequest](#atlas.ReportRequest)
-  
-    - [ReportRequestType](#atlas.ReportRequestType)
-  
-- [type_s3_address.proto](#type_s3_address.proto)
-    - [S3Address](#atlas.S3Address)
-  
-- [type_status_reply.proto](#type_status_reply.proto)
-    - [StatusReply](#atlas.StatusReply)
-  
-    - [StatusType](#atlas.StatusType)
-  
-- [type_status_request_multi.proto](#type_status_request_multi.proto)
-    - [StatusRequestMulti](#atlas.StatusRequestMulti)
-  
+- [status_request_mode.proto](#status_request_mode.proto)
     - [StatusRequestMode](#atlas.StatusRequestMode)
   
-- [type_status_request.proto](#type_status_request.proto)
+- [status_request_multi.proto](#status_request_multi.proto)
+    - [StatusRequestMulti](#atlas.StatusRequestMulti)
+  
+- [status_request.proto](#status_request.proto)
     - [StatusRequest](#atlas.StatusRequest)
   
-- [type_user_id.proto](#type_user_id.proto)
+- [url.proto](#url.proto)
+    - [URL](#atlas.URL)
+  
+- [user_id.proto](#user_id.proto)
     - [UserID](#atlas.UserID)
   
-- [type_uuid.proto](#type_uuid.proto)
+- [uuid.proto](#uuid.proto)
     - [UUID](#atlas.UUID)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="service_control_plane.proto"></a>
+<a name="address_list.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## service_control_plane.proto
-Control Plane.
+## address_list.proto
+Address is an abstraction over domain-specific addresses.
+Represents all types of addresses in the system.
 
-Control Plane represents communication between server and client(s).
-Communication is logically structured into the following areas:
 
-  - Commands. Commands flow into both directions, thus server can send commands to clients and clients can send
-    commands to server. Commands is usually a long-live connection, in order for clients and server
-    to receive commands with minimal delay. However, nothing prevents clients to connect to server
-    from time to time as necessary and exchange commands.
+<a name="atlas.AddressList"></a>
 
-  - DataChunks. DataChunks flow into both directions, thus server can send data stream to clients and clients
-    can send data stream to Server. Some commands can be followed by bulk data steamed from client and/or server.
+### AddressList
+AddressList describes list of general address
 
-  - Metrics. Metrics are sent from client to server in order for server to keep track of client&#39;s activities.
 
-  - Status. Status requests are sent from client to server in order to check status of the entity(es). Status calls
-    are usually used for &#34;check status and send updates&#34; logic.
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [Domain](#atlas.Domain) |  | Domain where address is specified |
+| addresses | [Address](#atlas.Address) | repeated |  |
+
+
+
+
 
  
 
@@ -125,28 +139,47 @@ Communication is logically structured into the following areas:
 
  
 
-
-<a name="atlas.ControlPlane"></a>
-
-### ControlPlane
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| Commands | [Command](#atlas.Command) stream | [Command](#atlas.Command) stream | Bi-directional Commands stream. Commands are sent from service to client and from client to server |
-| DataChunks | [DataChunk](#atlas.DataChunk) stream | [DataChunk](#atlas.DataChunk) stream | Bi-directional Data stream. Some commands may be followed by data load. Be it logs, dumps, etc. |
-| Metrics | [Metric](#atlas.Metric) stream | [Metric](#atlas.Metric) | Uni-directional Metrics stream from client to server. |
-| EntityStatus | [StatusRequest](#atlas.StatusRequest) | [StatusReply](#atlas.StatusReply) | EntityStatus checks status of the entity on the server. |
-| EntityStatusMultiple | [StatusRequestMulti](#atlas.StatusRequestMulti) | [StatusReply](#atlas.StatusReply) | EntityStatusMulti checks status of the multiple entities on server. |
-
  
 
 
 
-<a name="service_reports_plane.proto"></a>
+<a name="address_map.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## service_reports_plane.proto
+## address_map.proto
+Address is an abstraction over domain-specific addresses.
+Represents all types of addresses in the system.
+
+
+<a name="atlas.AddressMap"></a>
+
+### AddressMap
+AddressMap describes map of address lists
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [Domain](#atlas.Domain) |  | Domain where address is specified |
+| map | [AddressMap.MapEntry](#atlas.AddressMap.MapEntry) | repeated |  |
+
+
+
+
+
+
+<a name="atlas.AddressMap.MapEntry"></a>
+
+### AddressMap.MapEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [AddressList](#atlas.AddressList) |  |  |
+
+
+
 
 
  
@@ -155,24 +188,14 @@ Communication is logically structured into the following areas:
 
  
 
-
-<a name="atlas.ReportsPlane"></a>
-
-### ReportsPlane
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| Reports | [ReportRequest](#atlas.ReportRequest) stream | [ReportReply](#atlas.ReportReply) stream |  |
-
  
 
 
 
-<a name="type_address.proto"></a>
+<a name="address.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_address.proto
+## address.proto
 Address is an abstraction over domain-specific addresses.
 Represents all types of addresses in the system.
 
@@ -185,28 +208,22 @@ Address describes general address
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| type | [AddressType](#atlas.AddressType) |  | Type of the address. |
+| address_domain | [Domain](#atlas.Domain) |  | Domain where address is specified |
 | s3 | [S3Address](#atlas.S3Address) |  | S3 address option |
 | kafka | [KafkaAddress](#atlas.KafkaAddress) |  | Kafka address option |
+| digest | [Digest](#atlas.Digest) |  | Digest-based address option |
+| uuid | [UUID](#atlas.UUID) |  | UUID-based address option |
+| user_id | [UserID](#atlas.UserID) |  | UserID-based address. Used to specify any related user (owner, sender, etc) |
+| filename | [Filename](#atlas.Filename) |  | Filename/filepath-based address |
+| url | [URL](#atlas.URL) |  | URL address |
+| domain | [Domain](#atlas.Domain) |  | Domain address |
+| custom_string | [string](#string) |  | Custom string |
 
 
 
 
 
  
-
-
-<a name="atlas.AddressType"></a>
-
-### AddressType
-AddressType represents all types of domain-specific addresses in the system
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ADDRESS_RESERVED | 0 | Due to first enum value has to be zero in proto3 |
-| ADDRESS_S3 | 100 | S3 and MinIO address |
-| ADDRESS_KAFKA | 200 | Kafka address |
-
 
  
 
@@ -216,10 +233,10 @@ AddressType represents all types of domain-specific addresses in the system
 
 
 
-<a name="type_command.proto"></a>
+<a name="command.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_command.proto
+## command.proto
 Command is a command used for commands exchange by Control Plane.
 
 
@@ -242,31 +259,6 @@ Command represents a command used by Control Plane to exchange commands between 
 
  
 
-
-<a name="atlas.CommandType"></a>
-
-### CommandType
-CommandType represents all commands in the system
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| COMMAND_RESERVED | 0 | Due to first enum value has to be zero in proto3 |
-| COMMAND_UNSPECIFIED | 100 | Unspecified |
-| COMMAND_ECHO_REQUEST | 200 | Echo request expects echo reply as an answer |
-| COMMAND_ECHO_REPLY | 300 | Echo reply is an answer to echo request |
-| COMMAND_CONFIG_REQUEST | 400 | Request for configuration from the other party |
-| COMMAND_CONFIG | 500 | Configuration |
-| COMMAND_METRICS_SCHEDULE | 600 | Metrics schedule sends schedule by which metrics should be sent. |
-| COMMAND_METRICS_REQUEST | 700 | Metrics request is an explicit request for metrics to be sent |
-| COMMAND_METRICS | 800 | One-time metrics |
-| COMMAND_DATA_SCHEDULE | 900 | Schedule to send data |
-| COMMAND_DATA_REQUEST | 1000 | Explicit data request |
-| COMMAND_DATA | 1100 | Data are coming |
-| COMMAND_ADDRESS | 1200 | Address is coming |
-| COMMAND_EXTRACT | 1300 |  |
-| COMMAND_EXTRACT_EXECUTABLES | 1400 |  |
-
-
  
 
  
@@ -275,10 +267,83 @@ CommandType represents all commands in the system
 
 
 
-<a name="type_data_chunk.proto"></a>
+<a name="compression.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_data_chunk.proto
+## compression.proto
+
+
+
+<a name="atlas.Compression"></a>
+
+### Compression
+Compression describes compression of the object
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [int32](#int32) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="data_chunk_properties.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## data_chunk_properties.proto
+Metadata defines all possible metadata for objects.
+For example, for stream of dataChunks, is used to represent:
+  - chunk header,
+  - data descriptions,
+  - data encoding descriptions,
+  - etc.
+Can also be used as metadata description for any other objects.
+Since protobuf has ability not to send &#39;optional&#39; fields, metadata can have full set of fields, describing
+all possible metadata options and have only few of them which are really used sent to the correspondent.
+
+
+<a name="atlas.DataChunkProperties"></a>
+
+### DataChunkProperties
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| digest | [Digest](#atlas.Digest) |  | Optional. Digest represents digest of the object. |
+| len | [int64](#int64) |  | Optional. Len represents length of the object. |
+| offset | [int64](#int64) |  | Optional. Offset represents offset of the object within the stream. |
+| last | [bool](#bool) |  | Optional. Last identifies last object within the stream. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="data_chunk.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## data_chunk.proto
 
 
 
@@ -302,19 +367,6 @@ Can be part of bigger data, transferred by smaller chunks.
 
  
 
-
-<a name="atlas.DataChunkType"></a>
-
-### DataChunkType
-DataChunkType represents all data chunk types
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| DATA_CHUNK_TYPE_RESERVED | 0 | Due to first enum value has to be zero in proto3 |
-| DATA_CHUNK_TYPE_UNSPECIFIED | 100 | Unspecified means data chunk type is unknown |
-| DATA_CHUNK_TYPE_DATA | 200 | Data chunk |
-
-
  
 
  
@@ -323,10 +375,10 @@ DataChunkType represents all data chunk types
 
 
 
-<a name="type_diff_task.proto"></a>
+<a name="diff_task.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_diff_task.proto
+## diff_task.proto
 DiffTask represents request for diff between two objects.
 
 
@@ -356,10 +408,10 @@ DiffTask represents request for diff between two objects.
 
 
 
-<a name="type_digest.proto"></a>
+<a name="digest.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_digest.proto
+## digest.proto
 Digest represents abstract digest of multiple types.
 
 
@@ -402,10 +454,10 @@ DigestType represents all types of digests in the system.
 
 
 
-<a name="type_domain.proto"></a>
+<a name="domain.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_domain.proto
+## domain.proto
 Domain represents abstract domain.
 
 
@@ -433,22 +485,22 @@ Domain represents abstract domain.
 
 
 
-<a name="type_entity.proto"></a>
+<a name="encoding.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_entity.proto
-Domain represents abstract domain.
+## encoding.proto
 
 
-<a name="atlas.Entity"></a>
 
-### Entity
-Entity represents abstract entity.
+<a name="atlas.Encoding"></a>
+
+### Encoding
+Encoding describes encoding of the object
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | Entity name |
+| method | [string](#string) |  |  |
 
 
 
@@ -464,10 +516,41 @@ Entity represents abstract entity.
 
 
 
-<a name="type_kafka_address.proto"></a>
+<a name="filename.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_kafka_address.proto
+## filename.proto
+Domain represents abstract domain.
+
+
+<a name="atlas.Filename"></a>
+
+### Filename
+Filename represents abstract filename.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| filename | [string](#string) |  | Filename |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="kafka_address.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## kafka_address.proto
 KafkaAddress represents Kafka address within Kafka endpoint (cluster access endpoint).
 Full Kafka address would be KafkaEndpoint &#43; KafkaAddress
 
@@ -497,10 +580,10 @@ KafkaAddress represents Kafka address within Kafka endpoint (cluster).
 
 
 
-<a name="type_kafka_edpoint.proto"></a>
+<a name="kafka_endpoint.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_kafka_edpoint.proto
+## kafka_endpoint.proto
 KafkaEndpoint represents Kafka endpoint (cluster access endpoint).
 Full Kafka address would be KafkaEndpoint &#43; KafkaAddress
 
@@ -529,10 +612,10 @@ KafkaEndpoint represents Kafka cluster access endpoint
 
 
 
-<a name="type_metadata.proto"></a>
+<a name="metadata.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_metadata.proto
+## metadata.proto
 Metadata defines all possible metadata for objects.
 For example, for stream of dataChunks, is used to represent:
   - chunk header,
@@ -555,38 +638,19 @@ Metadata describes metadata of the object
 | type | [int32](#int32) |  | Optional. Type of the object. Object has to have either type or name, one of the is mandatory. Object can be typed/identified either by type or by name. |
 | name | [string](#string) |  | Optional. Name of the object. Object has to have either type or name, one of the is mandatory. Object can be typed/identified either by type or by name. |
 | version | [int32](#int32) |  | Optional. Version of the object. |
-| user_id | [UserID](#atlas.UserID) |  | Optional. User identifier. Used to specify related user (owner, sender, etc) |
-| id | [UUID](#atlas.UUID) |  | Optional. Unique identifier of the object. Used to reference this object from outside. |
-| reference_id | [UUID](#atlas.UUID) |  | Optional. Unique identifier of the reference object, if necessary. Used to reference to another object. |
-| ts | [google.protobuf.Timestamp](#google.protobuf.Timestamp) |  | Optional. Timestamp. |
-| encoding | [string](#string) |  | Optional. Encoding represents encoding algo/type of the object. TODO may be we should switch to enum here |
-| compression | [string](#string) |  | Optional. Compression represents compression algo/type of the object. TODO may be we should switch to enum here |
-| filename | [string](#string) |  | Optional. Filename represents filename of the object. |
-| url | [string](#string) |  | Optional. URL represents URL of the object. |
-| address | [Address](#atlas.Address) |  | Optional. address represents external address of the object. |
-| domain | [Domain](#atlas.Domain) |  | Optional. Domain represents domain of the object. |
-| digest | [Digest](#atlas.Digest) |  | Optional. Digest represents digest of the object. |
 | description | [string](#string) |  | Optional. Description represents string human-readable description of the object. |
-| len | [int64](#int64) |  | Optional. Len represents length of the object. |
-| offset | [int64](#int64) |  | Optional. Offset represents offset of the object within the stream. |
-| last | [bool](#bool) |  | Optional. Last identifies last object within the stream. |
+| status | [int32](#int32) |  | Optional. Status represents status code of the object. |
+| mode | [int32](#int32) |  | Optional. Mode represents mode code of the object. |
+| ts | [google.protobuf.Timestamp](#google.protobuf.Timestamp) |  | Optional. Timestamp of the object. |
+| addresses | [AddressMap](#atlas.AddressMap) |  | Optional. Addresses represents map of address of the object. Internal and external or whatever may be needed. |
+| presentation_options | [PresentationOptions](#atlas.PresentationOptions) |  | Optional. Presentation options of the object. |
+| data_chunk_properties | [DataChunkProperties](#atlas.DataChunkProperties) |  | Optional. Data chunk -level properties ob the object. |
 
 
 
 
 
  
-
-
-<a name="atlas.MetadataType"></a>
-
-### MetadataType
-MetadataType presents type of all metadata in the system
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| METADATA_RESERVED | 0 | Due to first enum value has to be zero in proto3 |
-
 
  
 
@@ -596,10 +660,10 @@ MetadataType presents type of all metadata in the system
 
 
 
-<a name="type_metric.proto"></a>
+<a name="metric.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_metric.proto
+## metric.proto
 Metrics come from client to server in order to track client&#39;s activities.
 
 
@@ -631,6 +695,36 @@ identifier is provided in parent&#39;s (outer) data type, such as Metric
 
 
 
+ 
+
+
+<a name="atlas.MetricType"></a>
+
+### MetricType
+MetricType represents all metric types in the system.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| METRIC_TYPE_RESERVED | 0 | Due to first enum value has to be zero in proto3 |
+| METRIC_TYPE_UNSPECIFIED | 100 | Unspecified means we do not know its type |
+| METRIC_TYPE_CPU | 200 | CPU usage metric |
+| METRIC_TYPE_RAM | 300 | RAM usage metric |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="metrics.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## metrics.proto
+Metrics come from client to server in order to track client&#39;s activities.
+
 
 <a name="atlas.Metrics"></a>
 
@@ -654,20 +748,6 @@ MetricType can be specified once for the whole set of metrics, instead of specif
  
 
 
-<a name="atlas.MetricType"></a>
-
-### MetricType
-MetricType represents all metric types in the system.
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| METRIC_TYPE_RESERVED | 0 | Due to first enum value has to be zero in proto3 |
-| METRIC_TYPE_UNSPECIFIED | 100 | Unspecified means we do not know its type |
-| METRIC_TYPE_CPU | 200 | CPU usage metric |
-| METRIC_TYPE_RAM | 300 | RAM usage metric |
-
-
-
 <a name="atlas.MetricsType"></a>
 
 ### MetricsType
@@ -688,10 +768,75 @@ MetricsType represents areas of metrics accumulation - such as resource utilizat
 
 
 
-<a name="type_report.proto"></a>
+<a name="presentation_options.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_report.proto
+## presentation_options.proto
+
+
+
+<a name="atlas.PresentationOptions"></a>
+
+### PresentationOptions
+PresentationOptions describes presentation options of the object
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| encoding | [Encoding](#atlas.Encoding) |  | Optional. Encoding represents encoding of the object. |
+| compression | [Compression](#atlas.Compression) |  | Optional. Compression represents compression of the object. |
+| digest | [Digest](#atlas.Digest) |  | Optional. Digest represents digest of the object. |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="report_multi.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## report_multi.proto
+
+
+
+<a name="atlas.ReportMulti"></a>
+
+### ReportMulti
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| header | [Metadata](#atlas.Metadata) |  |  |
+| reports | [Report](#atlas.Report) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="report.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## report.proto
 
 
 
@@ -703,26 +848,14 @@ MetricsType represents areas of metrics accumulation - such as resource utilizat
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| metadata | [Metadata](#atlas.Metadata) |  | Payload metadata of the whole data |
-| bytes | [bytes](#bytes) |  | Bytes is the purpose of the whole data chunk type May contain any arbitrary sequence of bytes no longer than 2^32 |
+| header | [Metadata](#atlas.Metadata) |  |  |
+| bytes | [bytes](#bytes) |  | Bytes is the purpose of the whole report type May contain any arbitrary sequence of bytes no longer than 2^32 |
 
 
 
 
 
  
-
-
-<a name="atlas.ReportType"></a>
-
-### ReportType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| REPORT_TYPE_RESERVED | 0 |  |
-| REPORT_TYPE_UNSPECIFIED | 100 |  |
-
 
  
 
@@ -732,56 +865,10 @@ MetricsType represents areas of metrics accumulation - such as resource utilizat
 
 
 
-<a name="type_report_reply.proto"></a>
+<a name="report_request.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_report_reply.proto
-
-
-
-<a name="atlas.ReportReply"></a>
-
-### ReportReply
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| type | [ReportReplyType](#atlas.ReportReplyType) |  |  |
-| ts | [google.protobuf.Timestamp](#google.protobuf.Timestamp) |  | Timestamp is optional |
-| description | [string](#string) |  | Description is optional |
-| reports | [Report](#atlas.Report) | repeated |  |
-
-
-
-
-
- 
-
-
-<a name="atlas.ReportReplyType"></a>
-
-### ReportReplyType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| REPORT_REPLY_TYPE_RESERVED | 0 |  |
-| REPORT_REPLY_TYPE_UNSPECIFIED | 100 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="type_report_request.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## type_report_request.proto
+## report_request.proto
 
 
 
@@ -793,27 +880,13 @@ MetricsType represents areas of metrics accumulation - such as resource utilizat
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| type | [ReportRequestType](#atlas.ReportRequestType) |  |  |
-| ts | [google.protobuf.Timestamp](#google.protobuf.Timestamp) |  | Timestamp is optional |
-| description | [string](#string) |  | Description is optional |
+| header | [Metadata](#atlas.Metadata) |  |  |
 
 
 
 
 
  
-
-
-<a name="atlas.ReportRequestType"></a>
-
-### ReportRequestType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| REPORT_REQUEST_TYPE_RESERVED | 0 |  |
-| REPORT_REQUEST_TYPE_UNSPECIFIED | 100 |  |
-
 
  
 
@@ -823,10 +896,10 @@ MetricsType represents areas of metrics accumulation - such as resource utilizat
 
 
 
-<a name="type_s3_address.proto"></a>
+<a name="s3_address.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_s3_address.proto
+## s3_address.proto
 S3Address represents S3 and MinIO address
 
 
@@ -855,44 +928,103 @@ S3Address represents S3 and MinIO address
 
 
 
-<a name="type_status_reply.proto"></a>
+<a name="service_control_plane.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_status_reply.proto
+## service_control_plane.proto
+Control Plane.
+
+Control Plane represents communication between server and client(s).
+Communication is logically structured into the following areas:
+
+  - Commands. Commands flow into both directions, thus server can send commands to clients and clients can send
+    commands to server. Commands is usually a long-live connection, in order for clients and server
+    to receive commands with minimal delay. However, nothing prevents clients to connect to server
+    from time to time as necessary and exchange commands.
+
+  - DataChunks. DataChunks flow into both directions, thus server can send data stream to clients and clients
+    can send data stream to Server. Some commands can be followed by bulk data steamed from client and/or server.
+
+  - Metrics. Metrics are sent from client to server in order for server to keep track of client&#39;s activities.
+
+  - Status. Status requests are sent from client to server in order to check status of the entity(es). Status calls
+    are usually used for &#34;check status and send updates&#34; logic.
+
+ 
+
+ 
+
+ 
+
+
+<a name="atlas.ControlPlane"></a>
+
+### ControlPlane
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| Commands | [Command](#atlas.Command) stream | [Command](#atlas.Command) stream | Bi-directional Commands stream. Commands are sent from service to client and from client to server |
+| DataChunks | [DataChunk](#atlas.DataChunk) stream | [DataChunk](#atlas.DataChunk) stream | Bi-directional Data stream. Some commands may be followed by data load. Be it logs, dumps, etc. |
+| UploadObject | [DataChunk](#atlas.DataChunk) stream | [Status](#atlas.Status) |  |
+| UploadObjects | [DataChunk](#atlas.DataChunk) stream | [StatusMulti](#atlas.StatusMulti) |  |
+| Metrics | [Metric](#atlas.Metric) stream | [Metric](#atlas.Metric) | Uni-directional Metrics stream from client to server. |
+| StatusObject | [StatusRequest](#atlas.StatusRequest) | [Status](#atlas.Status) | ObjectStatus checks status of the object on the server. |
+| StatusObjects | [StatusRequestMulti](#atlas.StatusRequestMulti) | [StatusMulti](#atlas.StatusMulti) | ObjectStatusMulti checks status of the multiple objects on server. |
+
+ 
+
+
+
+<a name="service_reports_plane.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## service_reports_plane.proto
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="atlas.ReportsPlane"></a>
+
+### ReportsPlane
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| Reports | [ReportRequest](#atlas.ReportRequest) stream | [ReportMulti](#atlas.ReportMulti) stream |  |
+
+ 
+
+
+
+<a name="status_multi.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## status_multi.proto
 StatusReply represents status of object(s)
 
 
-<a name="atlas.StatusReply"></a>
+<a name="atlas.StatusMulti"></a>
 
-### StatusReply
-StatusReply represents status of object(s)
+### StatusMulti
+StatusMulti represents status of multiple object(s)
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| status | [StatusType](#atlas.StatusType) |  | Status of the object. |
+| header | [Metadata](#atlas.Metadata) |  |  |
+| statuses | [Status](#atlas.Status) | repeated |  |
 
 
 
 
 
  
-
-
-<a name="atlas.StatusType"></a>
-
-### StatusType
-StatusType represents all types of statuses
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| STATUS_RESERVED | 0 | Due to first enum value has to be zero in proto3 |
-| STATUS_UNSPECIFIED | 100 | Unspecified means we do not know its type |
-| STATUS_NOT_FOUND | 200 | Object not found |
-| STATUS_FOUND_PARTIALLY | 300 | Not all objects requested were found |
-| STATUS_FOUND | 400 | Object found |
-| STATUS_FOUND_ALL | 500 | All objects found |
-
 
  
 
@@ -902,27 +1034,41 @@ StatusType represents all types of statuses
 
 
 
-<a name="type_status_request_multi.proto"></a>
+<a name="status.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_status_request_multi.proto
+## status.proto
+StatusRequest represents status request of the object(s)
 
 
+<a name="atlas.Status"></a>
 
-<a name="atlas.StatusRequestMulti"></a>
-
-### StatusRequestMulti
-
+### Status
+Status represents status of the object(s)
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| domain | [Domain](#atlas.Domain) |  |  |
-| mode | [StatusRequestMode](#atlas.StatusRequestMode) |  |  |
-| entities | [StatusRequest](#atlas.StatusRequest) | repeated |  |
+| header | [Metadata](#atlas.Metadata) |  |  |
 
 
 
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="status_request_mode.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## status_request_mode.proto
 
 
  
@@ -950,10 +1096,43 @@ StatusType represents all types of statuses
 
 
 
-<a name="type_status_request.proto"></a>
+<a name="status_request_multi.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_status_request.proto
+## status_request_multi.proto
+
+
+
+<a name="atlas.StatusRequestMulti"></a>
+
+### StatusRequestMulti
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [Domain](#atlas.Domain) |  |  |
+| mode | [StatusRequestMode](#atlas.StatusRequestMode) |  |  |
+| entities | [StatusRequest](#atlas.StatusRequest) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="status_request.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## status_request.proto
 StatusRequest represents status request of the object(s)
 
 
@@ -965,8 +1144,7 @@ StatusRequest represents status request of the object(s)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| entity | [Entity](#atlas.Entity) |  | Entity which status is requested |
-| digest | [Digest](#atlas.Digest) |  | Digest of entity to get status about |
+| header | [Metadata](#atlas.Metadata) |  |  |
 
 
 
@@ -982,10 +1160,41 @@ StatusRequest represents status request of the object(s)
 
 
 
-<a name="type_user_id.proto"></a>
+<a name="url.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_user_id.proto
+## url.proto
+Domain represents abstract domain.
+
+
+<a name="atlas.URL"></a>
+
+### URL
+URL represents abstract url.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| url | [string](#string) |  | URL |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="user_id.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## user_id.proto
 UsedID represents unique identifier of the user.
 May contain any arbitrary sequence of bytes.
 
@@ -1014,10 +1223,10 @@ Unique identifier of the user.
 
 
 
-<a name="type_uuid.proto"></a>
+<a name="uuid.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## type_uuid.proto
+## uuid.proto
 UUID represents unique identifier.
 May contain any arbitrary sequence of bytes.
 

@@ -65,12 +65,12 @@ func SendReader(client atlas.ControlPlaneClient, r io.Reader, options *DataExcha
 
 	result := DataExchange(client, r, options)
 	if result.Err == nil {
-		log.Infof("DONE send %s size %d", "io.Reader", result.Send.Len)
+		log.Infof("DONE send %s size %d", "io.Reader", result.Send.Data.Len)
 	} else {
-		log.Warnf("FAILED send %s size %d err %v", "io.Reader", result.Send.Len, result.Err)
+		log.Warnf("FAILED send %s size %d err %v", "io.Reader", result.Send.Data.Len, result.Err)
 	}
 
-	return result.Send.Len, result.Err
+	return result.Send.Data.Len, result.Err
 }
 
 // SendBytes
@@ -84,7 +84,7 @@ func SendBytes(client atlas.ControlPlaneClient, data []byte, options *DataExchan
 // SendEchoRequest
 func SendEchoRequest(outgoingQueue chan *atlas.Command) {
 	for i := 0; i < 5; i++ {
-		command := atlas.NewCommand().SetType(atlas.CommandType_COMMAND_ECHO_REQUEST).CreateID().SetDescription("desc")
+		command := atlas.NewCommand().SetType(atlas.CommandEchoRequest).CreateUUID().SetDescription("desc")
 		outgoingQueue <- command
 
 		log.Infof("Wait before send new Echo Request")
@@ -100,11 +100,11 @@ func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
 	for {
 		cmd := <-incomingQueue
 		log.Infof("Got cmd %v", cmd)
-		if cmd.GetType() == atlas.CommandType_COMMAND_ECHO_REQUEST {
+		if cmd.GetType() == atlas.CommandEchoRequest {
 			command := atlas.NewCommand().
-				SetType(atlas.CommandType_COMMAND_ECHO_REPLY).
-				CreateID().
-				SetReferenceIDFromString("reference: " + cmd.GetHeader().GetId().GetString()).
+				SetType(atlas.CommandEchoReply).
+				CreateUUID().
+				SetReferenceUUIDFromString("reference: " + cmd.GetUUID().String()).
 				SetDescription("desc")
 			outgoingQueue <- command
 		}

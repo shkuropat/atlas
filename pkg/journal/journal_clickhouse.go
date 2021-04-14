@@ -87,7 +87,7 @@ func (j *JournalClickHouse) NewEntry(ctxID *atlas.UUID, action ActionType) *Entr
 
 // RequestStart journals beginning of the request processing
 func (j *JournalClickHouse) RequestStart(ctx *rpc_context.RPCContext) {
-	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestStart)
+	e := NewEntry().SetBaseInfo(ctx.GetUUID(), ActionRequestStart)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -97,7 +97,7 @@ func (j *JournalClickHouse) RequestStart(ctx *rpc_context.RPCContext) {
 func (j *JournalClickHouse) RequestEnd(
 	ctx *rpc_context.RPCContext,
 ) {
-	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestCompleted)
+	e := NewEntry().SetBaseInfo(ctx.GetUUID(), ActionRequestCompleted)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -108,7 +108,7 @@ func (j *JournalClickHouse) RequestError(
 	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
-	e := NewEntry().SetBaseInfo(ctx.GetID(), ActionRequestError).
+	e := NewEntry().SetBaseInfo(ctx.GetUUID(), ActionRequestError).
 		SetError(callErr)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -125,8 +125,8 @@ func (j *JournalClickHouse) SaveData(
 	data []byte,
 ) {
 	e := NewEntry().
-		SetBaseInfo(ctx.GetID(), ActionSaveData).
-		SetSourceID(dataMetadata.GetUserId()).
+		SetBaseInfo(ctx.GetUUID(), ActionSaveData).
+		SetSourceID(dataMetadata.GetUserID()).
 		SetObject(ObjectType(dataMetadata.GetType()), dataAddress, uint64(dataSize), dataMetadata, data)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -139,7 +139,7 @@ func (j *JournalClickHouse) SaveDataError(
 	callErr error,
 ) {
 	e := NewEntry().
-		SetBaseInfo(ctx.GetID(), ActionSaveDataError).
+		SetBaseInfo(ctx.GetUUID(), ActionSaveDataError).
 		SetError(callErr)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -155,8 +155,8 @@ func (j *JournalClickHouse) ProcessData(
 	dataMetadata *atlas.Metadata,
 ) {
 	e := NewEntry().
-		SetBaseInfo(ctx.GetID(), ActionProcessData).
-		SetSourceID(dataMetadata.GetUserId()).
+		SetBaseInfo(ctx.GetUUID(), ActionProcessData).
+		SetSourceID(dataMetadata.GetUserID()).
 		SetObject(ObjectType(dataMetadata.GetType()), dataAddress, uint64(dataSize), dataMetadata, nil)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
@@ -169,7 +169,7 @@ func (j *JournalClickHouse) ProcessDataError(
 	callErr error,
 ) {
 	e := NewEntry().
-		SetBaseInfo(ctx.GetID(), ActionProcessDataError).
+		SetBaseInfo(ctx.GetUUID(), ActionProcessDataError).
 		SetError(callErr)
 	if err := j.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")

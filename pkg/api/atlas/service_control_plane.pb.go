@@ -27,24 +27,25 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 func init() { proto.RegisterFile("service_control_plane.proto", fileDescriptor_144c4e5d826a1f85) }
 
 var fileDescriptor_144c4e5d826a1f85 = []byte{
-	// 263 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x90, 0x4f, 0x4b, 0x03, 0x31,
-	0x10, 0xc5, 0x5b, 0xc1, 0x3f, 0x84, 0x2a, 0x3a, 0x54, 0xa4, 0xf1, 0x20, 0xf4, 0x24, 0x08, 0x4b,
-	0x51, 0xf0, 0xe0, 0x75, 0x15, 0x4f, 0x05, 0xd1, 0x0f, 0x10, 0xc6, 0x6d, 0xc0, 0xc5, 0x6c, 0x36,
-	0x26, 0xb3, 0xc2, 0x7e, 0x25, 0x3f, 0xa5, 0x24, 0x19, 0xc4, 0x6e, 0xf7, 0xf8, 0x7e, 0xef, 0xcd,
-	0xf0, 0x66, 0xc4, 0x65, 0xd0, 0xfe, 0xbb, 0xae, 0xb4, 0xaa, 0x5a, 0x4b, 0xbe, 0x35, 0xca, 0x19,
-	0xb4, 0xba, 0x70, 0xbe, 0xa5, 0x16, 0xf6, 0x91, 0x0c, 0x06, 0x09, 0xd4, 0xbb, 0x18, 0x68, 0x1a,
-	0xb4, 0x9b, 0x6c, 0xc9, 0xf3, 0xc4, 0x36, 0x48, 0xa8, 0xaa, 0x8f, 0xce, 0x7e, 0x32, 0x3e, 0x4b,
-	0xb8, 0xd1, 0xe4, 0xeb, 0x8a, 0xd1, 0x22, 0xa1, 0x40, 0x48, 0x5d, 0x50, 0x5e, 0x7f, 0x75, 0x3a,
-	0x10, 0x5b, 0x57, 0x23, 0x96, 0x6a, 0x3a, 0x43, 0x35, 0x07, 0x2e, 0xb6, 0x03, 0xce, 0xf4, 0xd9,
-	0xb8, 0xfd, 0xd9, 0x13, 0xb3, 0x32, 0x37, 0x7e, 0x89, 0x85, 0x61, 0x25, 0x8e, 0xca, 0x5c, 0x30,
-	0xc0, 0x49, 0x91, 0x7a, 0x17, 0x0c, 0xe4, 0x40, 0x2f, 0x27, 0xd7, 0xd3, 0xd5, 0x14, 0xee, 0x85,
-	0x78, 0x44, 0xc2, 0x32, 0xb6, 0x0f, 0x70, 0xca, 0x99, 0x3f, 0x24, 0x77, 0x08, 0xcf, 0xdd, 0x88,
-	0xc3, 0x75, 0xba, 0x2f, 0xc0, 0x31, 0x47, 0xb2, 0x96, 0xdb, 0x32, 0xc6, 0xe1, 0x41, 0xcc, 0x9e,
-	0x2c, 0xd5, 0xd4, 0xbf, 0xa5, 0x1b, 0x60, 0xce, 0x91, 0x2c, 0x5f, 0xf3, 0xc9, 0x12, 0x06, 0xd4,
-	0x99, 0x7e, 0x39, 0x81, 0x67, 0x31, 0xff, 0x3f, 0xbb, 0x8e, 0x7f, 0x71, 0x46, 0xc3, 0x62, 0x6c,
-	0x47, 0x72, 0xc7, 0x17, 0xbd, 0x1f, 0xa4, 0x9f, 0xdd, 0xfd, 0x06, 0x00, 0x00, 0xff, 0xff, 0xf2,
-	0x1a, 0x52, 0x72, 0xec, 0x01, 0x00, 0x00,
+	// 273 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x91, 0x4f, 0x4b, 0xc3, 0x40,
+	0x10, 0xc5, 0x2d, 0xe2, 0x1f, 0x86, 0x44, 0xca, 0xd0, 0x8b, 0xeb, 0xcd, 0x93, 0x20, 0x94, 0x62,
+	0x51, 0xf0, 0x26, 0xc4, 0x6b, 0x51, 0x14, 0xcf, 0x61, 0xba, 0x59, 0x30, 0x9a, 0x64, 0xe3, 0xee,
+	0xc4, 0x8f, 0xe1, 0x67, 0x96, 0xec, 0x4e, 0x25, 0xb1, 0x39, 0xbe, 0x97, 0xf7, 0xdb, 0xfc, 0xb2,
+	0x81, 0x0b, 0x6f, 0xdc, 0x77, 0xa9, 0x4d, 0xae, 0x6d, 0xc3, 0xce, 0x56, 0x79, 0x5b, 0x51, 0x63,
+	0x96, 0xad, 0xb3, 0x6c, 0xf1, 0x88, 0xb8, 0x22, 0xaf, 0x52, 0x6d, 0xeb, 0x9a, 0x9a, 0x22, 0xb6,
+	0x6a, 0x5e, 0x10, 0x53, 0xae, 0xdf, 0xbb, 0xe6, 0x53, 0x9a, 0xa4, 0x36, 0xec, 0x4a, 0x2d, 0x69,
+	0xe1, 0x99, 0xb8, 0xf3, 0xb9, 0x33, 0x5f, 0x9d, 0xf1, 0x2c, 0xad, 0x1a, 0xb7, 0x79, 0xdd, 0x55,
+	0x5c, 0xee, 0xf8, 0xf8, 0x4c, 0x12, 0xca, 0x72, 0xb0, 0xb8, 0xf9, 0x39, 0x84, 0x24, 0x8b, 0x86,
+	0xcf, 0xbd, 0x20, 0xae, 0xe0, 0x34, 0x8b, 0x56, 0x1e, 0xcf, 0x96, 0xc1, 0x73, 0x29, 0x85, 0xfa,
+	0x97, 0x2f, 0x0f, 0xae, 0x66, 0xab, 0x19, 0xde, 0x01, 0x3c, 0x12, 0x53, 0xd6, 0x7b, 0x7b, 0x9c,
+	0xcb, 0xe6, 0xaf, 0x52, 0x7b, 0x8d, 0x70, 0x6b, 0x48, 0xde, 0xda, 0xca, 0x52, 0xf1, 0xb4, 0xfd,
+	0x30, 0x9a, 0x27, 0xc8, 0x54, 0x9a, 0xd7, 0xe0, 0xdd, 0x63, 0x78, 0x0f, 0xe9, 0x10, 0x9a, 0x7a,
+	0x1f, 0x8e, 0xa8, 0x4d, 0xff, 0xb1, 0x01, 0xbd, 0x86, 0x93, 0x4d, 0xb8, 0x4e, 0x8f, 0xbb, 0x83,
+	0x63, 0x56, 0xe3, 0x18, 0xc6, 0xb7, 0x90, 0x44, 0x5e, 0xe4, 0x16, 0xa3, 0x43, 0x5f, 0xe2, 0x5d,
+	0xef, 0x09, 0xe2, 0x03, 0xa4, 0x43, 0xcc, 0xe3, 0xf9, 0x14, 0x17, 0x9c, 0xa6, 0x3d, 0xb7, 0xc7,
+	0xe1, 0xbf, 0xac, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x7b, 0xe0, 0x13, 0xac, 0x40, 0x02, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -67,15 +68,17 @@ type ControlPlaneClient interface {
 	// Bi-directional Data stream.
 	// Some commands may be followed by data load. Be it logs, dumps, etc.
 	DataChunks(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_DataChunksClient, error)
+	UploadObject(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_UploadObjectClient, error)
+	UploadObjects(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_UploadObjectsClient, error)
 	//*
 	// Uni-directional Metrics stream from client to server.
 	Metrics(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_MetricsClient, error)
 	//*
-	// EntityStatus checks status of the entity on the server.
-	EntityStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error)
+	// ObjectStatus checks status of the object on the server.
+	StatusObject(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*Status, error)
 	//*
-	// EntityStatusMulti checks status of the multiple entities on server.
-	EntityStatusMultiple(ctx context.Context, in *StatusRequestMulti, opts ...grpc.CallOption) (*StatusReply, error)
+	// ObjectStatusMulti checks status of the multiple objects on server.
+	StatusObjects(ctx context.Context, in *StatusRequestMulti, opts ...grpc.CallOption) (*StatusMulti, error)
 }
 
 type controlPlaneClient struct {
@@ -148,8 +151,76 @@ func (x *controlPlaneDataChunksClient) Recv() (*DataChunk, error) {
 	return m, nil
 }
 
+func (c *controlPlaneClient) UploadObject(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_UploadObjectClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_ControlPlane_serviceDesc.Streams[2], "/atlas.ControlPlane/UploadObject", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &controlPlaneUploadObjectClient{stream}
+	return x, nil
+}
+
+type ControlPlane_UploadObjectClient interface {
+	Send(*DataChunk) error
+	CloseAndRecv() (*Status, error)
+	grpc.ClientStream
+}
+
+type controlPlaneUploadObjectClient struct {
+	grpc.ClientStream
+}
+
+func (x *controlPlaneUploadObjectClient) Send(m *DataChunk) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *controlPlaneUploadObjectClient) CloseAndRecv() (*Status, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(Status)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *controlPlaneClient) UploadObjects(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_UploadObjectsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_ControlPlane_serviceDesc.Streams[3], "/atlas.ControlPlane/UploadObjects", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &controlPlaneUploadObjectsClient{stream}
+	return x, nil
+}
+
+type ControlPlane_UploadObjectsClient interface {
+	Send(*DataChunk) error
+	CloseAndRecv() (*StatusMulti, error)
+	grpc.ClientStream
+}
+
+type controlPlaneUploadObjectsClient struct {
+	grpc.ClientStream
+}
+
+func (x *controlPlaneUploadObjectsClient) Send(m *DataChunk) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *controlPlaneUploadObjectsClient) CloseAndRecv() (*StatusMulti, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(StatusMulti)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func (c *controlPlaneClient) Metrics(ctx context.Context, opts ...grpc.CallOption) (ControlPlane_MetricsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_ControlPlane_serviceDesc.Streams[2], "/atlas.ControlPlane/Metrics", opts...)
+	stream, err := c.cc.NewStream(ctx, &_ControlPlane_serviceDesc.Streams[4], "/atlas.ControlPlane/Metrics", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -182,18 +253,18 @@ func (x *controlPlaneMetricsClient) CloseAndRecv() (*Metric, error) {
 	return m, nil
 }
 
-func (c *controlPlaneClient) EntityStatus(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*StatusReply, error) {
-	out := new(StatusReply)
-	err := c.cc.Invoke(ctx, "/atlas.ControlPlane/EntityStatus", in, out, opts...)
+func (c *controlPlaneClient) StatusObject(ctx context.Context, in *StatusRequest, opts ...grpc.CallOption) (*Status, error) {
+	out := new(Status)
+	err := c.cc.Invoke(ctx, "/atlas.ControlPlane/StatusObject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *controlPlaneClient) EntityStatusMultiple(ctx context.Context, in *StatusRequestMulti, opts ...grpc.CallOption) (*StatusReply, error) {
-	out := new(StatusReply)
-	err := c.cc.Invoke(ctx, "/atlas.ControlPlane/EntityStatusMultiple", in, out, opts...)
+func (c *controlPlaneClient) StatusObjects(ctx context.Context, in *StatusRequestMulti, opts ...grpc.CallOption) (*StatusMulti, error) {
+	out := new(StatusMulti)
+	err := c.cc.Invoke(ctx, "/atlas.ControlPlane/StatusObjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -210,15 +281,17 @@ type ControlPlaneServer interface {
 	// Bi-directional Data stream.
 	// Some commands may be followed by data load. Be it logs, dumps, etc.
 	DataChunks(ControlPlane_DataChunksServer) error
+	UploadObject(ControlPlane_UploadObjectServer) error
+	UploadObjects(ControlPlane_UploadObjectsServer) error
 	//*
 	// Uni-directional Metrics stream from client to server.
 	Metrics(ControlPlane_MetricsServer) error
 	//*
-	// EntityStatus checks status of the entity on the server.
-	EntityStatus(context.Context, *StatusRequest) (*StatusReply, error)
+	// ObjectStatus checks status of the object on the server.
+	StatusObject(context.Context, *StatusRequest) (*Status, error)
 	//*
-	// EntityStatusMulti checks status of the multiple entities on server.
-	EntityStatusMultiple(context.Context, *StatusRequestMulti) (*StatusReply, error)
+	// ObjectStatusMulti checks status of the multiple objects on server.
+	StatusObjects(context.Context, *StatusRequestMulti) (*StatusMulti, error)
 }
 
 // UnimplementedControlPlaneServer can be embedded to have forward compatible implementations.
@@ -231,14 +304,20 @@ func (*UnimplementedControlPlaneServer) Commands(srv ControlPlane_CommandsServer
 func (*UnimplementedControlPlaneServer) DataChunks(srv ControlPlane_DataChunksServer) error {
 	return status.Errorf(codes.Unimplemented, "method DataChunks not implemented")
 }
+func (*UnimplementedControlPlaneServer) UploadObject(srv ControlPlane_UploadObjectServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadObject not implemented")
+}
+func (*UnimplementedControlPlaneServer) UploadObjects(srv ControlPlane_UploadObjectsServer) error {
+	return status.Errorf(codes.Unimplemented, "method UploadObjects not implemented")
+}
 func (*UnimplementedControlPlaneServer) Metrics(srv ControlPlane_MetricsServer) error {
 	return status.Errorf(codes.Unimplemented, "method Metrics not implemented")
 }
-func (*UnimplementedControlPlaneServer) EntityStatus(ctx context.Context, req *StatusRequest) (*StatusReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EntityStatus not implemented")
+func (*UnimplementedControlPlaneServer) StatusObject(ctx context.Context, req *StatusRequest) (*Status, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StatusObject not implemented")
 }
-func (*UnimplementedControlPlaneServer) EntityStatusMultiple(ctx context.Context, req *StatusRequestMulti) (*StatusReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EntityStatusMultiple not implemented")
+func (*UnimplementedControlPlaneServer) StatusObjects(ctx context.Context, req *StatusRequestMulti) (*StatusMulti, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StatusObjects not implemented")
 }
 
 func RegisterControlPlaneServer(s *grpc.Server, srv ControlPlaneServer) {
@@ -297,6 +376,58 @@ func (x *controlPlaneDataChunksServer) Recv() (*DataChunk, error) {
 	return m, nil
 }
 
+func _ControlPlane_UploadObject_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ControlPlaneServer).UploadObject(&controlPlaneUploadObjectServer{stream})
+}
+
+type ControlPlane_UploadObjectServer interface {
+	SendAndClose(*Status) error
+	Recv() (*DataChunk, error)
+	grpc.ServerStream
+}
+
+type controlPlaneUploadObjectServer struct {
+	grpc.ServerStream
+}
+
+func (x *controlPlaneUploadObjectServer) SendAndClose(m *Status) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *controlPlaneUploadObjectServer) Recv() (*DataChunk, error) {
+	m := new(DataChunk)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _ControlPlane_UploadObjects_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ControlPlaneServer).UploadObjects(&controlPlaneUploadObjectsServer{stream})
+}
+
+type ControlPlane_UploadObjectsServer interface {
+	SendAndClose(*StatusMulti) error
+	Recv() (*DataChunk, error)
+	grpc.ServerStream
+}
+
+type controlPlaneUploadObjectsServer struct {
+	grpc.ServerStream
+}
+
+func (x *controlPlaneUploadObjectsServer) SendAndClose(m *StatusMulti) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *controlPlaneUploadObjectsServer) Recv() (*DataChunk, error) {
+	m := new(DataChunk)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 func _ControlPlane_Metrics_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(ControlPlaneServer).Metrics(&controlPlaneMetricsServer{stream})
 }
@@ -323,38 +454,38 @@ func (x *controlPlaneMetricsServer) Recv() (*Metric, error) {
 	return m, nil
 }
 
-func _ControlPlane_EntityStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ControlPlane_StatusObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StatusRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ControlPlaneServer).EntityStatus(ctx, in)
+		return srv.(ControlPlaneServer).StatusObject(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/atlas.ControlPlane/EntityStatus",
+		FullMethod: "/atlas.ControlPlane/StatusObject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ControlPlaneServer).EntityStatus(ctx, req.(*StatusRequest))
+		return srv.(ControlPlaneServer).StatusObject(ctx, req.(*StatusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ControlPlane_EntityStatusMultiple_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ControlPlane_StatusObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StatusRequestMulti)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ControlPlaneServer).EntityStatusMultiple(ctx, in)
+		return srv.(ControlPlaneServer).StatusObjects(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/atlas.ControlPlane/EntityStatusMultiple",
+		FullMethod: "/atlas.ControlPlane/StatusObjects",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ControlPlaneServer).EntityStatusMultiple(ctx, req.(*StatusRequestMulti))
+		return srv.(ControlPlaneServer).StatusObjects(ctx, req.(*StatusRequestMulti))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -364,12 +495,12 @@ var _ControlPlane_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*ControlPlaneServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "EntityStatus",
-			Handler:    _ControlPlane_EntityStatus_Handler,
+			MethodName: "StatusObject",
+			Handler:    _ControlPlane_StatusObject_Handler,
 		},
 		{
-			MethodName: "EntityStatusMultiple",
-			Handler:    _ControlPlane_EntityStatusMultiple_Handler,
+			MethodName: "StatusObjects",
+			Handler:    _ControlPlane_StatusObjects_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
@@ -383,6 +514,16 @@ var _ControlPlane_serviceDesc = grpc.ServiceDesc{
 			StreamName:    "DataChunks",
 			Handler:       _ControlPlane_DataChunks_Handler,
 			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "UploadObject",
+			Handler:       _ControlPlane_UploadObject_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "UploadObjects",
+			Handler:       _ControlPlane_UploadObjects_Handler,
 			ClientStreams: true,
 		},
 		{

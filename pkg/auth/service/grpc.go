@@ -23,8 +23,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+// SetupOAuth
 func SetupOAuth(jwtRSAPublicKeyFile string) ([]grpc.ServerOption, error) {
-
 	opts := []grpc.ServerOption{
 		// Add an interceptor for all unary RPCs.
 		grpc.UnaryInterceptor(unaryInterceptor),

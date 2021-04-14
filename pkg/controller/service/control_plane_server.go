@@ -17,7 +17,6 @@ package controller_service
 import (
 	"context"
 	"fmt"
-
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 
@@ -69,41 +68,57 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 	defer log.Info("DataChunks() - end")
 
 	if DataChunksHandler == nil {
-		return fmt.Errorf("no DataChunksHandler provided")
+		return fmt.Errorf("no DataChunks provided")
 	}
 
 	metadata := fetchMetadata(DataChunksServer.Context())
 	return DataChunksHandler(DataChunksServer, metadata)
 }
 
-// EntityStatusHandler is a user-provided handler for EntityStatus call
-var EntityStatusHandler func(*atlas.StatusRequest, jwt.MapClaims) (*atlas.StatusReply, error)
+// UploadObject is a user-provided handler for UploadObject call
+var UploadObjectHandler func(atlas.ControlPlane_UploadObjectServer, jwt.MapClaims) error
 
-// EntityStatus gRPC call
-func (s *ControlPlaneServer) EntityStatus(ctx context.Context, req *atlas.StatusRequest) (*atlas.StatusReply, error) {
-	log.Info("EntityStatus() - start")
-	defer log.Info("EntityStatus() - end")
+// UploadObject gRPC call
+func (s *ControlPlaneServer) UploadObject(UploadObjectServer atlas.ControlPlane_UploadObjectServer) error {
+	log.Info("UploadObject() - start")
+	defer log.Info("UploadObject() - end")
 
-	if EntityStatusHandler == nil {
-		return nil, fmt.Errorf("no EntityStatusHandler provided")
+	if UploadObjectHandler == nil {
+		return fmt.Errorf("no UploadObject provided")
 	}
 
-	metadata := fetchMetadata(ctx)
-	return EntityStatusHandler(req, metadata)
+	metadata := fetchMetadata(UploadObjectServer.Context())
+	return UploadObjectHandler(UploadObjectServer, metadata)
 }
 
-// EntityStatusMultiHandler is a user-provided handler for FileStatus call
-var EntityStatusMultiHandler func(*atlas.StatusRequestMulti, jwt.MapClaims) (*atlas.StatusReply, error)
+// StatusObjectHandler is a user-provided handler for StatusObject call
+var StatusObjectHandler func(*atlas.StatusRequest, jwt.MapClaims) (*atlas.Status, error)
 
-// EntityStatusMulti gRPC call
-func (s *ControlPlaneServer) EntityStatusMulti(ctx context.Context, req *atlas.StatusRequestMulti) (*atlas.StatusReply, error) {
-	log.Info("EntityStatusMulti() - start")
-	defer log.Info("EntityStatusMulti() - end")
+// StatusObject gRPC call
+func (s *ControlPlaneServer) StatusObject(ctx context.Context, req *atlas.StatusRequest) (*atlas.Status, error) {
+	log.Info("StatusObject() - start")
+	defer log.Info("StatusObject() - end")
 
-	if EntityStatusMultiHandler == nil {
-		return nil, fmt.Errorf("no EntityStatusMultiHandler provided")
+	if StatusObjectHandler == nil {
+		return nil, fmt.Errorf("no StatusObjectHandler provided")
 	}
 
 	metadata := fetchMetadata(ctx)
-	return EntityStatusMultiHandler(req, metadata)
+	return StatusObjectHandler(req, metadata)
+}
+
+// StatusObjectsHandler is a user-provided handler for StatusObjects call
+var StatusObjectsHandler func(*atlas.StatusRequestMulti, jwt.MapClaims) (*atlas.Status, error)
+
+// StatusObjects gRPC call
+func (s *ControlPlaneServer) StatusObjects(ctx context.Context, req *atlas.StatusRequestMulti) (*atlas.Status, error) {
+	log.Info("StatusObjects() - start")
+	defer log.Info("StatusObjects() - end")
+
+	if StatusObjectsHandler == nil {
+		return nil, fmt.Errorf("no StatusObjectsHandler provided")
+	}
+
+	metadata := fetchMetadata(ctx)
+	return StatusObjectsHandler(req, metadata)
 }

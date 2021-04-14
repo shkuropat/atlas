@@ -30,7 +30,7 @@ func CopyDataChunkFile(consumer *Consumer, dst io.Writer) {
 	)
 	defer transport.Close()
 
-	f, err := atlas.OpenDataChunkFile(transport)
+	f, err := atlas.OpenDataChunkFile(transport, transport)
 	if err != nil {
 		log.Errorf("err: %v", err)
 	}

@@ -25,11 +25,13 @@ import (
 	_ "github.com/mailru/go-clickhouse"
 )
 
+// Connection is a connection to ClickHouse
 type Connection struct {
 	params *ConnParams
 	conn   *databasesql.DB
 }
 
+// NewConnection
 func NewConnection(params *ConnParams) *Connection {
 	// DO not perform connection immediately, do it in lazy manner
 	return &Connection{
@@ -37,6 +39,7 @@ func NewConnection(params *ConnParams) *Connection {
 	}
 }
 
+// connect
 func (c *Connection) connect() {
 	log.Infof("Establishing connection: %s", c.params.GetDSNWithHiddenCredentials())
 	dbConnection, err := databasesql.Open("clickhouse", c.params.GetDSN())
@@ -58,6 +61,7 @@ func (c *Connection) connect() {
 	c.conn = dbConnection
 }
 
+// ensureConnected
 func (c *Connection) ensureConnected() bool {
 	if c.conn != nil {
 		log.Infof("Already connected: %s", c.params.GetDSNWithHiddenCredentials())
@@ -67,34 +71,6 @@ func (c *Connection) ensureConnected() bool {
 	c.connect()
 
 	return c.conn != nil
-}
-
-// Query
-type Query struct {
-	ctx        context.Context
-	cancelFunc context.CancelFunc
-
-	Rows *databasesql.Rows
-}
-
-// Close
-func (q *Query) Close() {
-	if q == nil {
-		return
-	}
-
-	if q.Rows != nil {
-		err := q.Rows.Close()
-		q.Rows = nil
-		if err != nil {
-			log.Warnf("UNABLE to close rows. err: %v", err)
-		}
-	}
-
-	if q.cancelFunc != nil {
-		q.cancelFunc()
-		q.cancelFunc = nil
-	}
 }
 
 // Query runs given sql query

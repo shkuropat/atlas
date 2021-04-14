@@ -45,6 +45,7 @@ func authorize(ctx context.Context) error {
 	return err
 }
 
+// fetchJWTToken
 func fetchJWTToken(ctx context.Context) (*jwt.Token, error) {
 	var err error
 
@@ -70,6 +71,7 @@ func fetchJWTToken(ctx context.Context) (*jwt.Token, error) {
 	return parseToken(tokenString)
 }
 
+// fetchBearerToken
 func fetchBearerToken(md []string) (string, error) {
 	if len(md) < 1 {
 		return "", errMissingBearer
@@ -88,6 +90,7 @@ func fetchBearerToken(md []string) (string, error) {
 	return tokenString, nil
 }
 
+// dumpMetadata
 func dumpMetadata(md metadata.MD) {
 	log.Infof("Dump Metadata ---")
 	// Metadata is a map[string][]string
@@ -158,6 +161,7 @@ func parseToken(tokenString string) (*jwt.Token, error) {
 	return token, nil
 }
 
+// verifyClaims
 func verifyClaims(token *jwt.Token) error {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {
@@ -171,11 +175,12 @@ func verifyClaims(token *jwt.Token) error {
 	return nil
 }
 
+// getClaims
 func getClaims(token *jwt.Token) jwt.MapClaims {
 	return token.Claims.(jwt.MapClaims)
 }
 
-// authorize ensures a valid token exists within a request's metadata and authorizes the token received from Metadata
+// GetClaims
 func GetClaims(ctx context.Context) (jwt.MapClaims, error) {
 	token, err := fetchJWTToken(ctx)
 	if err != nil {

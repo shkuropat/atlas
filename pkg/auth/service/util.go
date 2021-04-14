@@ -22,6 +22,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+// parseRSAPublicKey
 func parseRSAPublicKey(pem []byte) (*rsa.PublicKey, error) {
 	var err error
 
@@ -35,6 +36,7 @@ func parseRSAPublicKey(pem []byte) (*rsa.PublicKey, error) {
 	return jwt.ParseRSAPublicKeyFromPEM(pem)
 }
 
+// verifyPEM
 func verifyPEM(pem []byte) error {
 	// Trim newlines from the end of the key
 	trimmed := strings.TrimRight(string(pem), "\r\n")

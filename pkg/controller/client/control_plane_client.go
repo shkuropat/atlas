@@ -60,9 +60,9 @@ func DataExchange(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	var DataChunksClient atlas.ControlPlane_DataChunksClient
+	var DataChunksBiMultiClient atlas.ControlPlane_DataChunksClient
 
-	DataChunksClient, result.Err = ControlPlaneClient.DataChunks(ctx)
+	DataChunksBiMultiClient, result.Err = ControlPlaneClient.DataChunks(ctx)
 	if result.Err != nil {
 		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
 		return result
@@ -75,12 +75,13 @@ func DataExchange(
 		// On receiving end, when cancel() is the first in the race, f receives 'cancel' and (sometimes) no data
 		// instead of complete set of data and EOF
 		// See https://github.com/grpc/grpc-go/issues/1714 for more details
-		DataChunksClient.CloseSend()
-		DataChunksClient.Recv()
+		DataChunksBiMultiClient.CloseSend()
+		DataChunksBiMultiClient.Recv()
 	}()
 
 	f, err := atlas.OpenDataChunkFileWOptions(
-		DataChunksClient,
+		DataChunksBiMultiClient,
+		DataChunksBiMultiClient,
 		atlas.NewDataChunkFileOptions().
 			SetMetadata(options.GetMetadata()).
 			SetCompress(options.GetCompress()).
@@ -94,7 +95,7 @@ func DataExchange(
 
 	if src != nil {
 		// We have something to send
-		result.Send.Len, result.Err = f.ReadFrom(src)
+		result.Send.Data.Len, result.Err = f.ReadFrom(src)
 		if result.Err != nil {
 			log.Warnf("SendDataChunkFile() failed with err %v", result.Err)
 			return result
@@ -103,13 +104,63 @@ func DataExchange(
 
 	if options.GetWaitReply() {
 		// We should wait for reply
-		result.Receive.Len, result.Receive.Data, result.Err = f.WriteToBuf()
+		result.Recv.Data.Len, result.Recv.Data.Data, result.Err = f.WriteToBuf()
 		if result.Err != nil {
 			log.Warnf("RecvDataChunkFileIntoBuf() failed with err %v", result.Err)
 			return result
 		}
 	}
-	result.Receive.Metadata = f.DataChunkFile.PayloadMetadata
+	result.Recv.Data.Metadata = f.DataChunkFile.PayloadMetadata
+
+	return result
+}
+
+// Upload send data to server and receives back status(es)
+func Upload(
+	ControlPlaneClient atlas.ControlPlaneClient,
+	options *DataExchangeOptions,
+	src io.Reader,
+) *DataExchangeResult {
+	log.Infof("DataExchange() - start")
+	defer log.Infof("DataExchange() - end")
+
+	result := NewDataExchangeResult()
+
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	var DataChunksUpOneClient atlas.ControlPlane_UploadObjectClient
+	DataChunksUpOneClient, result.Err = ControlPlaneClient.UploadObject(ctx)
+	if result.Err != nil {
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
+		return result
+	}
+
+	f, err := atlas.OpenDataChunkFileWOptions(
+		DataChunksUpOneClient,
+		nil,
+		atlas.NewDataChunkFileOptions().
+			SetMetadata(options.GetMetadata()).
+			SetCompress(options.GetCompress()).
+			SetDecompress(options.GetDecompress()),
+	)
+	if err != nil {
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
+		result.Err = err
+		return result
+	}
+
+	if src != nil {
+		// We have something to send
+		result.Send.Data.Len, result.Err = f.ReadFrom(src)
+		if result.Err != nil {
+			log.Warnf("SendDataChunkFile() failed with err %v", result.Err)
+			return result
+		}
+	}
+
+	result.Recv.Status, result.Err = DataChunksUpOneClient.CloseAndRecv()
 
 	return result
 }

@@ -29,7 +29,7 @@ type RPCContext struct {
 // New
 func New() *RPCContext {
 	return &RPCContext{
-		Metadata: atlas.NewMetadata().CreateID().CreateTimestamp(),
+		Metadata: atlas.NewMetadata().SetRandomUUID().CreateTimestamp(),
 	}
 }
 
@@ -40,8 +40,8 @@ func (c *RPCContext) SetClaims(claims jwt.MapClaims) *RPCContext {
 }
 
 // SetType
-func (c *RPCContext) SetType(_type atlas.MetadataType) *RPCContext {
-	c.Metadata.SetType(int32(_type))
+func (c *RPCContext) SetType(_type int32) *RPCContext {
+	c.Metadata.SetType(_type)
 	return c
 }
 
@@ -62,23 +62,23 @@ func (c *RPCContext) GetName() string {
 }
 
 // SetID
-func (c *RPCContext) SetID(id *atlas.UUID) *RPCContext {
-	c.Metadata.SetID(id)
+func (c *RPCContext) SetUUID(id *atlas.UUID) *RPCContext {
+	c.Metadata.SetUUID(id)
 	return c
 }
 
 // SetIDFromString
-func (c *RPCContext) SetCallIDFromString(id string) *RPCContext {
-	c.Metadata.SetIDFromString(id)
+func (c *RPCContext) SetCallUUIDFromString(id string) *RPCContext {
+	c.Metadata.SetUUIDFromString(id)
 	return c
 }
 
 // GetID
-func (c *RPCContext) GetID() *atlas.UUID {
-	return c.Metadata.GetId()
+func (c *RPCContext) GetUUID() *atlas.UUID {
+	return c.Metadata.GetUUID()
 }
 
 // GetIDAsString
-func (c *RPCContext) GetIDAsString() string {
-	return c.Metadata.GetId().GetString()
+func (c *RPCContext) GetUUIDAsString() string {
+	return c.Metadata.GetUUID().String()
 }

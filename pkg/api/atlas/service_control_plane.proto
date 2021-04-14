@@ -35,25 +35,28 @@ syntax = "proto3";
 
 package atlas;
 
-import "type_command.proto";
-import "type_data_chunk.proto";
-import "type_metric.proto";
-import "type_status_request.proto";
-import "type_status_request_multi.proto";
-import "type_status_reply.proto";
+import "command.proto";
+import "data_chunk.proto";
+import "metric.proto";
+import "status_request.proto";
+import "status_request_multi.proto";
+import "status.proto";
+import "status_multi.proto";
 
 service ControlPlane {
 	/**
 	 * Bi-directional Commands stream.
 	 * Commands are sent from service to client and from client to server
 	 */
-	rpc Commands (stream Command) returns (stream Command) {}
+	rpc Commands(stream Command) returns (stream Command) {}
 
 	/**
 	 * Bi-directional Data stream.
 	 * Some commands may be followed by data load. Be it logs, dumps, etc.
 	 */
-	rpc DataChunks (stream DataChunk) returns (stream DataChunk) {}
+	rpc DataChunks(stream DataChunk) returns (stream DataChunk) {}
+	rpc UploadObject(stream DataChunk) returns (Status) {}
+	rpc UploadObjects(stream DataChunk) returns (StatusMulti) {}
 
 	/**
 	 * Uni-directional Metrics stream from client to server.
@@ -61,12 +64,12 @@ service ControlPlane {
 	rpc Metrics (stream Metric) returns (Metric) {}
 
 	/**
-	 * EntityStatus checks status of the entity on the server.
+	 * ObjectStatus checks status of the object on the server.
 	 */
-	rpc EntityStatus(StatusRequest) returns (StatusReply) {}
+	rpc StatusObject(StatusRequest) returns (Status) {}
 
 	/**
-	 * EntityStatusMulti checks status of the multiple entities on server.
+	 * ObjectStatusMulti checks status of the multiple objects on server.
 	 */
-	rpc EntityStatusMultiple(StatusRequestMulti) returns (StatusReply) {}
+	rpc StatusObjects(StatusRequestMulti) returns (StatusMulti) {}
 }

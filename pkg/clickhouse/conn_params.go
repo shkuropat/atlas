@@ -38,7 +38,7 @@ type ConnParams struct {
 
 	// Ready-to-use DSN string
 	dsn string
-	// DSN string with hiddent credentials. Can be used in logs, etc
+	// DSN string with hidden credentials. Can be used in logs, etc
 	dsnHiddenCredentials string
 
 	// Timeout to be used with connection

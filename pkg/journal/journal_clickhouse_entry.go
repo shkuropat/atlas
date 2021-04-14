@@ -49,13 +49,13 @@ func NewClickHouseEntry() *ClickHouseEntry {
 func (ce *ClickHouseEntry) Accept(j *JournalClickHouse, entry *Entry) *ClickHouseEntry {
 	ce.d = time.Now()
 	ce.endpointID = int32(j.endpointID)
-	ce.sourceID = entry.SourceID.GetString()
-	ce.contextID = entry.ContextID.GetString()
+	ce.sourceID = entry.SourceID.String()
+	ce.contextID = entry.ContextID.String()
 	ce.actionID = int32(entry.Action)
 	ce.duration = ce.d.Sub(j.start).Nanoseconds()
 	ce._type = int32(entry.ObjectType)
 	ce.size = entry.ObjectSize
-	ce.address = entry.ObjectAddress.Printable()
+	ce.address = entry.ObjectAddress.String()
 	ce.domain = entry.ObjectMetadata.GetDomain().GetName()
 	ce.name = entry.ObjectMetadata.GetFilename()
 	ce.digest = string(entry.ObjectMetadata.GetDigest().GetData())
@@ -171,12 +171,12 @@ func NewClickHouseEntrySearch() *ClickHouseEntrySearch {
 func (ce *ClickHouseEntrySearch) Accept(entry *Entry) *ClickHouseEntrySearch {
 	ce.d = nil
 	ce.endpointID = nil
-	if entry.SourceID.GetString() != "" {
-		sourceID := entry.SourceID.GetString()
+	if entry.SourceID.String() != "" {
+		sourceID := entry.SourceID.String()
 		ce.sourceID = &sourceID
 	}
-	if entry.ContextID.GetString() != "" {
-		contextID := entry.ContextID.GetString()
+	if entry.ContextID.String() != "" {
+		contextID := entry.ContextID.String()
 		ce.contextID = &contextID
 	}
 	if entry.Action != ActionUnknown {
@@ -192,8 +192,8 @@ func (ce *ClickHouseEntrySearch) Accept(entry *Entry) *ClickHouseEntrySearch {
 		size := entry.ObjectSize
 		ce.size = &size
 	}
-	if entry.ObjectAddress.Printable() != "" {
-		address := entry.ObjectAddress.Printable()
+	if entry.ObjectAddress.String() != "" {
+		address := entry.ObjectAddress.String()
 		ce.address = &address
 	}
 	if entry.ObjectMetadata.GetDomain().GetName() != "" {
