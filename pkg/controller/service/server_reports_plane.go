@@ -15,6 +15,7 @@
 package controller_service
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
@@ -45,4 +46,20 @@ func (s *ReportsPlaneServer) Reports(ReportsServer atlas.ReportsPlane_ReportsSer
 
 	metadata := fetchMetadata(ReportsServer.Context())
 	return ReportsHandler(ReportsServer, metadata)
+}
+
+// ReportHandler is a user-provided handler for Report call
+var ReportHandler func(context.Context, *atlas.ReportRequest, jwt.MapClaims) (*atlas.ReportMulti, error)
+
+// Reports gRPC call
+func (s *ReportsPlaneServer) Report(ctx context.Context, req *atlas.ReportRequest) (*atlas.ReportMulti, error) {
+	log.Info("Report() - start")
+	defer log.Info("Report() - end")
+
+	if ReportHandler == nil {
+		return nil, fmt.Errorf("no ReportHandler provided")
+	}
+
+	metadata := fetchMetadata(ctx)
+	return ReportHandler(ctx, req, metadata)
 }
