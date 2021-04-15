@@ -21,8 +21,13 @@ import "status_request.proto";
 import "status_request_mode.proto";
 
 message StatusRequestMulti {
-    Domain            domain = 100;
-    StatusRequestMode mode   = 200;
+    oneof domain_optional {
+        Domain            domain = 100;
+    }
+
+    oneof mode_optional {
+        StatusRequestMode mode = 200;
+    }
 
     repeated StatusRequest entities = 300;
 }

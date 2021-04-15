@@ -19,6 +19,55 @@ func NewStatusRequestMulti() *StatusRequestMulti {
 	return new(StatusRequestMulti)
 }
 
+// EnsureDomain
+func (m *StatusRequestMulti) EnsureDomain() *Domain {
+	if m == nil {
+		return nil
+	}
+	if m.DomainOptional == nil {
+		m.DomainOptional = new(StatusRequestMulti_Domain)
+	}
+	if m.DomainOptional.(*StatusRequestMulti_Domain).Domain == nil {
+		m.DomainOptional.(*StatusRequestMulti_Domain).Domain = NewDomain()
+	}
+	return m.GetDomain()
+}
+
+// SetDomain
+func (m *StatusRequestMulti) SetDomain(domain *Domain) *StatusRequestMulti {
+	if m == nil {
+		return nil
+	}
+	if m.DomainOptional == nil {
+		m.DomainOptional = new(StatusRequestMulti_Domain)
+	}
+	m.DomainOptional.(*StatusRequestMulti_Domain).Domain = domain
+	return m
+}
+
+// EnsureMode
+func (m *StatusRequestMulti) EnsureMode() StatusRequestMode {
+	if m == nil {
+		return StatusRequestMode_RESERVED
+	}
+	if m.ModeOptional == nil {
+		m.ModeOptional = new(StatusRequestMulti_Mode)
+	}
+	return m.GetMode()
+}
+
+// SetMode
+func (m *StatusRequestMulti) SetMode(mode StatusRequestMode) *StatusRequestMulti {
+	if m == nil {
+		return nil
+	}
+	if m.ModeOptional == nil {
+		m.ModeOptional = new(StatusRequestMulti_Mode)
+	}
+	m.ModeOptional.(*StatusRequestMulti_Mode).Mode = mode
+	return m
+}
+
 // GetEntitiesNum
 func (m *StatusRequestMulti) GetEntitiesNum() int {
 	return len(m.GetEntities())

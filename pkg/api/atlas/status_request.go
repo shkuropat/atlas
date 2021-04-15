@@ -19,6 +19,17 @@ func NewStatusRequest() *StatusRequest {
 	return new(StatusRequest)
 }
 
+// EnsureHeader
+func (m *StatusRequest) EnsureHeader() *Metadata {
+	if m == nil {
+		return nil
+	}
+	if m.Header == nil {
+		m.Header = NewMetadata()
+	}
+	return m.Header
+}
+
 // String
 func (m *StatusRequest) String() string {
 	return "to be implemented"
