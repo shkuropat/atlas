@@ -31,15 +31,15 @@ type DataChunkFileWithOptions struct {
 
 // OpenDataChunkFileWOptions
 func OpenDataChunkFileWOptions(
-	send DataChunkTransporterSend,
-	recv DataChunkTransporterRecv,
+	writer DataChunkWriter,
+	reader DataChunkReader,
 	options *DataChunkFileOptions,
 ) (*DataChunkFileWithOptions, error) {
 	log.Tracef("OpenDataChunkFileWOptions() - start")
 	defer log.Tracef("OpenDataChunkFileWOptions() - end")
 
 	// Open underlying DataChunkFile
-	f, err := OpenDataChunkFile(send, recv)
+	f, err := OpenDataChunkFile(writer, reader)
 	if err != nil {
 		log.Warnf("FAILED to open DataChunkFile. err: %v", err)
 		return nil, err

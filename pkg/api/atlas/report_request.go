@@ -19,6 +19,17 @@ func NewReportRequest() *ReportRequest {
 	return new(ReportRequest)
 }
 
+// EnsureHeader
+func (m *ReportRequest) EnsureHeader() *Metadata {
+	if m == nil {
+		return nil
+	}
+	if m.Header == nil {
+		m.Header = NewMetadata()
+	}
+	return m.Header
+}
+
 // String
 func (m *ReportRequest) String() string {
 	return "to be implemented"

@@ -963,6 +963,7 @@ Communication is logically structured into the following areas:
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | Reports | [ReportRequest](#atlas.ReportRequest) stream | [ReportMulti](#atlas.ReportMulti) stream |  |
+| Report | [ReportRequest](#atlas.ReportRequest) | [ReportMulti](#atlas.ReportMulti) |  |
 
  
 

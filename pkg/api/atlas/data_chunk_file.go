@@ -34,10 +34,10 @@ const defaultMaxWriteChunkSize = 1024
 //	- io.Closer
 // and thus can be used in any functions, which operate these interfaces, such as io.Copy()
 type DataChunkFile struct {
-	// transportSend provides functions to send DataChunks
-	transportSend DataChunkTransporterSend
-	// transportRecv provides functions to receive DataChunks
-	transportRecv DataChunkTransporterRecv
+	// dataChunkWriter provides functions to send DataChunks
+	dataChunkWriter DataChunkWriter
+	// dataChunkReader provides functions to receive DataChunks
+	dataChunkReader DataChunkReader
 
 	// Header is mandatory
 	Header *Metadata
@@ -67,10 +67,10 @@ type DataChunkFile struct {
 
 // OpenDataChunkFile opens set of DataChunk(s)
 // Inspired by os.OpenFile()
-func OpenDataChunkFile(send DataChunkTransporterSend, recv DataChunkTransporterRecv) (*DataChunkFile, error) {
+func OpenDataChunkFile(writer DataChunkWriter, reader DataChunkReader) (*DataChunkFile, error) {
 	return &DataChunkFile{
-		transportSend: send,
-		transportRecv: recv,
+		dataChunkWriter: writer,
+		dataChunkReader: reader,
 	}, nil
 }
 
@@ -218,7 +218,7 @@ func (f *DataChunkFile) recvDataChunk() (*DataChunk, error) {
 	defer log.Tracef("DataChunkFile.recvDataChunk() - end")
 
 	// Recv DataChunk
-	dataChunk, err := f.transportRecv.Recv()
+	dataChunk, err := f.dataChunkReader.Recv()
 	f.acceptAllMetadata(dataChunk)
 	f.logDataChunk(dataChunk)
 
@@ -298,7 +298,7 @@ func (f *DataChunkFile) sendDataChunk(p []byte) (n int, err error) {
 
 	n = len(p)
 	chunk := f.newDataChunk(p)
-	err = f.transportSend.Send(chunk)
+	err = f.dataChunkWriter.Send(chunk)
 	if err != nil {
 		// We have some kind of error and were not able to send the data
 		n = 0
@@ -460,7 +460,7 @@ func (f *DataChunkFile) Close() error {
 
 	// Send "last" data chunk
 	chunk := NewDataChunk().SetLast(true)
-	err := f.transportSend.Send(chunk)
+	err := f.dataChunkWriter.Send(chunk)
 	if err != nil {
 		if err == io.EOF {
 			log.Infof("Send() received EOF")

@@ -14,16 +14,15 @@
 
 package atlas
 
-// DataChunkTransporter defines transport level interface for DataChunk transportation
-type DataChunkTransporterSend interface {
+// DataChunkWriter
+type DataChunkWriter interface {
 	Send(*DataChunk) error
-	//Recv() (*DataChunk, error)
 	// TODO add Close()
 	// TODO add Flush()
 }
 
-type DataChunkTransporterRecv interface {
-	//Send(*DataChunk) error
+// DataChunkReader
+type DataChunkReader interface {
 	Recv() (*DataChunk, error)
 	// TODO add Close()
 	// TODO add Flush()

@@ -21,4 +21,5 @@ import "report_multi.proto";
 
 service ReportsPlane {
     rpc Reports(stream ReportRequest) returns (stream ReportMulti) {}
+    rpc Report(ReportRequest) returns (ReportMulti) {}
 }

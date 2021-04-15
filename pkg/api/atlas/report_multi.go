@@ -19,6 +19,20 @@ func NewReportMulti() *ReportMulti {
 	return new(ReportMulti)
 }
 
+// EnsureHeader
+func (m *ReportMulti) EnsureHeader() *Metadata {
+	if m == nil {
+		return nil
+	}
+	if m.HeaderOptional == nil {
+		m.HeaderOptional = new(ReportMulti_Header)
+	}
+	if m.HeaderOptional.(*ReportMulti_Header).Header == nil {
+		m.HeaderOptional.(*ReportMulti_Header).Header = NewMetadata()
+	}
+	return m.GetHeader()
+}
+
 // AddReport
 func (m *ReportMulti) AddReport(report *Report) *ReportMulti {
 	if m == nil {
