@@ -108,10 +108,10 @@ func (s *ControlPlaneServer) StatusObject(ctx context.Context, req *atlas.Status
 }
 
 // StatusObjectsHandler is a user-provided handler for StatusObjects call
-var StatusObjectsHandler func(*atlas.StatusRequestMulti, jwt.MapClaims) (*atlas.Status, error)
+var StatusObjectsHandler func(*atlas.StatusRequestMulti, jwt.MapClaims) (*atlas.StatusMulti, error)
 
 // StatusObjects gRPC call
-func (s *ControlPlaneServer) StatusObjects(ctx context.Context, req *atlas.StatusRequestMulti) (*atlas.Status, error) {
+func (s *ControlPlaneServer) StatusObjects(ctx context.Context, req *atlas.StatusRequestMulti) (*atlas.StatusMulti, error) {
 	log.Info("StatusObjects() - start")
 	defer log.Info("StatusObjects() - end")
 
