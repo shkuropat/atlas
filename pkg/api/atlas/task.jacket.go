@@ -38,17 +38,17 @@ func (m *Task) SetName(name string) *Task {
 
 // GetUUID
 func (m *Task) GetUUID() *UUID {
-	return m.GetHeader().GetAddresses().First(DomainThis, DomainUUID).GetUuid()
+	return m.GetHeader().GetAddresses().First(DomainThis, DomainUUID).GetUUID()
 }
 
-// GetIDAsString
+// GetUUIDAsString
 func (m *Task) GetUUIDAsString() string {
 	return m.GetUUID().String()
 }
 
 // SetUUID
 func (m *Task) SetUUID(address *Address) *Task {
-	m.GetHeader().EnsureAddresses().Set(DomainThis, DomainUUID, address)
+	m.GetHeader().Set(DomainThis, DomainUUID, address)
 	return m
 }
 
@@ -65,23 +65,23 @@ func (m *Task) CreateUUID() *Task {
 
 // GetReferenceUUID
 func (m *Task) GetReferenceUUID() *UUID {
-	return m.GetHeader().GetAddresses().First(DomainReference, DomainUUID).GetUuid()
+	return m.GetHeader().GetAddresses().First(DomainReference, DomainUUID).GetUUID()
 }
 
-// GetReferenceIDAsString
+// GetReferenceUUIDAsString
 func (m *Task) GetReferenceUUIDAsString() string {
 	return m.GetReferenceUUID().String()
 }
 
 // SetReferenceUUID
-func (m *Task) SetReferenceUUID(address *Address) *Task {
-	m.GetHeader().EnsureAddresses().Set(DomainReference, DomainUUID, address)
+func (m *Task) SetReferenceUUID(uuid *UUID) *Task {
+	m.GetHeader().SetUUID(uuid)
 	return m
 }
 
-// SetReferenceIDFromString
+// SetReferenceUUIDFromString
 func (m *Task) SetReferenceUUIDFromString(id string) *Task {
-	m.SetReferenceUUID(NewAddressUUIDFromString(id, DomainUUID))
+	m.SetReferenceUUID(NewUUIDFromString(id))
 	return m
 }
 

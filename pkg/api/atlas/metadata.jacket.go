@@ -60,7 +60,7 @@ func (m *Metadata) SetUUIDFromString(id string, domain ...*Domain) *Metadata {
 	return m
 }
 
-// NewRandomUUID domains are optional
+// NewUUIDRandom domains are optional
 func (m *Metadata) SetRandomUUID(domains ...*Domain) *Metadata {
 	// Default values
 	var domain0 = DomainThis
@@ -78,7 +78,7 @@ func (m *Metadata) SetRandomUUID(domains ...*Domain) *Metadata {
 }
 
 func (m *Metadata) GetUUID() *UUID {
-	return m.GetAddresses().First(DomainThis, DomainUUID).GetUuid()
+	return m.GetAddresses().First(DomainThis, DomainUUID).GetUUID()
 }
 
 func (m *Metadata) SetUserID(userID *UserID) *Metadata {

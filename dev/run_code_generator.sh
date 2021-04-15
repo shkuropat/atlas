@@ -88,8 +88,19 @@ function delete_string_function() {
         # Cut specified line from the file and rewrite the file
         sed "${LINE}d" "${FILE}" > "${FILE}".new && mv "${FILE}".new "${FILE}"
     done
+}
 
+function rename_uuid_function() {
+    PROTO_FILES_FOLDER="${1}"
 
+    if [[ -z "${PROTO_FILES_FOLDER}" ]]; then
+        echo "need to specify folder where to look for .pb.go files to process"
+        exit 1
+    fi
+
+    for FILE in "${PROTO_FILES_FOLDER}"/*.pb.go; do
+        sed -i "s/GetUuid/GetUUID/g" "${FILE}"
+    done
 }
 
 BUILD_DOCS_HTML="yes"
@@ -130,6 +141,7 @@ generate_grpc_code "${PROTO_ROOT}"/atlas
 generate_grpc_code "${PROTO_ROOT}"/health
 
 delete_string_function "${PROTO_ROOT}"/atlas
+rename_uuid_function "${PROTO_ROOT}"/atlas
 
 generate_docs api atlas "${PROTO_ROOT}"/atlas
 generate_docs api health "${PROTO_ROOT}"/health

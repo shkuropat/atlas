@@ -21,9 +21,14 @@ func NewUUID() *UUID {
 	return &UUID{}
 }
 
-// NewRandomUUID
-func NewRandomUUID() *UUID {
+// NewUUIDRandom
+func NewUUIDRandom() *UUID {
 	return NewUUID().SetString(uuid.New().String())
+}
+
+// NewUUIDFromString
+func NewUUIDFromString(str string) *UUID {
+	return NewUUID().SetString(str)
 }
 
 // SetBytes

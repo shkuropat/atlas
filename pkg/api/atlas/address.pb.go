@@ -175,7 +175,7 @@ func (m *Address) GetDigest() *Digest {
 	return nil
 }
 
-func (m *Address) GetUuid() *UUID {
+func (m *Address) GetUUID() *UUID {
 	if x, ok := m.GetAddressOptional().(*Address_Uuid); ok {
 		return x.Uuid
 	}

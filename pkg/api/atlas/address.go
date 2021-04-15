@@ -80,7 +80,7 @@ func NewAddress(entities ...interface{}) *Address {
 
 // NewAddressUUIDRandom creates new Address with specified Domain with random UUID
 func NewAddressUUIDRandom(domain ...interface{}) *Address {
-	return NewAddress(domain...).Set(NewRandomUUID())
+	return NewAddress(domain...).Set(NewUUIDRandom())
 }
 
 // NewAddressUUIDFromString creates new Address with specified Domain with UUID fetched from string
@@ -164,7 +164,7 @@ func (m *Address) String() string {
 		return m.GetKafka().String()
 	case m.GetDigest() != nil:
 		return "digest printable not implemented"
-	case m.GetUuid() != nil:
+	case m.GetUUID() != nil:
 		return "uuid printable not implemented"
 	case m.GetUserId() != nil:
 		return "userid printable not implemented"
