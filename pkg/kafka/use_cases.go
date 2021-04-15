@@ -45,8 +45,8 @@ func CopyDataChunkFile(consumer *Consumer, dst io.Writer) {
 	}
 }
 
-func CommandsProcessor(consumer *Consumer, processor func(*atlas.Command) error) {
-	transport := NewCommandTransport(
+func TasksProcessor(consumer *Consumer, processor func(*atlas.Task) error) {
+	transport := NewTaskTransport(
 		nil,
 		consumer,
 		true,
@@ -54,9 +54,9 @@ func CommandsProcessor(consumer *Consumer, processor func(*atlas.Command) error)
 	defer transport.Close()
 
 	for {
-		cmd, err := transport.Recv()
-		if cmd != nil {
-			processor(cmd)
+		task, err := transport.Recv()
+		if task != nil {
+			processor(task)
 		}
 		if err != nil {
 			return

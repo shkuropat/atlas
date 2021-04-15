@@ -12,26 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Command is a command used for commands exchange by Control Plane.
- */
 syntax = "proto3";
 
 package atlas;
 
 import "metadata.proto";
 
-// Command represents a command used by Control Plane to exchange commands between server and client(s).
-message Command {
-    // Header of the command
+message Task {
+    // Header of the task
     Metadata header = 100;
 
     // Optional. Any arbitrary sequence of bytes no longer than 2^32
     bytes bytes = 200;
 
-    // Optional. Multiple command's subjects.
+    // Optional. Multiple task's subjects.
     repeated Metadata subjects = 300;
 
-    // Optional. Recursive chain of commands
-    repeated Command commands = 400;
+    // Optional. Recursive chain of tasks
+    repeated Task tasks = 400;
 }

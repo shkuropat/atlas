@@ -16,6 +16,7 @@ package controller_client
 
 import (
 	"bytes"
+
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 

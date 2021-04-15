@@ -82,31 +82,31 @@ func SendBytes(client atlas.ControlPlaneClient, data []byte, options *DataExchan
 }
 
 // SendEchoRequest
-func SendEchoRequest(outgoingQueue chan *atlas.Command) {
+func SendEchoRequest(outgoingQueue chan *atlas.Task) {
 	for i := 0; i < 5; i++ {
-		command := atlas.NewCommand().SetType(atlas.CommandEchoRequest).CreateUUID().SetDescription("desc")
-		outgoingQueue <- command
+		task := atlas.NewTask().SetType(atlas.TaskEchoRequest).CreateUUID().SetDescription("desc")
+		outgoingQueue <- task
 
 		log.Infof("Wait before send new Echo Request")
 		time.Sleep(3 * time.Second)
 	}
 }
 
-// IncomingCommandsHandler
-func IncomingCommandsHandler(incomingQueue, outgoingQueue chan *atlas.Command) {
-	log.Infof("IncomingCommandsHandler() - start")
-	defer log.Infof("IncomingCommandsHandler() - end")
+// IncomingTasksHandler
+func IncomingTasksHandler(incomingQueue, outgoingQueue chan *atlas.Task) {
+	log.Infof("IncomingTasksHandler() - start")
+	defer log.Infof("IncomingTasksHandler() - end")
 
 	for {
-		cmd := <-incomingQueue
-		log.Infof("Got cmd %v", cmd)
-		if cmd.GetType() == atlas.CommandEchoRequest {
-			command := atlas.NewCommand().
-				SetType(atlas.CommandEchoReply).
+		task := <-incomingQueue
+		log.Infof("Got task %s", task)
+		if task.GetType() == atlas.TaskEchoRequest {
+			task := atlas.NewTask().
+				SetType(atlas.TaskEchoReply).
 				CreateUUID().
-				SetReferenceUUIDFromString("reference: " + cmd.GetUUID().String()).
+				SetReferenceUUIDFromString("reference: " + task.GetUUID().String()).
 				SetDescription("desc")
-			outgoingQueue <- command
+			outgoingQueue <- task
 		}
 	}
 }

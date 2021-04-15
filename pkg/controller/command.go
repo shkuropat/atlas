@@ -22,36 +22,36 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-// CommandSenderReceiver defines transport level interface (for both client and server),
-// which serves Command streams bi-directionally.
-type CommandSenderReceiver interface {
-	Send(*atlas.Command) error
-	Recv() (*atlas.Command, error)
+// TaskSenderReceiver defines transport level interface (for both client and server),
+// which serves Tasks streams bi-directionally.
+type TaskSenderReceiver interface {
+	Send(*atlas.Task) error
+	Recv() (*atlas.Task, error)
 }
 
-func CommandsExchangeEndlessLoop(CommandSenderReceiver CommandSenderReceiver) {
+func TasksExchangeEndlessLoop(TaskSenderReceiver TaskSenderReceiver) {
 	waitIncoming := make(chan bool)
 	waitOutgoing := make(chan bool)
 
 	// Recv() loop
 	go func() {
 		for {
-			msg, err := CommandSenderReceiver.Recv()
+			msg, err := TaskSenderReceiver.Recv()
 			if msg != nil {
-				log.Infof("CommandsExchangeEndlessLoop.Recv() got msg")
+				log.Infof("TasksExchangeEndlessLoop.Recv() got msg")
 				GetIncoming() <- msg
 			}
 			if err == nil {
 				// All went well, ready to receive more data
 			} else if err == io.EOF {
 				// Correct EOF
-				log.Infof("CommandsExchangeEndlessLoop.Recv() got EOF")
+				log.Infof("TasksExchangeEndlessLoop.Recv() got EOF")
 
 				close(waitIncoming)
 				return
 			} else {
 				// Stream broken
-				log.Infof("CommandsExchangeEndlessLoop.Recv() got err: %v", err)
+				log.Infof("TasksExchangeEndlessLoop.Recv() got err: %v", err)
 
 				close(waitIncoming)
 				return
@@ -67,19 +67,19 @@ func CommandsExchangeEndlessLoop(CommandSenderReceiver CommandSenderReceiver) {
 				// Incoming stream from this client is closed/broken, no need to wait commands for it
 				close(waitOutgoing)
 				return
-			case command := <-GetOutgoing():
-				log.Infof("got command to send")
-				err := CommandSenderReceiver.Send(command)
+			case task := <-GetOutgoing():
+				log.Infof("got task to send")
+				err := TaskSenderReceiver.Send(task)
 				if err == nil {
 					// All went well
-					log.Infof("CommandsExchangeEndlessLoop.Send() OK")
+					log.Infof("TasksExchangeEndlessLoop.Send() OK")
 				} else if err == io.EOF {
-					log.Infof("CommandsExchangeEndlessLoop.Send() got EOF")
+					log.Infof("TasksExchangeEndlessLoop.Send() got EOF")
 
 					close(waitOutgoing)
 					return
 				} else {
-					log.Fatalf("CommandsExchangeEndlessLoop.Send() got err: %v", err)
+					log.Fatalf("TasksExchangeEndlessLoop.Send() got err: %v", err)
 
 					close(waitOutgoing)
 					return
@@ -94,20 +94,20 @@ func CommandsExchangeEndlessLoop(CommandSenderReceiver CommandSenderReceiver) {
 
 var (
 	incomingBacklog int32 = 100
-	incoming        chan *atlas.Command
+	incoming        chan *atlas.Task
 	outgoingBacklog int32 = 100
-	outgoing        chan *atlas.Command
+	outgoing        chan *atlas.Task
 )
 
 func Init() {
-	incoming = make(chan *atlas.Command, incomingBacklog)
-	outgoing = make(chan *atlas.Command, outgoingBacklog)
+	incoming = make(chan *atlas.Task, incomingBacklog)
+	outgoing = make(chan *atlas.Task, outgoingBacklog)
 }
 
-func GetOutgoing() chan *atlas.Command {
+func GetOutgoing() chan *atlas.Task {
 	return outgoing
 }
 
-func GetIncoming() chan *atlas.Command {
+func GetIncoming() chan *atlas.Task {
 	return incoming
 }

@@ -15,83 +15,83 @@
 package atlas
 
 // GetType gets command type
-func (m *Command) GetType() int32 {
+func (m *Task) GetType() int32 {
 	return m.GetHeader().GetType()
 }
 
 // SetType
-func (m *Command) SetType(_type int32) *Command {
+func (m *Task) SetType(_type int32) *Task {
 	m.GetHeader().SetType(_type)
 	return m
 }
 
 // GetName gets command name
-func (m *Command) GetName() string {
+func (m *Task) GetName() string {
 	return m.GetHeader().GetName()
 }
 
 // SetName
-func (m *Command) SetName(name string) *Command {
+func (m *Task) SetName(name string) *Task {
 	m.GetHeader().SetName(name)
 	return m
 }
 
 // GetUUID
-func (m *Command) GetUUID() *UUID {
+func (m *Task) GetUUID() *UUID {
 	return m.GetHeader().GetAddresses().First(DomainThis, DomainUUID).GetUuid()
 }
 
 // GetIDAsString
-func (m *Command) GetUUIDAsString() string {
+func (m *Task) GetUUIDAsString() string {
 	return m.GetUUID().String()
 }
 
 // SetUUID
-func (m *Command) SetUUID(address *Address) *Command {
+func (m *Task) SetUUID(address *Address) *Task {
 	m.GetHeader().EnsureAddresses().Set(DomainThis, DomainUUID, address)
 	return m
 }
 
 // SetUUIDFromString
-func (m *Command) SetUUIDFromString(id string) *Command {
+func (m *Task) SetUUIDFromString(id string) *Task {
 	m.SetUUID(NewAddressUUIDFromString(id, DomainUUID))
 	return m
 }
 
 // CreateUUID creates new random UUID
-func (m *Command) CreateUUID() *Command {
+func (m *Task) CreateUUID() *Task {
 	return m.SetUUID(NewAddressUUIDRandom(DomainUUID))
 }
 
 // GetReferenceUUID
-func (m *Command) GetReferenceUUID() *UUID {
+func (m *Task) GetReferenceUUID() *UUID {
 	return m.GetHeader().GetAddresses().First(DomainReference, DomainUUID).GetUuid()
 }
 
 // GetReferenceIDAsString
-func (m *Command) GetReferenceUUIDAsString() string {
+func (m *Task) GetReferenceUUIDAsString() string {
 	return m.GetReferenceUUID().String()
 }
 
 // SetReferenceUUID
-func (m *Command) SetReferenceUUID(address *Address) *Command {
+func (m *Task) SetReferenceUUID(address *Address) *Task {
 	m.GetHeader().EnsureAddresses().Set(DomainReference, DomainUUID, address)
 	return m
 }
 
 // SetReferenceIDFromString
-func (m *Command) SetReferenceUUIDFromString(id string) *Command {
+func (m *Task) SetReferenceUUIDFromString(id string) *Task {
 	m.SetReferenceUUID(NewAddressUUIDFromString(id, DomainUUID))
 	return m
 }
 
 // GetDescription
-func (m *Command) GetDescription() string {
+func (m *Task) GetDescription() string {
 	return m.GetHeader().GetDescription()
 }
 
 // SetDescription
-func (m *Command) SetDescription(description string) *Command {
+func (m *Task) SetDescription(description string) *Task {
 	m.GetHeader().SetDescription(description)
 	return m
 }

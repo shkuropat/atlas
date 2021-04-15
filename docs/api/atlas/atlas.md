@@ -13,9 +13,6 @@
 - [address.proto](#address.proto)
     - [Address](#atlas.Address)
   
-- [command.proto](#command.proto)
-    - [Command](#atlas.Command)
-  
 - [compression.proto](#compression.proto)
     - [Compression](#atlas.Compression)
   
@@ -96,6 +93,9 @@
   
 - [status_request.proto](#status_request.proto)
     - [StatusRequest](#atlas.StatusRequest)
+  
+- [task.proto](#task.proto)
+    - [Task](#atlas.Task)
   
 - [url.proto](#url.proto)
     - [URL](#atlas.URL)
@@ -218,40 +218,6 @@ Address describes general address
 | url | [URL](#atlas.URL) |  | URL address |
 | domain | [Domain](#atlas.Domain) |  | Domain address |
 | custom_string | [string](#string) |  | Custom string |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="command.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## command.proto
-Command is a command used for commands exchange by Control Plane.
-
-
-<a name="atlas.Command"></a>
-
-### Command
-Command represents a command used by Control Plane to exchange commands between server and client(s).
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  | Header of the command |
-| bytes | [bytes](#bytes) |  | Optional. Any arbitrary sequence of bytes no longer than 2^32 |
-| subjects | [Metadata](#atlas.Metadata) | repeated | Optional. Multiple command&#39;s subjects. |
-| commands | [Command](#atlas.Command) | repeated | Optional. Recursive chain of commands |
 
 
 
@@ -964,7 +930,7 @@ Communication is logically structured into the following areas:
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Commands | [Command](#atlas.Command) stream | [Command](#atlas.Command) stream | Bi-directional Commands stream. Commands are sent from service to client and from client to server |
+| Tasks | [Task](#atlas.Task) stream | [Task](#atlas.Task) stream | Bi-directional Commands stream. Commands are sent from service to client and from client to server |
 | DataChunks | [DataChunk](#atlas.DataChunk) stream | [DataChunk](#atlas.DataChunk) stream | Bi-directional Data stream. Some commands may be followed by data load. Be it logs, dumps, etc. |
 | UploadObject | [DataChunk](#atlas.DataChunk) stream | [Status](#atlas.Status) |  |
 | UploadObjects | [DataChunk](#atlas.DataChunk) stream | [StatusMulti](#atlas.StatusMulti) |  |
@@ -1145,6 +1111,40 @@ StatusRequest represents status request of the object(s)
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | header | [Metadata](#atlas.Metadata) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="task.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## task.proto
+
+
+
+<a name="atlas.Task"></a>
+
+### Task
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| header | [Metadata](#atlas.Metadata) |  | Header of the task |
+| bytes | [bytes](#bytes) |  | Optional. Any arbitrary sequence of bytes no longer than 2^32 |
+| subjects | [Metadata](#atlas.Metadata) | repeated | Optional. Multiple task&#39;s subjects. |
+| tasks | [Task](#atlas.Task) | repeated | Optional. Recursive chain of tasks |
 
 
 

@@ -224,21 +224,6 @@
         
           
           <li>
-            <a href="#command.proto">command.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#atlas.Command"><span class="badge">M</span>Command</a>
-                </li>
-              
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#compression.proto">compression.proto</a>
             <ul>
               
@@ -626,6 +611,21 @@
         
           
           <li>
+            <a href="#task.proto">task.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.Task"><span class="badge">M</span>Task</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#url.proto">url.proto</a>
             <ul>
               
@@ -880,65 +880,6 @@
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>Custom string </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="command.proto">command.proto</h2><a href="#title">Top</a>
-      </div>
-      <p>Command is a command used for commands exchange by Control Plane.</p>
-
-      
-        <h3 id="atlas.Command">Command</h3>
-        <p>Command represents a command used by Control Plane to exchange commands between server and client(s).</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
-                  <td></td>
-                  <td><p>Header of the command </p></td>
-                </tr>
-              
-                <tr>
-                  <td>bytes</td>
-                  <td><a href="#bytes">bytes</a></td>
-                  <td></td>
-                  <td><p>Optional. Any arbitrary sequence of bytes no longer than 2^32 </p></td>
-                </tr>
-              
-                <tr>
-                  <td>subjects</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
-                  <td>repeated</td>
-                  <td><p>Optional. Multiple command&#39;s subjects. </p></td>
-                </tr>
-              
-                <tr>
-                  <td>commands</td>
-                  <td><a href="#atlas.Command">Command</a></td>
-                  <td>repeated</td>
-                  <td><p>Optional. Recursive chain of commands </p></td>
                 </tr>
               
             </tbody>
@@ -2028,9 +1969,9 @@ May contain any arbitrary sequence of bytes no longer than 2^32 </p></td>
           <tbody>
             
               <tr>
-                <td>Commands</td>
-                <td><a href="#atlas.Command">Command</a> stream</td>
-                <td><a href="#atlas.Command">Command</a> stream</td>
+                <td>Tasks</td>
+                <td><a href="#atlas.Task">Task</a> stream</td>
+                <td><a href="#atlas.Task">Task</a> stream</td>
                 <td><p>Bi-directional Commands stream.
 Commands are sent from service to client and from client to server</p></td>
               </tr>
@@ -2328,6 +2269,65 @@ Some commands may be followed by data load. Be it logs, dumps, etc.</p></td>
                   <td><a href="#atlas.Metadata">Metadata</a></td>
                   <td></td>
                   <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="task.proto">task.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="atlas.Task">Task</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>header</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p>Header of the task </p></td>
+                </tr>
+              
+                <tr>
+                  <td>bytes</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Optional. Any arbitrary sequence of bytes no longer than 2^32 </p></td>
+                </tr>
+              
+                <tr>
+                  <td>subjects</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td>repeated</td>
+                  <td><p>Optional. Multiple task&#39;s subjects. </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tasks</td>
+                  <td><a href="#atlas.Task">Task</a></td>
+                  <td>repeated</td>
+                  <td><p>Optional. Recursive chain of tasks </p></td>
                 </tr>
               
             </tbody>

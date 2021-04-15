@@ -19,13 +19,14 @@ import (
 	"io"
 	"os"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/controller"
-	log "github.com/sirupsen/logrus"
 )
 
-// CommandsExchange exchanges commands
-func CommandsExchange(ControlPlaneClient atlas.ControlPlaneClient) {
+// TasksExchange exchanges tasks
+func TasksExchange(ControlPlaneClient atlas.ControlPlaneClient) {
 	// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -34,15 +35,15 @@ func CommandsExchange(ControlPlaneClient atlas.ControlPlaneClient) {
 	//	md := metadata.Pairs("authorization", "my-secret-token")
 	//	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	rpcCommands, err := ControlPlaneClient.Commands(ctx)
+	rpcTasks, err := ControlPlaneClient.Tasks(ctx)
 	if err != nil {
-		log.Fatalf("ControlPlaneClient.Control() failed %v", err)
+		log.Fatalf("ControlPlaneClient.Tasks() failed %v", err)
 		os.Exit(1)
 	}
-	defer rpcCommands.CloseSend()
+	defer rpcTasks.CloseSend()
 
-	log.Infof("Commands() called")
-	controller.CommandsExchangeEndlessLoop(rpcCommands)
+	log.Infof("Tasks() called")
+	controller.TasksExchangeEndlessLoop(rpcTasks)
 }
 
 // DataExchange send data to server and receives back reply (if needed)

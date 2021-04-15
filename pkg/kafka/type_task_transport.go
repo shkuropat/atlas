@@ -23,16 +23,16 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-type CommandTransport struct {
+type TaskTransport struct {
 	Transport
 }
 
-// NewCommandTransport
-func NewCommandTransport(producer *Producer, consumer *Consumer, close bool) *CommandTransport {
-	log.Infof("kafka.NewCommandTransport() - start")
-	defer log.Infof("kafka.NewCommandTransport() - end")
+// NewTaskTransport
+func NewTaskTransport(producer *Producer, consumer *Consumer, close bool) *TaskTransport {
+	log.Infof("kafka.NewTaskTransport() - start")
+	defer log.Infof("kafka.NewTaskTransport() - end")
 
-	return &CommandTransport{
+	return &TaskTransport{
 		Transport{
 			producer: producer,
 			consumer: consumer,
@@ -42,8 +42,8 @@ func NewCommandTransport(producer *Producer, consumer *Consumer, close bool) *Co
 }
 
 // Send
-func (t *CommandTransport) Send(command *atlas.Command) error {
-	if buf, err := proto.Marshal(command); err == nil {
+func (t *TaskTransport) Send(task *atlas.Task) error {
+	if buf, err := proto.Marshal(task); err == nil {
 		return t.producer.Send(buf)
 	} else {
 		return err
@@ -51,12 +51,12 @@ func (t *CommandTransport) Send(command *atlas.Command) error {
 }
 
 // Recv
-func (t *CommandTransport) Recv() (*atlas.Command, error) {
+func (t *TaskTransport) Recv() (*atlas.Task, error) {
 	msg := t.consumer.Recv()
 	if msg == nil {
 		// TODO not sure
 		return nil, io.EOF
 	}
-	command := &atlas.Command{}
-	return command, proto.Unmarshal(msg.Value, command)
+	task := &atlas.Task{}
+	return task, proto.Unmarshal(msg.Value, task)
 }

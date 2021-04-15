@@ -35,20 +35,20 @@ syntax = "proto3";
 
 package atlas;
 
-import "command.proto";
 import "data_chunk.proto";
 import "metric.proto";
+import "status_multi.proto";
 import "status_request.proto";
 import "status_request_multi.proto";
 import "status.proto";
-import "status_multi.proto";
+import "task.proto";
 
 service ControlPlane {
 	/**
 	 * Bi-directional Commands stream.
 	 * Commands are sent from service to client and from client to server
 	 */
-	rpc Commands(stream Command) returns (stream Command) {}
+	rpc Tasks(stream Task) returns (stream Task) {}
 
 	/**
 	 * Bi-directional Data stream.

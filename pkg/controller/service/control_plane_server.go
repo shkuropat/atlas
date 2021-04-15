@@ -24,11 +24,11 @@ import (
 	"github.com/binarly-io/atlas/pkg/controller"
 )
 
-func GetOutgoingQueue() chan *atlas.Command {
+func GetOutgoingQueue() chan *atlas.Task {
 	return controller.GetOutgoing()
 }
 
-func GetIncomingQueue() chan *atlas.Command {
+func GetIncomingQueue() chan *atlas.Task {
 	return controller.GetIncoming()
 }
 
@@ -40,20 +40,20 @@ func NewControlPlaneServer() *ControlPlaneServer {
 	return &ControlPlaneServer{}
 }
 
-// CommandsHandler is a user-provided handler for Commands call
-var CommandsHandler func(atlas.ControlPlane_CommandsServer, jwt.MapClaims) error
+// TasksHandler is a user-provided handler for Commands call
+var TasksHandler func(atlas.ControlPlane_TasksServer, jwt.MapClaims) error
 
-// Commands gRPC call
-func (s *ControlPlaneServer) Commands(CommandsServer atlas.ControlPlane_CommandsServer) error {
-	log.Info("Commands() - start")
-	defer log.Info("Commands() - end")
+// Tasks gRPC call
+func (s *ControlPlaneServer) Tasks(TasksServer atlas.ControlPlane_TasksServer) error {
+	log.Info("Tasks() - start")
+	defer log.Info("Tasks() - end")
 
-	if CommandsHandler == nil {
-		return fmt.Errorf("no CommandsHandler provided")
+	if TasksHandler == nil {
+		return fmt.Errorf("no TasksHandler provided")
 	}
 
-	metadata := fetchMetadata(CommandsServer.Context())
-	return CommandsHandler(CommandsServer, metadata)
+	metadata := fetchMetadata(TasksServer.Context())
+	return TasksHandler(TasksServer, metadata)
 
 	// controller.CommandsExchangeEndlessLoop(CommandsServer)
 	// return nil
