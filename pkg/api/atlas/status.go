@@ -58,6 +58,17 @@ func NewStatus() *Status {
 	return new(Status)
 }
 
+// EnsureHeader
+func (m *Status) EnsureHeader() *Metadata {
+	if m == nil {
+		return nil
+	}
+	if m.Header == nil {
+		m.Header = NewMetadata()
+	}
+	return m.Header
+}
+
 // String
 func (m *Status) String() string {
 	return "to be implemented"
