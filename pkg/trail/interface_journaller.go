@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package journal
+package trail
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
-// Journal
-type Journal interface {
+// Journaller
+type Journaller interface {
 	//
 	// Common requests section
 	//
@@ -29,9 +29,7 @@ type Journal interface {
 	RequestEnd(ctx *rpc_context.RPCContext)
 	RequestError(ctx *rpc_context.RPCContext, callErr error)
 
-	NewEntry(ctxID *atlas.UUID, action ActionType) *Entry
-	Insert(entry *Entry) error
-	FindAll(entry *Entry) ([]ClickHouseEntry, error)
+	NewEntry(ctxID *atlas.UUID, action int32) *JournalEntry
 
 	//
 	// In-request actions

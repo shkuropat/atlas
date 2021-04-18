@@ -12,22 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package journal
+package trail
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"time"
 )
 
-// Entry defines journal entry structure
-type Entry struct {
-	// Base info tells about the origin of the action
-	Endpoint  EndpointIDType
+// JournalEntry defines journal entry structure
+type JournalEntry struct {
+	// Base info tells about the origin of the journal entry
+	Time      time.Time
+	Start     time.Time
+	Endpoint  int32
 	SourceID  *atlas.UserID
 	ContextID *atlas.UUID
-	Action    ActionType
+	Action    int32
 
 	// Object info tells about object, if any
-	ObjectType     ObjectType
+	ObjectType     int32
 	ObjectAddress  *atlas.Address
 	ObjectSize     uint64
 	ObjectMetadata *atlas.Metadata
@@ -37,44 +40,53 @@ type Entry struct {
 	Error error
 }
 
-// NewEntry
-func NewEntry() *Entry {
-	return &Entry{}
+// NewJournalEntry
+func NewJournalEntry() *JournalEntry {
+	return &JournalEntry{}
 }
 
 // SetBaseInfo
-func (e *Entry) SetBaseInfo(ctxID *atlas.UUID, action ActionType) *Entry {
+func (e *JournalEntry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, action int32) *JournalEntry {
+	e.Time = time.Now()
+	e.Start = start
+	e.SetEndpoint(endpoint)
 	e.SetCtxID(ctxID)
 	e.SetAction(action)
 	return e
 }
 
+// SetEndpoint
+func (e *JournalEntry) SetEndpoint(endpoint int32) *JournalEntry {
+	e.Endpoint = endpoint
+	return e
+}
+
 // SetSourceID
-func (e *Entry) SetSourceID(userID *atlas.UserID) *Entry {
+func (e *JournalEntry) SetSourceID(userID *atlas.UserID) *JournalEntry {
 	e.SourceID = userID
 	return e
 }
 
 // SetCtxID
-func (e *Entry) SetCtxID(ctxID *atlas.UUID) *Entry {
+func (e *JournalEntry) SetCtxID(ctxID *atlas.UUID) *JournalEntry {
 	e.ContextID = ctxID
 	return e
 }
 
 // SetAction
-func (e *Entry) SetAction(action ActionType) *Entry {
+func (e *JournalEntry) SetAction(action int32) *JournalEntry {
 	e.Action = action
 	return e
 }
 
 // SetObject
-func (e *Entry) SetObject(
-	objectType ObjectType,
+func (e *JournalEntry) SetObject(
+	objectType int32,
 	address *atlas.Address,
 	size uint64,
 	metadata *atlas.Metadata,
 	data []byte,
-) *Entry {
+) *JournalEntry {
 	e.SetObjectType(objectType)
 	e.SetObjectAddress(address)
 	e.SetObjectSize(size)
@@ -84,42 +96,42 @@ func (e *Entry) SetObject(
 }
 
 // SetObjectType
-func (e *Entry) SetObjectType(objectType ObjectType) *Entry {
+func (e *JournalEntry) SetObjectType(objectType int32) *JournalEntry {
 	e.ObjectType = objectType
 	return e
 }
 
 // SetObjectAddress
-func (e *Entry) SetObjectAddress(address *atlas.Address) *Entry {
+func (e *JournalEntry) SetObjectAddress(address *atlas.Address) *JournalEntry {
 	e.ObjectAddress = address
 	return e
 }
 
 // SetObjectSize
-func (e *Entry) SetObjectSize(size uint64) *Entry {
+func (e *JournalEntry) SetObjectSize(size uint64) *JournalEntry {
 	e.ObjectSize = size
 	return e
 }
 
 // SetObjectMetadata
-func (e *Entry) SetObjectMetadata(metadata *atlas.Metadata) *Entry {
+func (e *JournalEntry) SetObjectMetadata(metadata *atlas.Metadata) *JournalEntry {
 	e.ObjectMetadata = metadata
 	return e
 }
 
 // SetObjectData
-func (e *Entry) SetObjectData(data []byte) *Entry {
+func (e *JournalEntry) SetObjectData(data []byte) *JournalEntry {
 	e.ObjectData = data
 	return e
 }
 
 // SetError
-func (e *Entry) SetError(err error) *Entry {
+func (e *JournalEntry) SetError(err error) *JournalEntry {
 	e.Error = err
 	return e
 }
 
 // InsertInto
-func (e *Entry) InsertInto(j Journal) {
-	j.Insert(e)
+func (e *JournalEntry) InsertInto(a Adapter) {
+	a.Insert(e)
 }

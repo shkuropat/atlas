@@ -12,15 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package journal
+package trail
 
 import (
 	"strings"
 	"time"
 )
 
-// ClickHouseEntry defines journal entry structure
-type ClickHouseEntry struct {
+// AdapterEntryClickHouse defines journal entry structure
+type AdapterEntryClickHouse struct {
 	// Call section
 	d          time.Time
 	endpointID int32
@@ -40,19 +40,19 @@ type ClickHouseEntry struct {
 	error string
 }
 
-// NewClickHouseEntry
-func NewClickHouseEntry() *ClickHouseEntry {
-	return &ClickHouseEntry{}
+// NewAdapterEntryClickHouse
+func NewAdapterEntryClickHouse() *AdapterEntryClickHouse {
+	return &AdapterEntryClickHouse{}
 }
 
 // Accept
-func (ce *ClickHouseEntry) Accept(j *JournalClickHouse, entry *Entry) *ClickHouseEntry {
-	ce.d = time.Now()
-	ce.endpointID = int32(j.endpointID)
+func (ce *AdapterEntryClickHouse) Accept(entry *JournalEntry) *AdapterEntryClickHouse {
+	ce.d = entry.Time
+	ce.endpointID = int32(entry.Endpoint)
 	ce.sourceID = entry.SourceID.String()
 	ce.contextID = entry.ContextID.String()
 	ce.actionID = int32(entry.Action)
-	ce.duration = ce.d.Sub(j.start).Nanoseconds()
+	ce.duration = ce.d.Sub(entry.Start).Nanoseconds()
 	ce._type = int32(entry.ObjectType)
 	ce.size = entry.ObjectSize
 	ce.address = entry.ObjectAddress.String()
@@ -68,7 +68,7 @@ func (ce *ClickHouseEntry) Accept(j *JournalClickHouse, entry *Entry) *ClickHous
 }
 
 // Fields
-func (ce *ClickHouseEntry) Fields() string {
+func (ce *AdapterEntryClickHouse) Fields() string {
 	return `
 		d, 
 		endpoint_id,
@@ -88,7 +88,7 @@ func (ce *ClickHouseEntry) Fields() string {
 }
 
 // StmtParamsPlaceholder
-func (ce *ClickHouseEntry) StmtParamsPlaceholder() string {
+func (ce *AdapterEntryClickHouse) StmtParamsPlaceholder() string {
 	return `
 		/* d */
 		?,
@@ -122,7 +122,7 @@ func (ce *ClickHouseEntry) StmtParamsPlaceholder() string {
 }
 
 // AsUntypedSlice
-func (ce *ClickHouseEntry) AsUntypedSlice() []interface{} {
+func (ce *AdapterEntryClickHouse) AsUntypedSlice() []interface{} {
 	return []interface{}{
 		ce.d,
 		ce.endpointID,
@@ -141,8 +141,8 @@ func (ce *ClickHouseEntry) AsUntypedSlice() []interface{} {
 	}
 }
 
-// ClickHouseEntrySearch defines journal entry structure
-type ClickHouseEntrySearch struct {
+// AdapterEntryClickHouseSearch defines journal entry structure
+type AdapterEntryClickHouseSearch struct {
 	// Call section
 	d          *time.Time
 	endpointID *int32
@@ -162,13 +162,13 @@ type ClickHouseEntrySearch struct {
 	error *string
 }
 
-// NewClickHouseEntrySearch
-func NewClickHouseEntrySearch() *ClickHouseEntrySearch {
-	return &ClickHouseEntrySearch{}
+// NewAdapterEntryClickHouseSearch
+func NewAdapterEntryClickHouseSearch() *AdapterEntryClickHouseSearch {
+	return &AdapterEntryClickHouseSearch{}
 }
 
 // Accept
-func (ce *ClickHouseEntrySearch) Accept(entry *Entry) *ClickHouseEntrySearch {
+func (ce *AdapterEntryClickHouseSearch) Accept(entry *JournalEntry) *AdapterEntryClickHouseSearch {
 	ce.d = nil
 	ce.endpointID = nil
 	if entry.SourceID.String() != "" {
@@ -222,7 +222,8 @@ func (ce *ClickHouseEntrySearch) Accept(entry *Entry) *ClickHouseEntrySearch {
 	return ce
 }
 
-func (ce *ClickHouseEntrySearch) StmtSearchParamsPlaceholderAndArgs() (string, []interface{}) {
+// StmtSearchParamsPlaceholderAndArgs
+func (ce *AdapterEntryClickHouseSearch) StmtSearchParamsPlaceholderAndArgs() (string, []interface{}) {
 	params := []string{}
 	str := ""
 	args := []interface{}{}

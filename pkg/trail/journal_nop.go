@@ -12,56 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package journal
+package trail
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
-// DefaultJournal provides empty implementations of all interface functions
-type DefaultJournal struct {
+// JournalNOP
+type JournalNOP struct {
 }
 
 // Validate interface compatibility
-var _ Journal = &DefaultJournal{}
+var _ Journaller = &JournalNOP{}
+
+// NewJournalNOP
+func NewJournalNOP() (*JournalNOP, error) {
+	return &JournalNOP{}, nil
+}
 
 // RequestStart journals beginning of the request processing
-func (j *DefaultJournal) RequestStart(
+func (j *JournalNOP) RequestStart(
 	ctx *rpc_context.RPCContext,
 ) {
+
 }
 
 // RequestCompleted journals request completed successfully
-func (j *DefaultJournal) RequestEnd(
+func (j *JournalNOP) RequestEnd(
 	ctx *rpc_context.RPCContext,
 ) {
+
 }
 
 // RequestError journals request error
-func (j *DefaultJournal) RequestError(
+func (j *JournalNOP) RequestError(
 	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
+
 }
 
-// NewEntry
-func (j *DefaultJournal) NewEntry(ctxID *atlas.UUID, action ActionType) *Entry {
+// NewJournalEntry
+func (j *JournalNOP) NewEntry(ctxID *atlas.UUID, action int32) *JournalEntry {
 	return nil
-}
-
-// Insert
-func (j *DefaultJournal) Insert(entry *Entry) error {
-	return nil
-}
-
-// FindAll
-func (j *DefaultJournal) FindAll(entry *Entry) ([]ClickHouseEntry, error) {
-	return nil, nil
 }
 
 // SaveData journals data saved successfully
-func (j *DefaultJournal) SaveData(
+func (j *JournalNOP) SaveData(
 	ctx *rpc_context.RPCContext,
 
 	dataAddress *atlas.Address,
@@ -69,28 +67,32 @@ func (j *DefaultJournal) SaveData(
 	dataMetadata *atlas.Metadata,
 	data []byte,
 ) {
+
 }
 
 // SaveDataError journals data not saved due to an error
-func (j *DefaultJournal) SaveDataError(
+func (j *JournalNOP) SaveDataError(
 	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
+
 }
 
 // ProcessData journals data processed successfully
-func (j *DefaultJournal) ProcessData(
+func (j *JournalNOP) ProcessData(
 	ctx *rpc_context.RPCContext,
 
 	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 ) {
+
 }
 
 // ProcessDataError journals data not processed due to an error
-func (j *DefaultJournal) ProcessDataError(
+func (j *JournalNOP) ProcessDataError(
 	ctx *rpc_context.RPCContext,
 	callErr error,
 ) {
+
 }
