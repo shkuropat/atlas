@@ -26,9 +26,8 @@ func (m *AddressMap) Len(domains ...*Domain) int {
 	case 2:
 		// Len of particular domain within particular domain
 		return m.GetList(domains[0]).Len(domains[1])
-	default:
-		return 0
 	}
+	return 0
 }
 
 // Has checks whether specified domain exists
@@ -38,9 +37,8 @@ func (m *AddressMap) Has(domains ...*Domain) bool {
 		return m.GetList(domains[0]) != nil
 	case 2:
 		return m.GetList(domains[0]).Has(domains[1])
-	default:
-		return false
 	}
+	return false
 }
 
 // Append wraps AddressList.Append
@@ -84,7 +82,6 @@ func (m *AddressMap) normalizeParams(insertDefaultDomain bool, entities ...inter
 // Replace([domain0, {domain1, domain2,... nested domains to be replaced with provided addresses}] address0[, address1,...])
 func (m *AddressMap) Replace(entities ...interface{}) *AddressMap {
 	domains, addresses := m.normalizeParams(true, entities...)
-
 	switch len(domains) {
 	case 0:
 		// No domains specified, don't know what to do
@@ -92,10 +89,10 @@ func (m *AddressMap) Replace(entities ...interface{}) *AddressMap {
 	case 1:
 		// Replace whole AddressList with specified addresses
 		return m.ReplaceList(domains[0], addresses...)
-	default:
-		// Replace some nested domains with specified addresses
-		return m.ReplaceAddresses(domains[0], domains[1:], addresses...)
 	}
+
+	// Replace some nested domains with specified addresses
+	return m.ReplaceAddresses(domains[0], domains[1:], addresses...)
 }
 
 // ReplaceList replaces whole AddressList with specified addresses
@@ -118,13 +115,21 @@ func (m *AddressMap) ReplaceAddresses(domain *Domain, deleteDomains []*Domain, a
 // First wraps AddressList.First
 func (m *AddressMap) First(domains ...*Domain) *Address {
 	switch len(domains) {
+	case 0:
+		// First of any available addresses
+		if lists := m.GetLists(); lists != nil {
+			for _, list := range lists {
+				if first := list.First(); first != nil {
+					return first
+				}
+			}
+		}
 	case 1:
 		return m.GetList(domains[0]).First()
 	case 2:
 		return m.GetList(domains[0]).First(domains[1:]...)
-	default:
-		return nil
 	}
+	return nil
 }
 
 // All wraps AddressList.All
@@ -134,7 +139,6 @@ func (m *AddressMap) All(domains ...*Domain) []*Address {
 		return m.GetList(domains[0]).All()
 	case 2:
 		return m.GetList(domains[0]).All(domains[1:]...)
-	default:
-		return nil
 	}
+	return nil
 }

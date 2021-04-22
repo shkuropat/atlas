@@ -29,6 +29,21 @@ func (m *AddressMap) GetList(domain *Domain) *AddressList {
 	return nil
 }
 
+// GetLists gets all AddressList from the AddressMap
+func (m *AddressMap) GetLists() []*AddressList {
+	if mp := m.GetMap(); mp != nil {
+		var res []*AddressList
+		for _, list := range mp {
+			if res == nil {
+				res = make([]*AddressList, m.Len())
+			}
+			res = append(res, list)
+		}
+		return res
+	}
+	return nil
+}
+
 // EnsureList makes sure AddressList of specified domain exists.
 // It uses already existing domain AddressList or creates new if none found
 func (m *AddressMap) EnsureList(domain *Domain) *AddressList {
