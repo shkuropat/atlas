@@ -1,0 +1,133 @@
+##
+## !!! IMPORTANT !!!
+## Do not forget to change volume paths when moving file along
+##
+
+version: '2'
+services:
+
+  # Zookeeper is required by Kafka
+  zookeeper:
+    image: wurstmeister/zookeeper
+    # Expose this port internally. This port will not be available from host-machine
+    expose:
+      - "2181"
+
+  kafka:
+    image: wurstmeister/kafka
+    # Expose this port externally. This port will be available from host-machine as
+    # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    # tcp        0      0 0.0.0.0:9092            0.0.0.0:*               LISTEN      79906/docker-proxy
+    ports:
+      - "9092:9092"
+    # Expose this port internally. This port will not be available from host-machine
+    expose:
+      - "9093"
+    environment:
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      # Listen OUTSIDE connection on host-machine 127.0.0.1:9092
+      # Replace IP 127.0.0.1 with your host-machine IP-address in case you need to accept traffic from other machines
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9093,OUTSIDE://127.0.0.1:9092
+      # Do not use any password protection at all
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      # Another approach:
+      # 1. Do not use passwords for INSIDE
+      # 2. Use password protection for OUTSIDE connections
+      # KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:SASL_PLAINTEX
+      # In case username/password auth is used, need to provide password file
+      # KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/kafka_server_jaas.conf"
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+    depends_on:
+      - zookeeper
+    # In case username/password auth is used, need to provide password file
+    # Map local dir with kafka_server_jaas.conf file as /etc/kafka inside image
+    #volumes:
+    #  - ./:/etc/kafka
+
+  # In case username/password auth is used, need to provide password file
+  # kafka_server_jaas.conf
+  #KafkaServer {
+  #  org.apache.kafka.common.security.plain.PlainLoginModule required
+  #  username="admin"
+  #  password="admin-secret"
+  #  user_admin="admin-secret";
+  #};
+  #Client {};
+
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --list"
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --create --topic qwe1"
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --create --topic qwe2"
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --list"
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --delete --topic qwe2"
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --list"
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --delete --topic qwe1"
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --list"
+
+  clickhouse-server:
+    image: yandex/clickhouse-server
+    # Expose this port externally. This port will be available from host-machine as
+    # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    # tcp        0      0 0.0.0.0:8123            0.0.0.0:*               LISTEN      79906/docker-proxy
+    # tcp        0      0 0.0.0.0:9000            0.0.0.0:*               LISTEN      79906/docker-proxy
+    ports:
+      # http
+      - "8123:8123"
+      # native protocol
+      - "9000:9000"
+    # Map local dir with ClickHouse data inside image
+    #volumes:
+    #  - ./db:/var/lib/clickhouse
+
+  clickhouse-client:
+    image: yandex/clickhouse-client
+    entrypoint:
+      - /bin/sleep
+    command:
+      - infinity
+    volumes:
+      - ../../pkg/trail:/trail
+
+  # /bin/sh -c "cat /trail/journal_clickhouse_schema.sql | /usr/bin/clickhouse-client --host=clickhouse-server --user=clickhouse_operator --password=clickhouse_operator_password --multiline --multiquery"
+    #            # additional option --database=dbname
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh clickhouse-client -c "cat /trail/journal_clickhouse_schema.sql | /usr/bin/clickhouse-client --host=clickhouse-server --multiline --multiquery"
+
+  minio:
+    image: minio/minio
+    # Expose this port externally. This port will be available from host-machine as
+    # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    # tcp        0      0 0.0.0.0:10000            0.0.0.0:*               LISTEN      79906/docker-proxy
+    ports:
+      - "10000:9000"
+    environment:
+      MINIO_ACCESS_KEY: minio1
+      MINIO_SECRET_KEY: minio123
+    #volumes:
+    #  - ./storage/minio:/data
+    #command: server --address 0.0.0.0:8000 /data
+    command: server /data
+
+  minio-mc:
+    image: minio/mc
+    depends_on:
+      - minio
+    #volumes:
+    #  - "./hello.txt:/tmp/hello.txt"
+  # Make a bucket and upload file
+  # For long-running
+  # docker-compose -f ./docker-compose.yaml run minio-mc mc config host add docker http://minio:9000 minio1 minio123
+  # docker-compose -f ./docker-compose.yaml run minio-mc mb docker/my-bucket
+  # docker-compose -f ./docker-compose.yaml run minio-mc mc cp /tmp/hello.txt docker/my-bucket/foo.txt
+  # For short-running
+  #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh minio-mc -c "mc config host add minio-docker http://minio:9000 minio1 minio123; mc mb minio-docker/my-bucket"
+
+  s3-client:
+    image: amazon/aws-cli
+    environment:
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+    depends_on:
+      - minio

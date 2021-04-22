@@ -17,5 +17,5 @@ package trail
 // Adapter
 type Adapter interface {
 	Insert(entry *JournalEntry) error
-	FindAll(entry *JournalEntry) ([]AdapterEntryClickHouse, error)
+	FindAll(entry *JournalEntry) ([]*JournalEntry, error)
 }

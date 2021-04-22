@@ -1145,7 +1145,8 @@ StatusRequest represents status request of the object(s)
 | header | [Metadata](#atlas.Metadata) |  | Header of the task |
 | bytes | [bytes](#bytes) |  | Optional. Any arbitrary sequence of bytes no longer than 2^32 |
 | subjects | [Metadata](#atlas.Metadata) | repeated | Optional. Multiple task&#39;s subjects. |
-| tasks | [Task](#atlas.Task) | repeated | Optional. Recursive chain of tasks |
+| parents | [Task](#atlas.Task) | repeated | Optional. Recursive chain of tasks |
+| children | [Task](#atlas.Task) | repeated | Optional. Recursive chain of tasks |
 
 
 

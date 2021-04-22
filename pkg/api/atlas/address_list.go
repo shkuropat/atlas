@@ -167,7 +167,7 @@ func (m *AddressList) Exclude(domains ...*Domain) *AddressList {
 	return res
 }
 
-// Delete deletes all addresses with specified domains
+// Delete deletes from the AddressList all addresses with specified domains
 func (m *AddressList) Delete(domains ...*Domain) *AddressList {
 	var keep []*Address = nil
 	for _, address := range m.GetAddresses() {
@@ -193,7 +193,7 @@ func (m *AddressList) Append(addresses ...*Address) *AddressList {
 	return nil
 }
 
-// Replace replaces existing list with new list of addresses
+// Replace replaces existing list with provided list of addresses
 func (m *AddressList) Replace(addresses ...*Address) *AddressList {
 	if m != nil {
 		m.Addresses = append([]*Address{}, addresses...)

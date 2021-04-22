@@ -16,11 +16,11 @@ package trail
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
 // JournalNOP
 type JournalNOP struct {
+	ctx Contexter
 }
 
 // Validate interface compatibility
@@ -31,37 +31,43 @@ func NewJournalNOP() (*JournalNOP, error) {
 	return &JournalNOP{}, nil
 }
 
+// SetContext
+func (j *JournalNOP) SetContext(ctx Contexter) Journaller {
+	return nil
+}
+
+// NewEntry
+func (j *JournalNOP) NewEntry(action int32) *JournalEntry {
+	return nil
+}
+
+// Insert
+func (j *JournalNOP) Insert(entry *JournalEntry) error {
+	return nil
+}
+
+// FindAll
+func (j *JournalNOP) FindAll(entry *JournalEntry) ([]*JournalEntry, error) {
+	return nil, nil
+}
+
 // RequestStart journals beginning of the request processing
-func (j *JournalNOP) RequestStart(
-	ctx *rpc_context.RPCContext,
-) {
+func (j *JournalNOP) RequestStart() {
 
 }
 
 // RequestCompleted journals request completed successfully
-func (j *JournalNOP) RequestEnd(
-	ctx *rpc_context.RPCContext,
-) {
+func (j *JournalNOP) RequestEnd() {
 
 }
 
 // RequestError journals request error
-func (j *JournalNOP) RequestError(
-	ctx *rpc_context.RPCContext,
-	callErr error,
-) {
+func (j *JournalNOP) RequestError(callErr error) {
 
-}
-
-// NewJournalEntry
-func (j *JournalNOP) NewEntry(ctxID *atlas.UUID, action int32) *JournalEntry {
-	return nil
 }
 
 // SaveData journals data saved successfully
 func (j *JournalNOP) SaveData(
-	ctx *rpc_context.RPCContext,
-
 	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
@@ -71,17 +77,12 @@ func (j *JournalNOP) SaveData(
 }
 
 // SaveDataError journals data not saved due to an error
-func (j *JournalNOP) SaveDataError(
-	ctx *rpc_context.RPCContext,
-	callErr error,
-) {
+func (j *JournalNOP) SaveDataError(callErr error) {
 
 }
 
 // ProcessData journals data processed successfully
 func (j *JournalNOP) ProcessData(
-	ctx *rpc_context.RPCContext,
-
 	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
@@ -90,9 +91,26 @@ func (j *JournalNOP) ProcessData(
 }
 
 // ProcessDataError journals data not processed due to an error
-func (j *JournalNOP) ProcessDataError(
-	ctx *rpc_context.RPCContext,
-	callErr error,
-) {
+func (j *JournalNOP) ProcessDataError(callErr error) {
+
+}
+
+// SaveTask journals task saved successfully
+func (j *JournalNOP) SaveTask(task *atlas.Task) {
+
+}
+
+// SaveTaskError journals task not saved due to an error
+func (j *JournalNOP) SaveTaskError(task *atlas.Task, callErr error) {
+
+}
+
+// ProcessTask journals task processed successfully
+func (j *JournalNOP) ProcessTask(task *atlas.Task) {
+
+}
+
+// ProcessTaskError journals task not processed due to an error
+func (j *JournalNOP) ProcessTaskError(task *atlas.Task, callErr error) {
 
 }

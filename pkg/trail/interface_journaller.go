@@ -16,51 +16,65 @@ package trail
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
 // Journaller
 type Journaller interface {
+	SetContext(ctx Contexter) Journaller
+
+	//
+	// Expose direct access to storage via adapters.
+	// Implement Adapter interface as wrappers over Adapter
+	//
+	NewEntry(action int32) *JournalEntry
+	Adapter
+
 	//
 	// Common requests section
 	//
 
-	RequestStart(ctx *rpc_context.RPCContext)
-	RequestEnd(ctx *rpc_context.RPCContext)
-	RequestError(ctx *rpc_context.RPCContext, callErr error)
-
-	NewEntry(ctxID *atlas.UUID, action int32) *JournalEntry
+	RequestStart()
+	RequestEnd()
+	RequestError(callErr error)
 
 	//
 	// In-request actions
 	//
 
 	SaveData(
-		ctx *rpc_context.RPCContext,
 		dataAddress *atlas.Address,
 		dataSize int64,
 		dataMetadata *atlas.Metadata,
 		data []byte,
 	)
 
-	SaveDataError(
-		ctx *rpc_context.RPCContext,
-		callErr error,
-	)
+	SaveDataError(callErr error)
 
 	//
 	//
 	//
 
 	ProcessData(
-		ctx *rpc_context.RPCContext,
 		dataAddress *atlas.Address,
 		dataSize int64,
 		dataMetadata *atlas.Metadata,
 	)
 
-	ProcessDataError(
-		ctx *rpc_context.RPCContext,
-		callErr error,
-	)
+	ProcessDataError(callErr error)
+
+	//
+	//
+	//
+
+	SaveTask(task *atlas.Task)
+
+	SaveTaskError(task *atlas.Task, callErr error)
+
+	//
+	//
+	//
+
+	ProcessTask(task *atlas.Task)
+
+	ProcessTaskError(task *atlas.Task, callErr error)
 }

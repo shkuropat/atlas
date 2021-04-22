@@ -21,15 +21,31 @@ import (
 
 // JournalEntry defines journal entry structure
 type JournalEntry struct {
+	//
 	// Base info tells about the origin of the journal entry
-	Time      time.Time
-	Start     time.Time
-	Endpoint  int32
-	SourceID  *atlas.UserID
+	//
+
+	// Time of the entry/event
+	Time time.Time
+	// StartTime specifies start time of the action sequence or execution context
+	StartTime time.Time
+
+	// EndpointID [MANDATORY] specifies ID of the endpoint (API call handler/Task processor/etc) which produces the entry
+	// See EndpointTypeEnum for available options.
+	EndpointID int32
+	// SourceID [OPTIONAL] specifies ID of the source (possibly external) of the entry
+	SourceID *atlas.UserID
+	// ContextID [OPTIONAL] specifies ID of the execution/rpc context associated with the entry
 	ContextID *atlas.UUID
-	Action    int32
+	// TaskID [OPTIONAL] specifies ID of the task associated with the entry
+	TaskID *atlas.UUID
+	// Type [MANDATORY] specifies type of the entry - what this entry is about.
+	// See EntryTypeEnum for available options.
+	Type int32
 
 	// Object info tells about object, if any
+	// ObjectType specified object type
+	// See ObjectTypeEnum for available options.
 	ObjectType     int32
 	ObjectAddress  *atlas.Address
 	ObjectSize     uint64
@@ -46,18 +62,18 @@ func NewJournalEntry() *JournalEntry {
 }
 
 // SetBaseInfo
-func (e *JournalEntry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, action int32) *JournalEntry {
+func (e *JournalEntry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, _type int32) *JournalEntry {
 	e.Time = time.Now()
-	e.Start = start
-	e.SetEndpoint(endpoint)
+	e.StartTime = start
+	e.SetEndpointID(endpoint)
 	e.SetCtxID(ctxID)
-	e.SetAction(action)
+	e.SetType(_type)
 	return e
 }
 
-// SetEndpoint
-func (e *JournalEntry) SetEndpoint(endpoint int32) *JournalEntry {
-	e.Endpoint = endpoint
+// SetEndpointID
+func (e *JournalEntry) SetEndpointID(endpoint int32) *JournalEntry {
+	e.EndpointID = endpoint
 	return e
 }
 
@@ -73,9 +89,15 @@ func (e *JournalEntry) SetCtxID(ctxID *atlas.UUID) *JournalEntry {
 	return e
 }
 
-// SetAction
-func (e *JournalEntry) SetAction(action int32) *JournalEntry {
-	e.Action = action
+// SetTaskID
+func (e *JournalEntry) SetTaskID(taskID *atlas.UUID) *JournalEntry {
+	e.TaskID = taskID
+	return e
+}
+
+// SetType
+func (e *JournalEntry) SetType(_type int32) *JournalEntry {
+	e.Type = _type
 	return e
 }
 
@@ -119,6 +141,14 @@ func (e *JournalEntry) SetObjectMetadata(metadata *atlas.Metadata) *JournalEntry
 	return e
 }
 
+// EnsureObjectMetadata
+func (e *JournalEntry) EnsureObjectMetadata() *atlas.Metadata {
+	if e.ObjectMetadata == nil {
+		e.ObjectMetadata = atlas.NewMetadata()
+	}
+	return e.ObjectMetadata
+}
+
 // SetObjectData
 func (e *JournalEntry) SetObjectData(data []byte) *JournalEntry {
 	e.ObjectData = data
@@ -131,7 +161,7 @@ func (e *JournalEntry) SetError(err error) *JournalEntry {
 	return e
 }
 
-// InsertInto
-func (e *JournalEntry) InsertInto(a Adapter) {
-	a.Insert(e)
+// InsertInto inserts entry into a journal
+func (e *JournalEntry) InsertInto(j Journaller) {
+	j.Insert(e)
 }

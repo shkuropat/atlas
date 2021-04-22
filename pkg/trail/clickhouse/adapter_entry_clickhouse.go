@@ -12,11 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package clickhouse
 
 import (
+	"fmt"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"strings"
 	"time"
+
+	"github.com/binarly-io/atlas/pkg/trail"
 )
 
 // AdapterEntryClickHouse defines journal entry structure
@@ -26,7 +30,8 @@ type AdapterEntryClickHouse struct {
 	endpointID int32
 	sourceID   string
 	contextID  string
-	actionID   int32
+	taskID     string
+	typeID     int32
 	duration   int64
 	// Object section
 	_type   int32
@@ -45,15 +50,16 @@ func NewAdapterEntryClickHouse() *AdapterEntryClickHouse {
 	return &AdapterEntryClickHouse{}
 }
 
-// Accept
-func (ce *AdapterEntryClickHouse) Accept(entry *JournalEntry) *AdapterEntryClickHouse {
+// Import
+func (ce *AdapterEntryClickHouse) Import(entry *trail.JournalEntry) *AdapterEntryClickHouse {
 	ce.d = entry.Time
-	ce.endpointID = int32(entry.Endpoint)
+	ce.endpointID = entry.EndpointID
 	ce.sourceID = entry.SourceID.String()
 	ce.contextID = entry.ContextID.String()
-	ce.actionID = int32(entry.Action)
-	ce.duration = ce.d.Sub(entry.Start).Nanoseconds()
-	ce._type = int32(entry.ObjectType)
+	ce.taskID = entry.TaskID.String()
+	ce.typeID = entry.Type
+	ce.duration = ce.d.Sub(entry.StartTime).Nanoseconds()
+	ce._type = entry.ObjectType
 	ce.size = entry.ObjectSize
 	ce.address = entry.ObjectAddress.String()
 	ce.domain = entry.ObjectMetadata.GetDomain().GetName()
@@ -67,6 +73,30 @@ func (ce *AdapterEntryClickHouse) Accept(entry *JournalEntry) *AdapterEntryClick
 	return ce
 }
 
+// Export
+func (ce *AdapterEntryClickHouse) Export() *trail.JournalEntry {
+	entry := trail.NewJournalEntry()
+	entry.Time = ce.d
+	entry.EndpointID = ce.endpointID
+	entry.SetSourceID(atlas.NewUserID().SetString(ce.sourceID))
+	entry.SetCtxID(atlas.NewUUIDFromString(ce.contextID))
+	entry.SetTaskID(atlas.NewUUIDFromString(ce.taskID))
+	entry.Type = ce.typeID
+	//ce.duration = ce.d.Sub(entry.StartTime).Nanoseconds()
+	entry.ObjectType = ce._type
+	entry.ObjectSize = ce.size
+	entry.SetObjectAddress(atlas.NewAddressUUIDFromString(ce.address))
+	entry.EnsureObjectMetadata().SetDomain(atlas.NewDomain().Set(ce.domain))
+	entry.EnsureObjectMetadata().SetFilename(ce.name)
+	entry.EnsureObjectMetadata().SetDigest(atlas.NewDigest().SetDataFromString(ce.digest))
+	entry.ObjectData = []byte(ce.data)
+	if ce.error != "" {
+		entry.Error = fmt.Errorf(ce.error)
+	}
+
+	return entry
+}
+
 // Fields
 func (ce *AdapterEntryClickHouse) Fields() string {
 	return `
@@ -74,7 +104,8 @@ func (ce *AdapterEntryClickHouse) Fields() string {
 		endpoint_id,
 		source_id,
 		context_id,
-		action_id,
+		task_id,
+		type_id,
 		duration,
 		type, 
 		size,
@@ -98,7 +129,9 @@ func (ce *AdapterEntryClickHouse) StmtParamsPlaceholder() string {
 		?,
 		/* context_id */
 		?,
-		/* action_id */
+		/* task_id */
+		?,
+		/* type_id */
 		?,
 		/* duration */
 		?,
@@ -128,7 +161,8 @@ func (ce *AdapterEntryClickHouse) AsUntypedSlice() []interface{} {
 		ce.endpointID,
 		ce.sourceID,
 		ce.contextID,
-		ce.actionID,
+		ce.taskID,
+		ce.typeID,
 		ce.duration,
 		ce._type,
 		ce.size,
@@ -148,7 +182,8 @@ type AdapterEntryClickHouseSearch struct {
 	endpointID *int32
 	sourceID   *string
 	contextID  *string
-	actionID   *int32
+	taskID     *string
+	typeID     *int32
 	duration   *int64
 	// Object section
 	_type   *int32
@@ -167,8 +202,8 @@ func NewAdapterEntryClickHouseSearch() *AdapterEntryClickHouseSearch {
 	return &AdapterEntryClickHouseSearch{}
 }
 
-// Accept
-func (ce *AdapterEntryClickHouseSearch) Accept(entry *JournalEntry) *AdapterEntryClickHouseSearch {
+// Import
+func (ce *AdapterEntryClickHouseSearch) Import(entry *trail.JournalEntry) *AdapterEntryClickHouseSearch {
 	ce.d = nil
 	ce.endpointID = nil
 	if entry.SourceID.String() != "" {
@@ -179,13 +214,17 @@ func (ce *AdapterEntryClickHouseSearch) Accept(entry *JournalEntry) *AdapterEntr
 		contextID := entry.ContextID.String()
 		ce.contextID = &contextID
 	}
-	if entry.Action != ActionUnknown {
-		actionID := int32(entry.Action)
-		ce.actionID = &actionID
+	if entry.TaskID.String() != "" {
+		taskID := entry.TaskID.String()
+		ce.taskID = &taskID
+	}
+	if entry.Type != trail.EntryTypeUnknown {
+		typeID := entry.Type
+		ce.typeID = &typeID
 	}
 	ce.duration = nil
-	if entry.ObjectType != ObjectTypeUnknown {
-		_type := int32(entry.ObjectType)
+	if entry.ObjectType != trail.ObjectTypeUnknown {
+		_type := entry.ObjectType
 		ce._type = &_type
 	}
 	if entry.ObjectSize > 0 {
@@ -244,9 +283,13 @@ func (ce *AdapterEntryClickHouseSearch) StmtSearchParamsPlaceholderAndArgs() (st
 		params = append(params, "(context_id ==?)")
 		args = append(args, *ce.contextID)
 	}
-	if ce.actionID != nil {
-		params = append(params, "(action_id == ?)")
-		args = append(args, *ce.actionID)
+	if ce.taskID != nil {
+		params = append(params, "(task_id ==?)")
+		args = append(args, *ce.taskID)
+	}
+	if ce.typeID != nil {
+		params = append(params, "(type_id == ?)")
+		args = append(args, *ce.typeID)
 	}
 	if ce.duration != nil {
 		params = append(params, "(duration == ?)")

@@ -14,6 +14,10 @@
 
 package atlas
 
+//
+// Wrap metadata
+//
+
 // GetType gets command type
 func (m *Task) GetType() int32 {
 	return m.GetHeader().GetType()

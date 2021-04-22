@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package clickhouse
 
 import (
 	"fmt"
@@ -20,15 +20,16 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/config/interfaces"
+	"github.com/binarly-io/atlas/pkg/trail"
 )
 
 // JournalClickHouse
 type JournalClickHouse struct {
-	JournalBase
+	trail.JournalBase
 }
 
 // Validate interface compatibility
-var _ Journaller = &JournalClickHouse{}
+var _ trail.Journaller = &JournalClickHouse{}
 
 // NewJournalClickHouseConfig
 func NewJournalClickHouseConfig(cfg interfaces.ClickHouseEndpointConfig, endpointID int32) (*JournalClickHouse, error) {
@@ -47,7 +48,7 @@ func NewJournalClickHouse(dsn string, endpointID int32) (*JournalClickHouse, err
 	if err != nil {
 		return nil, err
 	}
-	journal, err := NewJournalBase(endpointID, adapter)
+	journal, err := trail.NewJournalBase(endpointID, adapter)
 	if err != nil {
 		return nil, err
 	}

@@ -21,7 +21,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/rpc_context"
 )
 
 // JournalBase
@@ -45,31 +44,62 @@ func NewJournalBase(endpointID int32, adapter Adapter) (*JournalBase, error) {
 	}, nil
 }
 
-// NewJournalEntry
-func (j *JournalBase) NewEntry(ctxID *atlas.UUID, action int32) *JournalEntry {
-	return NewJournalEntry().SetBaseInfo(j.start, j.endpointID, ctxID, action)
+// SetContext
+func (j *JournalBase) SetContext(ctx Contexter) Journaller {
+	j.ctx = ctx
+	return j
+}
+
+// GetContext
+func (j *JournalBase) GetContext() Contexter {
+	if j == nil {
+		return nil
+	}
+	return j.ctx
+}
+
+// GetContextUUID
+func (j *JournalBase) GetContextUUID() *atlas.UUID {
+	if j.GetContext() == nil {
+		return nil
+	}
+	return j.GetContext().GetUUID()
+}
+
+// NewEntry
+func (j *JournalBase) NewEntry(entryType int32) *JournalEntry {
+	return NewJournalEntry().SetBaseInfo(j.start, j.endpointID, j.GetContextUUID(), entryType)
+}
+
+// Insert
+func (j *JournalBase) Insert(entry *JournalEntry) error {
+	return j.adapter.Insert(entry)
+}
+
+// FindAll
+func (j *JournalBase) FindAll(entry *JournalEntry) ([]*JournalEntry, error) {
+	return j.adapter.FindAll(entry)
 }
 
 // RequestStart journals beginning of the request processing
-func (j *JournalBase) RequestStart(ctx *rpc_context.RPCContext) {
-	e := NewJournalEntry().SetBaseInfo(j.start, j.endpointID, ctx.GetUUID(), ActionRequestStart)
+func (j *JournalBase) RequestStart() {
+	e := j.NewEntry(EntryTypeRequestStart)
 	if err := j.adapter.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
 }
 
 // RequestCompleted journals request completed successfully
-func (j *JournalBase) RequestEnd(ctx *rpc_context.RPCContext) {
-	e := NewJournalEntry().SetBaseInfo(j.start, j.endpointID, ctx.GetUUID(), ActionRequestCompleted)
+func (j *JournalBase) RequestEnd() {
+	e := j.NewEntry(EntryTypeRequestCompleted)
 	if err := j.adapter.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
 }
 
 // RequestError journals request error
-func (j *JournalBase) RequestError(ctx *rpc_context.RPCContext, callErr error) {
-	e := NewJournalEntry().SetBaseInfo(j.start, j.endpointID, ctx.GetUUID(), ActionRequestError).
-		SetError(callErr)
+func (j *JournalBase) RequestError(callErr error) {
+	e := j.NewEntry(EntryTypeRequestError).SetError(callErr)
 	if err := j.adapter.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -77,15 +107,12 @@ func (j *JournalBase) RequestError(ctx *rpc_context.RPCContext, callErr error) {
 
 // SaveData journals data saved successfully
 func (j *JournalBase) SaveData(
-	ctx *rpc_context.RPCContext,
-
 	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 	data []byte,
 ) {
-	e := NewJournalEntry().
-		SetBaseInfo(j.start, j.endpointID, ctx.GetUUID(), ActionSaveData).
+	e := j.NewEntry(EntryTypeSaveData).
 		SetSourceID(dataMetadata.GetUserID()).
 		SetObject(dataMetadata.GetType(), dataAddress, uint64(dataSize), dataMetadata, data)
 	if err := j.adapter.Insert(e); err != nil {
@@ -94,13 +121,8 @@ func (j *JournalBase) SaveData(
 }
 
 // SaveDataError journals data not saved due to an error
-func (j *JournalBase) SaveDataError(
-	ctx *rpc_context.RPCContext,
-	callErr error,
-) {
-	e := NewJournalEntry().
-		SetBaseInfo(j.start, j.endpointID, ctx.GetUUID(), ActionSaveDataError).
-		SetError(callErr)
+func (j *JournalBase) SaveDataError(callErr error) {
+	e := j.NewEntry(EntryTypeSaveDataError).SetError(callErr)
 	if err := j.adapter.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}
@@ -108,14 +130,11 @@ func (j *JournalBase) SaveDataError(
 
 // ProcessData journals data processed successfully
 func (j *JournalBase) ProcessData(
-	ctx *rpc_context.RPCContext,
-
 	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 ) {
-	e := NewJournalEntry().
-		SetBaseInfo(j.start, j.endpointID, ctx.GetUUID(), ActionProcessData).
+	e := j.NewEntry(EntryTypeProcessData).
 		SetSourceID(dataMetadata.GetUserID()).
 		SetObject(dataMetadata.GetType(), dataAddress, uint64(dataSize), dataMetadata, nil)
 	if err := j.adapter.Insert(e); err != nil {
@@ -124,13 +143,40 @@ func (j *JournalBase) ProcessData(
 }
 
 // ProcessDataError journals data not processed due to an error
-func (j *JournalBase) ProcessDataError(
-	ctx *rpc_context.RPCContext,
-	callErr error,
-) {
-	e := NewJournalEntry().
-		SetBaseInfo(j.start, j.endpointID, ctx.GetUUID(), ActionProcessDataError).
-		SetError(callErr)
+func (j *JournalBase) ProcessDataError(callErr error) {
+	e := j.NewEntry(EntryTypeProcessDataError).SetError(callErr)
+	if err := j.adapter.Insert(e); err != nil {
+		log.Warnf("unable to insert journal entry")
+	}
+}
+
+// SaveTask journals task saved successfully
+func (j *JournalBase) SaveTask(task *atlas.Task) {
+	e := j.NewEntry(EntryTypeSaveTask).SetTaskID(task.GetUUID())
+	if err := j.adapter.Insert(e); err != nil {
+		log.Warnf("unable to insert journal entry")
+	}
+}
+
+// SaveTaskError journals task not saved due to an error
+func (j *JournalBase) SaveTaskError(task *atlas.Task, callErr error) {
+	e := j.NewEntry(EntryTypeSaveTaskError).SetError(callErr).SetTaskID(task.GetUUID())
+	if err := j.adapter.Insert(e); err != nil {
+		log.Warnf("unable to insert journal entry")
+	}
+}
+
+// ProcessTask journals task processed successfully
+func (j *JournalBase) ProcessTask(task *atlas.Task) {
+	e := j.NewEntry(EntryTypeProcessTask).SetTaskID(task.GetUUID())
+	if err := j.adapter.Insert(e); err != nil {
+		log.Warnf("unable to insert journal entry")
+	}
+}
+
+// ProcessTaskError journals task not processed due to an error
+func (j *JournalBase) ProcessTaskError(task *atlas.Task, callErr error) {
+	e := j.NewEntry(EntryTypeProcessTaskError).SetError(callErr).SetTaskID(task.GetUUID())
 	if err := j.adapter.Insert(e); err != nil {
 		log.Warnf("unable to insert journal entry")
 	}

@@ -45,7 +45,7 @@ func (r *Runner) Run(options *Options) exe.Status {
 	log.Infof("Run() - start")
 	defer log.Infof("Run() - end")
 
-	// Start a long-running process, capture stdout and stderr
+	// StartTime a long-running process, capture stdout and stderr
 	r.cmd = exe.NewCmdOptions(
 		options.GetOptions(),
 		r.name,
@@ -55,7 +55,7 @@ func (r *Runner) Run(options *Options) exe.Status {
 	stopTimeoutChan := r.startTimeout(options)
 	log.Infof("wait for cmd to complete")
 
-	// Start command and wait for it to complete
+	// StartTime command and wait for it to complete
 	log.Infof("Starting command:\n%s %s", r.name, strings.Join(r.args, " "))
 	r.cmd.Start()
 	<-r.cmd.Done()

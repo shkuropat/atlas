@@ -12,25 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+package trail
 
-package atlas;
+import "github.com/binarly-io/atlas/pkg/api/atlas"
 
-import "metadata.proto";
-
-message Task {
-    // Header of the task
-    Metadata header = 100;
-
-    // Optional. Any arbitrary sequence of bytes no longer than 2^32
-    bytes bytes = 200;
-
-    // Optional. Multiple task's subjects.
-    repeated Metadata subjects = 300;
-
-    // Optional. Recursive chain of tasks
-    repeated Task parents = 400;
-
-    // Optional. Recursive chain of tasks
-    repeated Task children = 500;
+// Contexter
+type Contexter interface {
+	GetUUID() *atlas.UUID
 }

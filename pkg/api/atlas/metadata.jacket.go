@@ -14,7 +14,11 @@
 
 package atlas
 
-// Wrap Addresses into jacket
+//
+//
+// Wrap AddressMap
+//
+//
 
 // Has wraps AddressMap.Has
 func (m *Metadata) Has(domain ...*Domain) bool {
@@ -33,19 +37,12 @@ func (m *Metadata) Append(entities ...interface{}) *Metadata {
 	return m
 }
 
-func (m *Metadata) SetS3(bucket, object string) *Metadata {
-	return m.Set(DomainThis, DomainS3, NewAddress().SetDomain(DomainS3).Set(NewS3Address(bucket, object)))
-}
-
-func (m *Metadata) SetKafka(topic string, partition int32) *Metadata {
-	return m.Set(DomainThis, DomainKafka, NewAddress().SetDomain(DomainKafka).Set(NewKafkaAddress(topic, partition)))
-}
-
-func (m *Metadata) SetUUID(uuid *UUID) *Metadata {
-	return m.Set(DomainThis, DomainUUID, NewAddress().SetDomain(DomainUUID).Set(uuid))
-}
-
-// NewUUIDFromString
+//
+//
+// Address customization
+//
+//
+// SetUUIDFromString
 func (m *Metadata) SetUUIDFromString(id string, domain ...*Domain) *Metadata {
 	var domain0 = DomainThis
 	var domain1 = DomainUUID
@@ -60,7 +57,7 @@ func (m *Metadata) SetUUIDFromString(id string, domain ...*Domain) *Metadata {
 	return m
 }
 
-// NewUUIDRandom domains are optional
+// SetRandomUUID domains are optional
 func (m *Metadata) SetRandomUUID(domains ...*Domain) *Metadata {
 	// Default values
 	var domain0 = DomainThis
@@ -77,45 +74,75 @@ func (m *Metadata) SetRandomUUID(domains ...*Domain) *Metadata {
 	return m
 }
 
+//
+//
+// Wrap Address
+//
+//
+
+// SetS3
+func (m *Metadata) SetS3(bucket, object string) *Metadata {
+	return m.Set(DomainThis, DomainS3, NewAddress().SetDomain(DomainS3).Set(NewS3Address(bucket, object)))
+}
+
+// SetKafka
+func (m *Metadata) SetKafka(topic string, partition int32) *Metadata {
+	return m.Set(DomainThis, DomainKafka, NewAddress().SetDomain(DomainKafka).Set(NewKafkaAddress(topic, partition)))
+}
+
+// SetUUID
+func (m *Metadata) SetUUID(uuid *UUID) *Metadata {
+	return m.Set(DomainThis, DomainUUID, NewAddress().SetDomain(DomainUUID).Set(uuid))
+}
+
+// GetUUID
 func (m *Metadata) GetUUID() *UUID {
 	return m.GetAddresses().First(DomainThis, DomainUUID).GetUUID()
 }
 
+// SetUserID
 func (m *Metadata) SetUserID(userID *UserID) *Metadata {
 	return m.Set(DomainThis, DomainUserID, NewAddress().SetDomain(DomainUserID).Set(userID))
 }
 
+// GetUserID
 func (m *Metadata) GetUserID() *UserID {
 	return m.GetAddresses().First(DomainThis, DomainUserID).GetUserId()
 }
 
+// SetFilename
 func (m *Metadata) SetFilename(filename string) *Metadata {
 	return m.Set(DomainThis, DomainFilename, NewAddress().SetDomain(DomainFilename).Set(NewFilename(filename)))
 }
 
+// GetFilename
 func (m *Metadata) GetFilename() string {
 	return m.GetAddresses().First(DomainThis, DomainFilename).GetFilename().String()
 }
 
+// SetURL
 func (m *Metadata) SetURL(url string) *Metadata {
 	return m.Set(DomainThis, DomainURL, NewAddress().SetDomain(DomainURL).Set(NewURL(url)))
 }
 
+// SetDomain
 func (m *Metadata) SetDomain(domain *Domain) *Metadata {
 	return m.Set(DomainThis, DomainDomain, NewAddress().SetDomain(DomainDomain).Set(domain))
 }
 
+// GetDomain
 func (m *Metadata) GetDomain() *Domain {
 	return m.GetAddresses().First(DomainThis, DomainDomain).GetDomain()
 }
 
+// SetCustomString
 func (m *Metadata) SetCustomString(s string) *Metadata {
 	return m.Set(DomainThis, DomainCustomString, NewAddress().SetDomain(DomainCustomString).Set(s))
 }
 
 //
 //
-// Wrap PresentationOptions into jacket
+// Wrap PresentationOptions
 //
 //
 
@@ -153,7 +180,7 @@ func (m *Metadata) SetCompression(compression *Compression) *Metadata {
 
 //
 //
-// Wrap DataChunkProperties into jacket
+// Wrap DataChunkProperties
 //
 //
 

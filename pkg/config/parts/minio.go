@@ -51,7 +51,7 @@ func (c *ConfigMinIO) String() string {
 	b := &bytes.Buffer{}
 
 	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "Endpoint: %v\n", c.Endpoint)
+	_, _ = fmt.Fprintf(b, "EndpointID: %v\n", c.Endpoint)
 	_, _ = fmt.Fprintf(b, "AccessKeyID: %v\n", c.AccessKeyID)
 	_, _ = fmt.Fprintf(b, "SecretAccessKey: %v\n", c.SecretAccessKey)
 	_, _ = fmt.Fprintf(b, "Secure: %v\n", c.Secure)

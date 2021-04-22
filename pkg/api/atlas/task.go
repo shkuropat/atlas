@@ -79,7 +79,7 @@ func NewTask() *Task {
 	}
 }
 
-// NewTaskUnmarshalFrom creates new Task from bytes
+// NewTaskUnmarshalFrom creates new Task from a slice of bytes
 func NewTaskUnmarshalFrom(bytes []byte) (*Task, error) {
 	task := new(Task)
 	if err := task.UnmarshalFrom(bytes); err != nil {
@@ -88,7 +88,7 @@ func NewTaskUnmarshalFrom(bytes []byte) (*Task, error) {
 	return task, nil
 }
 
-// UnmarshalFrom unmarshal commands from bytes
+// UnmarshalFrom unmarshal commands from a slice of bytes
 func (m *Task) UnmarshalFrom(bytes []byte) error {
 	return proto.Unmarshal(bytes, m)
 }
@@ -99,7 +99,8 @@ func (m *Task) SetBytes(bytes []byte) *Task {
 	return m
 }
 
-// SetPayload marshals msg as command's data
+// SetPayload puts any protobuf message (type) into task's data.
+// Message is marshalled into binary form and set as data bytes of the task.
 func (m *Task) SetPayload(msg proto.Message) error {
 	if bytes, err := proto.Marshal(msg); err == nil {
 		m.SetBytes(bytes)
@@ -109,7 +110,8 @@ func (m *Task) SetPayload(msg proto.Message) error {
 	}
 }
 
-// GetPayload unmarshalls command's data into msg
+// GetPayload extracts profobuf message (type) from task's data.
+// Message is unmarshalled from task's data into provided message.
 func (m *Task) GetPayload(msg proto.Message) error {
 	return proto.Unmarshal(m.GetBytes(), msg)
 }
@@ -126,25 +128,47 @@ func (m *Task) AddSubjects(subjects ...*Metadata) *Task {
 	return m
 }
 
-// AddTask
-func (m *Task) AddTask(task *Task) *Task {
-	m.Tasks = append(m.Tasks, task)
+// AddSubtask
+func (m *Task) AddSubtask(task *Task) *Task {
+	m.Children = append(m.Children, task)
 	return m
 }
 
-// AddTasks
-func (m *Task) AddTasks(tasks ...*Task) *Task {
-	m.Tasks = append(m.Tasks, tasks...)
+// AddSubtasks
+func (m *Task) AddSubtasks(tasks ...*Task) *Task {
+	m.Children = append(m.Children, tasks...)
 	return m
+}
+
+// FirstSubtask
+func (m *Task) FirstSubtask() *Task {
+	if m == nil {
+		return nil
+	}
+	if len(m.Children) == 0 {
+		return nil
+	}
+	return m.Children[0]
+}
+
+// LastSubtask
+func (m *Task) LastSubtask() *Task {
+	if m == nil {
+		return nil
+	}
+	if len(m.Children) == 0 {
+		return nil
+	}
+	return m.Children[len(m.Children)-1]
 }
 
 // ShiftTasks fetches first (0-indexed) task from available tasks.
 // fetched task is removed from list of tasks
-func (m *Task) ShiftTasks() *Task {
+func (m *Task) ShiftSubtasks() *Task {
 	var task *Task = nil
-	if len(m.Tasks) > 0 {
-		task = m.Tasks[0]
-		m.Tasks = m.Tasks[1:]
+	if len(m.Children) > 0 {
+		task = m.Children[0]
+		m.Children = m.Children[1:]
 	}
 	return task
 }
@@ -154,13 +178,52 @@ func (m *Task) ShiftTasks() *Task {
 //   2. and attaches all the rest tasks (if any) as tasks of the fetched one
 // Original task is modified.
 func (m *Task) Derive() *Task {
-	root := m.ShiftTasks()
+	// Assume new root task is the first subtask of current task
+	root := m.FirstSubtask()
 	if root == nil {
 		return nil
 	}
 
-	root.Tasks = m.Tasks
+	// Parent of the new task is current task
+	root.AddParent(m)
+	// Subtasks of the new task are the same as of the current task except the rrot itself
+	root.Children = m.Children
+	root.ShiftSubtasks()
 	return root
+}
+
+// AddParent
+func (m *Task) AddParent(task *Task) *Task {
+	m.Parents = append(m.Parents, task)
+	return m
+}
+
+// AddParents
+func (m *Task) AddParents(tasks ...*Task) *Task {
+	m.Parents = append(m.Parents, tasks...)
+	return m
+}
+
+// FirstParent
+func (m *Task) FirstParent() *Task {
+	if m == nil {
+		return nil
+	}
+	if len(m.Parents) == 0 {
+		return nil
+	}
+	return m.Parents[0]
+}
+
+// LastParent
+func (m *Task) LastParent() *Task {
+	if m == nil {
+		return nil
+	}
+	if len(m.Parents) == 0 {
+		return nil
+	}
+	return m.Parents[len(m.Parents)-1]
 }
 
 // String
@@ -181,6 +244,14 @@ func (m *Task) String() string {
 		for _, subj := range m.GetSubjects() {
 			parts = append(parts, subj.String())
 		}
+	}
+
+	if len(m.Children) > 0 {
+		parts = append(parts, fmt.Sprintf("%d children", len(m.Children)))
+	}
+
+	if len(m.Parents) > 0 {
+		parts = append(parts, fmt.Sprintf("%d parents", len(m.Parents)))
 	}
 
 	return strings.Join(parts, " ")

@@ -19,6 +19,33 @@ func NewDigest() *Digest {
 	return new(Digest)
 }
 
+// SetType
+func (m *Digest) SetType(_type DigestType) *Digest {
+	if m == nil {
+		return nil
+	}
+	m.Type = _type
+	return m
+}
+
+// SetData
+func (m *Digest) SetData(data []byte) *Digest {
+	if m == nil {
+		return nil
+	}
+	m.Data = data
+	return m
+}
+
+// SetDataFromString
+func (m *Digest) SetDataFromString(data string) *Digest {
+	if m == nil {
+		return nil
+	}
+	m.Data = []byte(data)
+	return m
+}
+
 // String
 func (m *Digest) String() string {
 	return "no be implemented"

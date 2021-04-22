@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package clickhouse
 
 import (
 	databasesql "database/sql"
@@ -23,6 +23,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/config/interfaces"
+	"github.com/binarly-io/atlas/pkg/trail"
 )
 
 // JournalClickHouse
@@ -31,7 +32,7 @@ type AdapterClickHouse struct {
 }
 
 // Validate interface compatibility
-var _ Adapter = &AdapterClickHouse{}
+var _ trail.Adapter = &AdapterClickHouse{}
 
 // NewAdapterClickHouseConfig
 func NewAdapterClickHouseConfig(cfg interfaces.ClickHouseEndpointConfig) (*AdapterClickHouse, error) {
@@ -66,8 +67,8 @@ func NewAdapterClickHouse(dsn string) (*AdapterClickHouse, error) {
 }
 
 // Insert
-func (j *AdapterClickHouse) Insert(entry *JournalEntry) error {
-	e := NewAdapterEntryClickHouse().Accept(entry)
+func (j *AdapterClickHouse) Insert(entry *trail.JournalEntry) error {
+	e := NewAdapterEntryClickHouse().Import(entry)
 
 	sql := heredoc.Doc(
 		fmt.Sprintf(`
@@ -108,8 +109,8 @@ func (j *AdapterClickHouse) Insert(entry *JournalEntry) error {
 }
 
 // FindAll
-func (j *AdapterClickHouse) FindAll(entry *JournalEntry) ([]AdapterEntryClickHouse, error) {
-	e := NewAdapterEntryClickHouseSearch().Accept(entry)
+func (j *AdapterClickHouse) FindAll(entry *trail.JournalEntry) ([]*trail.JournalEntry, error) {
+	e := NewAdapterEntryClickHouseSearch().Import(entry)
 	placeholder, args := e.StmtSearchParamsPlaceholderAndArgs()
 	sql := heredoc.Doc(
 		fmt.Sprintf(`
@@ -132,7 +133,7 @@ func (j *AdapterClickHouse) FindAll(entry *JournalEntry) ([]AdapterEntryClickHou
 	}
 	defer rows.Close()
 
-	var res []AdapterEntryClickHouse
+	var res []*trail.JournalEntry
 	for rows.Next() {
 		var ce AdapterEntryClickHouse
 		if err := rows.Scan(
@@ -140,7 +141,8 @@ func (j *AdapterClickHouse) FindAll(entry *JournalEntry) ([]AdapterEntryClickHou
 			&ce.endpointID,
 			&ce.sourceID,
 			&ce.contextID,
-			&ce.actionID,
+			&ce.taskID,
+			&ce.typeID,
 			&ce.duration,
 			&ce._type,
 			&ce.size,
@@ -150,7 +152,7 @@ func (j *AdapterClickHouse) FindAll(entry *JournalEntry) ([]AdapterEntryClickHou
 			&ce.data,
 			&ce.error,
 		); err == nil {
-			res = append(res, ce)
+			res = append(res, ce.Export())
 		}
 	}
 

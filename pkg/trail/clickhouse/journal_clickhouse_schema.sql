@@ -12,14 +12,17 @@ CREATE TABLE atlas.api_journal
   /* endpoint_id specifies api endpoint being called (a.k.a. API function) */
   endpoint_id Int32,
 
-  /* source_id specifies source which is call is being journalled */
+  /* source_id specifies source which call is being journalled */
   source_id String,
 
-  /* context_id specifies ID of the context */
+  /* context_id specifies ID of the execution context */
   context_id String,
 
-  /* action_id specifies action */
-  action_id Int32,
+  /* task_id specifies ID of the task */
+  task_id String,
+
+  /* type_id specifies type of the entry */
+  type_id Int32,
 
   /* duration is a nanoseconds duration since start, if applicable */
   duration Int64,

@@ -18,67 +18,113 @@ import (
 	"github.com/dgrijalva/jwt-go"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
+	"github.com/binarly-io/atlas/pkg/trail"
 )
 
 // RPCContext
 type RPCContext struct {
-	Metadata *atlas.Metadata
-	Claims   jwt.MapClaims
+	metadata *atlas.Metadata
+	claims   jwt.MapClaims
+	journal  trail.Journaller
 }
 
 // New
 func New() *RPCContext {
 	return &RPCContext{
-		Metadata: atlas.NewMetadata().SetRandomUUID().CreateTimestamp(),
+		metadata: atlas.NewMetadata().SetRandomUUID().CreateTimestamp(),
 	}
 }
 
 // SetClaims
 func (c *RPCContext) SetClaims(claims jwt.MapClaims) *RPCContext {
-	c.Claims = claims
+	if c == nil {
+		return nil
+	}
+	c.claims = claims
+	return c
+}
+
+// GetJournal
+func (c *RPCContext) GetJournal() trail.Journaller {
+	if c == nil {
+		return nil
+	}
+	return c.journal
+}
+
+// SetJournal
+func (c *RPCContext) SetJournal(j trail.Journaller) *RPCContext {
+	if c == nil {
+		return nil
+	}
+	c.journal = j
 	return c
 }
 
 // SetType
 func (c *RPCContext) SetType(_type int32) *RPCContext {
-	c.Metadata.SetType(_type)
+	if c == nil {
+		return nil
+	}
+	c.metadata.SetType(_type)
 	return c
 }
 
 // GetType
 func (c *RPCContext) GetType() int32 {
-	return c.Metadata.GetType()
+	if c == nil {
+		return 0
+	}
+	return c.metadata.GetType()
 }
 
 // SetName
 func (c *RPCContext) SetName(name string) *RPCContext {
-	c.Metadata.SetName(name)
+	if c == nil {
+		return nil
+	}
+	c.metadata.SetName(name)
 	return c
 }
 
 // GetName
 func (c *RPCContext) GetName() string {
-	return c.Metadata.GetName()
+	if c == nil {
+		return ""
+	}
+	return c.metadata.GetName()
 }
 
 // SetID
 func (c *RPCContext) SetUUID(id *atlas.UUID) *RPCContext {
-	c.Metadata.SetUUID(id)
+	if c == nil {
+		return nil
+	}
+	c.metadata.SetUUID(id)
 	return c
 }
 
 // SetIDFromString
 func (c *RPCContext) SetCallUUIDFromString(id string) *RPCContext {
-	c.Metadata.SetUUIDFromString(id)
+	if c == nil {
+		return nil
+	}
+	c.metadata.SetUUIDFromString(id)
 	return c
 }
 
 // GetID
 func (c *RPCContext) GetUUID() *atlas.UUID {
-	return c.Metadata.GetUUID()
+	if c == nil {
+		return nil
+	}
+	return c.metadata.GetUUID()
 }
 
 // GetIDAsString
 func (c *RPCContext) GetUUIDAsString() string {
-	return c.Metadata.GetUUID().String()
+	if c == nil {
+		return ""
+	}
+	return c.metadata.GetUUID().String()
 }
