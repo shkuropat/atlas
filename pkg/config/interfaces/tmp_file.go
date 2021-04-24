@@ -33,7 +33,7 @@ type TmpFileConfig struct {
 }
 
 // TmpFileConfigNormalize
-func (c TmpFileConfig) ConfigTmpFileNormalize() {
+func (c TmpFileConfig) TmpFileConfigNormalize() {
 	if c.TmpFile == nil {
 		c.TmpFile = parts.NewTmpFileConfig()
 	}
