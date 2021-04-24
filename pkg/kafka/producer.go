@@ -57,7 +57,7 @@ func NewProducer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Pr
 }
 
 // NewProducerConfig
-func NewProducerConfig(cfg interfaces.KafkaEndpointConfig) *Producer {
+func NewProducerConfig(cfg interfaces.KafkaConfigurator) *Producer {
 	return NewProducer(
 		cfg.GetKafkaEndpoint(),
 		nil,

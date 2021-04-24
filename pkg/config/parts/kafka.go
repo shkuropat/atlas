@@ -22,7 +22,7 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ConfigKafka struct {
+type KafkaConfig struct {
 	Enabled bool `mapstructure:"enabled"`
 	// Brokers specifies list of Kafka brokers to connect to. Used by server and client
 	Brokers []string `mapstructure:"brokers"`
@@ -40,13 +40,13 @@ type ConfigKafka struct {
 	// IMPORTANT
 }
 
-// NewConfigKafka
-func NewConfigKafka() *ConfigKafka {
-	return new(ConfigKafka)
+// NewKafkaConfig
+func NewKafkaConfig() *KafkaConfig {
+	return new(KafkaConfig)
 }
 
 // String
-func (c *ConfigKafka) String() string {
+func (c *KafkaConfig) String() string {
 	if c == nil {
 		return ""
 	}

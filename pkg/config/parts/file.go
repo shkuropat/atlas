@@ -22,20 +22,20 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ConfigFile struct {
+type FileConfig struct {
 	File string `mapstructure:"file"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewConfigFile
-func NewConfigFile() *ConfigFile {
-	return new(ConfigFile)
+// NewFileConfig
+func NewFileConfig() *FileConfig {
+	return new(FileConfig)
 }
 
 // String
-func (c *ConfigFile) String() string {
+func (c *FileConfig) String() string {
 	if c == nil {
 		return ""
 	}

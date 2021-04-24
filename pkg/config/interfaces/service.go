@@ -18,14 +18,27 @@ import (
 	"github.com/binarly-io/atlas/pkg/config/parts"
 )
 
-// ConfigService
-type ConfigService struct {
-	Service *parts.ConfigService `mapstructure:"service"`
+// OAuthConfigurator
+type ServiceConfigurator interface {
+	GetServiceAddress() string
 }
 
-// ConfigServiceNormalize
-func (c ConfigService) ConfigServiceNormalize() {
+// Interface compatibility
+var _ ServiceConfigurator = ServiceConfig{}
+
+// ServiceConfig
+type ServiceConfig struct {
+	Service *parts.ServiceConfig `mapstructure:"service"`
+}
+
+// ServiceConfigNormalize
+func (c ServiceConfig) ServiceConfigNormalize() {
 	if c.Service == nil {
-		c.Service = parts.NewConfigService()
+		c.Service = parts.NewServiceConfig()
 	}
+}
+
+// GetServiceAddress
+func (c ServiceConfig) GetServiceAddress() string {
+	return c.Service.ServiceAddress
 }

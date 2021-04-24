@@ -22,7 +22,7 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ConfigTLS struct {
+type TLSConfig struct {
 	Enabled            bool   `mapstructure:"enabled"`
 	CAFile             string `mapstructure:"ca-file"`
 	ServerHostOverride string `mapstructure:"server-host-override"`
@@ -31,13 +31,13 @@ type ConfigTLS struct {
 	// IMPORTANT
 }
 
-// NewConfigTLS
-func NewConfigTLS() *ConfigTLS {
-	return new(ConfigTLS)
+// NewTLSConfig
+func NewTLSConfig() *TLSConfig {
+	return new(TLSConfig)
 }
 
 // String
-func (c *ConfigTLS) String() string {
+func (c *TLSConfig) String() string {
 	if c == nil {
 		return ""
 	}

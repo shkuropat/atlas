@@ -88,7 +88,7 @@ func NewMinIO(
 }
 
 // NewMinIOFromConfig
-func NewMinIOFromConfig(cfg interfaces.MinIOEndpointConfig) (*MinIO, error) {
+func NewMinIOFromConfig(cfg interfaces.MinIOConfigurator) (*MinIO, error) {
 	return NewMinIO(
 		cfg.GetMinIOEndpoint(),
 		cfg.GetMinIOSecure(),

@@ -22,7 +22,7 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ConfigLog struct {
+type LogConfig struct {
 	Level     string `mapstructure:"level"`
 	Formatter string `mapstructure:"format"`
 	// IMPORTANT
@@ -30,13 +30,13 @@ type ConfigLog struct {
 	// IMPORTANT
 }
 
-// NewConfigLog
-func NewConfigLog() *ConfigLog {
-	return new(ConfigLog)
+// NewLogConfig
+func NewLogConfig() *LogConfig {
+	return new(LogConfig)
 }
 
 // String
-func (c *ConfigLog) String() string {
+func (c *LogConfig) String() string {
 	if c == nil {
 		return ""
 	}

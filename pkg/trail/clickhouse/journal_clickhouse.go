@@ -32,7 +32,7 @@ type JournalClickHouse struct {
 var _ trail.Journaller = &JournalClickHouse{}
 
 // NewJournalClickHouseConfig
-func NewJournalClickHouseConfig(cfg interfaces.ClickHouseEndpointConfig, endpointID int32) (*JournalClickHouse, error) {
+func NewJournalClickHouseConfig(cfg interfaces.ClickHouseConfigurator, endpointID int32) (*JournalClickHouse, error) {
 	dsn := cfg.GetClickHouseEndpoint()
 	return NewJournalClickHouse(dsn, endpointID)
 }

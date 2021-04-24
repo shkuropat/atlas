@@ -22,27 +22,29 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ServiceConfig struct {
-	ServiceAddress string `mapstructure:"address"`
+type TmpFileConfig struct {
+	Dir     string `mapstructure:"dir"`
+	Pattern string `mapstructure:"pattern"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewServiceConfig
-func NewServiceConfig() *ServiceConfig {
-	return new(ServiceConfig)
+// NewTmpFileConfig
+func NewTmpFileConfig() *TmpFileConfig {
+	return new(TmpFileConfig)
 }
 
 // String
-func (c *ServiceConfig) String() string {
+func (c *TmpFileConfig) String() string {
 	if c == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "ServiceAddress: %v\n", c.ServiceAddress)
+	_, _ = fmt.Fprintf(b, "Dir: %v\n", c.Dir)
+	_, _ = fmt.Fprintf(b, "Pattern: %v\n", c.Pattern)
 
 	return b.String()
 }

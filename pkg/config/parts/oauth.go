@@ -22,7 +22,7 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ConfigOAuth struct {
+type OAuthConfig struct {
 	Enabled bool `mapstructure:"enabled"`
 	// OAuth Login
 	ClientID     string `mapstructure:"client-id"`
@@ -36,13 +36,13 @@ type ConfigOAuth struct {
 	// IMPORTANT
 }
 
-// NewConfigOAuth
-func NewConfigOAuth() *ConfigOAuth {
-	return new(ConfigOAuth)
+// NewOAuthConfig
+func NewOAuthConfig() *OAuthConfig {
+	return new(OAuthConfig)
 }
 
 // String
-func (c *ConfigOAuth) String() string {
+func (c *OAuthConfig) String() string {
 	if c == nil {
 		return ""
 	}

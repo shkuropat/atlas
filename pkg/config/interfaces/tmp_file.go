@@ -14,16 +14,37 @@
 
 package interfaces
 
-import "github.com/binarly-io/atlas/pkg/config/parts"
+import (
+	"github.com/binarly-io/atlas/pkg/config/parts"
+)
 
-// ConfigFile
-type ConfigFile struct {
-	ConfigFile *parts.ConfigFile `mapstructure:"config"`
+// TmpFileConfigurator
+type TmpFileConfigurator interface {
+	GetDir() string
+	GetPattern() string
 }
 
-// ConfigFileNormalize
-func (c ConfigFile) ConfigFileNormalize() {
-	if c.ConfigFile == nil {
-		c.ConfigFile = parts.NewConfigFile()
+// Interface compatibility
+var _ TmpFileConfigurator = TmpFileConfig{}
+
+// TmpFileConfig
+type TmpFileConfig struct {
+	TmpFile *parts.TmpFileConfig `mapstructure:"tmp"`
+}
+
+// TmpFileConfigNormalize
+func (c TmpFileConfig) ConfigTmpFileNormalize() {
+	if c.TmpFile == nil {
+		c.TmpFile = parts.NewTmpFileConfig()
 	}
+}
+
+// GetDir
+func (c TmpFileConfig) GetDir() string {
+	return c.TmpFile.Dir
+}
+
+// GetPattern
+func (c TmpFileConfig) GetPattern() string {
+	return c.TmpFile.Pattern
 }

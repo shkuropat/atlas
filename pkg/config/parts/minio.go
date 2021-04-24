@@ -22,7 +22,7 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ConfigMinIO struct {
+type MinIOConfig struct {
 	Enabled bool `mapstructure:"enabled"`
 	// MinIO connection
 	Endpoint           string `mapstructure:"endpoint"`
@@ -37,13 +37,13 @@ type ConfigMinIO struct {
 	// IMPORTANT
 }
 
-// NewConfigMinIO
-func NewConfigMinIO() *ConfigMinIO {
-	return new(ConfigMinIO)
+// NewMinIOConfig
+func NewMinIOConfig() *MinIOConfig {
+	return new(MinIOConfig)
 }
 
 // String
-func (c *ConfigMinIO) String() string {
+func (c *MinIOConfig) String() string {
 	if c == nil {
 		return ""
 	}

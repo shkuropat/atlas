@@ -18,14 +18,57 @@ import (
 	"github.com/binarly-io/atlas/pkg/config/parts"
 )
 
-// ConfigOAuth
-type ConfigOAuth struct {
-	OAuth *parts.ConfigOAuth `mapstructure:"oauth"`
+// OAuthConfigurator
+type OAuthConfigurator interface {
+	GetEnabled() bool
+	GetClientID() string
+	GetClientSecret() string
+	GetTokenURL() string
+	GetRegisterURL() string
+	GetInitialAccessToken() string
 }
 
-// ConfigOAuthNormalize
-func (c ConfigOAuth) ConfigOAuthNormalize() {
+// Interface compatibility
+var _ OAuthConfigurator = OAuthConfig{}
+
+// OAuthConfig
+type OAuthConfig struct {
+	OAuth *parts.OAuthConfig `mapstructure:"oauth"`
+}
+
+// OAuthConfigNormalize
+func (c OAuthConfig) OAuthConfigNormalize() {
 	if c.OAuth == nil {
-		c.OAuth = parts.NewConfigOAuth()
+		c.OAuth = parts.NewOAuthConfig()
 	}
+}
+
+// GetEnabled
+func (c OAuthConfig) GetEnabled() bool {
+	return c.OAuth.Enabled
+}
+
+// GetClientID
+func (c OAuthConfig) GetClientID() string {
+	return c.OAuth.ClientID
+}
+
+// GetClientSecret
+func (c OAuthConfig) GetClientSecret() string {
+	return c.OAuth.ClientSecret
+}
+
+// GetTokenURL
+func (c OAuthConfig) GetTokenURL() string {
+	return c.OAuth.TokenURL
+}
+
+// GetRegisterURL
+func (c OAuthConfig) GetRegisterURL() string {
+	return c.OAuth.RegisterURL
+}
+
+// GetInitialAccessToken
+func (c OAuthConfig) GetInitialAccessToken() string {
+	return c.OAuth.InitialAccessToken
 }

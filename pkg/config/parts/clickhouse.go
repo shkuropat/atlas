@@ -22,7 +22,7 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ConfigClickHouse struct {
+type ClickHouseConfig struct {
 	Enabled bool `mapstructure:"enabled"`
 	// DSN in the form: http://clickhouse_operator:clickhouse_operator_password@clickhouse-journal.clickhouse:8123/atlas
 	DSN string `mapstructure:"dsn"`
@@ -31,13 +31,13 @@ type ConfigClickHouse struct {
 	// IMPORTANT
 }
 
-// NewConfigClickHouse
-func NewConfigClickHouse() *ConfigClickHouse {
-	return new(ConfigClickHouse)
+// NewClickHouseConfig
+func NewClickHouseConfig() *ClickHouseConfig {
+	return new(ClickHouseConfig)
 }
 
 // String
-func (c *ConfigClickHouse) String() string {
+func (c *ClickHouseConfig) String() string {
 	if c == nil {
 		return ""
 	}

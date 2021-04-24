@@ -18,14 +18,33 @@ import (
 	"github.com/binarly-io/atlas/pkg/config/parts"
 )
 
-// ConfigLog
-type ConfigLog struct {
-	Log *parts.ConfigLog `mapstructure:"log"`
+// LogConfigurator
+type LogConfigurator interface {
+	GetLevel() string
+	GetFormatter() string
 }
 
-// ConfigLogNormalize
-func (c ConfigLog) ConfigLogNormalize() {
+// Interface compatibility
+var _ LogConfigurator = LogConfig{}
+
+// LogConfig
+type LogConfig struct {
+	Log *parts.LogConfig `mapstructure:"log"`
+}
+
+// LogConfigNormalize
+func (c LogConfig) LogConfigNormalize() {
 	if c.Log == nil {
-		c.Log = parts.NewConfigLog()
+		c.Log = parts.NewLogConfig()
 	}
+}
+
+// GetLevel
+func (c LogConfig) GetLevel() string {
+	return c.Log.Level
+}
+
+// GetFormatter
+func (c LogConfig) GetFormatter() string {
+	return c.Log.Formatter
 }

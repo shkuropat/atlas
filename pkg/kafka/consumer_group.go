@@ -52,7 +52,7 @@ func NewConsumerGroup(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress
 // IMPORTANT - you have to specify topic to read from either with
 //	1. SetAddress
 //	2. SetTopic
-func NewConsumerGroupFromEndpoint(cfg interfaces.KafkaEndpointConfig, groupID string) *ConsumerGroup {
+func NewConsumerGroupFromEndpoint(cfg interfaces.KafkaConfigurator, groupID string) *ConsumerGroup {
 	return NewConsumerGroup(cfg.GetKafkaEndpoint(), nil, groupID)
 }
 

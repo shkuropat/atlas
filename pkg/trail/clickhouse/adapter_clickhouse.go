@@ -35,7 +35,7 @@ type AdapterClickHouse struct {
 var _ trail.Adapter = &AdapterClickHouse{}
 
 // NewAdapterClickHouseConfig
-func NewAdapterClickHouseConfig(cfg interfaces.ClickHouseEndpointConfig) (*AdapterClickHouse, error) {
+func NewAdapterClickHouseConfig(cfg interfaces.ClickHouseConfigurator) (*AdapterClickHouse, error) {
 	dsn := cfg.GetClickHouseEndpoint()
 	return NewAdapterClickHouse(dsn)
 }

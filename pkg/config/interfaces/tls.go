@@ -18,14 +18,39 @@ import (
 	"github.com/binarly-io/atlas/pkg/config/parts"
 )
 
-// ConfigTLS
-type ConfigTLS struct {
-	TLS *parts.ConfigTLS `mapstructure:"tls"`
+// TLSConfigurator
+type TLSConfigurator interface {
+	GetEnabled() bool
+	GetCAFile() string
+	GetServerHostOverride() string
+}
+
+// Interface compatibility
+var _ TLSConfigurator = TLSConfig{}
+
+// TLSConfig
+type TLSConfig struct {
+	TLS *parts.TLSConfig `mapstructure:"tls"`
 }
 
 // ConfigTLSNormalize
-func (c ConfigTLS) ConfigTLSNormalize() {
+func (c TLSConfig) ConfigTLSNormalize() {
 	if c.TLS == nil {
-		c.TLS = parts.NewConfigTLS()
+		c.TLS = parts.NewTLSConfig()
 	}
+}
+
+// GetEnabled
+func (c TLSConfig) GetEnabled() bool {
+	return c.TLS.Enabled
+}
+
+// GetCAFile
+func (c TLSConfig) GetCAFile() string {
+	return c.TLS.CAFile
+}
+
+// GetServerHostOverride
+func (c TLSConfig) GetServerHostOverride() string {
+	return c.TLS.ServerHostOverride
 }

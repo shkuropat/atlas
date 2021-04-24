@@ -78,7 +78,7 @@ func NewConsumer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Co
 }
 
 // NewConsumerConfig
-func NewConsumerConfig(cfg interfaces.KafkaEndpointConfig, topic string) *Consumer {
+func NewConsumerConfig(cfg interfaces.KafkaConfigurator, topic string) *Consumer {
 	return NewConsumer(cfg.GetKafkaEndpoint(), atlas.NewKafkaAddress(topic, 0))
 }
 

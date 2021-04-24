@@ -16,27 +16,27 @@ package interfaces
 
 import "github.com/binarly-io/atlas/pkg/config/parts"
 
-// ClickHouseEndpointConfig
-type ClickHouseEndpointConfig interface {
+// ClickHouseConfigurator
+type ClickHouseConfigurator interface {
 	GetClickHouseEndpoint() string
 }
 
 // Interface compatibility
-var _ ClickHouseEndpointConfig = ConfigClickHouse{}
+var _ ClickHouseConfigurator = ClickHouseConfig{}
 
-// ConfigClickHouse
-type ConfigClickHouse struct {
-	ClickHouse *parts.ConfigClickHouse `mapstructure:"clickhouse"`
+// ClickHouseConfig
+type ClickHouseConfig struct {
+	ClickHouse *parts.ClickHouseConfig `mapstructure:"clickhouse"`
 }
 
-// ConfigClickHouseNormalize
-func (c ConfigClickHouse) ConfigClickHouseNormalize() {
+// ClickHouseConfigNormalize
+func (c ClickHouseConfig) ClickHouseConfigNormalize() {
 	if c.ClickHouse == nil {
-		c.ClickHouse = parts.NewConfigClickHouse()
+		c.ClickHouse = parts.NewClickHouseConfig()
 	}
 }
 
 // GetClickHouseEndpoint
-func (c ConfigClickHouse) GetClickHouseEndpoint() string {
+func (c ClickHouseConfig) GetClickHouseEndpoint() string {
 	return c.ClickHouse.DSN
 }
