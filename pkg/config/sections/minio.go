@@ -43,30 +43,30 @@ func (c MinIO) MinIONormalize() {
 
 // GetMinIOEndpoint
 func (c MinIO) GetMinIOEndpoint() string {
-	return c.MinIO.Endpoint
+	return c.MinIO.GetEndpoint()
 }
 
 // GetMinIOAccessKeyID
 func (c MinIO) GetMinIOAccessKeyID() string {
-	return c.MinIO.AccessKeyID
+	return c.MinIO.GetAccessKeyID()
 }
 
 // GetMinIOSecretAccessKey
 func (c MinIO) GetMinIOSecretAccessKey() string {
-	return c.MinIO.SecretAccessKey
+	return c.MinIO.GetSecretAccessKey()
 }
 
 // GetMinIOSecure
 func (c MinIO) GetMinIOSecure() bool {
-	return c.MinIO.Secure
+	return c.MinIO.GetSecure()
 }
 
 // GetMinIOInsecureSkipVerify
 func (c MinIO) GetMinIOInsecureSkipVerify() bool {
-	return c.MinIO.InsecureSkipVerify
+	return c.MinIO.GetInsecureSkipVerify()
 }
 
 // GetMinIOBucket
 func (c MinIO) GetMinIOBucket() string {
-	return c.MinIO.Bucket
+	return c.MinIO.GetBucket()
 }

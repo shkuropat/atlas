@@ -29,22 +29,22 @@ var _ TmpFileConfigurator = TmpFile{}
 
 // TmpFile
 type TmpFile struct {
-	TmpFile *items.TmpFile `mapstructure:"tmpfile"`
+	TmpFile *items.TmpItem `mapstructure:"tmpfile"`
 }
 
 // TmpFileNormalize
 func (c TmpFile) TmpFileNormalize() {
 	if c.TmpFile == nil {
-		c.TmpFile = items.NewTmpFile()
+		c.TmpFile = items.NewTmpItem()
 	}
 }
 
 // GetTmpFileDir
 func (c TmpFile) GetTmpFileDir() string {
-	return c.TmpFile.Dir
+	return c.TmpFile.GetDir()
 }
 
 // GetTmpFilePattern
 func (c TmpFile) GetTmpFilePattern() string {
-	return c.TmpFile.Pattern
+	return c.TmpFile.GetPattern()
 }

@@ -46,30 +46,30 @@ func (c Kafka) KafkaNormalize() {
 
 // GetKafkaEndpoint
 func (c Kafka) GetKafkaEndpoint() *atlas.KafkaEndpoint {
-	return atlas.NewKafkaEndpoint(c.Kafka.Brokers)
+	return atlas.NewKafkaEndpoint(c.Kafka.GetBrokers())
 }
 
 // GetKafkaAddress
 func (c Kafka) GetKafkaAddress() *atlas.KafkaAddress {
-	return atlas.NewKafkaAddress(c.Kafka.Topic, 0)
+	return atlas.NewKafkaAddress(c.Kafka.GetTopic(), 0)
 }
 
 // GetKafkaTopic
 func (c Kafka) GetKafkaTopic() string {
-	return c.Kafka.Topic
+	return c.Kafka.GetTopic()
 }
 
 // GetKafkaGroupID
 func (c Kafka) GetKafkaGroupID() string {
-	return c.Kafka.GroupID
+	return c.Kafka.GetGroupID()
 }
 
 // GetKafkaReadNewest
 func (c Kafka) GetKafkaReadNewest() bool {
-	return c.Kafka.ReadNewest
+	return c.Kafka.GetReadNewest()
 }
 
 // GetKafkaAck
 func (c Kafka) GetKafkaAck() bool {
-	return c.Kafka.Ack
+	return c.Kafka.GetAck()
 }

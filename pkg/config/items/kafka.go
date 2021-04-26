@@ -45,20 +45,60 @@ func NewKafka() *Kafka {
 	return new(Kafka)
 }
 
+// GetBrokers
+func (k *Kafka) GetBrokers() []string {
+	if k == nil {
+		return nil
+	}
+	return k.Brokers
+}
+
+// GetTopic
+func (k *Kafka) GetTopic() string {
+	if k == nil {
+		return ""
+	}
+	return k.Topic
+}
+
+// GetGroupID
+func (k *Kafka) GetGroupID() string {
+	if k == nil {
+		return ""
+	}
+	return k.GroupID
+}
+
+// GetReadNewest
+func (k *Kafka) GetReadNewest() bool {
+	if k == nil {
+		return false
+	}
+	return k.ReadNewest
+}
+
+// GetAck
+func (k *Kafka) GetAck() bool {
+	if k == nil {
+		return false
+	}
+	return k.Ack
+}
+
 // String
-func (c *Kafka) String() string {
-	if c == nil {
+func (k *Kafka) String() string {
+	if k == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "Brokers: %v\n", c.Brokers)
-	_, _ = fmt.Fprintf(b, "Topic: %v\n", c.Topic)
-	_, _ = fmt.Fprintf(b, "GroupID: %v\n", c.GroupID)
-	_, _ = fmt.Fprintf(b, "ReadNewest: %v\n", c.ReadNewest)
-	_, _ = fmt.Fprintf(b, "Ack: %v\n", c.Ack)
+	_, _ = fmt.Fprintf(b, "Enabled: %v\n", k.Enabled)
+	_, _ = fmt.Fprintf(b, "Brokers: %v\n", k.Brokers)
+	_, _ = fmt.Fprintf(b, "Topic: %v\n", k.Topic)
+	_, _ = fmt.Fprintf(b, "GroupID: %v\n", k.GroupID)
+	_, _ = fmt.Fprintf(b, "ReadNewest: %v\n", k.ReadNewest)
+	_, _ = fmt.Fprintf(b, "Ack: %v\n", k.Ack)
 
 	return b.String()
 }

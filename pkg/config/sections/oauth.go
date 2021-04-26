@@ -45,30 +45,30 @@ func (c OAuth) OAuthNormalize() {
 
 // GetOAuthEnabled
 func (c OAuth) GetOAuthEnabled() bool {
-	return c.OAuth.Enabled
+	return c.OAuth.GetEnabled()
 }
 
 // GetOAuthClientID
 func (c OAuth) GetOAuthClientID() string {
-	return c.OAuth.ClientID
+	return c.OAuth.GetClientID()
 }
 
 // GetOAuthClientSecret
 func (c OAuth) GetOAuthClientSecret() string {
-	return c.OAuth.ClientSecret
+	return c.OAuth.GetClientSecret()
 }
 
 // GetOAuthTokenURL
 func (c OAuth) GetOAuthTokenURL() string {
-	return c.OAuth.TokenURL
+	return c.OAuth.GetTokenURL()
 }
 
 // GetOAuthRegisterURL
 func (c OAuth) GetOAuthRegisterURL() string {
-	return c.OAuth.RegisterURL
+	return c.OAuth.GetRegisterURL()
 }
 
 // GetOAuthInitialAccessToken
 func (c OAuth) GetOAuthInitialAccessToken() string {
-	return c.OAuth.InitialAccessToken
+	return c.OAuth.GetInitialAccessToken()
 }

@@ -38,5 +38,5 @@ func (c ClickHouse) ClickHouseNormalize() {
 
 // GetClickHouseEndpoint
 func (c ClickHouse) GetClickHouseEndpoint() string {
-	return c.ClickHouse.DSN
+	return c.ClickHouse.GetEndpoint()
 }

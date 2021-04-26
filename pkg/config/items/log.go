@@ -35,16 +35,32 @@ func NewLog() *Log {
 	return new(Log)
 }
 
+// GetLevel
+func (l *Log) GetLevel() string {
+	if l == nil {
+		return ""
+	}
+	return l.Level
+}
+
+// GetFormatter
+func (l *Log) GetFormatter() string {
+	if l == nil {
+		return ""
+	}
+	return l.Formatter
+}
+
 // String
-func (c *Log) String() string {
-	if c == nil {
+func (l *Log) String() string {
+	if l == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "Level: %v\n", c.Level)
-	_, _ = fmt.Fprintf(b, "Formatter: %v\n", c.Formatter)
+	_, _ = fmt.Fprintf(b, "Level: %v\n", l.Level)
+	_, _ = fmt.Fprintf(b, "Formatter: %v\n", l.Formatter)
 
 	return b.String()
 }

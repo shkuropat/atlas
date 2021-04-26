@@ -12,39 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package items
+package sections
 
 import (
-	"bytes"
-	"fmt"
+	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
-// IMPORTANT
-// IMPORTANT Do not forget to update String() function
-// IMPORTANT
-type TmpFile struct {
-	Dir     string `mapstructure:"dir"`
-	Pattern string `mapstructure:"pattern"`
-	// IMPORTANT
-	// IMPORTANT Do not forget to update String() function
-	// IMPORTANT
+// TmpDirConfigurator
+type TmpDirConfigurator interface {
+	GetTmpDirDir() string
+	GetTmpDirPattern() string
 }
 
-// NewTmpFile
-func NewTmpFile() *TmpFile {
-	return new(TmpFile)
+// Interface compatibility
+var _ TmpDirConfigurator = TmpDir{}
+
+// TmpDir
+type TmpDir struct {
+	TmpDir *items.TmpItem `mapstructure:"tmpdir"`
 }
 
-// String
-func (c *TmpFile) String() string {
-	if c == nil {
-		return ""
+// TmpDirNormalize
+func (c TmpDir) TmpDirNormalize() {
+	if c.TmpDir == nil {
+		c.TmpDir = items.NewTmpItem()
 	}
+}
 
-	b := &bytes.Buffer{}
+// GetTmpDirDir
+func (c TmpDir) GetTmpDirDir() string {
+	return c.TmpDir.GetDir()
+}
 
-	_, _ = fmt.Fprintf(b, "Dir: %v\n", c.Dir)
-	_, _ = fmt.Fprintf(b, "Pattern: %v\n", c.Pattern)
-
-	return b.String()
+// GetTmpDirPattern
+func (c TmpDir) GetTmpDirPattern() string {
+	return c.TmpDir.GetPattern()
 }

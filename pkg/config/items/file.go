@@ -34,15 +34,23 @@ func NewFile() *File {
 	return new(File)
 }
 
+// GetFile
+func (f *File) GetFile() string {
+	if f == nil {
+		return ""
+	}
+	return f.File
+}
+
 // String
-func (c *File) String() string {
-	if c == nil {
+func (f *File) String() string {
+	if f == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "File: %v\n", c.File)
+	_, _ = fmt.Fprintf(b, "File: %v\n", f.File)
 
 	return b.String()
 }

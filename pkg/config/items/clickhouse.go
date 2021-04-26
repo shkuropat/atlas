@@ -36,6 +36,14 @@ func NewClickHouse() *ClickHouse {
 	return new(ClickHouse)
 }
 
+// GetEndpoint
+func (c *ClickHouse) GetEndpoint() string {
+	if c == nil {
+		return ""
+	}
+	return c.DSN
+}
+
 // String
 func (c *ClickHouse) String() string {
 	if c == nil {

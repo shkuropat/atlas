@@ -38,5 +38,5 @@ func (c ConfigFile) ConfigFileNormalize() {
 
 // GetConfigFile
 func (c ConfigFile) GetConfigFile() string {
-	return c.ConfigFile.File
+	return c.ConfigFile.GetFile()
 }

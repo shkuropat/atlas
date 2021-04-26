@@ -40,5 +40,5 @@ func (c Service) ServiceNormalize() {
 
 // GetServiceAddress
 func (c Service) GetServiceAddress() string {
-	return c.Service.Address
+	return c.Service.GetAddress()
 }

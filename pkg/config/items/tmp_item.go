@@ -22,55 +22,47 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type TLS struct {
-	Enabled            bool   `mapstructure:"enabled"`
-	CAFile             string `mapstructure:"ca-file"`
-	ServerHostOverride string `mapstructure:"server-host-override"`
+
+// TmpItem specifies temp item, such as file or folder/dir
+type TmpItem struct {
+	Dir     string `mapstructure:"dir"`
+	Pattern string `mapstructure:"pattern"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewTLS
-func NewTLS() *TLS {
-	return new(TLS)
+// NewTmpItem
+func NewTmpItem() *TmpItem {
+	return new(TmpItem)
 }
 
-// GetEnabled
-func (t *TLS) GetEnabled() bool {
-	if t == nil {
-		return false
-	}
-	return t.Enabled
-}
-
-// GetCAFile
-func (t *TLS) GetCAFile() string {
-	if t == nil {
+// GetDir
+func (i *TmpItem) GetDir() string {
+	if i == nil {
 		return ""
 	}
-	return t.CAFile
+	return i.Dir
 }
 
-// GetServerHostOverride
-func (t *TLS) GetServerHostOverride() string {
-	if t == nil {
+// GetPattern
+func (i *TmpItem) GetPattern() string {
+	if i == nil {
 		return ""
 	}
-	return t.ServerHostOverride
+	return i.Pattern
 }
 
 // String
-func (t *TLS) String() string {
-	if t == nil {
+func (i *TmpItem) String() string {
+	if i == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "Enabled: %v\n", t.Enabled)
-	_, _ = fmt.Fprintf(b, "CAFile: %v\n", t.CAFile)
-	_, _ = fmt.Fprintf(b, "ServerHostOverride: %v\n", t.ServerHostOverride)
+	_, _ = fmt.Fprintf(b, "Dir: %v\n", i.Dir)
+	_, _ = fmt.Fprintf(b, "Pattern: %v\n", i.Pattern)
 
 	return b.String()
 }

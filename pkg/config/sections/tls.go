@@ -42,15 +42,15 @@ func (c TLS) TLSNormalize() {
 
 // GetTLSEnabled
 func (c TLS) GetTLSEnabled() bool {
-	return c.TLS.Enabled
+	return c.TLS.GetEnabled()
 }
 
 // GetTLSCAFile
 func (c TLS) GetTLSCAFile() string {
-	return c.TLS.CAFile
+	return c.TLS.GetCAFile()
 }
 
 // GetTLSServerHostOverride
 func (c TLS) GetTLSServerHostOverride() string {
-	return c.TLS.ServerHostOverride
+	return c.TLS.GetServerHostOverride()
 }

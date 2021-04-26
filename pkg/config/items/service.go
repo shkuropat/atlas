@@ -34,15 +34,23 @@ func NewService() *Service {
 	return new(Service)
 }
 
+// GetAddress
+func (s *Service) GetAddress() string {
+	if s == nil {
+		return ""
+	}
+	return s.Address
+}
+
 // String
-func (c *Service) String() string {
-	if c == nil {
+func (s *Service) String() string {
+	if s == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "Address: %v\n", c.Address)
+	_, _ = fmt.Fprintf(b, "Address: %v\n", s.Address)
 
 	return b.String()
 }

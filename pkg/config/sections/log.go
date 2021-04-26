@@ -41,10 +41,10 @@ func (c Log) LogNormalize() {
 
 // GetLogLevel
 func (c Log) GetLogLevel() string {
-	return c.Log.Level
+	return c.Log.GetLevel()
 }
 
 // GetLogFormatter
 func (c Log) GetLogFormatter() string {
-	return c.Log.Formatter
+	return c.Log.GetFormatter()
 }

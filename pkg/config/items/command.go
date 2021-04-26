@@ -35,6 +35,14 @@ func NewCommand() *Command {
 	return new(Command)
 }
 
+// GetArgs
+func (c *Command) GetArgs() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Args
+}
+
 // String
 func (c *Command) String() string {
 	if c == nil {

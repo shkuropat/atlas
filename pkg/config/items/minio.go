@@ -42,21 +42,69 @@ func NewMinIO() *MinIO {
 	return new(MinIO)
 }
 
+// GetEndpoint
+func (m *MinIO) GetEndpoint() string {
+	if m == nil {
+		return ""
+	}
+	return m.Endpoint
+}
+
+// GetAccessKeyID
+func (m *MinIO) GetAccessKeyID() string {
+	if m == nil {
+		return ""
+	}
+	return m.AccessKeyID
+}
+
+// GetSecretAccessKey
+func (m *MinIO) GetSecretAccessKey() string {
+	if m == nil {
+		return ""
+	}
+	return m.SecretAccessKey
+}
+
+// GetSecure
+func (m *MinIO) GetSecure() bool {
+	if m == nil {
+		return false
+	}
+	return m.Secure
+}
+
+// GetInsecureSkipVerify
+func (m *MinIO) GetInsecureSkipVerify() bool {
+	if m == nil {
+		return false
+	}
+	return m.InsecureSkipVerify
+}
+
+// GetBucket
+func (m *MinIO) GetBucket() string {
+	if m == nil {
+		return ""
+	}
+	return m.Bucket
+}
+
 // String
-func (c *MinIO) String() string {
-	if c == nil {
+func (m *MinIO) String() string {
+	if m == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "EndpointID: %v\n", c.Endpoint)
-	_, _ = fmt.Fprintf(b, "AccessKeyID: %v\n", c.AccessKeyID)
-	_, _ = fmt.Fprintf(b, "SecretAccessKey: %v\n", c.SecretAccessKey)
-	_, _ = fmt.Fprintf(b, "Secure: %v\n", c.Secure)
-	_, _ = fmt.Fprintf(b, "InsecureSkipVerify: %v\n", c.InsecureSkipVerify)
-	_, _ = fmt.Fprintf(b, "Bucket: %v\n", c.Bucket)
+	_, _ = fmt.Fprintf(b, "Enabled: %v\n", m.Enabled)
+	_, _ = fmt.Fprintf(b, "EndpointID: %v\n", m.Endpoint)
+	_, _ = fmt.Fprintf(b, "AccessKeyID: %v\n", m.AccessKeyID)
+	_, _ = fmt.Fprintf(b, "SecretAccessKey: %v\n", m.SecretAccessKey)
+	_, _ = fmt.Fprintf(b, "Secure: %v\n", m.Secure)
+	_, _ = fmt.Fprintf(b, "InsecureSkipVerify: %v\n", m.InsecureSkipVerify)
+	_, _ = fmt.Fprintf(b, "Bucket: %v\n", m.Bucket)
 
 	return b.String()
 }

@@ -41,20 +41,68 @@ func NewOAuth() *OAuth {
 	return new(OAuth)
 }
 
+// GetEnabled
+func (o *OAuth) GetEnabled() bool {
+	if o == nil {
+		return false
+	}
+	return o.Enabled
+}
+
+// GetClientID
+func (o *OAuth) GetClientID() string {
+	if o == nil {
+		return ""
+	}
+	return o.ClientID
+}
+
+// GetClientSecret
+func (o *OAuth) GetClientSecret() string {
+	if o == nil {
+		return ""
+	}
+	return o.ClientSecret
+}
+
+// GetTokenURL
+func (o *OAuth) GetTokenURL() string {
+	if o == nil {
+		return ""
+	}
+	return o.TokenURL
+}
+
+// GetRegisterURL
+func (o *OAuth) GetRegisterURL() string {
+	if o == nil {
+		return ""
+	}
+	return o.RegisterURL
+}
+
+// GetInitialAccessToken
+func (o *OAuth) GetInitialAccessToken() string {
+	if o == nil {
+		return ""
+	}
+	return o.InitialAccessToken
+}
+
 // String
-func (c *OAuth) String() string {
-	if c == nil {
+func (o *OAuth) String() string {
+	if o == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "ClientID: %v\n", c.ClientID)
-	_, _ = fmt.Fprintf(b, "ClientSecret: %v\n", c.ClientSecret)
-	_, _ = fmt.Fprintf(b, "TokenURL: %v\n", c.TokenURL)
-	_, _ = fmt.Fprintf(b, "RegisterURL: %v\n", c.RegisterURL)
-	_, _ = fmt.Fprintf(b, "InitialAccessToken: %v\n", c.InitialAccessToken)
+	_, _ = fmt.Fprintf(b, "Enabled: %v\n", o.Enabled)
+	_, _ = fmt.Fprintf(b, "ClientID: %v\n", o.ClientID)
+	_, _ = fmt.Fprintf(b, "ClientSecret: %v\n", o.ClientSecret)
+	_, _ = fmt.Fprintf(b, "TokenURL: %v\n", o.TokenURL)
+	_, _ = fmt.Fprintf(b, "RegisterURL: %v\n", o.RegisterURL)
+	_, _ = fmt.Fprintf(b, "InitialAccessToken: %v\n", o.InitialAccessToken)
 
 	return b.String()
 }
