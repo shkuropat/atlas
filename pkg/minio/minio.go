@@ -30,7 +30,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/config/interfaces"
+	"github.com/binarly-io/atlas/pkg/config/sections"
 )
 
 var errorNotConnected = fmt.Errorf("minio is not connected")
@@ -88,7 +88,7 @@ func NewMinIO(
 }
 
 // NewMinIOFromConfig
-func NewMinIOFromConfig(cfg interfaces.MinIOConfigurator) (*MinIO, error) {
+func NewMinIOFromConfig(cfg sections.MinIOConfigurator) (*MinIO, error) {
 	return NewMinIO(
 		cfg.GetMinIOEndpoint(),
 		cfg.GetMinIOSecure(),

@@ -12,39 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package items
 
 import (
-	"github.com/binarly-io/atlas/pkg/config/parts"
+	"bytes"
+	"fmt"
 )
 
-// TmpFileConfigurator
-type TmpFileConfigurator interface {
-	GetDir() string
-	GetPattern() string
+// IMPORTANT
+// IMPORTANT Do not forget to update String() function
+// IMPORTANT
+type TmpFile struct {
+	Dir     string `mapstructure:"dir"`
+	Pattern string `mapstructure:"pattern"`
+	// IMPORTANT
+	// IMPORTANT Do not forget to update String() function
+	// IMPORTANT
 }
 
-// Interface compatibility
-var _ TmpFileConfigurator = TmpFileConfig{}
-
-// TmpFileConfig
-type TmpFileConfig struct {
-	TmpFile *parts.TmpFileConfig `mapstructure:"tmp"`
+// NewTmpFile
+func NewTmpFile() *TmpFile {
+	return new(TmpFile)
 }
 
-// TmpFileConfigNormalize
-func (c TmpFileConfig) TmpFileConfigNormalize() {
-	if c.TmpFile == nil {
-		c.TmpFile = parts.NewTmpFileConfig()
+// String
+func (c *TmpFile) String() string {
+	if c == nil {
+		return ""
 	}
-}
 
-// GetDir
-func (c TmpFileConfig) GetDir() string {
-	return c.TmpFile.Dir
-}
+	b := &bytes.Buffer{}
 
-// GetPattern
-func (c TmpFileConfig) GetPattern() string {
-	return c.TmpFile.Pattern
+	_, _ = fmt.Fprintf(b, "Dir: %v\n", c.Dir)
+	_, _ = fmt.Fprintf(b, "Pattern: %v\n", c.Pattern)
+
+	return b.String()
 }

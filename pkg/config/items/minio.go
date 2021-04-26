@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package items
 
 import (
 	"bytes"
@@ -22,7 +22,7 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type MinIOConfig struct {
+type MinIO struct {
 	Enabled bool `mapstructure:"enabled"`
 	// MinIO connection
 	Endpoint           string `mapstructure:"endpoint"`
@@ -37,13 +37,13 @@ type MinIOConfig struct {
 	// IMPORTANT
 }
 
-// NewMinIOConfig
-func NewMinIOConfig() *MinIOConfig {
-	return new(MinIOConfig)
+// NewMinIO
+func NewMinIO() *MinIO {
+	return new(MinIO)
 }
 
 // String
-func (c *MinIOConfig) String() string {
+func (c *MinIO) String() string {
 	if c == nil {
 		return ""
 	}

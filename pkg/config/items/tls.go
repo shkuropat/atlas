@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package items
 
 import (
 	"bytes"
@@ -22,29 +22,31 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type TmpFileConfig struct {
-	Dir     string `mapstructure:"dir"`
-	Pattern string `mapstructure:"pattern"`
+type TLS struct {
+	Enabled            bool   `mapstructure:"enabled"`
+	CAFile             string `mapstructure:"ca-file"`
+	ServerHostOverride string `mapstructure:"server-host-override"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewTmpFileConfig
-func NewTmpFileConfig() *TmpFileConfig {
-	return new(TmpFileConfig)
+// NewTLS
+func NewTLS() *TLS {
+	return new(TLS)
 }
 
 // String
-func (c *TmpFileConfig) String() string {
+func (c *TLS) String() string {
 	if c == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "Dir: %v\n", c.Dir)
-	_, _ = fmt.Fprintf(b, "Pattern: %v\n", c.Pattern)
+	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
+	_, _ = fmt.Fprintf(b, "CAFile: %v\n", c.CAFile)
+	_, _ = fmt.Fprintf(b, "ServerHostOverride: %v\n", c.ServerHostOverride)
 
 	return b.String()
 }

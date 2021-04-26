@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package items
 
 import (
 	"bytes"
@@ -22,20 +22,20 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type FileConfig struct {
+type File struct {
 	File string `mapstructure:"file"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewFileConfig
-func NewFileConfig() *FileConfig {
-	return new(FileConfig)
+// NewFile
+func NewFile() *File {
+	return new(File)
 }
 
 // String
-func (c *FileConfig) String() string {
+func (c *File) String() string {
 	if c == nil {
 		return ""
 	}

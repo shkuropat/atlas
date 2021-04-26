@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package items
 
 import (
 	"bytes"
@@ -22,22 +22,27 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type TLSConfig struct {
-	Enabled            bool   `mapstructure:"enabled"`
-	CAFile             string `mapstructure:"ca-file"`
-	ServerHostOverride string `mapstructure:"server-host-override"`
+type OAuth struct {
+	Enabled bool `mapstructure:"enabled"`
+	// OAuth Login
+	ClientID     string `mapstructure:"client-id"`
+	ClientSecret string `mapstructure:"client-secret"`
+	TokenURL     string `mapstructure:"token-url"`
+	// OAuth Register
+	RegisterURL        string `mapstructure:"register-url"`
+	InitialAccessToken string `mapstructure:"initial-access-token"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewTLSConfig
-func NewTLSConfig() *TLSConfig {
-	return new(TLSConfig)
+// NewOAuth
+func NewOAuth() *OAuth {
+	return new(OAuth)
 }
 
 // String
-func (c *TLSConfig) String() string {
+func (c *OAuth) String() string {
 	if c == nil {
 		return ""
 	}
@@ -45,8 +50,11 @@ func (c *TLSConfig) String() string {
 	b := &bytes.Buffer{}
 
 	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "CAFile: %v\n", c.CAFile)
-	_, _ = fmt.Fprintf(b, "ServerHostOverride: %v\n", c.ServerHostOverride)
+	_, _ = fmt.Fprintf(b, "ClientID: %v\n", c.ClientID)
+	_, _ = fmt.Fprintf(b, "ClientSecret: %v\n", c.ClientSecret)
+	_, _ = fmt.Fprintf(b, "TokenURL: %v\n", c.TokenURL)
+	_, _ = fmt.Fprintf(b, "RegisterURL: %v\n", c.RegisterURL)
+	_, _ = fmt.Fprintf(b, "InitialAccessToken: %v\n", c.InitialAccessToken)
 
 	return b.String()
 }

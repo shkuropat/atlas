@@ -22,7 +22,7 @@ import (
 	_ "github.com/mailru/go-clickhouse"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/binarly-io/atlas/pkg/config/interfaces"
+	"github.com/binarly-io/atlas/pkg/config/sections"
 	"github.com/binarly-io/atlas/pkg/trail"
 )
 
@@ -35,7 +35,7 @@ type AdapterClickHouse struct {
 var _ trail.Adapter = &AdapterClickHouse{}
 
 // NewAdapterClickHouseConfig
-func NewAdapterClickHouseConfig(cfg interfaces.ClickHouseConfigurator) (*AdapterClickHouse, error) {
+func NewAdapterClickHouseConfig(cfg sections.ClickHouseConfigurator) (*AdapterClickHouse, error) {
 	dsn := cfg.GetClickHouseEndpoint()
 	return NewAdapterClickHouse(dsn)
 }

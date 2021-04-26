@@ -12,39 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package sections
 
 import (
-	"bytes"
-	"fmt"
+	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
-// IMPORTANT
-// IMPORTANT Do not forget to update String() function
-// IMPORTANT
-type LogConfig struct {
-	Level     string `mapstructure:"level"`
-	Formatter string `mapstructure:"format"`
-	// IMPORTANT
-	// IMPORTANT Do not forget to update String() function
-	// IMPORTANT
+// TmpFileConfigurator
+type TmpFileConfigurator interface {
+	GetTmpFileDir() string
+	GetTmpFilePattern() string
 }
 
-// NewLogConfig
-func NewLogConfig() *LogConfig {
-	return new(LogConfig)
+// Interface compatibility
+var _ TmpFileConfigurator = TmpFile{}
+
+// TmpFile
+type TmpFile struct {
+	TmpFile *items.TmpFile `mapstructure:"tmpfile"`
 }
 
-// String
-func (c *LogConfig) String() string {
-	if c == nil {
-		return ""
+// TmpFileNormalize
+func (c TmpFile) TmpFileNormalize() {
+	if c.TmpFile == nil {
+		c.TmpFile = items.NewTmpFile()
 	}
+}
 
-	b := &bytes.Buffer{}
+// GetTmpFileDir
+func (c TmpFile) GetTmpFileDir() string {
+	return c.TmpFile.Dir
+}
 
-	_, _ = fmt.Fprintf(b, "Level: %v\n", c.Level)
-	_, _ = fmt.Fprintf(b, "Formatter: %v\n", c.Formatter)
-
-	return b.String()
+// GetTmpFilePattern
+func (c TmpFile) GetTmpFilePattern() string {
+	return c.TmpFile.Pattern
 }

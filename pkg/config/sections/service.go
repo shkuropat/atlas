@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package sections
 
 import (
-	"github.com/binarly-io/atlas/pkg/config/parts"
+	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
 // OAuthConfigurator
@@ -24,21 +24,21 @@ type ServiceConfigurator interface {
 }
 
 // Interface compatibility
-var _ ServiceConfigurator = ServiceConfig{}
+var _ ServiceConfigurator = Service{}
 
-// ServiceConfig
-type ServiceConfig struct {
-	Service *parts.ServiceConfig `mapstructure:"service"`
+// Service
+type Service struct {
+	Service *items.Service `mapstructure:"service"`
 }
 
-// ServiceConfigNormalize
-func (c ServiceConfig) ServiceConfigNormalize() {
+// ServiceNormalize
+func (c Service) ServiceNormalize() {
 	if c.Service == nil {
-		c.Service = parts.NewServiceConfig()
+		c.Service = items.NewService()
 	}
 }
 
 // GetServiceAddress
-func (c ServiceConfig) GetServiceAddress() string {
-	return c.Service.ServiceAddress
+func (c Service) GetServiceAddress() string {
+	return c.Service.Address
 }

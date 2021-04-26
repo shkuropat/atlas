@@ -12,53 +12,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package sections
 
 import (
-	"github.com/binarly-io/atlas/pkg/config/parts"
+	"github.com/binarly-io/atlas/pkg/config/items"
 	"github.com/binarly-io/atlas/pkg/macros"
 	"strings"
 )
 
 // CommandConfigurator
 type CommandConfigurator interface {
-	GetArgs() []string
+	GetCommandArgs() []string
 	GetCommand() string
-	ParseArgs(*macros.Expander) []string
+	ParseCommandArgs(*macros.Expander) []string
 	ParseCommand(*macros.Expander) string
 }
 
 // Interface compatibility
-var _ CommandConfigurator = CommandConfig{}
+var _ CommandConfigurator = Command{}
 
-// CommandConfig
-type CommandConfig struct {
-	Command *parts.CommandConfig `mapstructure:"command"`
+// Command
+type Command struct {
+	Command *items.Command `mapstructure:"command"`
 }
 
-// CommandConfigNormalize
-func (c CommandConfig) CommandConfigNormalize() {
+// CommandNormalize
+func (c Command) CommandNormalize() {
 	if c.Command == nil {
-		c.Command = parts.NewCommandConfig()
+		c.Command = items.NewCommand()
 	}
 }
 
-// GetArgs
-func (c CommandConfig) GetArgs() []string {
+// GetCommandArgs
+func (c Command) GetCommandArgs() []string {
 	return c.Command.Args
 }
 
 // GetCommand
-func (c CommandConfig) GetCommand() string {
-	return strings.Join(c.GetArgs(), " ")
+func (c Command) GetCommand() string {
+	return strings.Join(c.GetCommandArgs(), " ")
 }
 
-// ParseArgs
-func (c CommandConfig) ParseArgs(macro *macros.Expander) []string {
+// ParseCommandArgs
+func (c Command) ParseCommandArgs(macro *macros.Expander) []string {
 	return macro.ExpandAll(c.Command.Args...)
 }
 
 // ParseCommand
-func (c CommandConfig) ParseCommand(macro *macros.Expander) string {
-	return strings.Join(c.ParseArgs(macro), " ")
+func (c Command) ParseCommand(macro *macros.Expander) string {
+	return strings.Join(c.ParseCommandArgs(macro), " ")
 }

@@ -19,7 +19,7 @@ import (
 	_ "github.com/mailru/go-clickhouse"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/binarly-io/atlas/pkg/config/interfaces"
+	"github.com/binarly-io/atlas/pkg/config/sections"
 	"github.com/binarly-io/atlas/pkg/trail"
 )
 
@@ -32,7 +32,7 @@ type JournalClickHouse struct {
 var _ trail.Journaller = &JournalClickHouse{}
 
 // NewJournalClickHouseConfig
-func NewJournalClickHouseConfig(cfg interfaces.ClickHouseConfigurator, endpointID int32) (*JournalClickHouse, error) {
+func NewJournalClickHouseConfig(cfg sections.ClickHouseConfigurator, endpointID int32) (*JournalClickHouse, error) {
 	dsn := cfg.GetClickHouseEndpoint()
 	return NewJournalClickHouse(dsn, endpointID)
 }

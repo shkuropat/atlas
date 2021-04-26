@@ -12,40 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package items
 
 import (
 	"bytes"
 	"fmt"
+	"strings"
 )
 
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ClickHouseConfig struct {
-	Enabled bool `mapstructure:"enabled"`
-	// DSN in the form: http://clickhouse_operator:clickhouse_operator_password@clickhouse-journal.clickhouse:8123/atlas
-	DSN string `mapstructure:"dsn"`
+type Command struct {
+	Args []string `mapstructure:"args"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewClickHouseConfig
-func NewClickHouseConfig() *ClickHouseConfig {
-	return new(ClickHouseConfig)
+// NewCommand
+func NewCommand() *Command {
+	return new(Command)
 }
 
 // String
-func (c *ClickHouseConfig) String() string {
+func (c *Command) String() string {
 	if c == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "DSN: %v\n", c.DSN)
+	_, _ = fmt.Fprintf(b, strings.Join(c.Args, " "))
 
 	return b.String()
 }

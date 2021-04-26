@@ -12,63 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package sections
 
 import (
-	"github.com/binarly-io/atlas/pkg/config/parts"
+	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
 // OAuthConfigurator
 type OAuthConfigurator interface {
-	GetEnabled() bool
-	GetClientID() string
-	GetClientSecret() string
-	GetTokenURL() string
-	GetRegisterURL() string
-	GetInitialAccessToken() string
+	GetOAuthEnabled() bool
+	GetOAuthClientID() string
+	GetOAuthClientSecret() string
+	GetOAuthTokenURL() string
+	GetOAuthRegisterURL() string
+	GetOAuthInitialAccessToken() string
 }
 
 // Interface compatibility
-var _ OAuthConfigurator = OAuthConfig{}
+var _ OAuthConfigurator = OAuth{}
 
-// OAuthConfig
-type OAuthConfig struct {
-	OAuth *parts.OAuthConfig `mapstructure:"oauth"`
+// OAuth
+type OAuth struct {
+	OAuth *items.OAuth `mapstructure:"oauth"`
 }
 
-// OAuthConfigNormalize
-func (c OAuthConfig) OAuthConfigNormalize() {
+// OAuthNormalize
+func (c OAuth) OAuthNormalize() {
 	if c.OAuth == nil {
-		c.OAuth = parts.NewOAuthConfig()
+		c.OAuth = items.NewOAuth()
 	}
 }
 
-// GetEnabled
-func (c OAuthConfig) GetEnabled() bool {
+// GetOAuthEnabled
+func (c OAuth) GetOAuthEnabled() bool {
 	return c.OAuth.Enabled
 }
 
-// GetClientID
-func (c OAuthConfig) GetClientID() string {
+// GetOAuthClientID
+func (c OAuth) GetOAuthClientID() string {
 	return c.OAuth.ClientID
 }
 
-// GetClientSecret
-func (c OAuthConfig) GetClientSecret() string {
+// GetOAuthClientSecret
+func (c OAuth) GetOAuthClientSecret() string {
 	return c.OAuth.ClientSecret
 }
 
-// GetTokenURL
-func (c OAuthConfig) GetTokenURL() string {
+// GetOAuthTokenURL
+func (c OAuth) GetOAuthTokenURL() string {
 	return c.OAuth.TokenURL
 }
 
-// GetRegisterURL
-func (c OAuthConfig) GetRegisterURL() string {
+// GetOAuthRegisterURL
+func (c OAuth) GetOAuthRegisterURL() string {
 	return c.OAuth.RegisterURL
 }
 
-// GetInitialAccessToken
-func (c OAuthConfig) GetInitialAccessToken() string {
+// GetOAuthInitialAccessToken
+func (c OAuth) GetOAuthInitialAccessToken() string {
 	return c.OAuth.InitialAccessToken
 }

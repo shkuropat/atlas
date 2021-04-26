@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package sections
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/config/parts"
+	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
 // KafkaConfigurator
@@ -30,46 +30,46 @@ type KafkaConfigurator interface {
 }
 
 // Interface compatibility
-var _ KafkaConfigurator = KafkaConfig{}
+var _ KafkaConfigurator = Kafka{}
 
-// KafkaConfig
-type KafkaConfig struct {
-	Kafka *parts.KafkaConfig `mapstructure:"kafka"`
+// Kafka
+type Kafka struct {
+	Kafka *items.Kafka `mapstructure:"kafka"`
 }
 
-// KafkaConfigNormalize
-func (c KafkaConfig) KafkaConfigNormalize() {
+// KafkaNormalize
+func (c Kafka) KafkaNormalize() {
 	if c.Kafka == nil {
-		c.Kafka = parts.NewKafkaConfig()
+		c.Kafka = items.NewKafka()
 	}
 }
 
 // GetKafkaEndpoint
-func (c KafkaConfig) GetKafkaEndpoint() *atlas.KafkaEndpoint {
+func (c Kafka) GetKafkaEndpoint() *atlas.KafkaEndpoint {
 	return atlas.NewKafkaEndpoint(c.Kafka.Brokers)
 }
 
 // GetKafkaAddress
-func (c KafkaConfig) GetKafkaAddress() *atlas.KafkaAddress {
+func (c Kafka) GetKafkaAddress() *atlas.KafkaAddress {
 	return atlas.NewKafkaAddress(c.Kafka.Topic, 0)
 }
 
 // GetKafkaTopic
-func (c KafkaConfig) GetKafkaTopic() string {
+func (c Kafka) GetKafkaTopic() string {
 	return c.Kafka.Topic
 }
 
 // GetKafkaGroupID
-func (c KafkaConfig) GetKafkaGroupID() string {
+func (c Kafka) GetKafkaGroupID() string {
 	return c.Kafka.GroupID
 }
 
 // GetKafkaReadNewest
-func (c KafkaConfig) GetKafkaReadNewest() bool {
+func (c Kafka) GetKafkaReadNewest() bool {
 	return c.Kafka.ReadNewest
 }
 
 // GetKafkaAck
-func (c KafkaConfig) GetKafkaAck() bool {
+func (c Kafka) GetKafkaAck() bool {
 	return c.Kafka.Ack
 }

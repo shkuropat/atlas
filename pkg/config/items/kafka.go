@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package items
 
 import (
 	"bytes"
@@ -22,27 +22,31 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type OAuthConfig struct {
+type Kafka struct {
 	Enabled bool `mapstructure:"enabled"`
-	// OAuth Login
-	ClientID     string `mapstructure:"client-id"`
-	ClientSecret string `mapstructure:"client-secret"`
-	TokenURL     string `mapstructure:"token-url"`
-	// OAuth Register
-	RegisterURL        string `mapstructure:"register-url"`
-	InitialAccessToken string `mapstructure:"initial-access-token"`
+	// Brokers specifies list of Kafka brokers to connect to. Used by server and client
+	Brokers []string `mapstructure:"brokers"`
+	// Topic specifies topic to read from or write into in Kafka. Used by server and client
+	Topic string `mapstructure:"topic"`
+	// GroupID specifies consumer group id. Used by client only
+	GroupID string `mapstructure:"groupID"`
+	// ReadNewest specifies whether to read newest messages. Used by client only
+	ReadNewest bool `mapstructure:"readNewest"`
+	// Ack specifies whether to ack messages. Used by client only
+	Ack bool `mapstructure:"ack"`
+	//
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewOAuthConfig
-func NewOAuthConfig() *OAuthConfig {
-	return new(OAuthConfig)
+// NewKafka
+func NewKafka() *Kafka {
+	return new(Kafka)
 }
 
 // String
-func (c *OAuthConfig) String() string {
+func (c *Kafka) String() string {
 	if c == nil {
 		return ""
 	}
@@ -50,11 +54,11 @@ func (c *OAuthConfig) String() string {
 	b := &bytes.Buffer{}
 
 	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "ClientID: %v\n", c.ClientID)
-	_, _ = fmt.Fprintf(b, "ClientSecret: %v\n", c.ClientSecret)
-	_, _ = fmt.Fprintf(b, "TokenURL: %v\n", c.TokenURL)
-	_, _ = fmt.Fprintf(b, "RegisterURL: %v\n", c.RegisterURL)
-	_, _ = fmt.Fprintf(b, "InitialAccessToken: %v\n", c.InitialAccessToken)
+	_, _ = fmt.Fprintf(b, "Brokers: %v\n", c.Brokers)
+	_, _ = fmt.Fprintf(b, "Topic: %v\n", c.Topic)
+	_, _ = fmt.Fprintf(b, "GroupID: %v\n", c.GroupID)
+	_, _ = fmt.Fprintf(b, "ReadNewest: %v\n", c.ReadNewest)
+	_, _ = fmt.Fprintf(b, "Ack: %v\n", c.Ack)
 
 	return b.String()
 }

@@ -12,38 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package sections
 
-import (
-	"bytes"
-	"fmt"
-	"strings"
-)
+import "github.com/binarly-io/atlas/pkg/config/items"
 
-// IMPORTANT
-// IMPORTANT Do not forget to update String() function
-// IMPORTANT
-type CommandConfig struct {
-	Args []string `mapstructure:"args"`
-	// IMPORTANT
-	// IMPORTANT Do not forget to update String() function
-	// IMPORTANT
+// ConfigFileConfigurator
+type ConfigFileConfigurator interface {
+	GetConfigFile() string
 }
 
-// NewCommandConfig
-func NewCommandConfig() *CommandConfig {
-	return new(CommandConfig)
+// Interface compatibility
+var _ ConfigFileConfigurator = ConfigFile{}
+
+// ConfigFile
+type ConfigFile struct {
+	ConfigFile *items.File `mapstructure:"config"`
 }
 
-// String
-func (c *CommandConfig) String() string {
-	if c == nil {
-		return ""
+// ConfigFileNormalize
+func (c ConfigFile) ConfigFileNormalize() {
+	if c.ConfigFile == nil {
+		c.ConfigFile = items.NewFile()
 	}
+}
 
-	b := &bytes.Buffer{}
-
-	_, _ = fmt.Fprintf(b, strings.Join(c.Args, " "))
-
-	return b.String()
+// GetConfigFile
+func (c ConfigFile) GetConfigFile() string {
+	return c.ConfigFile.File
 }

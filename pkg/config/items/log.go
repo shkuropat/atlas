@@ -12,31 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package items
 
-import "github.com/binarly-io/atlas/pkg/config/parts"
+import (
+	"bytes"
+	"fmt"
+)
 
-// ConfigFileConfigurator
-type ConfigFileConfigurator interface {
-	GetConfigFile() string
+// IMPORTANT
+// IMPORTANT Do not forget to update String() function
+// IMPORTANT
+type Log struct {
+	Level     string `mapstructure:"level"`
+	Formatter string `mapstructure:"format"`
+	// IMPORTANT
+	// IMPORTANT Do not forget to update String() function
+	// IMPORTANT
 }
 
-// Interface compatibility
-var _ ConfigFileConfigurator = ConfigFileConfig{}
-
-// ConfigFileConfig
-type ConfigFileConfig struct {
-	FileConfig *parts.FileConfig `mapstructure:"config"`
+// NewLog
+func NewLog() *Log {
+	return new(Log)
 }
 
-// ConfigFileNormalize
-func (c ConfigFileConfig) ConfigFileConfigNormalize() {
-	if c.FileConfig == nil {
-		c.FileConfig = parts.NewFileConfig()
+// String
+func (c *Log) String() string {
+	if c == nil {
+		return ""
 	}
-}
 
-// GetConfigFile
-func (c ConfigFileConfig) GetConfigFile() string {
-	return c.FileConfig.File
+	b := &bytes.Buffer{}
+
+	_, _ = fmt.Fprintf(b, "Level: %v\n", c.Level)
+	_, _ = fmt.Fprintf(b, "Formatter: %v\n", c.Formatter)
+
+	return b.String()
 }

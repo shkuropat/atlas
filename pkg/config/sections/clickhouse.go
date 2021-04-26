@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package sections
 
-import "github.com/binarly-io/atlas/pkg/config/parts"
+import "github.com/binarly-io/atlas/pkg/config/items"
 
 // ClickHouseConfigurator
 type ClickHouseConfigurator interface {
@@ -22,21 +22,21 @@ type ClickHouseConfigurator interface {
 }
 
 // Interface compatibility
-var _ ClickHouseConfigurator = ClickHouseConfig{}
+var _ ClickHouseConfigurator = ClickHouse{}
 
-// ClickHouseConfig
-type ClickHouseConfig struct {
-	ClickHouse *parts.ClickHouseConfig `mapstructure:"clickhouse"`
+// ClickHouse
+type ClickHouse struct {
+	ClickHouse *items.ClickHouse `mapstructure:"clickhouse"`
 }
 
-// ClickHouseConfigNormalize
-func (c ClickHouseConfig) ClickHouseConfigNormalize() {
+// ClickHouseNormalize
+func (c ClickHouse) ClickHouseNormalize() {
 	if c.ClickHouse == nil {
-		c.ClickHouse = parts.NewClickHouseConfig()
+		c.ClickHouse = items.NewClickHouse()
 	}
 }
 
 // GetClickHouseEndpoint
-func (c ClickHouseConfig) GetClickHouseEndpoint() string {
+func (c ClickHouse) GetClickHouseEndpoint() string {
 	return c.ClickHouse.DSN
 }

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package sections
 
-import "github.com/binarly-io/atlas/pkg/config/parts"
+import "github.com/binarly-io/atlas/pkg/config/items"
 
 // MinIOConfigurator
 type MinIOConfigurator interface {
@@ -27,46 +27,46 @@ type MinIOConfigurator interface {
 }
 
 // Interface compatibility
-var _ MinIOConfigurator = MinIOConfig{}
+var _ MinIOConfigurator = MinIO{}
 
-// MinIOConfig
-type MinIOConfig struct {
-	MinIO *parts.MinIOConfig `mapstructure:"minio"`
+// MinIO
+type MinIO struct {
+	MinIO *items.MinIO `mapstructure:"minio"`
 }
 
-// MinIOConfigNormalize
-func (c MinIOConfig) MinIOConfigNormalize() {
+// MinIONormalize
+func (c MinIO) MinIONormalize() {
 	if c.MinIO == nil {
-		c.MinIO = parts.NewMinIOConfig()
+		c.MinIO = items.NewMinIO()
 	}
 }
 
 // GetMinIOEndpoint
-func (c MinIOConfig) GetMinIOEndpoint() string {
+func (c MinIO) GetMinIOEndpoint() string {
 	return c.MinIO.Endpoint
 }
 
 // GetMinIOAccessKeyID
-func (c MinIOConfig) GetMinIOAccessKeyID() string {
+func (c MinIO) GetMinIOAccessKeyID() string {
 	return c.MinIO.AccessKeyID
 }
 
 // GetMinIOSecretAccessKey
-func (c MinIOConfig) GetMinIOSecretAccessKey() string {
+func (c MinIO) GetMinIOSecretAccessKey() string {
 	return c.MinIO.SecretAccessKey
 }
 
 // GetMinIOSecure
-func (c MinIOConfig) GetMinIOSecure() bool {
+func (c MinIO) GetMinIOSecure() bool {
 	return c.MinIO.Secure
 }
 
 // GetMinIOInsecureSkipVerify
-func (c MinIOConfig) GetMinIOInsecureSkipVerify() bool {
+func (c MinIO) GetMinIOInsecureSkipVerify() bool {
 	return c.MinIO.InsecureSkipVerify
 }
 
 // GetMinIOBucket
-func (c MinIOConfig) GetMinIOBucket() string {
+func (c MinIO) GetMinIOBucket() string {
 	return c.MinIO.Bucket
 }

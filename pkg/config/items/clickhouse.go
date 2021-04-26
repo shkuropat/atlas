@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package items
 
 import (
 	"bytes"
@@ -22,31 +22,22 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type KafkaConfig struct {
+type ClickHouse struct {
 	Enabled bool `mapstructure:"enabled"`
-	// Brokers specifies list of Kafka brokers to connect to. Used by server and client
-	Brokers []string `mapstructure:"brokers"`
-	// Topic specifies topic to read from or write into in Kafka. Used by server and client
-	Topic string `mapstructure:"topic"`
-	// GroupID specifies consumer group id. Used by client only
-	GroupID string `mapstructure:"groupID"`
-	// ReadNewest specifies whether to read newest messages. Used by client only
-	ReadNewest bool `mapstructure:"readNewest"`
-	// Ack specifies whether to ack messages. Used by client only
-	Ack bool `mapstructure:"ack"`
-	//
+	// DSN in the form: http://clickhouse_operator:clickhouse_operator_password@clickhouse-journal.clickhouse:8123/atlas
+	DSN string `mapstructure:"dsn"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewKafkaConfig
-func NewKafkaConfig() *KafkaConfig {
-	return new(KafkaConfig)
+// NewClickHouse
+func NewClickHouse() *ClickHouse {
+	return new(ClickHouse)
 }
 
 // String
-func (c *KafkaConfig) String() string {
+func (c *ClickHouse) String() string {
 	if c == nil {
 		return ""
 	}
@@ -54,11 +45,7 @@ func (c *KafkaConfig) String() string {
 	b := &bytes.Buffer{}
 
 	_, _ = fmt.Fprintf(b, "Enabled: %v\n", c.Enabled)
-	_, _ = fmt.Fprintf(b, "Brokers: %v\n", c.Brokers)
-	_, _ = fmt.Fprintf(b, "Topic: %v\n", c.Topic)
-	_, _ = fmt.Fprintf(b, "GroupID: %v\n", c.GroupID)
-	_, _ = fmt.Fprintf(b, "ReadNewest: %v\n", c.ReadNewest)
-	_, _ = fmt.Fprintf(b, "Ack: %v\n", c.Ack)
+	_, _ = fmt.Fprintf(b, "DSN: %v\n", c.DSN)
 
 	return b.String()
 }

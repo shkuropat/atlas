@@ -19,7 +19,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/config/interfaces"
+	"github.com/binarly-io/atlas/pkg/config/sections"
 	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
@@ -57,7 +57,7 @@ func NewProducer(endpoint *atlas.KafkaEndpoint, address *atlas.KafkaAddress) *Pr
 }
 
 // NewProducerConfig
-func NewProducerConfig(cfg interfaces.KafkaConfigurator) *Producer {
+func NewProducerConfig(cfg sections.KafkaConfigurator) *Producer {
 	return NewProducer(
 		cfg.GetKafkaEndpoint(),
 		nil,

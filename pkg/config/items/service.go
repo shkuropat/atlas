@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package parts
+package items
 
 import (
 	"bytes"
@@ -22,27 +22,27 @@ import (
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type ServiceConfig struct {
-	ServiceAddress string `mapstructure:"address"`
+type Service struct {
+	Address string `mapstructure:"address"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewServiceConfig
-func NewServiceConfig() *ServiceConfig {
-	return new(ServiceConfig)
+// NewService
+func NewService() *Service {
+	return new(Service)
 }
 
 // String
-func (c *ServiceConfig) String() string {
+func (c *Service) String() string {
 	if c == nil {
 		return ""
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, "ServiceAddress: %v\n", c.ServiceAddress)
+	_, _ = fmt.Fprintf(b, "Address: %v\n", c.Address)
 
 	return b.String()
 }

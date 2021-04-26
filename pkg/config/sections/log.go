@@ -12,39 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package sections
 
 import (
-	"github.com/binarly-io/atlas/pkg/config/parts"
+	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
 // LogConfigurator
 type LogConfigurator interface {
-	GetLevel() string
-	GetFormatter() string
+	GetLogLevel() string
+	GetLogFormatter() string
 }
 
 // Interface compatibility
-var _ LogConfigurator = LogConfig{}
+var _ LogConfigurator = Log{}
 
-// LogConfig
-type LogConfig struct {
-	Log *parts.LogConfig `mapstructure:"log"`
+// Log
+type Log struct {
+	Log *items.Log `mapstructure:"log"`
 }
 
-// LogConfigNormalize
-func (c LogConfig) LogConfigNormalize() {
+// LogNormalize
+func (c Log) LogNormalize() {
 	if c.Log == nil {
-		c.Log = parts.NewLogConfig()
+		c.Log = items.NewLog()
 	}
 }
 
-// GetLevel
-func (c LogConfig) GetLevel() string {
+// GetLogLevel
+func (c Log) GetLogLevel() string {
 	return c.Log.Level
 }
 
-// GetFormatter
-func (c LogConfig) GetFormatter() string {
+// GetLogFormatter
+func (c Log) GetLogFormatter() string {
 	return c.Log.Formatter
 }

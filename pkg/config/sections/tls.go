@@ -12,45 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package interfaces
+package sections
 
 import (
-	"github.com/binarly-io/atlas/pkg/config/parts"
+	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
 // TLSConfigurator
 type TLSConfigurator interface {
-	GetEnabled() bool
-	GetCAFile() string
-	GetServerHostOverride() string
+	GetTLSEnabled() bool
+	GetTLSCAFile() string
+	GetTLSServerHostOverride() string
 }
 
 // Interface compatibility
-var _ TLSConfigurator = TLSConfig{}
+var _ TLSConfigurator = TLS{}
 
-// TLSConfig
-type TLSConfig struct {
-	TLS *parts.TLSConfig `mapstructure:"tls"`
+// TLS
+type TLS struct {
+	TLS *items.TLS `mapstructure:"tls"`
 }
 
-// ConfigTLSNormalize
-func (c TLSConfig) ConfigTLSNormalize() {
+// TLSNormalize
+func (c TLS) TLSNormalize() {
 	if c.TLS == nil {
-		c.TLS = parts.NewTLSConfig()
+		c.TLS = items.NewTLS()
 	}
 }
 
-// GetEnabled
-func (c TLSConfig) GetEnabled() bool {
+// GetTLSEnabled
+func (c TLS) GetTLSEnabled() bool {
 	return c.TLS.Enabled
 }
 
-// GetCAFile
-func (c TLSConfig) GetCAFile() string {
+// GetTLSCAFile
+func (c TLS) GetTLSCAFile() string {
 	return c.TLS.CAFile
 }
 
-// GetServerHostOverride
-func (c TLSConfig) GetServerHostOverride() string {
+// GetTLSServerHostOverride
+func (c TLS) GetTLSServerHostOverride() string {
 	return c.TLS.ServerHostOverride
 }
