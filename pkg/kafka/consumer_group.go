@@ -25,18 +25,21 @@ import (
 	"github.com/binarly-io/atlas/pkg/softwareid"
 )
 
-// MessageProcessorFunc specifies message processor function
-type MessageProcessorFunc func(context.Context, *sarama.ConsumerMessage) bool
+// ConsumeMessageFunction specifies message consumeMessageFunction function
+type ConsumeMessageFunction func(context.Context, *sarama.ConsumerMessage) bool
 
 // ConsumerGroup
 type ConsumerGroup struct {
+	// endpoint specifies Kafka endpoint which to connect to
 	endpoint *atlas.KafkaEndpoint
-	address  *atlas.KafkaAddress
-	groupID  string
+	// address specifies Kafka address which to connect to
+	address *atlas.KafkaAddress
+	// groupID specifies id of the consumer group
+	groupID string
 
-	consumerGroupHandler sarama.ConsumerGroupHandler
-	ctx                  context.Context
-	messageProcessor     MessageProcessorFunc
+	consumerGroupHandler   sarama.ConsumerGroupHandler
+	ctx                    context.Context
+	consumeMessageFunction ConsumeMessageFunction
 }
 
 // NewConsumerGroup creates new consumer group
@@ -80,9 +83,9 @@ func (c *ConsumerGroup) SetConsumerGroupHandler(handler sarama.ConsumerGroupHand
 	return c
 }
 
-// SetMessageProcessor sets MessageProcessor - function which will be called for each message received
-func (c *ConsumerGroup) SetMessageProcessor(processor MessageProcessorFunc) *ConsumerGroup {
-	c.messageProcessor = processor
+// SetConsumeMessageFunction sets function which will be called for each message received from Kafka
+func (c *ConsumerGroup) SetConsumeMessageFunction(consumeMessageFunction ConsumeMessageFunction) *ConsumerGroup {
+	c.consumeMessageFunction = consumeMessageFunction
 	return c
 }
 
@@ -121,10 +124,10 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 	ctx := context.Background()
 	for {
 		// Handler can be either explicitly specified, or a default one
-		// Default handler can still use external c.messageProcessor
+		// Default handler can still use external c.consumeMessageFunction
 		handler := c.consumerGroupHandler
 		if handler == nil {
-			handler = newDefaultConsumerGroupHandler(c.ctx, c.messageProcessor, ack)
+			handler = newConsumerGroupHandler(c.ctx, c.consumeMessageFunction, ack)
 		}
 
 		// Consume joins a cluster of consumers for a given list of topics
@@ -136,77 +139,4 @@ func (c *ConsumerGroup) ConsumeLoop(consumeNewest bool, ack bool) {
 			log.Fatalf("unable to Consume topics %v err: %v", c.address.GetTopics(), err)
 		}
 	}
-}
-
-// ConsumerGroupHandler instances are used to handle individual topic/partition claims.
-// It also provides hooks for your consumer group session life-cycle and allow you to
-// trigger logic before or after the consume loop(s).
-//
-// PLEASE NOTE that handlers are likely be called from several goroutines concurrently,
-// ensure that all state is safely protected against race conditions.
-//
-// Implements sarama.ConsumerGroupHandler interface
-type DefaultConsumerGroupHandler struct {
-	ctx       context.Context
-	processor MessageProcessorFunc
-	ack       bool
-}
-
-// newDefaultConsumerGroupHandler
-func newDefaultConsumerGroupHandler(ctx context.Context, processor MessageProcessorFunc, ack bool) *DefaultConsumerGroupHandler {
-	return &DefaultConsumerGroupHandler{
-		ctx:       ctx,
-		processor: processor,
-		ack:       ack,
-	}
-}
-
-// Implement sarama.ConsumerGroupHandler interface
-
-// Setup is run at the beginning of a new session, before ConsumeClaim.
-// Part of sarama.ConsumerGroupHandler interface
-func (*DefaultConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
-	log.Infof("DefaultConsumerGroupHandler.Setup() - start")
-	defer log.Infof("DefaultConsumerGroupHandler.Setup() - end")
-
-	return nil
-}
-
-// Cleanup is run at the end of a session, once all ConsumeClaim goroutines have exited
-// but before the offsets are committed for the very last time.
-// Part of sarama.ConsumerGroupHandler interface
-func (*DefaultConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
-	log.Infof("DefaultConsumerGroupHandler.Cleanup() - start")
-	defer log.Infof("DefaultConsumerGroupHandler.Cleanup() - end")
-
-	return nil
-}
-
-// ConsumeClaim must start a consumer loop of ConsumerGroupClaim's Messages().
-// Once the Messages() channel is closed, the Handler must finish
-// its processing loop and exit.
-// Part of sarama.ConsumerGroupHandler interface
-func (h *DefaultConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	// Claim is a claimed Partition, so Claim refers to Partition
-	log.Infof("DefaultConsumerGroupHandler.ConsumeClaim() - start")
-	defer log.Infof("DefaultConsumerGroupHandler.ConsumeClaim() - end")
-
-	for msg := range claim.Messages() {
-		// msg.Headers
-		log.Infof("Got message %s", MsgAddressPrintable(msg))
-
-		// Call message processor
-		ack := h.ack
-		if h.processor == nil {
-			log.Warnf("no message processor specified with DefaultConsumerGroupHandler")
-		} else {
-			ack = h.processor(h.ctx, msg)
-		}
-
-		if ack {
-			sess.MarkMessage(msg, "")
-			log.Infof("Ack message %s", MsgAddressPrintable(msg))
-		}
-	}
-	return nil
 }

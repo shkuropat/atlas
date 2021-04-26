@@ -26,14 +26,32 @@ import (
 
 // Runner
 type Runner struct {
-	name   string
-	args   []string
+	// name specifies name of the executable to launch. Ex.: "/path/to/binary"
+	name string
+	// args specifies arguments of the executable. Ex.: ["-f=filename", "-v"]
+	args []string
+
 	cmd    *exe.Cmd
 	status exe.Status
+
+	// stopTickerChan specifies chan to stop periodical ticker
+	stopTickerChan chan bool
+	// stopTimeoutChan specifies chan to stop command timeout
+	stopTimeoutChan chan bool
 }
 
-// New
-func New(name string, args ...string) *Runner {
+// New creates new runner having all executable command specified as args
+func New(args ...string) *Runner {
+	if len(args) == 0 {
+		return nil
+	}
+	name := args[0]
+	args = args[1:]
+	return NewWithName(name, args...)
+}
+
+// NewWithName creates new cmdrunner having name explicitly specified
+func NewWithName(name string, args ...string) *Runner {
 	return &Runner{
 		name: name,
 		args: args,
@@ -45,23 +63,23 @@ func (r *Runner) Run(options *Options) exe.Status {
 	log.Infof("Run() - start")
 	defer log.Infof("Run() - end")
 
-	// StartTime a long-running process, capture stdout and stderr
+	// Create new command. It is not launched here yet
 	r.cmd = exe.NewCmdOptions(
 		options.GetOptions(),
 		r.name,
 		r.args...,
 	)
-	stopTickerChan := r.startTicker(options)
-	stopTimeoutChan := r.startTimeout(options)
+	r.startTicker(options)
+	r.startTimeout(options)
 	log.Infof("wait for cmd to complete")
 
-	// StartTime command and wait for it to complete
+	// Start command and wait for it to complete
 	log.Infof("Starting command:\n%s %s", r.name, strings.Join(r.args, " "))
 	r.cmd.Start()
 	<-r.cmd.Done()
 
-	r.stopTicker(stopTickerChan)
-	r.stopTimeout(stopTimeoutChan)
+	r.stopTicker()
+	r.stopTimeout()
 	r.status = r.cmd.Status()
 
 	r.WriteOutput(options.GetStdoutWriter(), options.GetStderrWriter())
@@ -86,29 +104,29 @@ func (r *Runner) WriteOutput(stdout, stderr io.Writer) {
 
 // startTicker starts goroutine which prints last line of stdout every `tick`
 // Returns chan where to send quit/stop request
-func (r *Runner) startTicker(options *Options) chan bool {
+func (r *Runner) startTicker(options *Options) {
 	if !options.HasTick() {
 		// No tick specified, unable to start ticker
-		return nil
+		return
 	}
 
 	log.Infof("ticker start")
 
 	// Chan to receive quit request
-	quit := make(chan bool)
+	r.stopTickerChan = make(chan bool)
 	ticker := time.NewTicker(options.GetTick())
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				// Time to log last line from stdout
+				// Ticker's tick arrived. Time to log last line from stdout
 				log.Infof("ticker tick")
 				status := r.cmd.Status()
 				n := len(status.Stdout)
 				if n > 0 {
 					log.Infof("runtime:%f:%s", status.Runtime, status.Stdout[n-1])
 				}
-			case <-quit:
+			case <-r.stopTickerChan:
 				// Quit request arrived
 				log.Infof("ticker stop")
 				ticker.Stop()
@@ -116,7 +134,11 @@ func (r *Runner) startTicker(options *Options) chan bool {
 			}
 		}
 	}()
-	return quit
+}
+
+// stopTicker sends quit request to specified chan
+func (r *Runner) stopTicker() {
+	r.stop(r.stopTickerChan)
 }
 
 // stop sends quit request to specified chan
@@ -128,40 +150,34 @@ func (r *Runner) stop(quit chan bool) {
 	close(quit)
 }
 
-// stopTicker sends quit request to specified chan
-func (r *Runner) stopTicker(quit chan bool) {
-	r.stop(quit)
-}
-
 // startTimeout starts goroutine which stops command after specified `timeout`
-func (r *Runner) startTimeout(options *Options) chan bool {
+func (r *Runner) startTimeout(options *Options) {
 	if !options.HasTimeout() {
-		return nil
+		return
 	}
 
 	log.Infof("timeout start")
 
 	// Chan to receive quit request
-	quit := make(chan bool)
+	r.stopTimeoutChan = make(chan bool)
 	go func() {
 		select {
 		case <-time.After(options.GetTimeout()):
 			// Time to stop the command
 			log.Warnf("timout trigger")
 			_ = r.cmd.Stop()
-			return // func
-		case <-quit:
+			return
+		case <-r.stopTimeoutChan:
 			// Quit request arrived
 			log.Infof("timeout stop")
 			return
 		}
 	}()
-	return quit
 }
 
 // stopTimeout sends quit request to specified chan
-func (r *Runner) stopTimeout(quit chan bool) {
-	r.stop(quit)
+func (r *Runner) stopTimeout() {
+	r.stop(r.stopTimeoutChan)
 }
 
 // GetStdoutReader
