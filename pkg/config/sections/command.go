@@ -22,9 +22,9 @@ import (
 
 // CommandConfigurator
 type CommandConfigurator interface {
-	GetCommandArgs() []string
+	GetCommandLines() []string
 	GetCommand() string
-	ParseCommandArgs(*macros.Expander) []string
+	ParseCommandLines(*macros.Expander) []string
 	ParseCommand(*macros.Expander) string
 }
 
@@ -44,21 +44,21 @@ func (c Command) CommandNormalize() {
 }
 
 // GetCommandArgs
-func (c Command) GetCommandArgs() []string {
-	return c.Command.GetArgs()
+func (c Command) GetCommandLines() []string {
+	return c.Command.GetLines()
 }
 
 // GetCommand
 func (c Command) GetCommand() string {
-	return strings.Join(c.GetCommandArgs(), " ")
+	return strings.Join(c.GetCommandLines(), " ")
 }
 
 // ParseCommandArgs
-func (c Command) ParseCommandArgs(macro *macros.Expander) []string {
-	return macro.ExpandAll(c.GetCommandArgs()...)
+func (c Command) ParseCommandLines(macro *macros.Expander) []string {
+	return macro.ExpandAll(c.GetCommandLines()...)
 }
 
 // ParseCommand
 func (c Command) ParseCommand(macro *macros.Expander) string {
-	return strings.Join(c.ParseCommandArgs(macro), " ")
+	return strings.Join(c.ParseCommandLines(macro), " ")
 }
