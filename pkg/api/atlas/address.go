@@ -28,14 +28,16 @@ const (
 	AddressUUID int32 = 400
 	// UserID-based address. Used to specify any related user (owner, sender, etc)
 	AddressUserID int32 = 500
+	// Dirname/path-based address
+	AddressDirname int32 = 600
 	// Filename/filepath-based address
-	AddressFilename int32 = 600
+	AddressFilename int32 = 700
 	// URL address
-	AddressURL int32 = 700
+	AddressURL int32 = 800
 	// Domain address
-	AddressDomain int32 = 800
+	AddressDomain int32 = 900
 	// Custom string
-	AddressCustomString int32 = 900
+	AddressCustomString int32 = 1000
 )
 
 var AddressTypeEnum = NewEnum()
@@ -47,6 +49,7 @@ func init() {
 	AddressTypeEnum.MustRegister("AddressDigest", AddressDigest)
 	AddressTypeEnum.MustRegister("AddressUUID", AddressUUID)
 	AddressTypeEnum.MustRegister("AddressUserID", AddressUserID)
+	AddressTypeEnum.MustRegister("AddressDirname", AddressDirname)
 	AddressTypeEnum.MustRegister("AddressFilename", AddressFilename)
 	AddressTypeEnum.MustRegister("AddressURL", AddressURL)
 	AddressTypeEnum.MustRegister("AddressDomain", AddressDomain)
@@ -127,6 +130,10 @@ func (m *Address) Set(address interface{}) *Address {
 		i := new(Address_UserId)
 		i.UserId = typed
 		m.AddressOptional = i
+	case *Dirname:
+		i := new(Address_Dirname)
+		i.Dirname = typed
+		m.AddressOptional = i
 	case *Filename:
 		i := new(Address_Filename)
 		i.Filename = typed
@@ -168,6 +175,8 @@ func (m *Address) String() string {
 		return "uuid printable not implemented"
 	case m.GetUserId() != nil:
 		return "userid printable not implemented"
+	case m.GetDirname() != nil:
+		return m.GetDirname().String()
 	case m.GetFilename() != nil:
 		return m.GetFilename().String()
 	case m.GetUrl() != nil:

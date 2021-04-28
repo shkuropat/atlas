@@ -26,6 +26,7 @@ var (
 	DomainDigest       = NewDomain().Set("digest")
 	DomainUUID         = NewDomain().Set("uuid")
 	DomainUserID       = NewDomain().Set("userid")
+	DomainDirname      = NewDomain().Set("dirname")
 	DomainFilename     = NewDomain().Set("filename")
 	DomainURL          = NewDomain().Set("url")
 	DomainDomain       = NewDomain().Set("domain")

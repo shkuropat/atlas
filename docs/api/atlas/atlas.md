@@ -30,6 +30,9 @@
   
     - [DigestType](#atlas.DigestType)
   
+- [dirname.proto](#dirname.proto)
+    - [Dirname](#atlas.Dirname)
+  
 - [domain.proto](#domain.proto)
     - [Domain](#atlas.Domain)
   
@@ -214,6 +217,7 @@ Address describes general address
 | digest | [Digest](#atlas.Digest) |  | Digest-based address option |
 | uuid | [UUID](#atlas.UUID) |  | UUID-based address option |
 | user_id | [UserID](#atlas.UserID) |  | UserID-based address. Used to specify any related user (owner, sender, etc) |
+| dirname | [Dirname](#atlas.Dirname) |  | Dirname/path-based address |
 | filename | [Filename](#atlas.Filename) |  | Filename/filepath-based address |
 | url | [URL](#atlas.URL) |  | URL address |
 | domain | [Domain](#atlas.Domain) |  | Domain address |
@@ -411,6 +415,37 @@ DigestType represents all types of digests in the system.
 | DIGEST_MD5 | 200 | MD5 digest |
 | DIGEST_SHA256 | 300 | SHA256 digest |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="dirname.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## dirname.proto
+Domain represents abstract domain.
+
+
+<a name="atlas.Dirname"></a>
+
+### Dirname
+Dirname represents abstract directory name.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dirname | [string](#string) |  | Dirname |
+
+
+
+
+
+ 
 
  
 

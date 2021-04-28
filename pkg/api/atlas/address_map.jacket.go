@@ -46,7 +46,10 @@ func (m *AddressMap) Has(domains ...*Domain) bool {
 // Append([domain,] address0, [address1,...])
 func (m *AddressMap) Append(entities ...interface{}) *AddressMap {
 	domains, addresses := m.normalizeParams(true, entities...)
-	m.EnsureList(domains[0]).Append(addresses...)
+	if len(domains) > 0 {
+		// Domain extracted, append provided addresses to specified domain
+		m.EnsureList(domains[0]).Append(addresses...)
+	}
 	return m
 }
 
@@ -55,9 +58,8 @@ func (m *AddressMap) Set(entities ...interface{}) *AddressMap {
 	return m.Replace(entities...)
 }
 
-// normalizeParams
+// normalizeParams builds list of domains and list of addresses out of provided entities
 func (m *AddressMap) normalizeParams(insertDefaultDomain bool, entities ...interface{}) ([]*Domain, []*Address) {
-	// Build list of domains and list of addresses
 	var domains []*Domain
 	var addresses []*Address
 	for _, entity := range entities {

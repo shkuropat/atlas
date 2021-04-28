@@ -110,6 +110,16 @@ func (m *Metadata) GetUserID() *UserID {
 	return m.GetAddresses().First(DomainThis, DomainUserID).GetUserId()
 }
 
+// SetDirname
+func (m *Metadata) SetDirname(dirname string) *Metadata {
+	return m.Set(DomainThis, DomainDirname, NewAddress().SetDomain(DomainDirname).Set(NewDirname(dirname)))
+}
+
+// GetDirname
+func (m *Metadata) GetDirname() string {
+	return m.GetAddresses().First(DomainThis, DomainDirname).GetDirname().String()
+}
+
 // SetFilename
 func (m *Metadata) SetFilename(filename string) *Metadata {
 	return m.Set(DomainThis, DomainFilename, NewAddress().SetDomain(DomainFilename).Set(NewFilename(filename)))

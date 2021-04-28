@@ -21,6 +21,7 @@ syntax = "proto3";
 package atlas;
 
 import "digest.proto";
+import "dirname.proto";
 import "domain.proto";
 import "filename.proto";
 import "kafka_address.proto";
@@ -47,13 +48,15 @@ message Address {
         UUID uuid = 400;
         // UserID-based address. Used to specify any related user (owner, sender, etc)
         UserID user_id = 500;
+        // Dirname/path-based address
+        Dirname dirname = 600;
         // Filename/filepath-based address
-        Filename filename = 600;
+        Filename filename = 700;
         // URL address
-        URL url = 700;
+        URL url = 800;
         // Domain address
-        Domain domain = 800;
+        Domain domain = 900;
         // Custom string
-        string custom_string = 900;
+        string custom_string = 1000;
     }
 }
