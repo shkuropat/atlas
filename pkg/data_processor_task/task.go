@@ -184,8 +184,8 @@ func (t *DataProcessorTask) SetTaskFile(file string) *DataProcessorTask {
 	return t
 }
 
-// Has checks whether DataProcessorTask has specified section
-func (t *DataProcessorTask) Has(section string) bool {
+// Exists checks whether specified section exists within DataProcessorTask. Section may have 0 items in it
+func (t *DataProcessorTask) Exists(section string) bool {
 	if t == nil {
 		return false
 	}
@@ -194,6 +194,11 @@ func (t *DataProcessorTask) Has(section string) bool {
 	}
 	_, ok := t.Items[section]
 	return ok
+}
+
+// Has checks whether DataProcessorTask has something in specified section. Returns true only in case section has > 0 items in it.
+func (t *DataProcessorTask) Has(section string) bool {
+	return t.Len(section) > 0
 }
 
 // Sections lists all sections
@@ -222,31 +227,36 @@ func (t *DataProcessorTask) Walk(f func(section string, items []string) error) *
 
 // GetAll gets all entities of a section
 func (t *DataProcessorTask) GetAll(section string) []string {
-	if t.Has(section) {
+	if t.Exists(section) {
 		return t.Items[section]
 	}
 	return nil
 }
 
-// Len gets number of items wihtin a section
+// Len gets number of items within a section
 func (t *DataProcessorTask) Len(section string) int {
 	return len(t.GetAll(section))
 }
 
-// Get first item from a section
-func (t *DataProcessorTask) Get(section string) string {
+// Get first item from a section or default value, which can be provided or "" used otherwise
+func (t *DataProcessorTask) Get(section string, defaultValue ...string) string {
+	// Prepare default value
+	_default := ""
+	if len(defaultValue) > 0 {
+		_default = defaultValue[0]
+	}
 	if t == nil {
-		return ""
+		return _default
 	}
 	if t.Len(section) == 0 {
-		return ""
+		return _default
 	}
 	return t.GetAll(section)[0]
 }
 
 // Delete deletes a section
 func (t *DataProcessorTask) Delete(section string) *DataProcessorTask {
-	if t.Has(section) {
+	if t.Exists(section) {
 		delete(t.Items, section)
 	}
 	return t
@@ -277,9 +287,14 @@ func (t *DataProcessorTask) GetConfigFiles() []string {
 	return t.GetAll(ConfigFiles)
 }
 
+// HasConfigFiles checks whether there are config file(s)
+func (t *DataProcessorTask) HasConfigFiles() bool {
+	return t.Has(ConfigFiles)
+}
+
 // GetConfigFile gets the first config file
-func (t *DataProcessorTask) GetConfigFile() string {
-	return t.Get(ConfigFiles)
+func (t *DataProcessorTask) GetConfigFile(defaultValue ...string) string {
+	return t.Get(ConfigFiles, defaultValue...)
 }
 
 // GetConfigDirs gets all config dirs
@@ -287,9 +302,14 @@ func (t *DataProcessorTask) GetConfigDirs() []string {
 	return t.GetAll(ConfigDirs)
 }
 
+// HasConfigDirs checks whether there are config dirs(s)
+func (t *DataProcessorTask) HasConfigDirs() bool {
+	return t.Has(ConfigDirs)
+}
+
 // GetConfigDir gets the first config dir
-func (t *DataProcessorTask) GetConfigDir() string {
-	return t.Get(ConfigDirs)
+func (t *DataProcessorTask) GetConfigDir(defaultValue ...string) string {
+	return t.Get(ConfigDirs, defaultValue...)
 }
 
 // GetInputFiles gets all input files
@@ -297,9 +317,14 @@ func (t *DataProcessorTask) GetInputFiles() []string {
 	return t.GetAll(InputFiles)
 }
 
+// HasInputFiles checks whether there are input file(s)
+func (t *DataProcessorTask) HasInputFiles() bool {
+	return t.Has(InputFiles)
+}
+
 // GetInputFile gets the first input file
-func (t *DataProcessorTask) GetInputFile() string {
-	return t.Get(InputFiles)
+func (t *DataProcessorTask) GetInputFile(defaultValue ...string) string {
+	return t.Get(InputFiles, defaultValue...)
 }
 
 // GetInputDirs gets all input dirs
@@ -307,9 +332,14 @@ func (t *DataProcessorTask) GetInputDirs() []string {
 	return t.GetAll(InputDirs)
 }
 
+// HasInputDirs checks whether there are input dires(s)
+func (t *DataProcessorTask) HasInputDirs() bool {
+	return t.Has(InputDirs)
+}
+
 // GetInputDir gets the first input dir
-func (t *DataProcessorTask) GetInputDir() string {
-	return t.Get(InputDirs)
+func (t *DataProcessorTask) GetInputDir(defaultValue ...string) string {
+	return t.Get(InputDirs, defaultValue...)
 }
 
 // GetOutputFiles gets all output files
@@ -317,9 +347,14 @@ func (t *DataProcessorTask) GetOutputFiles() []string {
 	return t.GetAll(OutputFiles)
 }
 
+// HasOutputFiles checks whether there are output file(s)
+func (t *DataProcessorTask) HasOutputFiles() bool {
+	return t.Has(OutputFiles)
+}
+
 // GetOutputFile gets the first output file
-func (t *DataProcessorTask) GetOutputFile() string {
-	return t.Get(OutputFiles)
+func (t *DataProcessorTask) GetOutputFile(defaultValue ...string) string {
+	return t.Get(OutputFiles, defaultValue...)
 }
 
 // GetOutputDirs gets all output dirs
@@ -327,9 +362,14 @@ func (t *DataProcessorTask) GetOutputDirs() []string {
 	return t.GetAll(OutputDirs)
 }
 
+// HasOutputDirs checks whether there are output dir(s)
+func (t *DataProcessorTask) HasOutputDirs() bool {
+	return t.Has(OutputDirs)
+}
+
 // GetOutputDir gets the first output dir
-func (t *DataProcessorTask) GetOutputDir() string {
-	return t.Get(OutputDirs)
+func (t *DataProcessorTask) GetOutputDir(defaultValue ...string) string {
+	return t.Get(OutputDirs, defaultValue...)
 }
 
 // AddConfigFile adds config file(s)
