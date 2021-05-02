@@ -39,6 +39,7 @@ type Format string
 
 const (
 	// DataProcessorTask serialization formats
+	Empty   Format = ""
 	Unknown Format = "unknown"
 	YAML    Format = "yaml"
 	JSON    Format = "json"
@@ -70,6 +71,31 @@ type DataProcessorTask struct {
 	TaskFile string `json:"task,omitempty"   yaml:"task,omitempty"`
 	// Format specifies DataProcessorTask serialization formats
 	Format Format `json:"-" yaml:"-"`
+}
+
+// DataProcessorTaskFile defines what DataProcessorTask file should be used.
+// It has to be exported var in order to be used in cases such as:
+// rootCmd.PersistentFlags().StringVar(&data_processor_task.DataProcessorTaskFile, "task", "", "DataProcessorTask file")
+var DataProcessorTaskFile string
+
+// Task is the DataProcessorTask read from DataProcessorTaskFile
+var Task *DataProcessorTask
+
+// ReadIn reads the DataProcessorTask read from DataProcessorTaskFile
+func ReadIn() {
+	if DataProcessorTaskFile == "" {
+		// No task file specified
+		return
+	}
+
+	Task = New()
+	if err := Task.ReadFrom(DataProcessorTaskFile); err != nil {
+		// Unable to read task file, need to clear task
+		Task = nil
+		return
+	}
+
+	// Task read successfully
 }
 
 // New
@@ -363,6 +389,17 @@ func (t *DataProcessorTask) SetFormat(format Format) *DataProcessorTask {
 	return t
 }
 
+// IsFormatKnown checks whether specified format is known to parser
+func (t *DataProcessorTask) IsFormatKnown() bool {
+	switch t.GetFormat() {
+	case
+		YAML,
+		JSON:
+		return true
+	}
+	return false
+}
+
 // Marshal marshals DataProcessorTask according with specified format
 func (t *DataProcessorTask) Marshal() (out []byte, err error) {
 	if t == nil {
@@ -388,7 +425,7 @@ func (t *DataProcessorTask) Unmarshal(in []byte) (err error) {
 	case JSON:
 		return json.Unmarshal(in, t)
 	}
-	return fmt.Errorf("unspecified format to unmarshal")
+	return fmt.Errorf("unspecified format to unmarshal from")
 }
 
 // SaveAs saves DataProcessorTask into specified file
@@ -451,6 +488,22 @@ func (t *DataProcessorTask) ReadFrom(file string) error {
 	if err != nil {
 		return err
 	}
+
+	// Let's check, whether format is specified, and in case it is not, let's guess it from filename
+	if !t.IsFormatKnown() {
+		switch strings.ToLower(filepath.Ext(file)) {
+		case
+			".yaml",
+			".yml":
+			t.SetFormat(YAML)
+		case
+			".json":
+			t.SetFormat(JSON)
+		default:
+			return fmt.Errorf("unable to understand what format task file shoud be read")
+		}
+	}
+
 	return t.Unmarshal(b)
 }
 
