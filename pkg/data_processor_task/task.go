@@ -51,8 +51,10 @@ const (
 	ConfigFiles  = "config_files"
 	InputDirs    = "input_dirs"
 	InputFiles   = "input_files"
+	InputTables  = "input_tables"
 	OutputDirs   = "output_dirs"
 	OutputFiles  = "output_files"
+	OutputTables = "output_tables"
 	ReportLevel  = "report_level"
 	SummaryLevel = "summary_level"
 	TraceLevel   = "trace_level"
@@ -184,7 +186,8 @@ func (t *DataProcessorTask) SetTaskFile(file string) *DataProcessorTask {
 	return t
 }
 
-// Exists checks whether specified section exists within DataProcessorTask. Section may have 0 items in it
+// Exists checks whether specified section exists within DataProcessorTask.
+// Returns tru if section exists. Section may have 0 items in it and return true
 func (t *DataProcessorTask) Exists(section string) bool {
 	if t == nil {
 		return false
@@ -196,7 +199,8 @@ func (t *DataProcessorTask) Exists(section string) bool {
 	return ok
 }
 
-// Has checks whether DataProcessorTask has something in specified section. Returns true only in case section has > 0 items in it.
+// Has checks whether DataProcessorTask has something in specified section.
+// Returns true only in case section has > 0 items in it.
 func (t *DataProcessorTask) Has(section string) bool {
 	return t.Len(section) > 0
 }
@@ -238,7 +242,7 @@ func (t *DataProcessorTask) Len(section string) int {
 	return len(t.GetAll(section))
 }
 
-// Get first item from a section or default value, which can be provided or "" used otherwise
+// Get first item from a section or default value. Default value can be provided explicitly or "" used otherwise
 func (t *DataProcessorTask) Get(section string, defaultValue ...string) string {
 	// Prepare default value
 	_default := ""
@@ -297,6 +301,11 @@ func (t *DataProcessorTask) GetConfigFile(defaultValue ...string) string {
 	return t.Get(ConfigFiles, defaultValue...)
 }
 
+// AddConfigFile adds config file(s)
+func (t *DataProcessorTask) AddConfigFile(file ...string) *DataProcessorTask {
+	return t.Add(ConfigFiles, file...)
+}
+
 // GetConfigDirs gets all config dirs
 func (t *DataProcessorTask) GetConfigDirs() []string {
 	return t.GetAll(ConfigDirs)
@@ -310,6 +319,11 @@ func (t *DataProcessorTask) HasConfigDirs() bool {
 // GetConfigDir gets the first config dir
 func (t *DataProcessorTask) GetConfigDir(defaultValue ...string) string {
 	return t.Get(ConfigDirs, defaultValue...)
+}
+
+// AddConfigDir adds config dir(s)
+func (t *DataProcessorTask) AddConfigDir(dir ...string) *DataProcessorTask {
+	return t.Add(ConfigDirs, dir...)
 }
 
 // GetInputFiles gets all input files
@@ -327,6 +341,11 @@ func (t *DataProcessorTask) GetInputFile(defaultValue ...string) string {
 	return t.Get(InputFiles, defaultValue...)
 }
 
+// AddInputFile adds input file(s)
+func (t *DataProcessorTask) AddInputFile(file ...string) *DataProcessorTask {
+	return t.Add(InputFiles, file...)
+}
+
 // GetInputDirs gets all input dirs
 func (t *DataProcessorTask) GetInputDirs() []string {
 	return t.GetAll(InputDirs)
@@ -340,6 +359,11 @@ func (t *DataProcessorTask) HasInputDirs() bool {
 // GetInputDir gets the first input dir
 func (t *DataProcessorTask) GetInputDir(defaultValue ...string) string {
 	return t.Get(InputDirs, defaultValue...)
+}
+
+// AddInputDir adds input dir(s)
+func (t *DataProcessorTask) AddInputDir(dir ...string) *DataProcessorTask {
+	return t.Add(InputDirs, dir...)
 }
 
 // GetOutputFiles gets all output files
@@ -357,6 +381,11 @@ func (t *DataProcessorTask) GetOutputFile(defaultValue ...string) string {
 	return t.Get(OutputFiles, defaultValue...)
 }
 
+// AddOutputFile adds output file(s)
+func (t *DataProcessorTask) AddOutputFile(file ...string) *DataProcessorTask {
+	return t.Add(OutputFiles, file...)
+}
+
 // GetOutputDirs gets all output dirs
 func (t *DataProcessorTask) GetOutputDirs() []string {
 	return t.GetAll(OutputDirs)
@@ -372,34 +401,49 @@ func (t *DataProcessorTask) GetOutputDir(defaultValue ...string) string {
 	return t.Get(OutputDirs, defaultValue...)
 }
 
-// AddConfigFile adds config file(s)
-func (t *DataProcessorTask) AddConfigFile(file ...string) *DataProcessorTask {
-	return t.Add(ConfigFiles, file...)
-}
-
-// AddConfigDir adds config dir(s)
-func (t *DataProcessorTask) AddConfigDir(dir ...string) *DataProcessorTask {
-	return t.Add(ConfigDirs, dir...)
-}
-
-// AddInputFile adds input file(s)
-func (t *DataProcessorTask) AddInputFile(file ...string) *DataProcessorTask {
-	return t.Add(InputFiles, file...)
-}
-
-// AddInputDir adds input dir(s)
-func (t *DataProcessorTask) AddInputDir(dir ...string) *DataProcessorTask {
-	return t.Add(InputDirs, dir...)
-}
-
-// AddOutputFile adds output file(s)
-func (t *DataProcessorTask) AddOutputFile(file ...string) *DataProcessorTask {
-	return t.Add(OutputFiles, file...)
-}
-
 // AddOutputDir adds output dir(s)
 func (t *DataProcessorTask) AddOutputDir(dir ...string) *DataProcessorTask {
 	return t.Add(OutputDirs, dir...)
+}
+
+// GetInputTables gets all input tables
+func (t *DataProcessorTask) GetInputTables() []string {
+	return t.GetAll(InputTables)
+}
+
+// HasInputTables checks whether there are input table(s)
+func (t *DataProcessorTask) HasInputTables() bool {
+	return t.Has(InputTables)
+}
+
+// GetInputTable gets the first input table
+func (t *DataProcessorTask) GetInputTable(defaultValue ...string) string {
+	return t.Get(InputTables, defaultValue...)
+}
+
+// AddInputTable adds input table(s)
+func (t *DataProcessorTask) AddInputTable(table ...string) *DataProcessorTask {
+	return t.Add(InputTables, table...)
+}
+
+// GetOutputTables gets all output tables
+func (t *DataProcessorTask) GetOutputTables() []string {
+	return t.GetAll(OutputTables)
+}
+
+// HasOutputTables checks whether there are output table(s)
+func (t *DataProcessorTask) HasOutputTables() bool {
+	return t.Has(OutputTables)
+}
+
+// GetOutputTable gets the first output table
+func (t *DataProcessorTask) GetOutputTable(defaultValue ...string) string {
+	return t.Get(OutputTables, defaultValue...)
+}
+
+// AddOutputTable adds output table(s)
+func (t *DataProcessorTask) AddOutputTable(table ...string) *DataProcessorTask {
+	return t.Add(OutputTables, table...)
 }
 
 // GetStatus gets status of the task
