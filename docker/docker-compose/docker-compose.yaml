@@ -13,6 +13,7 @@ services:
     expose:
       - "2181"
 
+  # Kafka is one of the core components of the system
   kafka:
     image: wurstmeister/kafka
     # Expose this port externally. This port will be available from host-machine as
@@ -37,6 +38,7 @@ services:
       # In case username/password auth is used, need to provide password file
       # KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/kafka_server_jaas.conf"
       KAFKA_LISTENERS: INSIDE://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      # Where Kafka should connect to Zookeeper. See "zookeeper" section for endpoint details
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
@@ -67,6 +69,7 @@ services:
   #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --delete --topic qwe1"
   #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka-topics.sh --bootstrap-server=kafka:9093 --list"
 
+  # ClickHouse server is one of the core components of the system
   clickhouse-server:
     image: yandex/clickhouse-server
     # Expose this port externally. This port will be available from host-machine as
@@ -82,12 +85,15 @@ services:
     #volumes:
     #  - ./db:/var/lib/clickhouse
 
+  # clickhouse-client is used for maintenance purposes
   clickhouse-client:
     image: yandex/clickhouse-client
     entrypoint:
       - /bin/sleep
     command:
       - infinity
+    # Mount pkg/trail dir from sources into docker container in order to have .sql file
+    # with schema available inside the container. Thus we can create schema calling vlivkhouse-client within the container
     volumes:
       - ../../pkg/trail:/trail
 
@@ -95,6 +101,7 @@ services:
     #            # additional option --database=dbname
   #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh clickhouse-client -c "cat /trail/journal_clickhouse_schema.sql | /usr/bin/clickhouse-client --host=clickhouse-server --multiline --multiquery"
 
+  # MinIO is one of the core components of the system
   minio:
     image: minio/minio
     # Expose this port externally. This port will be available from host-machine as
@@ -110,6 +117,7 @@ services:
     #command: server --address 0.0.0.0:8000 /data
     command: server /data
 
+  # minio-mc is used for maintenance purposes
   minio-mc:
     image: minio/mc
     depends_on:
@@ -124,6 +132,7 @@ services:
   # For short-running
   #docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh minio-mc -c "mc config host add minio-docker http://minio:9000 minio1 minio123; mc mb minio-docker/my-bucket"
 
+  # s3-client is used for maintenance purposes
   s3-client:
     image: amazon/aws-cli
     environment:

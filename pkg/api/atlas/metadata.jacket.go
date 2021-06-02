@@ -150,6 +150,26 @@ func (m *Metadata) SetCustomString(s string) *Metadata {
 	return m.Set(DomainThis, DomainCustomString, NewAddress().SetDomain(DomainCustomString).Set(s))
 }
 
+// GetContextUUID
+func (m *Metadata) GetContextUUID() *UUID {
+	return m.GetAddresses().First(DomainContext, DomainUUID).GetUUID()
+}
+
+// SetContextUUID
+func (m *Metadata) SetContextUUID(uuid *UUID) *Metadata {
+	return m.Set(DomainContext, DomainUUID, NewAddress().SetDomain(DomainUUID).Set(uuid))
+}
+
+// GetTaskUUID
+func (m *Metadata) GetTaskUUID() *UUID {
+	return m.GetAddresses().First(DomainTask, DomainUUID).GetUUID()
+}
+
+// SetTaskUUID
+func (m *Metadata) SetTaskUUID(uuid *UUID) *Metadata {
+	return m.Set(DomainTask, DomainUUID, NewAddress().SetDomain(DomainUUID).Set(uuid))
+}
+
 //
 //
 // Wrap PresentationOptions

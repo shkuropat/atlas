@@ -93,7 +93,7 @@ func (m *Task) UnmarshalFrom(bytes []byte) error {
 	return proto.Unmarshal(bytes, m)
 }
 
-// SetBytes sets payload bytes
+// SetBytes sets bytes as task's data. Provided bytes are not interpreted and used as-is.
 func (m *Task) SetBytes(bytes []byte) *Task {
 	m.Bytes = bytes
 	return m
@@ -116,31 +116,31 @@ func (m *Task) GetPayload(msg proto.Message) error {
 	return proto.Unmarshal(m.GetBytes(), msg)
 }
 
-// AddSubject
+// AddSubject ands one subject to the task
 func (m *Task) AddSubject(subject *Metadata) *Task {
 	m.Subjects = append(m.Subjects, subject)
 	return m
 }
 
-// AddSubjects
+// AddSubjects adds multiple subjects to the task
 func (m *Task) AddSubjects(subjects ...*Metadata) *Task {
 	m.Subjects = append(m.Subjects, subjects...)
 	return m
 }
 
-// AddSubtask
+// AddSubtask adds one subtask to the task
 func (m *Task) AddSubtask(task *Task) *Task {
 	m.Children = append(m.Children, task)
 	return m
 }
 
-// AddSubtasks
+// AddSubtasks adds multiple subtasks to the task
 func (m *Task) AddSubtasks(tasks ...*Task) *Task {
 	m.Children = append(m.Children, tasks...)
 	return m
 }
 
-// FirstSubtask
+// FirstSubtask fetches first (0-indexed) subtask. List of subtasks does not change.
 func (m *Task) FirstSubtask() *Task {
 	if m == nil {
 		return nil
@@ -151,7 +151,7 @@ func (m *Task) FirstSubtask() *Task {
 	return m.Children[0]
 }
 
-// LastSubtask
+// LastSubtask fetches last subtask. List of subtasks does not change.
 func (m *Task) LastSubtask() *Task {
 	if m == nil {
 		return nil
@@ -162,8 +162,9 @@ func (m *Task) LastSubtask() *Task {
 	return m.Children[len(m.Children)-1]
 }
 
-// ShiftTasks fetches first (0-indexed) task from available tasks.
-// fetched task is removed from list of tasks
+// ShiftSubtasks fetches first (0-indexed) task from available tasks.
+// Fetched task is removed from the list of tasks.
+// List of subtasks changes.
 func (m *Task) ShiftSubtasks() *Task {
 	var task *Task = nil
 	if len(m.Children) > 0 {
@@ -174,8 +175,8 @@ func (m *Task) ShiftSubtasks() *Task {
 }
 
 // Derive produces derivative task from the task as:
-//   1. fetches first (0-indexed) task from available tasks
-//   2. and attaches all the rest tasks (if any) as tasks of the fetched one
+//   1. fetches first (0-indexed) subtask from available subtasks
+//   2. and attaches all the rest subtasks (if any) as subtasks of the fetched one, which it the new top now.
 // Original task is modified.
 func (m *Task) Derive() *Task {
 	// Assume new root task is the first subtask of current task
@@ -192,19 +193,19 @@ func (m *Task) Derive() *Task {
 	return root
 }
 
-// AddParent
+// AddParent adds one parent of the task
 func (m *Task) AddParent(task *Task) *Task {
 	m.Parents = append(m.Parents, task)
 	return m
 }
 
-// AddParents
+// AddParents adds multiple parents of the task
 func (m *Task) AddParents(tasks ...*Task) *Task {
 	m.Parents = append(m.Parents, tasks...)
 	return m
 }
 
-// FirstParent
+// FirstParent fetches first (0-indexed) parent. List of list does not change.
 func (m *Task) FirstParent() *Task {
 	if m == nil {
 		return nil
@@ -215,7 +216,7 @@ func (m *Task) FirstParent() *Task {
 	return m.Parents[0]
 }
 
-// LastParent
+// LastParent fetches last parent. List of list does not change.
 func (m *Task) LastParent() *Task {
 	if m == nil {
 		return nil

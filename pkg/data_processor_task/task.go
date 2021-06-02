@@ -28,10 +28,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Status
+// Status specifies status of the DataProcessorTask
 type Status struct {
-	Status int32
-	Errors []string
+	status int32
+	errors []string
 }
 
 // Format specifies DataProcessorTask serialization formats
@@ -60,19 +60,26 @@ const (
 	TraceLevel   = "trace_level"
 )
 
-// DataProcessorTask
-type DataProcessorTask struct {
-	// Items contains named slices of parameters
-	Items map[string][]string `json:"items,omitempty"  yaml:"items,omitempty"`
-	// Status represents status of the data processor task
-	Status Status `json:"status,omitempty" yaml:"status,omitempty"`
+const (
+	// Names of the directories
+	ConfigDirName = "config"
+	InputDirName  = "input"
+	OutputDirName = "output"
+)
 
-	// RootDir specifies name of the root directory in case dirs have nested structure
-	RootDir string `json:"root,omitempty"   yaml:"root,omitempty"`
-	// TaskFile specifies path/name where to serialize/un-serialize from a task
-	TaskFile string `json:"task,omitempty"   yaml:"task,omitempty"`
-	// Format specifies DataProcessorTask serialization formats
-	Format Format `json:"-" yaml:"-"`
+// DataProcessorTask specifies task to be launched as external process for data processing
+type DataProcessorTask struct {
+	// items contains named sections of various parameters. Each section is represented as a slice.
+	items map[string][]string `json:"items,omitempty" yaml:"items,omitempty"`
+	// status represents status of the data processor task
+	status Status `json:"status,omitempty" yaml:"status,omitempty"`
+
+	// rootDir specifies name of the root directory in case dirs have nested structure
+	rootDir string `json:"root,omitempty" yaml:"root,omitempty"`
+	// taskFile specifies path/name where to/from serialize/un-serialize a task
+	taskFile string `json:"task,omitempty" yaml:"task,omitempty"`
+	// format specifies DataProcessorTask serialization formats
+	format Format `json:"-" yaml:"-"`
 }
 
 // DataProcessorTaskFile defines what DataProcessorTask file should be used.
@@ -80,10 +87,11 @@ type DataProcessorTask struct {
 // rootCmd.PersistentFlags().StringVar(&data_processor_task.DataProcessorTaskFile, "task", "", "DataProcessorTask file")
 var DataProcessorTaskFile string
 
-// Task is the DataProcessorTask read from DataProcessorTaskFile
+// Task is the DataProcessorTask un-serialized from DataProcessorTaskFile
+// It has to be exported var in order to be used in external modules to access the Task specification
 var Task *DataProcessorTask
 
-// ReadIn reads the DataProcessorTask read from DataProcessorTaskFile
+// ReadIn reads/un-serializes the DataProcessorTask from DataProcessorTaskFile
 func ReadIn() {
 	if DataProcessorTaskFile == "" {
 		// No task file specified
@@ -100,10 +108,10 @@ func ReadIn() {
 	// Task read successfully
 }
 
-// New
+// New creates new task
 func New() *DataProcessorTask {
 	return &DataProcessorTask{
-		Format: Unknown,
+		format: Unknown,
 	}
 }
 
@@ -112,10 +120,10 @@ func (t *DataProcessorTask) ensureItems() map[string][]string {
 	if t == nil {
 		return nil
 	}
-	if t.Items == nil {
-		t.Items = make(map[string][]string)
+	if t.items == nil {
+		t.items = make(map[string][]string)
 	}
-	return t.Items
+	return t.items
 }
 
 // CreateTempDir
@@ -123,24 +131,34 @@ func (t *DataProcessorTask) CreateTempDir(dir, pattern string) *DataProcessorTas
 	// Create root folder
 	root, err := ioutil.TempDir(dir, pattern)
 	if err != nil {
+		return t
 	}
 	if _, err := os.Stat(root); os.IsNotExist(err) {
+		return t
 	}
 
 	// Create sub-folders
-	config := filepath.Join(root, "config")
-	input := filepath.Join(root, "input")
-	output := filepath.Join(root, "output")
-
-	_ = os.Mkdir(config, 0700)
-	_ = os.Mkdir(input, 0700)
-	_ = os.Mkdir(output, 0700)
+	config := filepath.Join(root, ConfigDirName)
+	input := filepath.Join(root, InputDirName)
+	output := filepath.Join(root, OutputDirName)
+	if err := os.Mkdir(config, 0700); err != nil {
+		return t
+	}
+	if err := os.Mkdir(input, 0700); err != nil {
+		return t
+	}
+	if err := os.Mkdir(output, 0700); err != nil {
+		return t
+	}
 
 	if _, err := os.Stat(config); os.IsNotExist(err) {
+		return t
 	}
 	if _, err := os.Stat(input); os.IsNotExist(err) {
+		return t
 	}
 	if _, err := os.Stat(output); os.IsNotExist(err) {
+		return t
 	}
 
 	// Setup folders in the task
@@ -157,7 +175,7 @@ func (t *DataProcessorTask) GetRootDir() string {
 	if t == nil {
 		return ""
 	}
-	return t.RootDir
+	return t.rootDir
 }
 
 // SetRootDir
@@ -165,7 +183,7 @@ func (t *DataProcessorTask) SetRootDir(dir string) *DataProcessorTask {
 	if t == nil {
 		return nil
 	}
-	t.RootDir = dir
+	t.rootDir = dir
 	return t
 }
 
@@ -174,7 +192,7 @@ func (t *DataProcessorTask) GetTaskFile() string {
 	if t == nil {
 		return ""
 	}
-	return t.TaskFile
+	return t.taskFile
 }
 
 // SetTaskFile
@@ -182,7 +200,7 @@ func (t *DataProcessorTask) SetTaskFile(file string) *DataProcessorTask {
 	if t == nil {
 		return nil
 	}
-	t.TaskFile = file
+	t.taskFile = file
 	return t
 }
 
@@ -192,10 +210,10 @@ func (t *DataProcessorTask) Exists(section string) bool {
 	if t == nil {
 		return false
 	}
-	if t.Items == nil {
+	if t.items == nil {
 		return false
 	}
-	_, ok := t.Items[section]
+	_, ok := t.items[section]
 	return ok
 }
 
@@ -210,12 +228,12 @@ func (t *DataProcessorTask) Sections() []string {
 	if t == nil {
 		return nil
 	}
-	if t.Items == nil {
+	if t.items == nil {
 		return nil
 	}
 
 	var sections []string
-	for section := range t.Items {
+	for section := range t.items {
 		sections = append(sections, section)
 	}
 	return sections
@@ -232,7 +250,7 @@ func (t *DataProcessorTask) Walk(f func(section string, items []string) error) *
 // GetAll gets all entities of a section
 func (t *DataProcessorTask) GetAll(section string) []string {
 	if t.Exists(section) {
-		return t.Items[section]
+		return t.items[section]
 	}
 	return nil
 }
@@ -261,7 +279,7 @@ func (t *DataProcessorTask) Get(section string, defaultValue ...string) string {
 // Delete deletes a section
 func (t *DataProcessorTask) Delete(section string) *DataProcessorTask {
 	if t.Exists(section) {
-		delete(t.Items, section)
+		delete(t.items, section)
 	}
 	return t
 }
@@ -275,7 +293,7 @@ func (t *DataProcessorTask) Add(section string, items ...string) *DataProcessorT
 		return t
 	}
 	t.ensureItems()
-	t.Items[section] = append(t.Items[section], items...)
+	t.items[section] = append(t.items[section], items...)
 	return t
 }
 
@@ -448,12 +466,12 @@ func (t *DataProcessorTask) AddOutputTable(table ...string) *DataProcessorTask {
 
 // GetStatus gets status of the task
 func (t *DataProcessorTask) GetStatus() int32 {
-	return t.Status.Status
+	return t.status.status
 }
 
 // GetErrors gets slice of errors reported by the task
 func (t *DataProcessorTask) GetErrors() []string {
-	return t.Status.Errors
+	return t.status.errors
 }
 
 // GetFormat gets format to serialize DataProcessorTask to
@@ -461,7 +479,7 @@ func (t *DataProcessorTask) GetFormat() Format {
 	if t == nil {
 		return Unknown
 	}
-	return t.Format
+	return t.format
 }
 
 // SetFormat sets format to serialize DataProcessorTask to
@@ -469,7 +487,7 @@ func (t *DataProcessorTask) SetFormat(format Format) *DataProcessorTask {
 	if t == nil {
 		return nil
 	}
-	t.Format = format
+	t.format = format
 	return t
 }
 
@@ -489,7 +507,7 @@ func (t *DataProcessorTask) Marshal() (out []byte, err error) {
 	if t == nil {
 		return nil, fmt.Errorf("unable to marshal nil")
 	}
-	switch t.Format {
+	switch t.format {
 	case YAML:
 		return yaml.Marshal(t)
 	case JSON:
@@ -503,7 +521,7 @@ func (t *DataProcessorTask) Unmarshal(in []byte) (err error) {
 	if t == nil {
 		return fmt.Errorf("unable to unmarshal into nil")
 	}
-	switch t.Format {
+	switch t.format {
 	case YAML:
 		return yaml.Unmarshal(in, t)
 	case JSON:

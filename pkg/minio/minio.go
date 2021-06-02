@@ -35,7 +35,7 @@ import (
 
 var errorNotConnected = fmt.Errorf("minio is not connected")
 
-// MinIO
+// MinIO specifies MinIO/S3 access structure
 type MinIO struct {
 	Endpoint        string
 	Secure          bool
@@ -87,7 +87,7 @@ func NewMinIO(
 	return min, err
 }
 
-// NewMinIOFromConfig
+// NewMinIOFromConfig creates new MinIO from config
 func NewMinIOFromConfig(cfg sections.MinIOConfigurator) (*MinIO, error) {
 	return NewMinIO(
 		cfg.GetMinIOEndpoint(),
@@ -98,7 +98,7 @@ func NewMinIOFromConfig(cfg sections.MinIOConfigurator) (*MinIO, error) {
 	)
 }
 
-// Put
+// Put creates specified object from the reader
 func (m *MinIO) Put(bucketName, objectName string, reader io.Reader) (int64, error) {
 	if m.client == nil {
 		return 0, errorNotConnected
@@ -114,18 +114,18 @@ func (m *MinIO) Put(bucketName, objectName string, reader io.Reader) (int64, err
 	return m.client.PutObjectWithContext(ctx, bucketName, objectName, reader, size, options)
 }
 
-// PutA
+// PutA creates specified object from the reader
 func (m *MinIO) PutA(addr *atlas.S3Address, reader io.Reader) (int64, error) {
 	return m.Put(addr.Bucket, addr.Object, reader)
 }
 
-// PutUUID
+// PutUUID creates object in specified bucket named by generated UUID from the reader
 func (m *MinIO) PutUUID(bucketName string, reader io.Reader) (string, int64, error) {
 	target, n, err := m.PutUUIDA(bucketName, reader)
 	return target.Object, n, err
 }
 
-// PutUUIDA
+// PutUUIDA creates object in specified bucket named by generated UUID from the reader
 func (m *MinIO) PutUUIDA(bucketName string, reader io.Reader) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
@@ -135,7 +135,7 @@ func (m *MinIO) PutUUIDA(bucketName string, reader io.Reader) (*atlas.S3Address,
 	return target, n, err
 }
 
-// FPut
+// FPut creates specified object from the file
 func (m *MinIO) FPut(bucketName, objectName, fileName string) (int64, error) {
 	if m.client == nil {
 		return 0, errorNotConnected
@@ -149,18 +149,18 @@ func (m *MinIO) FPut(bucketName, objectName, fileName string) (int64, error) {
 	return m.client.FPutObjectWithContext(ctx, bucketName, objectName, fileName, options)
 }
 
-// FPutA
+// FPutA creates specified object from the file
 func (m *MinIO) FPutA(addr *atlas.S3Address, fileName string) (int64, error) {
 	return m.FPut(addr.Bucket, addr.Object, fileName)
 }
 
-// FPutUUID
+// FPutUUID creates object in specified bucket named by generated UUID from the file
 func (m *MinIO) FPutUUID(bucketName, fileName string) (string, int64, error) {
 	target, n, err := m.FPutUUIDA(bucketName, fileName)
 	return target.Object, n, err
 }
 
-// FPutUUIDA
+// FPutUUIDA creates object in specified bucket named by generated UUID from the file
 func (m *MinIO) FPutUUIDA(bucketName, fileName string) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
@@ -170,7 +170,7 @@ func (m *MinIO) FPutUUIDA(bucketName, fileName string) (*atlas.S3Address, int64,
 	return target, n, err
 }
 
-// Get
+// Get returns reader for specified object
 func (m *MinIO) Get(bucketName, objectName string) (io.Reader, error) {
 	if m.client == nil {
 		return nil, errorNotConnected
@@ -182,12 +182,12 @@ func (m *MinIO) Get(bucketName, objectName string) (io.Reader, error) {
 	return m.client.GetObjectWithContext(ctx, bucketName, objectName, opts)
 }
 
-// GetA
+// GetA returns reader for specified object
 func (m *MinIO) GetA(addr *atlas.S3Address) (io.Reader, error) {
 	return m.Get(addr.Bucket, addr.Object)
 }
 
-// FGet
+// FGet downloads specified object into specified file
 func (m *MinIO) FGet(bucketName, objectName, fileName string) error {
 	if m.client == nil {
 		return errorNotConnected
@@ -199,12 +199,13 @@ func (m *MinIO) FGet(bucketName, objectName, fileName string) error {
 	return m.client.FGetObjectWithContext(ctx, bucketName, objectName, fileName, opts)
 }
 
-// FGetA
+// FGetA downloads specified object into specified file
 func (m *MinIO) FGetA(addr *atlas.S3Address, fileName string) error {
 	return m.FGet(addr.Bucket, addr.Object, fileName)
 }
 
-// FGetTempFile
+// FGetTempFile downloads specified object into temp file created in specified dir with name pattern
+// See ioutil.TempFile() for more into about dir and name pattern
 func (m *MinIO) FGetTempFile(bucketName, objectName, dir, pattern string) (string, error) {
 	r, err := m.Get(bucketName, objectName)
 	if err != nil {
@@ -229,12 +230,13 @@ func (m *MinIO) FGetTempFile(bucketName, objectName, dir, pattern string) (strin
 	return f.Name(), nil
 }
 
-// FGetTempFileA
+// FGetTempFileA downloads specified object into temp file created in specified dir with name pattern
+// See ioutil.TempFile() for more into about dir and name pattern
 func (m *MinIO) FGetTempFileA(addr *atlas.S3Address, dir, pattern string) (string, error) {
 	return m.FGetTempFile(addr.Bucket, addr.Object, dir, pattern)
 }
 
-// Remove
+// Remove removes specified object
 func (m *MinIO) Remove(bucketName, objectName string) error {
 	if m.client == nil {
 		return errorNotConnected
@@ -243,12 +245,12 @@ func (m *MinIO) Remove(bucketName, objectName string) error {
 	return m.client.RemoveObject(bucketName, objectName)
 }
 
-// RemoveA
+// RemoveA removes specified object
 func (m *MinIO) RemoveA(addr *atlas.S3Address) error {
 	return m.Remove(addr.Bucket, addr.Object)
 }
 
-// Copy
+// Copy copies specified src object into specified dst object
 func (m *MinIO) Copy(dstBucketName, dstObjectName, srcBucketName, srcObjectName string) error {
 	if m.client == nil {
 		return errorNotConnected
@@ -263,7 +265,12 @@ func (m *MinIO) Copy(dstBucketName, dstObjectName, srcBucketName, srcObjectName 
 	return m.client.CopyObject(dst, src)
 }
 
-// Digest
+// CopyA copies specified src object into specified dst object
+func (m *MinIO) CopyA(dst, src *atlas.S3Address) error {
+	return m.Copy(dst.Bucket, dst.Object, src.Bucket, src.Object)
+}
+
+// Digest calculates digest of the specified object
 func (m *MinIO) Digest(bucketName, objectName string, _type atlas.DigestType) (*atlas.Digest, error) {
 	reader, err := m.Get(bucketName, objectName)
 	if err != nil {
@@ -291,17 +298,12 @@ func (m *MinIO) Digest(bucketName, objectName string, _type atlas.DigestType) (*
 	return res, nil
 }
 
-// DigestA
+// DigestA calculates digest of the specified object
 func (m *MinIO) DigestA(addr *atlas.S3Address, _type atlas.DigestType) (*atlas.Digest, error) {
 	return m.Digest(addr.Bucket, addr.Object, _type)
 }
 
-// CopyA
-func (m *MinIO) CopyA(dst, src *atlas.S3Address) error {
-	return m.Copy(dst.Bucket, dst.Object, src.Bucket, src.Object)
-}
-
-// ListBuckets
+// ListBuckets lists all buckets
 func (m *MinIO) ListBuckets() ([]string, error) {
 	if m.client == nil {
 		return nil, errorNotConnected
@@ -321,7 +323,7 @@ func (m *MinIO) ListBuckets() ([]string, error) {
 	return res, nil
 }
 
-// CreateBucket
+// CreateBucket creates specified bucket
 func (m *MinIO) CreateBucket(bucketName string) error {
 	if m.client == nil {
 		return errorNotConnected
@@ -331,7 +333,7 @@ func (m *MinIO) CreateBucket(bucketName string) error {
 	return m.client.MakeBucket(bucketName, location)
 }
 
-// RemoveBucket
+// RemoveBucket removes specified bucket
 func (m *MinIO) RemoveBucket(bucketName string) error {
 	if m.client == nil {
 		return errorNotConnected
@@ -339,7 +341,7 @@ func (m *MinIO) RemoveBucket(bucketName string) error {
 	return m.client.RemoveBucket(bucketName)
 }
 
-// List n objects from a bucket with a prefix.
+// List at max n objects from a bucket having specified name prefix.
 func (m *MinIO) List(bucket, prefix string, n int) ([]minio.ObjectInfo, error) {
 	var res []minio.ObjectInfo
 

@@ -50,7 +50,8 @@ func New(args ...string) *Runner {
 	return NewWithName(name, args...)
 }
 
-// NewWithName creates new cmdrunner having name explicitly specified
+// NewWithName creates new runner having name and args explicitly separated
+// as in github.com/go-cmd/cmd
 func NewWithName(name string, args ...string) *Runner {
 	return &Runner{
 		name: name,
@@ -58,7 +59,7 @@ func NewWithName(name string, args ...string) *Runner {
 	}
 }
 
-// Run
+// Run runs command with options
 func (r *Runner) Run(options *Options) exe.Status {
 	log.Infof("Run() - start")
 	defer log.Infof("Run() - end")

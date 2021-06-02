@@ -18,7 +18,7 @@ package atlas
 // Wrap metadata
 //
 
-// GetType gets command type
+// GetType gets task type
 func (m *Task) GetType() int32 {
 	return m.GetHeader().GetType()
 }
@@ -29,7 +29,7 @@ func (m *Task) SetType(_type int32) *Task {
 	return m
 }
 
-// GetName gets command name
+// GetName gets task name
 func (m *Task) GetName() string {
 	return m.GetHeader().GetName()
 }
@@ -79,7 +79,7 @@ func (m *Task) GetReferenceUUIDAsString() string {
 
 // SetReferenceUUID
 func (m *Task) SetReferenceUUID(uuid *UUID) *Task {
-	m.GetHeader().SetUUID(uuid)
+	m.GetHeader().EnsureAddresses().Set(DomainReference, DomainUUID, uuid)
 	return m
 }
 

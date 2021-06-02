@@ -146,7 +146,7 @@ func (m *Metadata) SetTimestamp(seconds int64, nanos int32) *Metadata {
 	return m
 }
 
-// CreateTimestamp
+// CreateTimestamp creates current timestamp
 func (m *Metadata) CreateTimestamp() *Metadata {
 	now := time.Now()
 	seconds := now.Unix()           // seconds since 1970
@@ -251,5 +251,5 @@ func (m *Metadata) Log() {
 
 // String
 func (m *Metadata) String() string {
-	return "no be implemented"
+	return "to be implemented"
 }

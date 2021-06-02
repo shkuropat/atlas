@@ -20,6 +20,9 @@ var (
 	DomainSrc       = NewDomain().Set("src")
 	DomainDst       = NewDomain().Set("dst")
 	DomainReference = NewDomain().Set("reference")
+	DomainContext   = NewDomain().Set("context")
+	DomainTask      = NewDomain().Set("task")
+	DomainParent    = NewDomain().Set("parent")
 	// Most popular predefined nested domains
 	DomainS3           = NewDomain().Set("s3")
 	DomainKafka        = NewDomain().Set("kafka")
