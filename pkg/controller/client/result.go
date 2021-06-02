@@ -48,3 +48,10 @@ type DataExchangeResult struct {
 func NewDataExchangeResult() *DataExchangeResult {
 	return &DataExchangeResult{}
 }
+
+// NewDataExchangeResultError
+func NewDataExchangeResultError(err error) *DataExchangeResult {
+	res := NewDataExchangeResult()
+	res.Err = err
+	return res
+}

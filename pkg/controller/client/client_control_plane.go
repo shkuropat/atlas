@@ -119,8 +119,8 @@ func DataExchange(
 // Upload send data to server and receives back status(es)
 func Upload(
 	ControlPlaneClient atlas.ControlPlaneClient,
-	options *DataExchangeOptions,
 	src io.Reader,
+	options *DataExchangeOptions,
 ) *DataExchangeResult {
 	log.Infof("DataExchange() - start")
 	defer log.Infof("DataExchange() - end")
