@@ -38,10 +38,11 @@ type OAuth struct {
 }
 
 // OAuthNormalize
-func (c OAuth) OAuthNormalize() {
+func (c OAuth) OAuthNormalize() OAuth {
 	if c.OAuth == nil {
 		c.OAuth = items.NewOAuth()
 	}
+	return c
 }
 
 // GetOAuthEnabled

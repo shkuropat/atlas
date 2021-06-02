@@ -33,10 +33,11 @@ type Service struct {
 }
 
 // ServiceNormalize
-func (c Service) ServiceNormalize() {
+func (c Service) ServiceNormalize() Service {
 	if c.Service == nil {
 		c.Service = items.NewService()
 	}
+	return c
 }
 
 // GetServiceAddress

@@ -34,10 +34,11 @@ type Log struct {
 }
 
 // LogNormalize
-func (c Log) LogNormalize() {
+func (c Log) LogNormalize() Log {
 	if c.Log == nil {
 		c.Log = items.NewLog()
 	}
+	return c
 }
 
 // GetLogLevel

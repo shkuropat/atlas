@@ -35,10 +35,11 @@ type TLS struct {
 }
 
 // TLSNormalize
-func (c TLS) TLSNormalize() {
+func (c TLS) TLSNormalize() TLS {
 	if c.TLS == nil {
 		c.TLS = items.NewTLS()
 	}
+	return c
 }
 
 // GetTLSEnabled

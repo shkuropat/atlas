@@ -38,10 +38,11 @@ type MinIO struct {
 }
 
 // MinIONormalize
-func (c MinIO) MinIONormalize() {
+func (c MinIO) MinIONormalize() MinIO {
 	if c.MinIO == nil {
 		c.MinIO = items.NewMinIO()
 	}
+	return c
 }
 
 // GetMinIOEndpoint

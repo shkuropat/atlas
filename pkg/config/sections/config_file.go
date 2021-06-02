@@ -33,10 +33,11 @@ type ConfigFile struct {
 }
 
 // ConfigFileNormalize
-func (c ConfigFile) ConfigFileNormalize() {
+func (c ConfigFile) ConfigFileNormalize() ConfigFile {
 	if c.ConfigFile == nil {
 		c.ConfigFile = items.NewFile()
 	}
+	return c
 }
 
 // GetConfigFile

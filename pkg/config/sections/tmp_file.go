@@ -34,10 +34,11 @@ type TmpFile struct {
 }
 
 // TmpFileNormalize
-func (c TmpFile) TmpFileNormalize() {
+func (c TmpFile) TmpFileNormalize() TmpFile {
 	if c.TmpFile == nil {
 		c.TmpFile = items.NewTmpItem()
 	}
+	return c
 }
 
 // GetTmpFileDir

@@ -33,10 +33,11 @@ type ClickHouse struct {
 }
 
 // ClickHouseNormalize
-func (c ClickHouse) ClickHouseNormalize() {
+func (c ClickHouse) ClickHouseNormalize() ClickHouse {
 	if c.ClickHouse == nil {
 		c.ClickHouse = items.NewClickHouse()
 	}
+	return c
 }
 
 // GetClickHouseEndpoint

@@ -34,10 +34,11 @@ type TmpDir struct {
 }
 
 // TmpDirNormalize
-func (c TmpDir) TmpDirNormalize() {
+func (c TmpDir) TmpDirNormalize() TmpDir {
 	if c.TmpDir == nil {
 		c.TmpDir = items.NewTmpItem()
 	}
+	return c
 }
 
 // GetTmpDirDir

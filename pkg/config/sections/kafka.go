@@ -39,10 +39,11 @@ type Kafka struct {
 }
 
 // KafkaNormalize
-func (c Kafka) KafkaNormalize() {
+func (c Kafka) KafkaNormalize() Kafka {
 	if c.Kafka == nil {
 		c.Kafka = items.NewKafka()
 	}
+	return c
 }
 
 // GetKafkaEndpoint

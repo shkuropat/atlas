@@ -38,10 +38,11 @@ type Command struct {
 }
 
 // CommandNormalize
-func (c Command) CommandNormalize() {
+func (c Command) CommandNormalize() Command {
 	if c.Command == nil {
 		c.Command = items.NewCommand()
 	}
+	return c
 }
 
 // GetCommandArgs
