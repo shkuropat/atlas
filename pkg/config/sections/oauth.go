@@ -15,6 +15,7 @@
 package sections
 
 import (
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
@@ -71,4 +72,9 @@ func (c OAuth) GetOAuthRegisterURL() string {
 // GetOAuthInitialAccessToken
 func (c OAuth) GetOAuthInitialAccessToken() string {
 	return c.OAuth.GetInitialAccessToken()
+}
+
+// String
+func (c OAuth) String() string {
+	return fmt.Sprintf("OAuth=%s", c.OAuth)
 }

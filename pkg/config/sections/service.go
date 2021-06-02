@@ -15,6 +15,7 @@
 package sections
 
 import (
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
@@ -41,4 +42,9 @@ func (c Service) ServiceNormalize() {
 // GetServiceAddress
 func (c Service) GetServiceAddress() string {
 	return c.Service.GetAddress()
+}
+
+// String
+func (c Service) String() string {
+	return fmt.Sprintf("Service=%s", c.Service)
 }

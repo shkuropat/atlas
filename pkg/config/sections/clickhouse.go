@@ -14,7 +14,10 @@
 
 package sections
 
-import "github.com/binarly-io/atlas/pkg/config/items"
+import (
+	"fmt"
+	"github.com/binarly-io/atlas/pkg/config/items"
+)
 
 // ClickHouseConfigurator
 type ClickHouseConfigurator interface {
@@ -39,4 +42,9 @@ func (c ClickHouse) ClickHouseNormalize() {
 // GetClickHouseEndpoint
 func (c ClickHouse) GetClickHouseEndpoint() string {
 	return c.ClickHouse.GetEndpoint()
+}
+
+// String
+func (c ClickHouse) String() string {
+	return fmt.Sprintf("ClickHouse=%s", c.ClickHouse)
 }

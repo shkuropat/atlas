@@ -15,6 +15,7 @@
 package sections
 
 import (
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
@@ -47,4 +48,9 @@ func (c Log) GetLogLevel() string {
 // GetLogFormatter
 func (c Log) GetLogFormatter() string {
 	return c.Log.GetFormatter()
+}
+
+// String
+func (c Log) String() string {
+	return fmt.Sprintf("Log=%s", c.Log)
 }

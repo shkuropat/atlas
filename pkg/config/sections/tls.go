@@ -15,6 +15,7 @@
 package sections
 
 import (
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
@@ -53,4 +54,9 @@ func (c TLS) GetTLSCAFile() string {
 // GetTLSServerHostOverride
 func (c TLS) GetTLSServerHostOverride() string {
 	return c.TLS.GetServerHostOverride()
+}
+
+// String
+func (c TLS) String() string {
+	return fmt.Sprintf("TLS=%s", c.TLS)
 }

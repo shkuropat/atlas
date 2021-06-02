@@ -14,7 +14,10 @@
 
 package sections
 
-import "github.com/binarly-io/atlas/pkg/config/items"
+import (
+	"fmt"
+	"github.com/binarly-io/atlas/pkg/config/items"
+)
 
 // ConfigFileConfigurator
 type ConfigFileConfigurator interface {
@@ -39,4 +42,9 @@ func (c ConfigFile) ConfigFileNormalize() {
 // GetConfigFile
 func (c ConfigFile) GetConfigFile() string {
 	return c.ConfigFile.GetFile()
+}
+
+// String
+func (c ConfigFile) String() string {
+	return fmt.Sprintf("ConfigFile=%s", c.ConfigFile)
 }

@@ -15,6 +15,7 @@
 package sections
 
 import (
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/config/items"
 	"github.com/binarly-io/atlas/pkg/macros"
 	"strings"
@@ -61,4 +62,9 @@ func (c Command) ParseCommandLines(macro *macros.Expander) []string {
 // ParseCommand
 func (c Command) ParseCommand(macro *macros.Expander) string {
 	return strings.Join(c.ParseCommandLines(macro), " ")
+}
+
+// String
+func (c Command) String() string {
+	return fmt.Sprintf("Command=%s", c.Command)
 }

@@ -15,6 +15,7 @@
 package sections
 
 import (
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/config/items"
 )
 
@@ -47,4 +48,9 @@ func (c TmpDir) GetTmpDirDir() string {
 // GetTmpDirPattern
 func (c TmpDir) GetTmpDirPattern() string {
 	return c.TmpDir.GetPattern()
+}
+
+// String
+func (c TmpDir) String() string {
+	return fmt.Sprintf("TmpDir=%s", c.TmpDir)
 }

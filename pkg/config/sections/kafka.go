@@ -15,6 +15,7 @@
 package sections
 
 import (
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/config/items"
 )
@@ -72,4 +73,9 @@ func (c Kafka) GetKafkaReadNewest() bool {
 // GetKafkaAck
 func (c Kafka) GetKafkaAck() bool {
 	return c.Kafka.GetAck()
+}
+
+// String
+func (c Kafka) String() string {
+	return fmt.Sprintf("Kafka=%s", c.Kafka)
 }

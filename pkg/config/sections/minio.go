@@ -14,7 +14,10 @@
 
 package sections
 
-import "github.com/binarly-io/atlas/pkg/config/items"
+import (
+	"fmt"
+	"github.com/binarly-io/atlas/pkg/config/items"
+)
 
 // MinIOConfigurator
 type MinIOConfigurator interface {
@@ -69,4 +72,9 @@ func (c MinIO) GetMinIOInsecureSkipVerify() bool {
 // GetMinIOBucket
 func (c MinIO) GetMinIOBucket() string {
 	return c.MinIO.GetBucket()
+}
+
+// String
+func (c MinIO) String() string {
+	return fmt.Sprintf("MinIO=%s", c.MinIO)
 }
