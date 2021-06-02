@@ -45,7 +45,7 @@ func (f *File) GetFile() string {
 // String
 func (f *File) String() string {
 	if f == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}

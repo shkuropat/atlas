@@ -63,7 +63,7 @@ func (t *TLS) GetServerHostOverride() string {
 // String
 func (t *TLS) String() string {
 	if t == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}

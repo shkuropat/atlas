@@ -47,7 +47,7 @@ func (c *ClickHouse) GetEndpoint() string {
 // String
 func (c *ClickHouse) String() string {
 	if c == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}

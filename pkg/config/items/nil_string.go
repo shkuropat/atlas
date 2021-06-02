@@ -14,44 +14,6 @@
 
 package items
 
-import (
-	"bytes"
-	"fmt"
-	"strings"
+const (
+	nilString = "nil-string"
 )
-
-// IMPORTANT
-// IMPORTANT Do not forget to update String() function
-// IMPORTANT
-type Command struct {
-	Lines []string `mapstructure:"command"`
-	// IMPORTANT
-	// IMPORTANT Do not forget to update String() function
-	// IMPORTANT
-}
-
-// NewCommand
-func NewCommand() *Command {
-	return new(Command)
-}
-
-// GetLines
-func (c *Command) GetLines() []string {
-	if c == nil {
-		return nil
-	}
-	return c.Lines
-}
-
-// String
-func (c *Command) String() string {
-	if c == nil {
-		return nilString
-	}
-
-	b := &bytes.Buffer{}
-
-	_, _ = fmt.Fprintf(b, strings.Join(c.Lines, " "))
-
-	return b.String()
-}

@@ -93,7 +93,7 @@ func (m *MinIO) GetBucket() string {
 // String
 func (m *MinIO) String() string {
 	if m == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}

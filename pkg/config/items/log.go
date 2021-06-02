@@ -54,7 +54,7 @@ func (l *Log) GetFormatter() string {
 // String
 func (l *Log) String() string {
 	if l == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}

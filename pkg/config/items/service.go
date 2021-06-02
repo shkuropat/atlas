@@ -45,7 +45,7 @@ func (s *Service) GetAddress() string {
 // String
 func (s *Service) String() string {
 	if s == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}

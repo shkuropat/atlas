@@ -88,7 +88,7 @@ func (k *Kafka) GetAck() bool {
 // String
 func (k *Kafka) String() string {
 	if k == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}

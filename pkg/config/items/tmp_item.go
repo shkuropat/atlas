@@ -56,7 +56,7 @@ func (i *TmpItem) GetPattern() string {
 // String
 func (i *TmpItem) String() string {
 	if i == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}

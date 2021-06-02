@@ -92,7 +92,7 @@ func (o *OAuth) GetInitialAccessToken() string {
 // String
 func (o *OAuth) String() string {
 	if o == nil {
-		return ""
+		return nilString
 	}
 
 	b := &bytes.Buffer{}
