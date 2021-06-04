@@ -69,7 +69,7 @@ func (e *JournalEntry) String() string {
 	_, _ = fmt.Fprintf(b, "Time:%s\n", e.Time)
 	_, _ = fmt.Fprintf(b, "StartTime:%s\n", e.StartTime)
 
-	_, _ = fmt.Fprintf(b, "EndpointID:%d", e.EndpointID)
+	_, _ = fmt.Fprintf(b, "EndpointID:%d\n", e.EndpointID)
 	_, _ = fmt.Fprintf(b, "SourceID:%s\n", e.SourceID)
 	_, _ = fmt.Fprintf(b, "ContextID:%s\n", e.ContextID)
 	_, _ = fmt.Fprintf(b, "TaskID:%s\n", e.TaskID)

@@ -15,6 +15,7 @@
 package trail
 
 import (
+	"fmt"
 	"time"
 
 	_ "github.com/mailru/go-clickhouse"
@@ -46,6 +47,10 @@ func NewJournalBase(endpointID int32, adapter Adapter) (*JournalBase, error) {
 
 // SetContext
 func (j *JournalBase) SetContext(ctx Contexter) Journaller {
+	fmt.Println(fmt.Sprintf("SetContext. UUID=%s\n", ctx.GetUUID()))
+	if j == nil {
+		return nil
+	}
 	j.ctx = ctx
 	return j
 }
@@ -73,11 +78,17 @@ func (j *JournalBase) NewEntry(entryType int32) *JournalEntry {
 
 // Insert
 func (j *JournalBase) Insert(entry *JournalEntry) error {
+	if j == nil {
+		return fmt.Errorf("unable to unsert into nil")
+	}
 	return j.adapter.Insert(entry)
 }
 
 // FindAll
 func (j *JournalBase) FindAll(entry *JournalEntry) ([]*JournalEntry, error) {
+	if j == nil {
+		return nil, fmt.Errorf("unable to find over nil")
+	}
 	return j.adapter.FindAll(entry)
 }
 
