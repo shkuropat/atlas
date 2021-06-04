@@ -23,7 +23,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/config/sections"
-	"github.com/binarly-io/atlas/pkg/trail"
+	"github.com/binarly-io/atlas/pkg/journal/base"
 )
 
 // JournalClickHouse
@@ -32,7 +32,7 @@ type AdapterClickHouse struct {
 }
 
 // Validate interface compatibility
-var _ trail.Adapter = &AdapterClickHouse{}
+var _ base.Adapter = &AdapterClickHouse{}
 
 // NewAdapterClickHouseConfig
 func NewAdapterClickHouseConfig(cfg sections.ClickHouseConfigurator) (*AdapterClickHouse, error) {
@@ -67,7 +67,7 @@ func NewAdapterClickHouse(dsn string) (*AdapterClickHouse, error) {
 }
 
 // Insert
-func (j *AdapterClickHouse) Insert(entry *trail.JournalEntry) error {
+func (j *AdapterClickHouse) Insert(entry *base.Entry) error {
 	e := NewAdapterEntryClickHouse().Import(entry)
 	sql := heredoc.Docf(`
 		INSERT INTO api_journal (
@@ -107,7 +107,7 @@ func (j *AdapterClickHouse) Insert(entry *trail.JournalEntry) error {
 }
 
 // FindAll
-func (j *AdapterClickHouse) FindAll(entry *trail.JournalEntry) ([]*trail.JournalEntry, error) {
+func (j *AdapterClickHouse) FindAll(entry *base.Entry) ([]*base.Entry, error) {
 	e := NewAdapterEntryClickHouseSearch().Import(entry)
 	placeholder, args := e.StmtSearchParamsPlaceholderAndArgs()
 	sql := heredoc.Doc(
@@ -131,7 +131,7 @@ func (j *AdapterClickHouse) FindAll(entry *trail.JournalEntry) ([]*trail.Journal
 	}
 	defer rows.Close()
 
-	var res []*trail.JournalEntry
+	var res []*base.Entry
 	for rows.Next() {
 		var ce AdapterEntryClickHouse
 		if err := rows.Scan(

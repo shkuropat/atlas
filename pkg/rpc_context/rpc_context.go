@@ -18,14 +18,14 @@ import (
 	"github.com/dgrijalva/jwt-go"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/trail"
+	"github.com/binarly-io/atlas/pkg/journal/base"
 )
 
 // RPCContext
 type RPCContext struct {
 	metadata *atlas.Metadata
 	claims   jwt.MapClaims
-	journal  trail.Journaller
+	journal  base.Journaller
 }
 
 // New
@@ -45,7 +45,7 @@ func (c *RPCContext) SetClaims(claims jwt.MapClaims) *RPCContext {
 }
 
 // GetJournal
-func (c *RPCContext) GetJournal() trail.Journaller {
+func (c *RPCContext) GetJournal() base.Journaller {
 	if c == nil {
 		return nil
 	}
@@ -53,7 +53,7 @@ func (c *RPCContext) GetJournal() trail.Journaller {
 }
 
 // SetJournal
-func (c *RPCContext) SetJournal(j trail.Journaller) *RPCContext {
+func (c *RPCContext) SetJournal(j base.Journaller) *RPCContext {
 	if c == nil {
 		return nil
 	}
@@ -95,7 +95,7 @@ func (c *RPCContext) GetName() string {
 	return c.metadata.GetName()
 }
 
-// SetID
+// SetUUID
 func (c *RPCContext) SetUUID(id *atlas.UUID) *RPCContext {
 	if c == nil {
 		return nil
@@ -104,7 +104,7 @@ func (c *RPCContext) SetUUID(id *atlas.UUID) *RPCContext {
 	return c
 }
 
-// SetIDFromString
+// SetCallUUIDFromString
 func (c *RPCContext) SetCallUUIDFromString(id string) *RPCContext {
 	if c == nil {
 		return nil
@@ -113,7 +113,7 @@ func (c *RPCContext) SetCallUUIDFromString(id string) *RPCContext {
 	return c
 }
 
-// GetID
+// GetUUID
 func (c *RPCContext) GetUUID() *atlas.UUID {
 	if c == nil {
 		return nil
@@ -121,7 +121,7 @@ func (c *RPCContext) GetUUID() *atlas.UUID {
 	return c.metadata.GetUUID()
 }
 
-// GetIDAsString
+// GetUUIDAsString
 func (c *RPCContext) GetUUIDAsString() string {
 	if c == nil {
 		return ""

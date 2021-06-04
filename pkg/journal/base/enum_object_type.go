@@ -12,11 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package base
 
-import "github.com/binarly-io/atlas/pkg/api/atlas"
+import (
+	"github.com/binarly-io/atlas/pkg/api/atlas"
+)
 
-// Contexter
-type Contexter interface {
-	GetUUID() *atlas.UUID
+const (
+	ObjectTypeUnknown int32 = 0
+)
+
+var (
+	ObjectTypeEnum = atlas.NewEnum()
+)
+
+func init() {
+	ObjectTypeEnum.MustRegister("ObjectTypeUnknown", ObjectTypeUnknown)
 }

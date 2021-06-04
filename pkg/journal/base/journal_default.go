@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package base
 
 // JournalDefault provides empty implementations of all interface functions
 type JournalDefault struct {

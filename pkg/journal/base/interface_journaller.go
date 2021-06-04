@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package base
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
@@ -21,12 +21,15 @@ import (
 // Journaller
 type Journaller interface {
 	SetContext(ctx Contexter) Journaller
+	SetTask(task Tasker) Journaller
+	WithContext(ctx Contexter) Journaller
+	WithTask(task Tasker) Journaller
 
 	//
 	// Expose direct access to storage via adapters.
 	// Implement Adapter interface as wrappers over Adapter
 	//
-	NewEntry(action int32) *JournalEntry
+	NewEntry(action int32) *Entry
 	Adapter
 
 	//

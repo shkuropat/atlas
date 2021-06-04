@@ -16,21 +16,22 @@ package clickhouse
 
 import (
 	"fmt"
+	"github.com/binarly-io/atlas/pkg/journal/adapters/clickhouse"
 
 	_ "github.com/mailru/go-clickhouse"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/config/sections"
-	"github.com/binarly-io/atlas/pkg/trail"
+	"github.com/binarly-io/atlas/pkg/journal/base"
 )
 
 // JournalClickHouse
 type JournalClickHouse struct {
-	trail.JournalBase
+	base.JournalBase
 }
 
 // Validate interface compatibility
-var _ trail.Journaller = &JournalClickHouse{}
+var _ base.Journaller = &JournalClickHouse{}
 
 // NewJournalClickHouseConfig
 func NewJournalClickHouseConfig(cfg sections.ClickHouseConfigurator, endpointID int32) (*JournalClickHouse, error) {
@@ -45,11 +46,11 @@ func NewJournalClickHouse(dsn string, endpointID int32) (*JournalClickHouse, err
 		log.Errorf(str)
 		return nil, fmt.Errorf(str)
 	}
-	adapter, err := NewAdapterClickHouse(dsn)
+	adapter, err := clickhouse.NewAdapterClickHouse(dsn)
 	if err != nil {
 		return nil, err
 	}
-	journal, err := trail.NewJournalBase(endpointID, adapter)
+	journal, err := base.NewJournalBase(endpointID, adapter)
 	if err != nil {
 		return nil, err
 	}

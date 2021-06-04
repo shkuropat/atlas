@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package base
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
@@ -20,7 +20,8 @@ import (
 
 // JournalNOP
 type JournalNOP struct {
-	ctx Contexter
+	ctx  Contexter
+	task Tasker
 }
 
 // Validate interface compatibility
@@ -36,18 +37,33 @@ func (j *JournalNOP) SetContext(ctx Contexter) Journaller {
 	return nil
 }
 
+// SetTask
+func (j *JournalNOP) SetTask(task Tasker) Journaller {
+	return nil
+}
+
+// WithContext
+func (j *JournalNOP) WithContext(ctx Contexter) Journaller {
+	return nil
+}
+
+// WithTask
+func (j *JournalNOP) WithTask(task Tasker) Journaller {
+	return nil
+}
+
 // NewEntry
-func (j *JournalNOP) NewEntry(action int32) *JournalEntry {
+func (j *JournalNOP) NewEntry(action int32) *Entry {
 	return nil
 }
 
 // Insert
-func (j *JournalNOP) Insert(entry *JournalEntry) error {
+func (j *JournalNOP) Insert(entry *Entry) error {
 	return nil
 }
 
 // FindAll
-func (j *JournalNOP) FindAll(entry *JournalEntry) ([]*JournalEntry, error) {
+func (j *JournalNOP) FindAll(entry *Entry) ([]*Entry, error) {
 	return nil, nil
 }
 

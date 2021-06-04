@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package base
 
 import (
 	"bytes"
@@ -21,8 +21,8 @@ import (
 	"time"
 )
 
-// JournalEntry defines journal entry structure
-type JournalEntry struct {
+// Entry defines journal entry structure
+type Entry struct {
 	//
 	// Base info tells about the origin of the journal entry
 	//
@@ -59,7 +59,7 @@ type JournalEntry struct {
 }
 
 // String
-func (e *JournalEntry) String() string {
+func (e *Entry) String() string {
 	if e == nil {
 		return "this JE is nil"
 	}
@@ -86,13 +86,13 @@ func (e *JournalEntry) String() string {
 	return b.String()
 }
 
-// NewJournalEntry
-func NewJournalEntry() *JournalEntry {
-	return &JournalEntry{}
+// NewEntry
+func NewEntry() *Entry {
+	return &Entry{}
 }
 
 // SetBaseInfo
-func (e *JournalEntry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, _type int32) *JournalEntry {
+func (e *Entry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, _type int32) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -105,7 +105,7 @@ func (e *JournalEntry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas
 }
 
 // SetEndpointID
-func (e *JournalEntry) SetEndpointID(endpoint int32) *JournalEntry {
+func (e *Entry) SetEndpointID(endpoint int32) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -114,7 +114,7 @@ func (e *JournalEntry) SetEndpointID(endpoint int32) *JournalEntry {
 }
 
 // SetSourceID
-func (e *JournalEntry) SetSourceID(userID *atlas.UserID) *JournalEntry {
+func (e *Entry) SetSourceID(userID *atlas.UserID) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -123,7 +123,7 @@ func (e *JournalEntry) SetSourceID(userID *atlas.UserID) *JournalEntry {
 }
 
 // SetCtxID
-func (e *JournalEntry) SetCtxID(ctxID *atlas.UUID) *JournalEntry {
+func (e *Entry) SetCtxID(ctxID *atlas.UUID) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -132,7 +132,7 @@ func (e *JournalEntry) SetCtxID(ctxID *atlas.UUID) *JournalEntry {
 }
 
 // SetTaskID
-func (e *JournalEntry) SetTaskID(taskID *atlas.UUID) *JournalEntry {
+func (e *Entry) SetTaskID(taskID *atlas.UUID) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -141,7 +141,7 @@ func (e *JournalEntry) SetTaskID(taskID *atlas.UUID) *JournalEntry {
 }
 
 // SetType
-func (e *JournalEntry) SetType(_type int32) *JournalEntry {
+func (e *Entry) SetType(_type int32) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -150,13 +150,13 @@ func (e *JournalEntry) SetType(_type int32) *JournalEntry {
 }
 
 // SetObject
-func (e *JournalEntry) SetObject(
+func (e *Entry) SetObject(
 	objectType int32,
 	address *atlas.Address,
 	size uint64,
 	metadata *atlas.Metadata,
 	data []byte,
-) *JournalEntry {
+) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -169,7 +169,7 @@ func (e *JournalEntry) SetObject(
 }
 
 // SetObjectType
-func (e *JournalEntry) SetObjectType(objectType int32) *JournalEntry {
+func (e *Entry) SetObjectType(objectType int32) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -178,7 +178,7 @@ func (e *JournalEntry) SetObjectType(objectType int32) *JournalEntry {
 }
 
 // SetObjectAddress
-func (e *JournalEntry) SetObjectAddress(address *atlas.Address) *JournalEntry {
+func (e *Entry) SetObjectAddress(address *atlas.Address) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -187,7 +187,7 @@ func (e *JournalEntry) SetObjectAddress(address *atlas.Address) *JournalEntry {
 }
 
 // SetObjectSize
-func (e *JournalEntry) SetObjectSize(size uint64) *JournalEntry {
+func (e *Entry) SetObjectSize(size uint64) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -196,7 +196,7 @@ func (e *JournalEntry) SetObjectSize(size uint64) *JournalEntry {
 }
 
 // SetObjectMetadata
-func (e *JournalEntry) SetObjectMetadata(metadata *atlas.Metadata) *JournalEntry {
+func (e *Entry) SetObjectMetadata(metadata *atlas.Metadata) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -205,7 +205,7 @@ func (e *JournalEntry) SetObjectMetadata(metadata *atlas.Metadata) *JournalEntry
 }
 
 // EnsureObjectMetadata
-func (e *JournalEntry) EnsureObjectMetadata() *atlas.Metadata {
+func (e *Entry) EnsureObjectMetadata() *atlas.Metadata {
 	if e == nil {
 		return nil
 	}
@@ -216,7 +216,7 @@ func (e *JournalEntry) EnsureObjectMetadata() *atlas.Metadata {
 }
 
 // SetObjectData
-func (e *JournalEntry) SetObjectData(data []byte) *JournalEntry {
+func (e *Entry) SetObjectData(data []byte) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -225,7 +225,7 @@ func (e *JournalEntry) SetObjectData(data []byte) *JournalEntry {
 }
 
 // SetError
-func (e *JournalEntry) SetError(err error) *JournalEntry {
+func (e *Entry) SetError(err error) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -234,6 +234,6 @@ func (e *JournalEntry) SetError(err error) *JournalEntry {
 }
 
 // InsertInto inserts entry into a journal
-func (e *JournalEntry) InsertInto(j Journaller) {
+func (e *Entry) InsertInto(j Journaller) {
 	j.Insert(e)
 }

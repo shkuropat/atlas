@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package trail
+package base
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ type JournalBase struct {
 	endpointID int32
 	adapter    Adapter
 
-	JournalDefault
+	JournalNOP
 }
 
 // Validate interface compatibility
@@ -43,6 +43,15 @@ func NewJournalBase(endpointID int32, adapter Adapter) (*JournalBase, error) {
 		endpointID: endpointID,
 		adapter:    adapter,
 	}, nil
+}
+
+// copy
+func (j *JournalBase) copy() *JournalBase {
+	return &JournalBase{
+		start:      j.start,
+		endpointID: j.endpointID,
+		adapter:    j.adapter,
+	}
 }
 
 // SetContext
@@ -71,13 +80,49 @@ func (j *JournalBase) GetContextUUID() *atlas.UUID {
 	return j.GetContext().GetUUID()
 }
 
+// SetTask
+func (j *JournalBase) SetTask(task Tasker) Journaller {
+	fmt.Println(fmt.Sprintf("SetTask. UUID=%s\n", task.GetUUID()))
+	if j == nil {
+		return nil
+	}
+	j.task = task
+	return j
+}
+
+// GetTask
+func (j *JournalBase) GetTask() Tasker {
+	if j == nil {
+		return nil
+	}
+	return j.task
+}
+
+// GetTaskUUID
+func (j *JournalBase) GetTaskUUID() *atlas.UUID {
+	if j.GetTask() == nil {
+		return nil
+	}
+	return j.GetTask().GetUUID()
+}
+
+// WithContext
+func (j *JournalBase) WithContext(ctx Contexter) Journaller {
+	return j.copy().SetContext(ctx)
+}
+
+// WithTask
+func (j *JournalBase) WithTask(task Tasker) Journaller {
+	return j.copy().SetTask(task)
+}
+
 // NewEntry
-func (j *JournalBase) NewEntry(entryType int32) *JournalEntry {
-	return NewJournalEntry().SetBaseInfo(j.start, j.endpointID, j.GetContextUUID(), entryType)
+func (j *JournalBase) NewEntry(entryType int32) *Entry {
+	return NewEntry().SetBaseInfo(j.start, j.endpointID, j.GetContextUUID(), entryType)
 }
 
 // Insert
-func (j *JournalBase) Insert(entry *JournalEntry) error {
+func (j *JournalBase) Insert(entry *Entry) error {
 	if j == nil {
 		return fmt.Errorf("unable to unsert into nil")
 	}
@@ -85,7 +130,7 @@ func (j *JournalBase) Insert(entry *JournalEntry) error {
 }
 
 // FindAll
-func (j *JournalBase) FindAll(entry *JournalEntry) ([]*JournalEntry, error) {
+func (j *JournalBase) FindAll(entry *Entry) ([]*Entry, error) {
 	if j == nil {
 		return nil, fmt.Errorf("unable to find over nil")
 	}
