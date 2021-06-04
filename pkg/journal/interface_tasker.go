@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package base
+package journal
 
-// Adapter
-type Adapter interface {
-	Insert(entry *Entry) error
-	FindAll(entry *Entry) ([]*Entry, error)
+import "github.com/binarly-io/atlas/pkg/api/atlas"
+
+// Tasker
+type Tasker interface {
+	GetUUID() *atlas.UUID
 }

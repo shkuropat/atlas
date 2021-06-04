@@ -12,78 +12,78 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package base
+package journal
 
 import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-// JournalNOP
-type JournalNOP struct {
+// NOPJournal
+type NOPJournal struct {
 	ctx  Contexter
 	task Tasker
 }
 
 // Validate interface compatibility
-var _ Journaller = &JournalNOP{}
+var _ Journaller = &NOPJournal{}
 
-// NewJournalNOP
-func NewJournalNOP() (*JournalNOP, error) {
-	return &JournalNOP{}, nil
+// NewNOPJournal
+func NewNOPJournal() (*NOPJournal, error) {
+	return &NOPJournal{}, nil
 }
 
 // SetContext
-func (j *JournalNOP) SetContext(ctx Contexter) Journaller {
+func (j *NOPJournal) SetContext(ctx Contexter) Journaller {
 	return nil
 }
 
 // SetTask
-func (j *JournalNOP) SetTask(task Tasker) Journaller {
+func (j *NOPJournal) SetTask(task Tasker) Journaller {
 	return nil
 }
 
 // WithContext
-func (j *JournalNOP) WithContext(ctx Contexter) Journaller {
+func (j *NOPJournal) WithContext(ctx Contexter) Journaller {
 	return nil
 }
 
 // WithTask
-func (j *JournalNOP) WithTask(task Tasker) Journaller {
+func (j *NOPJournal) WithTask(task Tasker) Journaller {
 	return nil
 }
 
 // NewEntry
-func (j *JournalNOP) NewEntry(action int32) *Entry {
+func (j *NOPJournal) NewEntry(action int32) *Entry {
 	return nil
 }
 
 // Insert
-func (j *JournalNOP) Insert(entry *Entry) error {
+func (j *NOPJournal) Insert(entry *Entry) error {
 	return nil
 }
 
 // FindAll
-func (j *JournalNOP) FindAll(entry *Entry) ([]*Entry, error) {
+func (j *NOPJournal) FindAll(entry *Entry) ([]*Entry, error) {
 	return nil, nil
 }
 
 // RequestStart journals beginning of the request processing
-func (j *JournalNOP) RequestStart() {
+func (j *NOPJournal) RequestStart() {
 
 }
 
 // RequestCompleted journals request completed successfully
-func (j *JournalNOP) RequestEnd() {
+func (j *NOPJournal) RequestEnd() {
 
 }
 
 // RequestError journals request error
-func (j *JournalNOP) RequestError(callErr error) {
+func (j *NOPJournal) RequestError(callErr error) {
 
 }
 
 // SaveData journals data saved successfully
-func (j *JournalNOP) SaveData(
+func (j *NOPJournal) SaveData(
 	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
@@ -93,12 +93,12 @@ func (j *JournalNOP) SaveData(
 }
 
 // SaveDataError journals data not saved due to an error
-func (j *JournalNOP) SaveDataError(callErr error) {
+func (j *NOPJournal) SaveDataError(callErr error) {
 
 }
 
 // ProcessData journals data processed successfully
-func (j *JournalNOP) ProcessData(
+func (j *NOPJournal) ProcessData(
 	dataAddress *atlas.Address,
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
@@ -107,26 +107,26 @@ func (j *JournalNOP) ProcessData(
 }
 
 // ProcessDataError journals data not processed due to an error
-func (j *JournalNOP) ProcessDataError(callErr error) {
+func (j *NOPJournal) ProcessDataError(callErr error) {
 
 }
 
 // SaveTask journals task saved successfully
-func (j *JournalNOP) SaveTask(task *atlas.Task) {
+func (j *NOPJournal) SaveTask(task *atlas.Task) {
 
 }
 
 // SaveTaskError journals task not saved due to an error
-func (j *JournalNOP) SaveTaskError(task *atlas.Task, callErr error) {
+func (j *NOPJournal) SaveTaskError(task *atlas.Task, callErr error) {
 
 }
 
 // ProcessTask journals task processed successfully
-func (j *JournalNOP) ProcessTask(task *atlas.Task) {
+func (j *NOPJournal) ProcessTask(task *atlas.Task) {
 
 }
 
 // ProcessTaskError journals task not processed due to an error
-func (j *JournalNOP) ProcessTaskError(task *atlas.Task, callErr error) {
+func (j *NOPJournal) ProcessTaskError(task *atlas.Task, callErr error) {
 
 }

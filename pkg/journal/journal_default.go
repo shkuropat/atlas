@@ -12,20 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package base
+package journal
 
-import (
-	"github.com/binarly-io/atlas/pkg/api/atlas"
-)
-
-const (
-	ObjectTypeUnknown int32 = 0
-)
-
-var (
-	ObjectTypeEnum = atlas.NewEnum()
-)
-
-func init() {
-	ObjectTypeEnum.MustRegister("ObjectTypeUnknown", ObjectTypeUnknown)
+// DefaultJournal provides empty implementations of all interface functions
+type DefaultJournal struct {
+	NOPJournal
 }
+
+// Validate interface compatibility
+var _ Journaller = &DefaultJournal{}

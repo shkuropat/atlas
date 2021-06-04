@@ -18,14 +18,14 @@ import (
 	"github.com/dgrijalva/jwt-go"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
-	"github.com/binarly-io/atlas/pkg/journal/base"
+	"github.com/binarly-io/atlas/pkg/journal"
 )
 
 // RPCContext
 type RPCContext struct {
 	metadata *atlas.Metadata
 	claims   jwt.MapClaims
-	journal  base.Journaller
+	journal  journal.Journaller
 }
 
 // New
@@ -45,7 +45,7 @@ func (c *RPCContext) SetClaims(claims jwt.MapClaims) *RPCContext {
 }
 
 // GetJournal
-func (c *RPCContext) GetJournal() base.Journaller {
+func (c *RPCContext) GetJournal() journal.Journaller {
 	if c == nil {
 		return nil
 	}
@@ -53,7 +53,7 @@ func (c *RPCContext) GetJournal() base.Journaller {
 }
 
 // SetJournal
-func (c *RPCContext) SetJournal(j base.Journaller) *RPCContext {
+func (c *RPCContext) SetJournal(j journal.Journaller) *RPCContext {
 	if c == nil {
 		return nil
 	}

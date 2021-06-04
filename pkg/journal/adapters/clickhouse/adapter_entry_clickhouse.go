@@ -21,7 +21,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/binarly-io/atlas/pkg/journal/base"
+	"github.com/binarly-io/atlas/pkg/journal"
 )
 
 // AdapterEntryClickHouse defines journal entry structure
@@ -80,7 +80,7 @@ func NewAdapterEntryClickHouse() *AdapterEntryClickHouse {
 }
 
 // Import
-func (ce *AdapterEntryClickHouse) Import(entry *base.Entry) *AdapterEntryClickHouse {
+func (ce *AdapterEntryClickHouse) Import(entry *journal.Entry) *AdapterEntryClickHouse {
 	ce.d = entry.Time
 	ce.endpointID = entry.EndpointID
 	ce.sourceID = entry.SourceID.String()
@@ -106,8 +106,8 @@ func (ce *AdapterEntryClickHouse) Import(entry *base.Entry) *AdapterEntryClickHo
 }
 
 // Export
-func (ce *AdapterEntryClickHouse) Export() *base.Entry {
-	entry := base.NewEntry()
+func (ce *AdapterEntryClickHouse) Export() *journal.Entry {
+	entry := journal.NewEntry()
 	entry.Time = ce.d
 	entry.EndpointID = ce.endpointID
 	entry.SetSourceID(atlas.NewUserID().SetString(ce.sourceID))
@@ -235,7 +235,7 @@ func NewAdapterEntryClickHouseSearch() *AdapterEntryClickHouseSearch {
 }
 
 // Import
-func (ce *AdapterEntryClickHouseSearch) Import(entry *base.Entry) *AdapterEntryClickHouseSearch {
+func (ce *AdapterEntryClickHouseSearch) Import(entry *journal.Entry) *AdapterEntryClickHouseSearch {
 	ce.d = nil
 	ce.endpointID = nil
 	if entry.SourceID.String() != "" {
@@ -250,12 +250,12 @@ func (ce *AdapterEntryClickHouseSearch) Import(entry *base.Entry) *AdapterEntryC
 		taskID := entry.TaskID.String()
 		ce.taskID = &taskID
 	}
-	if entry.Type != base.EntryTypeUnknown {
+	if entry.Type != journal.EntryTypeUnknown {
 		typeID := entry.Type
 		ce.typeID = &typeID
 	}
 	ce.duration = nil
-	if entry.ObjectType != base.ObjectTypeUnknown {
+	if entry.ObjectType != journal.ObjectTypeUnknown {
 		_type := entry.ObjectType
 		ce._type = &_type
 	}

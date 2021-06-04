@@ -12,26 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package base
+package journal
 
-import (
-	"github.com/binarly-io/atlas/pkg/api/atlas"
-)
+import "github.com/binarly-io/atlas/pkg/api/atlas"
 
-const (
-	EndpointUnknown    int32 = 0
-	EndpointDataChunks int32 = 1
-	EndpointReports    int32 = 2
-	EndpointFileStatus int32 = 3
-)
-
-var (
-	EndpointTypeEnum = atlas.NewEnum()
-)
-
-func init() {
-	EndpointTypeEnum.MustRegister("EndpointUnknown", EndpointUnknown)
-	EndpointTypeEnum.MustRegister("EndpointDataChunks", EndpointDataChunks)
-	EndpointTypeEnum.MustRegister("EndpointReports", EndpointReports)
-	EndpointTypeEnum.MustRegister("EndpointRFileStatus", EndpointFileStatus)
+// Contexter
+type Contexter interface {
+	GetUUID() *atlas.UUID
 }
