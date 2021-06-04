@@ -21,3 +21,8 @@ type DefaultJournal struct {
 
 // Validate interface compatibility
 var _ Journaller = &DefaultJournal{}
+
+// NewDefaultJournal
+func NewDefaultJournal() (*DefaultJournal, error) {
+	return &DefaultJournal{}, nil
+}
