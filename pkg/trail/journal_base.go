@@ -89,7 +89,7 @@ func (j *JournalBase) RequestStart() {
 	}
 }
 
-// RequestCompleted journals request completed successfully
+// RequestEnd journals request completed successfully
 func (j *JournalBase) RequestEnd() {
 	e := j.NewEntry(EntryTypeRequestCompleted)
 	if err := j.adapter.Insert(e); err != nil {
@@ -97,7 +97,7 @@ func (j *JournalBase) RequestEnd() {
 	}
 }
 
-// RequestError journals request error
+// RequestError journals request has failed with an error
 func (j *JournalBase) RequestError(callErr error) {
 	e := j.NewEntry(EntryTypeRequestError).SetError(callErr)
 	if err := j.adapter.Insert(e); err != nil {

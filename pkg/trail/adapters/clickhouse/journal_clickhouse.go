@@ -16,6 +16,7 @@ package clickhouse
 
 import (
 	"fmt"
+
 	_ "github.com/mailru/go-clickhouse"
 	log "github.com/sirupsen/logrus"
 

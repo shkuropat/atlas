@@ -63,6 +63,9 @@ func NewJournalEntry() *JournalEntry {
 
 // SetBaseInfo
 func (e *JournalEntry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, _type int32) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.Time = time.Now()
 	e.StartTime = start
 	e.SetEndpointID(endpoint)
@@ -73,30 +76,45 @@ func (e *JournalEntry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas
 
 // SetEndpointID
 func (e *JournalEntry) SetEndpointID(endpoint int32) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.EndpointID = endpoint
 	return e
 }
 
 // SetSourceID
 func (e *JournalEntry) SetSourceID(userID *atlas.UserID) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.SourceID = userID
 	return e
 }
 
 // SetCtxID
 func (e *JournalEntry) SetCtxID(ctxID *atlas.UUID) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.ContextID = ctxID
 	return e
 }
 
 // SetTaskID
 func (e *JournalEntry) SetTaskID(taskID *atlas.UUID) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.TaskID = taskID
 	return e
 }
 
 // SetType
 func (e *JournalEntry) SetType(_type int32) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.Type = _type
 	return e
 }
@@ -109,6 +127,9 @@ func (e *JournalEntry) SetObject(
 	metadata *atlas.Metadata,
 	data []byte,
 ) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.SetObjectType(objectType)
 	e.SetObjectAddress(address)
 	e.SetObjectSize(size)
@@ -119,30 +140,45 @@ func (e *JournalEntry) SetObject(
 
 // SetObjectType
 func (e *JournalEntry) SetObjectType(objectType int32) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.ObjectType = objectType
 	return e
 }
 
 // SetObjectAddress
 func (e *JournalEntry) SetObjectAddress(address *atlas.Address) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.ObjectAddress = address
 	return e
 }
 
 // SetObjectSize
 func (e *JournalEntry) SetObjectSize(size uint64) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.ObjectSize = size
 	return e
 }
 
 // SetObjectMetadata
 func (e *JournalEntry) SetObjectMetadata(metadata *atlas.Metadata) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.ObjectMetadata = metadata
 	return e
 }
 
 // EnsureObjectMetadata
 func (e *JournalEntry) EnsureObjectMetadata() *atlas.Metadata {
+	if e == nil {
+		return nil
+	}
 	if e.ObjectMetadata == nil {
 		e.ObjectMetadata = atlas.NewMetadata()
 	}
@@ -151,12 +187,18 @@ func (e *JournalEntry) EnsureObjectMetadata() *atlas.Metadata {
 
 // SetObjectData
 func (e *JournalEntry) SetObjectData(data []byte) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.ObjectData = data
 	return e
 }
 
 // SetError
 func (e *JournalEntry) SetError(err error) *JournalEntry {
+	if e == nil {
+		return nil
+	}
 	e.Error = err
 	return e
 }

@@ -69,19 +69,18 @@ func NewAdapterClickHouse(dsn string) (*AdapterClickHouse, error) {
 // Insert
 func (j *AdapterClickHouse) Insert(entry *trail.JournalEntry) error {
 	e := NewAdapterEntryClickHouse().Import(entry)
-
-	sql := heredoc.Doc(
-		fmt.Sprintf(`
-			INSERT INTO api_journal (
-				%s
-			) VALUES (
-				%s
-			)
-			`,
-			e.Fields(),
-			e.StmtParamsPlaceholder(),
-		),
+	sql := heredoc.Docf(`
+		INSERT INTO api_journal (
+			%s
+		) VALUES (
+			%s
+		)
+		`,
+		e.Fields(),
+		e.StmtParamsPlaceholder(),
 	)
+	fmt.Println(fmt.Sprintf("e=%v", e))
+	fmt.Println(fmt.Sprintf("sql=%v", sql))
 
 	tx, err := j.connect.Begin()
 	if err != nil {
