@@ -15,6 +15,8 @@
 package trail
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"time"
 )
@@ -54,6 +56,34 @@ type JournalEntry struct {
 
 	// Error info tells about error, if any
 	Error error
+}
+
+// String
+func (e *JournalEntry) String() string {
+	if e == nil {
+		return "this JE is nil"
+	}
+
+	b := &bytes.Buffer{}
+
+	_, _ = fmt.Fprintf(b, "Time:%s\n", e.Time)
+	_, _ = fmt.Fprintf(b, "StartTime:%s\n", e.StartTime)
+
+	_, _ = fmt.Fprintf(b, "EndpointID:%d", e.EndpointID)
+	_, _ = fmt.Fprintf(b, "SourceID:%s\n", e.SourceID)
+	_, _ = fmt.Fprintf(b, "ContextID:%s\n", e.ContextID)
+	_, _ = fmt.Fprintf(b, "TaskID:%s\n", e.TaskID)
+	_, _ = fmt.Fprintf(b, "Type:%d\n", e.Type)
+
+	_, _ = fmt.Fprintf(b, "ObjectType:%d\n", e.ObjectType)
+	_, _ = fmt.Fprintf(b, "ObjectAddress:%s\n", e.ObjectAddress)
+	_, _ = fmt.Fprintf(b, "ObjectSize:%d\n", e.ObjectSize)
+	_, _ = fmt.Fprintf(b, "ObjectMetadata:%s\n", e.ObjectMetadata)
+	_, _ = fmt.Fprintf(b, "ObjectData:%s\n", e.ObjectData)
+
+	_, _ = fmt.Fprintf(b, "Error:%s\n", e.Error)
+
+	return b.String()
 }
 
 // NewJournalEntry

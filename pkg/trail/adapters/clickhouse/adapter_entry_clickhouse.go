@@ -15,6 +15,7 @@
 package clickhouse
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"strings"
@@ -45,6 +46,34 @@ type AdapterEntryClickHouse struct {
 	error string
 }
 
+// String
+func (ce *AdapterEntryClickHouse) String() string {
+	if ce == nil {
+		return "this is nil"
+	}
+
+	b := &bytes.Buffer{}
+
+	_, _ = fmt.Fprintf(b, "d:%s\n", ce.d)
+	_, _ = fmt.Fprintf(b, "endpointID:%d\n", ce.endpointID)
+	_, _ = fmt.Fprintf(b, "sourceID:%s\n", ce.sourceID)
+	_, _ = fmt.Fprintf(b, "contextID:%s\n", ce.contextID)
+	_, _ = fmt.Fprintf(b, "taskID:%s\n", ce.taskID)
+	_, _ = fmt.Fprintf(b, "typeID:%d\n", ce.typeID)
+	_, _ = fmt.Fprintf(b, "duration:%d\n", ce.duration)
+	// Object section
+	_, _ = fmt.Fprintf(b, "_type:%d\n", ce._type)
+	_, _ = fmt.Fprintf(b, "size:%d\n", ce.size)
+	_, _ = fmt.Fprintf(b, "address:%s\n", ce.address)
+	_, _ = fmt.Fprintf(b, "domain:%s\n", ce.domain)
+	_, _ = fmt.Fprintf(b, "name:%s\n", ce.name)
+	_, _ = fmt.Fprintf(b, "digest:%s\n", ce.digest)
+	_, _ = fmt.Fprintf(b, "data:%s\n", ce.data)
+	_, _ = fmt.Fprintf(b, "error:%s\n", ce.error)
+
+	return b.String()
+}
+
 // NewAdapterEntryClickHouse
 func NewAdapterEntryClickHouse() *AdapterEntryClickHouse {
 	return &AdapterEntryClickHouse{}
@@ -69,6 +98,9 @@ func (ce *AdapterEntryClickHouse) Import(entry *trail.JournalEntry) *AdapterEntr
 	if entry.Error != nil {
 		ce.error = entry.Error.Error()
 	}
+
+	fmt.Println(fmt.Sprintf("importing:%s", entry))
+	fmt.Println(fmt.Sprintf("imported:%s", ce))
 
 	return ce
 }

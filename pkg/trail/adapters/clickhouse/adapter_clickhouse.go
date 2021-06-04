@@ -79,8 +79,7 @@ func (j *AdapterClickHouse) Insert(entry *trail.JournalEntry) error {
 		e.Fields(),
 		e.StmtParamsPlaceholder(),
 	)
-	fmt.Println(fmt.Sprintf("e=%v", e))
-	fmt.Println(fmt.Sprintf("sql=%v", sql))
+	fmt.Println(fmt.Sprintf("sql=%s", sql))
 
 	tx, err := j.connect.Begin()
 	if err != nil {
