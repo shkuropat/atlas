@@ -19,6 +19,14 @@ func NewAddressList() *AddressList {
 	return &AddressList{}
 }
 
+// Ensure returns new or existing AddressList
+func (m *AddressList) Ensure() *AddressList {
+	if m == nil {
+		return NewAddressList()
+	}
+	return m
+}
+
 // Len return len of specified nested domain or len of the whole AddressList in case no domain specified
 func (m *AddressList) Len(domains ...*Domain) int {
 	if len(domains) > 0 {
@@ -39,6 +47,7 @@ func (m *AddressList) LenDomain(domain *Domain) int {
 }
 
 // All wraps GetAddresses and Select and returns all Addresses in specified domains
+// May return nil
 func (m *AddressList) All(domains ...*Domain) []*Address {
 	if len(domains) > 0 {
 		return m.Select(domains...).GetAddresses()
@@ -47,6 +56,7 @@ func (m *AddressList) All(domains ...*Domain) []*Address {
 }
 
 // Slice returns slice of addresses
+// May return nil
 func (m *AddressList) Slice(a, b int) []*Address {
 	// Sanity check
 	if (a < 0) || (b < 0) {
@@ -79,6 +89,7 @@ func (m *AddressList) Has(domains ...*Domain) bool {
 }
 
 // First return first address in the list of specified nested domain
+// May return nil
 func (m *AddressList) First(domains ...*Domain) *Address {
 	if len(domains) > 0 {
 		return m.FirstDomain(domains[0])
@@ -133,6 +144,7 @@ func (m *AddressList) LastDomain(domains ...*Domain) *Address {
 }
 
 // Select selects all addresses with specified domains into new AddressList
+// May return nil in case nothing selected
 func (m *AddressList) Select(domains ...*Domain) *AddressList {
 	var res *AddressList = nil
 	for _, address := range m.GetAddresses() {
@@ -149,6 +161,7 @@ func (m *AddressList) Select(domains ...*Domain) *AddressList {
 }
 
 // Exclude selects all addresses without specified domains into new AddressList
+// May return nil in case result is empty
 func (m *AddressList) Exclude(domains ...*Domain) *AddressList {
 	var res *AddressList = nil
 	for _, address := range m.GetAddresses() {

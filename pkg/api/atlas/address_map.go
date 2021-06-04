@@ -19,6 +19,14 @@ func NewAddressMap() *AddressMap {
 	return new(AddressMap)
 }
 
+// Ensure returns new or existing AddressMap
+func (m *AddressMap) Ensure() *AddressMap {
+	if m == nil {
+		return NewAddressMap()
+	}
+	return m
+}
+
 // GetList gets specified AddressList of specified domain
 func (m *AddressMap) GetList(domain *Domain) *AddressList {
 	if mp := m.GetMap(); mp != nil {

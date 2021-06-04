@@ -91,6 +91,14 @@ func NewAddressUUIDFromString(str string, domain ...interface{}) *Address {
 	return NewAddress(domain...).Set(NewUUID().SetString(str))
 }
 
+// Ensure returns new or existing Address
+func (m *Address) Ensure() *Address {
+	if m == nil {
+		return NewAddress()
+	}
+	return m
+}
+
 // SetDomain sets Domain of the Address
 func (m *Address) SetDomain(domain *Domain) *Address {
 	if m == nil {
@@ -154,7 +162,7 @@ func (m *Address) Set(address interface{}) *Address {
 	return m
 }
 
-// Printable
+// String
 func (m *Address) String() string {
 	if m == nil {
 		return ""

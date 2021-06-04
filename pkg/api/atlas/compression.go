@@ -38,6 +38,14 @@ func NewCompression(_type int32) *Compression {
 	}
 }
 
+// Ensure returns new or existing Compression
+func (m *Compression) Ensure(_type int32) *Compression {
+	if m == nil {
+		return NewCompression(_type)
+	}
+	return m
+}
+
 // GetName
 func (m *Compression) GetName() string {
 	name, _ := CompressionTypeEnum.GetName(m.GetType())

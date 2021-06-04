@@ -19,6 +19,14 @@ func NewDomain() *Domain {
 	return new(Domain)
 }
 
+// Ensure returns new or existing Domain
+func (m *Domain) Ensure() *Domain {
+	if m == nil {
+		return NewDomain()
+	}
+	return m
+}
+
 // Set
 func (m *Domain) Set(name string) *Domain {
 	if m == nil {

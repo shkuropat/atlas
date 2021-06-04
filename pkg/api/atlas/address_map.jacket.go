@@ -108,8 +108,9 @@ func (m *AddressMap) ReplaceAddresses(domain *Domain, deleteDomains []*Domain, a
 	return m.ReplaceList(
 		domain,
 		m.EnsureList(domain). // get current AddressList
-					Exclude(deleteDomains...). // create new AddressList w/o deleteDomains
-					Append(addresses...).      // append to new AddressList w/o deleteDomains provded addresses
+					Exclude(deleteDomains...). // create new AddressList w/o deleteDomains. New AddressList can be nil
+					Ensure().                  // but we definitely need to have this list, thus ensure it exists
+					Append(addresses...).      // append to new AddressList w/o deleteDomains provided addresses
 					All()...,                  // get AddressList as slice
 	)
 }
