@@ -118,7 +118,7 @@ func (j *BaseJournal) WithTask(task Tasker) Journaller {
 
 // NewEntry
 func (j *BaseJournal) NewEntry(entryType int32) *Entry {
-	return NewEntry().SetBaseInfo(j.start, j.endpointID, j.GetContextUUID(), entryType)
+	return NewEntry().SetBaseInfo(j.start, j.endpointID, j.GetContextUUID(), j.GetTaskUUID(), entryType)
 }
 
 // Insert

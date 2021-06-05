@@ -92,7 +92,7 @@ func NewEntry() *Entry {
 }
 
 // SetBaseInfo
-func (e *Entry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, _type int32) *Entry {
+func (e *Entry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, taskID *atlas.UUID, _type int32) *Entry {
 	if e == nil {
 		return nil
 	}
@@ -100,6 +100,7 @@ func (e *Entry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, 
 	e.StartTime = start
 	e.SetEndpointID(endpoint)
 	e.SetCtxID(ctxID)
+	e.SetTaskID(taskID)
 	e.SetType(_type)
 	return e
 }
