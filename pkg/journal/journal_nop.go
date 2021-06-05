@@ -69,17 +69,14 @@ func (j *NOPJournal) FindAll(entry *Entry) ([]*Entry, error) {
 
 // RequestStart journals beginning of the request processing
 func (j *NOPJournal) RequestStart() {
-
 }
 
 // RequestCompleted journals request completed successfully
 func (j *NOPJournal) RequestEnd() {
-
 }
 
 // RequestError journals request error
 func (j *NOPJournal) RequestError(callErr error) {
-
 }
 
 // SaveData journals data saved successfully
@@ -89,12 +86,10 @@ func (j *NOPJournal) SaveData(
 	dataMetadata *atlas.Metadata,
 	data []byte,
 ) {
-
 }
 
 // SaveDataError journals data not saved due to an error
 func (j *NOPJournal) SaveDataError(callErr error) {
-
 }
 
 // ProcessData journals data processed successfully
@@ -103,30 +98,32 @@ func (j *NOPJournal) ProcessData(
 	dataSize int64,
 	dataMetadata *atlas.Metadata,
 ) {
-
 }
 
 // ProcessDataError journals data not processed due to an error
 func (j *NOPJournal) ProcessDataError(callErr error) {
-
 }
 
 // SaveTask journals task saved successfully
 func (j *NOPJournal) SaveTask(task *atlas.Task) {
-
 }
 
 // SaveTaskError journals task not saved due to an error
 func (j *NOPJournal) SaveTaskError(task *atlas.Task, callErr error) {
-
 }
 
 // ProcessTask journals task processed successfully
 func (j *NOPJournal) ProcessTask(task *atlas.Task) {
-
 }
 
 // ProcessTaskError journals task not processed due to an error
 func (j *NOPJournal) ProcessTaskError(task *atlas.Task, callErr error) {
+}
 
+// Lookup
+func (j *NOPJournal) Lookup(address *atlas.Address) {
+}
+
+// LookupError
+func (j *NOPJournal) LookupError(address *atlas.Address, callErr error) {
 }

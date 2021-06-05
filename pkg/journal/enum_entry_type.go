@@ -21,16 +21,18 @@ import (
 const (
 	EntryTypeUnknown          int32 = 0
 	EntryTypeRequestStart     int32 = 1
-	EntryTypeRequestCompleted int32 = 10
-	EntryTypeRequestError     int32 = 11
-	EntryTypeSaveData         int32 = 2
-	EntryTypeSaveDataError    int32 = 3
-	EntryTypeProcessData      int32 = 4
-	EntryTypeProcessDataError int32 = 5
-	EntryTypeSaveTask         int32 = 6
-	EntryTypeSaveTaskError    int32 = 7
-	EntryTypeProcessTask      int32 = 8
-	EntryTypeProcessTaskError int32 = 9
+	EntryTypeSaveData         int32 = 100
+	EntryTypeSaveDataError    int32 = 101
+	EntryTypeProcessData      int32 = 200
+	EntryTypeProcessDataError int32 = 201
+	EntryTypeSaveTask         int32 = 300
+	EntryTypeSaveTaskError    int32 = 301
+	EntryTypeProcessTask      int32 = 400
+	EntryTypeProcessTaskError int32 = 401
+	EntryTypeLookup           int32 = 500
+	EntryTypeLookupError      int32 = 501
+	EntryTypeRequestCompleted int32 = 10000
+	EntryTypeRequestError     int32 = 10001
 )
 
 var (
@@ -40,8 +42,6 @@ var (
 func init() {
 	EntryTypeEnum.MustRegister("EntryTypeUnknown", EntryTypeUnknown)
 	EntryTypeEnum.MustRegister("EntryTypeRequestStart", EntryTypeRequestStart)
-	EntryTypeEnum.MustRegister("EntryTypeRequestCompleted", EntryTypeRequestCompleted)
-	EntryTypeEnum.MustRegister("EntryTypeRequestError", EntryTypeRequestError)
 	EntryTypeEnum.MustRegister("EntryTypeSaveData", EntryTypeSaveData)
 	EntryTypeEnum.MustRegister("EntryTypeSaveDataError", EntryTypeSaveDataError)
 	EntryTypeEnum.MustRegister("EntryTypeProcessData", EntryTypeProcessData)
@@ -50,4 +50,8 @@ func init() {
 	EntryTypeEnum.MustRegister("EntryTypeSaveTaskError", EntryTypeSaveTaskError)
 	EntryTypeEnum.MustRegister("EntryTypeProcessTask", EntryTypeProcessTask)
 	EntryTypeEnum.MustRegister("EntryTypeProcessTaskError", EntryTypeProcessTaskError)
+	EntryTypeEnum.MustRegister("EntryTypeLookup", EntryTypeLookup)
+	EntryTypeEnum.MustRegister("EntryTypeLookupError", EntryTypeLookupError)
+	EntryTypeEnum.MustRegister("EntryTypeRequestCompleted", EntryTypeRequestCompleted)
+	EntryTypeEnum.MustRegister("EntryTypeRequestError", EntryTypeRequestError)
 }

@@ -50,7 +50,6 @@ type Journaller interface {
 		dataMetadata *atlas.Metadata,
 		data []byte,
 	)
-
 	SaveDataError(callErr error)
 
 	//
@@ -62,7 +61,6 @@ type Journaller interface {
 		dataSize int64,
 		dataMetadata *atlas.Metadata,
 	)
-
 	ProcessDataError(callErr error)
 
 	//
@@ -70,7 +68,6 @@ type Journaller interface {
 	//
 
 	SaveTask(task *atlas.Task)
-
 	SaveTaskError(task *atlas.Task, callErr error)
 
 	//
@@ -78,6 +75,11 @@ type Journaller interface {
 	//
 
 	ProcessTask(task *atlas.Task)
-
 	ProcessTaskError(task *atlas.Task, callErr error)
+
+	//
+	//
+	//
+	Lookup(address *atlas.Address)
+	LookupError(address *atlas.Address, callErr error)
 }

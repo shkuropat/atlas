@@ -9,19 +9,22 @@ CREATE TABLE atlas.api_journal
   /**** Call section ****/
   /**********************/
 
-  /* endpoint_id specifies api endpoint being called (a.k.a. API function) */
+  /* EndpointID [MANDATORY] specifies ID of the endpoint (API call handler/Task processor/etc) which produces the entry */
   endpoint_id Int32,
 
-  /* source_id specifies source which call is being journalled */
+  /* EndpointInstanceID [OPTIONAL] specifies ID of the particular endpoint instance (ex.: process) which produces the entry */
+  endpoint_instance_id String,
+
+  /* SourceID [OPTIONAL] specifies ID of the source (possibly external) of the entry */
   source_id String,
 
-  /* context_id specifies ID of the execution context */
+  /* ContextID [OPTIONAL] specifies ID of the execution/rpc context associated with the entry */
   context_id String,
 
-  /* task_id specifies ID of the task */
+  /* TaskID [OPTIONAL] specifies ID of the task associated with the entry */
   task_id String,
 
-  /* type_id specifies type of the entry */
+  /* Type [MANDATORY] specifies type of the entry - what this entry is about. */
   type_id Int32,
 
   /* duration is a nanoseconds duration since start, if applicable */
@@ -52,13 +55,16 @@ CREATE TABLE atlas.api_journal
   /* data specifies object data, if any */
   data String,
 
-  /***********************/
-  /**** Error section ****/
-  /***********************/
+  /************************/
+  /**** Result section ****/
+  /************************/
 
-  /* error specifies error, if any */
+  /* Result [OPTIONAL] specifies result of the operation, specified by Type */
+  result String,
+  /* Result [OPTIONAL] specifies status of the operation, specified by Type */
+  status String,
+  /* Error [OPTIONAL] tells about error encountered during the operation, specified by Type */
   error String
-
 )
 ENGINE = MergeTree
 ORDER BY d

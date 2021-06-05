@@ -19,10 +19,23 @@ import (
 )
 
 const (
-	EndpointUnknown    int32 = 0
-	EndpointDataChunks int32 = 1
-	EndpointReports    int32 = 2
-	EndpointFileStatus int32 = 3
+	// Unknown endpoint
+	EndpointUnknown int32 = 0
+
+	// Control Plane
+	ControlPlane          int32 = 100
+	EndpointTasks         int32 = ControlPlane + 1
+	EndpointDataChunks    int32 = ControlPlane + 2
+	EndpointUploadObject  int32 = ControlPlane + 3
+	EndpointUploadObjects int32 = ControlPlane + 4
+	EndpointMetrics       int32 = ControlPlane + 5
+	EndpointStatusObject  int32 = ControlPlane + 6
+	EndpointStatusObjects int32 = ControlPlane + 7
+
+	// Reports Plane
+	ReportsPlane    int32 = 200
+	EndpointReport  int32 = ReportsPlane + 1
+	EndpointReports int32 = ReportsPlane + 2
 )
 
 var (
@@ -31,7 +44,15 @@ var (
 
 func init() {
 	EndpointTypeEnum.MustRegister("EndpointUnknown", EndpointUnknown)
+	// Control Plane
+	EndpointTypeEnum.MustRegister("EndpointTasks", EndpointTasks)
 	EndpointTypeEnum.MustRegister("EndpointDataChunks", EndpointDataChunks)
+	EndpointTypeEnum.MustRegister("EndpointUploadObject", EndpointUploadObject)
+	EndpointTypeEnum.MustRegister("EndpointUploadObjects", EndpointUploadObjects)
+	EndpointTypeEnum.MustRegister("EndpointMetrics", EndpointMetrics)
+	EndpointTypeEnum.MustRegister("EndpointStatusObject", EndpointStatusObject)
+	EndpointTypeEnum.MustRegister("EndpointStatusObjects", EndpointStatusObjects)
+	// Reports Plane
+	EndpointTypeEnum.MustRegister("EndpointReport", EndpointReport)
 	EndpointTypeEnum.MustRegister("EndpointReports", EndpointReports)
-	EndpointTypeEnum.MustRegister("EndpointRFileStatus", EndpointFileStatus)
 }

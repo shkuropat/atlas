@@ -16,6 +16,7 @@ package clickhouse
 
 import (
 	"fmt"
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 
 	_ "github.com/mailru/go-clickhouse"
 	log "github.com/sirupsen/logrus"
@@ -34,13 +35,13 @@ type JournalClickHouse struct {
 var _ journal.Journaller = &JournalClickHouse{}
 
 // NewJournalClickHouseConfig
-func NewJournalClickHouseConfig(cfg sections.ClickHouseConfigurator, endpointID int32) (*JournalClickHouse, error) {
+func NewJournalClickHouseConfig(cfg sections.ClickHouseConfigurator, endpointID int32, endpointInstanceID *atlas.UUID) (*JournalClickHouse, error) {
 	dsn := cfg.GetClickHouseEndpoint()
-	return NewJournalClickHouse(dsn, endpointID)
+	return NewJournalClickHouse(dsn, endpointID, endpointInstanceID)
 }
 
 // NewJournalClickHouse
-func NewJournalClickHouse(dsn string, endpointID int32) (*JournalClickHouse, error) {
+func NewJournalClickHouse(dsn string, endpointID int32, endpointInstanceID *atlas.UUID) (*JournalClickHouse, error) {
 	if dsn == "" {
 		str := "ClickHouse address in Config is empty"
 		log.Errorf(str)
@@ -50,7 +51,7 @@ func NewJournalClickHouse(dsn string, endpointID int32) (*JournalClickHouse, err
 	if err != nil {
 		return nil, err
 	}
-	journal, err := journal.NewBaseJournal(endpointID, adapter)
+	journal, err := journal.NewBaseJournal(endpointID, endpointInstanceID, adapter)
 	if err != nil {
 		return nil, err
 	}

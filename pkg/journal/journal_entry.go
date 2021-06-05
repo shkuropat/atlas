@@ -35,6 +35,9 @@ type Entry struct {
 	// EndpointID [MANDATORY] specifies ID of the endpoint (API call handler/Task processor/etc) which produces the entry
 	// See EndpointTypeEnum for available options.
 	EndpointID int32
+	// EndpointInstanceID [OPTIONAL] specifies ID of the particular endpoint instance (ex.: process) which produces the entry
+	// Elaborates EndpointID in terms of particular instance specification.
+	EndpointInstanceID *atlas.UUID
 	// SourceID [OPTIONAL] specifies ID of the source (possibly external) of the entry
 	SourceID *atlas.UserID
 	// ContextID [OPTIONAL] specifies ID of the execution/rpc context associated with the entry
@@ -54,7 +57,11 @@ type Entry struct {
 	ObjectMetadata *atlas.Metadata
 	ObjectData     []byte
 
-	// Error info tells about error, if any
+	// Result [OPTIONAL] specifies result of the operation, specified by Type
+	Result string
+	// Result [OPTIONAL] specifies status of the operation, specified by Type
+	Status string
+	// Error [OPTIONAL] tells about error encountered during the operation, specified by Type
 	Error error
 }
 
@@ -70,6 +77,7 @@ func (e *Entry) String() string {
 	_, _ = fmt.Fprintf(b, "StartTime:%s\n", e.StartTime)
 
 	_, _ = fmt.Fprintf(b, "EndpointID:%d\n", e.EndpointID)
+	_, _ = fmt.Fprintf(b, "EndpointInstanceID:%d\n", e.EndpointInstanceID)
 	_, _ = fmt.Fprintf(b, "SourceID:%s\n", e.SourceID)
 	_, _ = fmt.Fprintf(b, "ContextID:%s\n", e.ContextID)
 	_, _ = fmt.Fprintf(b, "TaskID:%s\n", e.TaskID)
@@ -81,6 +89,8 @@ func (e *Entry) String() string {
 	_, _ = fmt.Fprintf(b, "ObjectMetadata:%s\n", e.ObjectMetadata)
 	_, _ = fmt.Fprintf(b, "ObjectData:%s\n", e.ObjectData)
 
+	_, _ = fmt.Fprintf(b, "Result:%s\n", e.Result)
+	_, _ = fmt.Fprintf(b, "Status:%s\n", e.Status)
 	_, _ = fmt.Fprintf(b, "Error:%s\n", e.Error)
 
 	return b.String()
@@ -92,13 +102,21 @@ func NewEntry() *Entry {
 }
 
 // SetBaseInfo
-func (e *Entry) SetBaseInfo(start time.Time, endpoint int32, ctxID *atlas.UUID, taskID *atlas.UUID, _type int32) *Entry {
+func (e *Entry) SetBaseInfo(
+	start time.Time,
+	endpoint int32,
+	endpointInstanceID *atlas.UUID,
+	ctxID *atlas.UUID,
+	taskID *atlas.UUID,
+	_type int32,
+) *Entry {
 	if e == nil {
 		return nil
 	}
 	e.Time = time.Now()
 	e.StartTime = start
 	e.SetEndpointID(endpoint)
+	e.SetEndpointInstanceID(endpointInstanceID)
 	e.SetCtxID(ctxID)
 	e.SetTaskID(taskID)
 	e.SetType(_type)
@@ -111,6 +129,15 @@ func (e *Entry) SetEndpointID(endpoint int32) *Entry {
 		return nil
 	}
 	e.EndpointID = endpoint
+	return e
+}
+
+// SetEndpointIInstanceD
+func (e *Entry) SetEndpointInstanceID(endpointInstanceID *atlas.UUID) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.EndpointInstanceID = endpointInstanceID
 	return e
 }
 
@@ -222,6 +249,24 @@ func (e *Entry) SetObjectData(data []byte) *Entry {
 		return nil
 	}
 	e.ObjectData = data
+	return e
+}
+
+// SetResult
+func (e *Entry) SetResult(result string) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.Result = result
+	return e
+}
+
+// SetStatus
+func (e *Entry) SetStatus(status string) *Entry {
+	if e == nil {
+		return nil
+	}
+	e.Status = status
 	return e
 }
 

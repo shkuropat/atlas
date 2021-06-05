@@ -17,23 +17,24 @@ package clickhouse
 import (
 	"bytes"
 	"fmt"
-	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"strings"
 	"time"
 
+	"github.com/binarly-io/atlas/pkg/api/atlas"
 	"github.com/binarly-io/atlas/pkg/journal"
 )
 
 // AdapterEntryClickHouse defines journal entry structure
 type AdapterEntryClickHouse struct {
 	// Call section
-	d          time.Time
-	endpointID int32
-	sourceID   string
-	contextID  string
-	taskID     string
-	typeID     int32
-	duration   int64
+	d                  time.Time
+	endpointID         int32
+	endpointInstanceID string
+	sourceID           string
+	contextID          string
+	taskID             string
+	typeID             int32
+	duration           int64
 	// Object section
 	_type   int32
 	size    uint64
@@ -42,8 +43,10 @@ type AdapterEntryClickHouse struct {
 	name    string
 	digest  string
 	data    string
-	// Error section
-	error string
+	// Result section
+	result string
+	status string
+	error  string
 }
 
 // String
@@ -54,8 +57,10 @@ func (ce *AdapterEntryClickHouse) String() string {
 
 	b := &bytes.Buffer{}
 
+	// Call section
 	_, _ = fmt.Fprintf(b, "d:%s\n", ce.d)
 	_, _ = fmt.Fprintf(b, "endpointID:%d\n", ce.endpointID)
+	_, _ = fmt.Fprintf(b, "endpointInstanceID:%d\n", ce.endpointInstanceID)
 	_, _ = fmt.Fprintf(b, "sourceID:%s\n", ce.sourceID)
 	_, _ = fmt.Fprintf(b, "contextID:%s\n", ce.contextID)
 	_, _ = fmt.Fprintf(b, "taskID:%s\n", ce.taskID)
@@ -69,6 +74,9 @@ func (ce *AdapterEntryClickHouse) String() string {
 	_, _ = fmt.Fprintf(b, "name:%s\n", ce.name)
 	_, _ = fmt.Fprintf(b, "digest:%s\n", ce.digest)
 	_, _ = fmt.Fprintf(b, "data:%s\n", ce.data)
+	// Result section
+	_, _ = fmt.Fprintf(b, "result:%s\n", ce.result)
+	_, _ = fmt.Fprintf(b, "status:%s\n", ce.status)
 	_, _ = fmt.Fprintf(b, "error:%s\n", ce.error)
 
 	return b.String()
@@ -81,13 +89,16 @@ func NewAdapterEntryClickHouse() *AdapterEntryClickHouse {
 
 // Import
 func (ce *AdapterEntryClickHouse) Import(entry *journal.Entry) *AdapterEntryClickHouse {
+	// Call section
 	ce.d = entry.Time
 	ce.endpointID = entry.EndpointID
+	ce.endpointInstanceID = entry.EndpointInstanceID.String()
 	ce.sourceID = entry.SourceID.String()
 	ce.contextID = entry.ContextID.String()
 	ce.taskID = entry.TaskID.String()
 	ce.typeID = entry.Type
 	ce.duration = ce.d.Sub(entry.StartTime).Nanoseconds()
+	// Object section
 	ce._type = entry.ObjectType
 	ce.size = entry.ObjectSize
 	ce.address = entry.ObjectAddress.String()
@@ -95,6 +106,9 @@ func (ce *AdapterEntryClickHouse) Import(entry *journal.Entry) *AdapterEntryClic
 	ce.name = entry.ObjectMetadata.GetFilename()
 	ce.digest = string(entry.ObjectMetadata.GetDigest().GetData())
 	ce.data = string(entry.ObjectData)
+	// Result section
+	ce.result = entry.Result
+	ce.status = entry.Status
 	if entry.Error != nil {
 		ce.error = entry.Error.Error()
 	}
@@ -107,14 +121,17 @@ func (ce *AdapterEntryClickHouse) Import(entry *journal.Entry) *AdapterEntryClic
 
 // Export
 func (ce *AdapterEntryClickHouse) Export() *journal.Entry {
+	// Call section
 	entry := journal.NewEntry()
 	entry.Time = ce.d
 	entry.EndpointID = ce.endpointID
+	entry.SetEndpointInstanceID(atlas.NewUUIDFromString(ce.endpointInstanceID))
 	entry.SetSourceID(atlas.NewUserID().SetString(ce.sourceID))
 	entry.SetCtxID(atlas.NewUUIDFromString(ce.contextID))
 	entry.SetTaskID(atlas.NewUUIDFromString(ce.taskID))
 	entry.Type = ce.typeID
 	//ce.duration = ce.d.Sub(entry.StartTime).Nanoseconds()
+	// Object section
 	entry.ObjectType = ce._type
 	entry.ObjectSize = ce.size
 	entry.SetObjectAddress(atlas.NewAddressUUIDFromString(ce.address))
@@ -122,6 +139,9 @@ func (ce *AdapterEntryClickHouse) Export() *journal.Entry {
 	entry.EnsureObjectMetadata().SetFilename(ce.name)
 	entry.EnsureObjectMetadata().SetDigest(atlas.NewDigest().SetDataFromString(ce.digest))
 	entry.ObjectData = []byte(ce.data)
+	// Result section
+	entry.Result = ce.result
+	entry.Status = ce.status
 	if ce.error != "" {
 		entry.Error = fmt.Errorf(ce.error)
 	}
@@ -134,6 +154,7 @@ func (ce *AdapterEntryClickHouse) Fields() string {
 	return `
 		d, 
 		endpoint_id,
+		endpoint_instance_id,
 		source_id,
 		context_id,
 		task_id,
@@ -146,6 +167,8 @@ func (ce *AdapterEntryClickHouse) Fields() string {
 		name,
 		digest,
 		data, 
+		result, 
+		status, 
 		error
 	`
 }
@@ -156,6 +179,8 @@ func (ce *AdapterEntryClickHouse) StmtParamsPlaceholder() string {
 		/* d */
 		?,
 		/* endpoint_id */
+		?,
+		/* endpoint_source_id */
 		?,
 		/* source_id */
 		?,
@@ -181,6 +206,10 @@ func (ce *AdapterEntryClickHouse) StmtParamsPlaceholder() string {
 		?,
 		/* data */
 		?,
+		/* result */
+		?,
+		/* status */
+		?,
 		/* error */
 		?
 	`
@@ -191,6 +220,7 @@ func (ce *AdapterEntryClickHouse) AsUntypedSlice() []interface{} {
 	return []interface{}{
 		ce.d,
 		ce.endpointID,
+		ce.endpointInstanceID,
 		ce.sourceID,
 		ce.contextID,
 		ce.taskID,
@@ -203,6 +233,8 @@ func (ce *AdapterEntryClickHouse) AsUntypedSlice() []interface{} {
 		ce.name,
 		ce.digest,
 		ce.data,
+		ce.result,
+		ce.status,
 		ce.error,
 	}
 }
@@ -210,13 +242,14 @@ func (ce *AdapterEntryClickHouse) AsUntypedSlice() []interface{} {
 // AdapterEntryClickHouseSearch defines journal entry structure
 type AdapterEntryClickHouseSearch struct {
 	// Call section
-	d          *time.Time
-	endpointID *int32
-	sourceID   *string
-	contextID  *string
-	taskID     *string
-	typeID     *int32
-	duration   *int64
+	d                  *time.Time
+	endpointID         *int32
+	endpointInstanceID *string
+	sourceID           *string
+	contextID          *string
+	taskID             *string
+	typeID             *int32
+	duration           *int64
 	// Object section
 	_type   *int32
 	size    *uint64
@@ -225,8 +258,10 @@ type AdapterEntryClickHouseSearch struct {
 	name    *string
 	digest  *string
 	data    *string
-	// Error section
-	error *string
+	// Result section
+	result *string
+	status *string
+	error  *string
 }
 
 // NewAdapterEntryClickHouseSearch
@@ -238,6 +273,7 @@ func NewAdapterEntryClickHouseSearch() *AdapterEntryClickHouseSearch {
 func (ce *AdapterEntryClickHouseSearch) Import(entry *journal.Entry) *AdapterEntryClickHouseSearch {
 	ce.d = nil
 	ce.endpointID = nil
+	ce.endpointInstanceID = nil
 	if entry.SourceID.String() != "" {
 		sourceID := entry.SourceID.String()
 		ce.sourceID = &sourceID
@@ -283,6 +319,8 @@ func (ce *AdapterEntryClickHouseSearch) Import(entry *journal.Entry) *AdapterEnt
 	if data != "" {
 		ce.data = &data
 	}
+	ce.result = nil
+	ce.status = nil
 	if entry.Error != nil {
 		e := entry.Error.Error()
 		if e != "" {
@@ -306,6 +344,10 @@ func (ce *AdapterEntryClickHouseSearch) StmtSearchParamsPlaceholderAndArgs() (st
 	if ce.endpointID != nil {
 		params = append(params, "(endpoint_id == ?)")
 		args = append(args, *ce.endpointID)
+	}
+	if ce.endpointInstanceID != nil {
+		params = append(params, "(endpoint_instance_id == ?)")
+		args = append(args, *ce.endpointInstanceID)
 	}
 	if ce.sourceID != nil {
 		params = append(params, "(source_id == ?)")
@@ -354,6 +396,14 @@ func (ce *AdapterEntryClickHouseSearch) StmtSearchParamsPlaceholderAndArgs() (st
 	if ce.data != nil {
 		params = append(params, "(data == ?)")
 		args = append(args, *ce.data)
+	}
+	if ce.result != nil {
+		params = append(params, "(result == ?)")
+		args = append(args, *ce.result)
+	}
+	if ce.status != nil {
+		params = append(params, "(status == ?)")
+		args = append(args, *ce.status)
 	}
 	if ce.error != nil {
 		params = append(params, "(error == ?)")

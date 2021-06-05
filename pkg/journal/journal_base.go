@@ -26,9 +26,10 @@ import (
 
 // BaseJournal
 type BaseJournal struct {
-	start      time.Time
-	endpointID int32
-	adapter    Adapter
+	start              time.Time
+	endpointID         int32
+	endpointInstanceID *atlas.UUID
+	adapter            Adapter
 
 	NOPJournal
 }
@@ -37,20 +38,22 @@ type BaseJournal struct {
 var _ Journaller = &BaseJournal{}
 
 // NewBaseJournal
-func NewBaseJournal(endpointID int32, adapter Adapter) (*BaseJournal, error) {
+func NewBaseJournal(endpointID int32, endpointInstanceID *atlas.UUID, adapter Adapter) (*BaseJournal, error) {
 	return &BaseJournal{
-		start:      time.Now(),
-		endpointID: endpointID,
-		adapter:    adapter,
+		start:              time.Now(),
+		endpointID:         endpointID,
+		endpointInstanceID: endpointInstanceID,
+		adapter:            adapter,
 	}, nil
 }
 
 // copy
 func (j *BaseJournal) copy() *BaseJournal {
 	return &BaseJournal{
-		start:      j.start,
-		endpointID: j.endpointID,
-		adapter:    j.adapter,
+		start:              j.start,
+		endpointID:         j.endpointID,
+		endpointInstanceID: j.endpointInstanceID,
+		adapter:            j.adapter,
 	}
 }
 
@@ -118,7 +121,7 @@ func (j *BaseJournal) WithTask(task Tasker) Journaller {
 
 // NewEntry
 func (j *BaseJournal) NewEntry(entryType int32) *Entry {
-	return NewEntry().SetBaseInfo(j.start, j.endpointID, j.GetContextUUID(), j.GetTaskUUID(), entryType)
+	return NewEntry().SetBaseInfo(j.start, j.endpointID, j.endpointInstanceID, j.GetContextUUID(), j.GetTaskUUID(), entryType)
 }
 
 // Insert
@@ -126,7 +129,11 @@ func (j *BaseJournal) Insert(entry *Entry) error {
 	if j == nil {
 		return fmt.Errorf("unable to unsert into nil")
 	}
-	return j.adapter.Insert(entry)
+	err := j.adapter.Insert(entry)
+	if err != nil {
+		log.Warnf("unable to insert journal entry")
+	}
+	return err
 }
 
 // FindAll
@@ -140,25 +147,19 @@ func (j *BaseJournal) FindAll(entry *Entry) ([]*Entry, error) {
 // RequestStart journals beginning of the request processing
 func (j *BaseJournal) RequestStart() {
 	e := j.NewEntry(EntryTypeRequestStart)
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // RequestEnd journals request completed successfully
 func (j *BaseJournal) RequestEnd() {
 	e := j.NewEntry(EntryTypeRequestCompleted)
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // RequestError journals request has failed with an error
 func (j *BaseJournal) RequestError(callErr error) {
 	e := j.NewEntry(EntryTypeRequestError).SetError(callErr)
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // SaveData journals data saved successfully
@@ -171,17 +172,13 @@ func (j *BaseJournal) SaveData(
 	e := j.NewEntry(EntryTypeSaveData).
 		SetSourceID(dataMetadata.GetUserID()).
 		SetObject(dataMetadata.GetType(), dataAddress, uint64(dataSize), dataMetadata, data)
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // SaveDataError journals data not saved due to an error
 func (j *BaseJournal) SaveDataError(callErr error) {
 	e := j.NewEntry(EntryTypeSaveDataError).SetError(callErr)
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // ProcessData journals data processed successfully
@@ -193,47 +190,47 @@ func (j *BaseJournal) ProcessData(
 	e := j.NewEntry(EntryTypeProcessData).
 		SetSourceID(dataMetadata.GetUserID()).
 		SetObject(dataMetadata.GetType(), dataAddress, uint64(dataSize), dataMetadata, nil)
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // ProcessDataError journals data not processed due to an error
 func (j *BaseJournal) ProcessDataError(callErr error) {
 	e := j.NewEntry(EntryTypeProcessDataError).SetError(callErr)
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // SaveTask journals task saved successfully
 func (j *BaseJournal) SaveTask(task *atlas.Task) {
 	e := j.NewEntry(EntryTypeSaveTask).SetTaskID(task.GetUUID())
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // SaveTaskError journals task not saved due to an error
 func (j *BaseJournal) SaveTaskError(task *atlas.Task, callErr error) {
 	e := j.NewEntry(EntryTypeSaveTaskError).SetError(callErr).SetTaskID(task.GetUUID())
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // ProcessTask journals task processed successfully
 func (j *BaseJournal) ProcessTask(task *atlas.Task) {
 	e := j.NewEntry(EntryTypeProcessTask).SetTaskID(task.GetUUID())
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
 }
 
 // ProcessTaskError journals task not processed due to an error
 func (j *BaseJournal) ProcessTaskError(task *atlas.Task, callErr error) {
 	e := j.NewEntry(EntryTypeProcessTaskError).SetError(callErr).SetTaskID(task.GetUUID())
-	if err := j.adapter.Insert(e); err != nil {
-		log.Warnf("unable to insert journal entry")
-	}
+	_ = j.Insert(e)
+}
+
+// Lookup
+func (j *BaseJournal) Lookup(address *atlas.Address) {
+	e := j.NewEntry(EntryTypeLookup).SetObjectAddress(address)
+	_ = j.Insert(e)
+}
+
+// LookupError
+func (j *BaseJournal) LookupError(address *atlas.Address, callErr error) {
+	e := j.NewEntry(EntryTypeLookupError).SetError(callErr).SetObjectAddress(address)
+	_ = j.Insert(e)
 }
