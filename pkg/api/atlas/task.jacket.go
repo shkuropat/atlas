@@ -89,6 +89,28 @@ func (m *Task) SetReferenceUUIDFromString(id string) *Task {
 	return m
 }
 
+// GetContextUUID
+func (m *Task) GetContextUUID() *UUID {
+	return m.GetHeader().GetAddresses().First(DomainContext, DomainUUID).GetUUID()
+}
+
+// GetContextUUIDAsString
+func (m *Task) GetContextUUIDAsString() string {
+	return m.GetContextUUID().String()
+}
+
+// SetContextUUID
+func (m *Task) SetContextUUID(uuid *UUID) *Task {
+	m.GetHeader().EnsureAddresses().Set(DomainContext, DomainUUID, uuid)
+	return m
+}
+
+// SetContextUUIDFromString
+func (m *Task) SetContextUUIDFromString(id string) *Task {
+	m.SetContextUUID(NewUUIDFromString(id))
+	return m
+}
+
 // GetDescription
 func (m *Task) GetDescription() string {
 	return m.GetHeader().GetDescription()
