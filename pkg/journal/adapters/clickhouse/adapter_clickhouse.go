@@ -151,6 +151,8 @@ func (j *AdapterClickHouse) FindAll(entry *journal.Entry) ([]*journal.Entry, err
 			&ce.error,
 		); err == nil {
 			res = append(res, ce.Export())
+		} else {
+			log.Errorf("unable to scan stmt. err: %v", err)
 		}
 	}
 

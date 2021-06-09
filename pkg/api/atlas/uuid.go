@@ -54,7 +54,7 @@ func (m *UUID) SetString(str string) *UUID {
 // String
 func (m *UUID) String() string {
 	if m != nil {
-		return "UUIDAsString=" + string(m.Data)
+		return string(m.Data)
 	}
 	return ""
 }
