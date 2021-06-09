@@ -18,7 +18,7 @@ docker-compose -f ./docker-compose.yaml run --entrypoint=/bin/sh kafka -c "kafka
 ##
 
 # Schema file is located within the container and should be mounted into clickhouse-client container prior
-SCHEMA_FILE=/trail/clickhouse/journal_clickhouse_schema.sql
+SCHEMA_FILE=/journal/adapters/clickhouse/journal_clickhouse_schema.sql
 # ClickHouse server host where to create schema
 CLICKHOUSE_HOST=clickhouse-server
 # Create ClickHouse schema

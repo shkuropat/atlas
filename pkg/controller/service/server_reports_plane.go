@@ -16,24 +16,26 @@ package controller_service
 
 import (
 	"context"
-	"fmt"
-
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
+// ReportsPlaneServer
 type ReportsPlaneServer struct {
 	atlas.UnimplementedReportsPlaneServer
 }
 
+// NewReportsPlaneServer
 func NewReportsPlaneServer() *ReportsPlaneServer {
 	return &ReportsPlaneServer{}
 }
 
 // ReportsHandler is a user-provided handler for Reports call
-var ReportsHandler func(atlas.ReportsPlane_ReportsServer, jwt.MapClaims) error
+var ReportsHandler = func(atlas.ReportsPlane_ReportsServer, jwt.MapClaims) error {
+	return HandlerUnavailable
+}
 
 // Reports gRPC call
 func (s *ReportsPlaneServer) Reports(ReportsServer atlas.ReportsPlane_ReportsServer) error {
@@ -41,7 +43,7 @@ func (s *ReportsPlaneServer) Reports(ReportsServer atlas.ReportsPlane_ReportsSer
 	defer log.Info("Reports() - end")
 
 	if ReportsHandler == nil {
-		return fmt.Errorf("no ReportsHandler provided")
+		return HandlerUnavailable
 	}
 
 	metadata := fetchMetadata(ReportsServer.Context())
@@ -49,7 +51,9 @@ func (s *ReportsPlaneServer) Reports(ReportsServer atlas.ReportsPlane_ReportsSer
 }
 
 // ReportHandler is a user-provided handler for Report call
-var ReportHandler func(context.Context, *atlas.ReportRequest, jwt.MapClaims) (*atlas.ReportMulti, error)
+var ReportHandler = func(context.Context, *atlas.ReportRequest, jwt.MapClaims) (*atlas.ReportMulti, error) {
+	return nil, HandlerUnavailable
+}
 
 // Reports gRPC call
 func (s *ReportsPlaneServer) Report(ctx context.Context, req *atlas.ReportRequest) (*atlas.ReportMulti, error) {
@@ -57,7 +61,7 @@ func (s *ReportsPlaneServer) Report(ctx context.Context, req *atlas.ReportReques
 	defer log.Info("Report() - end")
 
 	if ReportHandler == nil {
-		return nil, fmt.Errorf("no ReportHandler provided")
+		return nil, HandlerUnavailable
 	}
 
 	metadata := fetchMetadata(ctx)

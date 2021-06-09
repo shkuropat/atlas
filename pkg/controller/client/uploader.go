@@ -70,10 +70,10 @@ func UploadReader(client atlas.ControlPlaneClient, r io.Reader, options *DataExc
 	defer log.Info("UploadReader() - end")
 
 	result := Upload(client, r, options)
-	if result.Err == nil {
+	if result.Error == nil {
 		log.Infof("DONE send %s size %d", "io.Reader", result.Send.Data.Len)
 	} else {
-		log.Warnf("FAILED send %s size %d err %v", "io.Reader", result.Send.Data.Len, result.Err)
+		log.Warnf("FAILED send %s size %d err %v", "io.Reader", result.Send.Data.Len, result.Error)
 	}
 
 	return result

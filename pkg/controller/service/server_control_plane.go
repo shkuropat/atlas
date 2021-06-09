@@ -16,7 +16,6 @@ package controller_service
 
 import (
 	"context"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 
@@ -32,16 +31,20 @@ func GetIncomingQueue() chan *atlas.Task {
 	return controller.GetIncoming()
 }
 
+// ControlPlaneServer
 type ControlPlaneServer struct {
 	atlas.UnimplementedControlPlaneServer
 }
 
+// NewControlPlaneServer
 func NewControlPlaneServer() *ControlPlaneServer {
 	return &ControlPlaneServer{}
 }
 
-// TasksHandler is a user-provided handler for Commands call
-var TasksHandler func(atlas.ControlPlane_TasksServer, jwt.MapClaims) error
+// TasksHandler is a user-provided handler for Tasks call
+var TasksHandler = func(atlas.ControlPlane_TasksServer, jwt.MapClaims) error {
+	return HandlerUnavailable
+}
 
 // Tasks gRPC call
 func (s *ControlPlaneServer) Tasks(TasksServer atlas.ControlPlane_TasksServer) error {
@@ -49,7 +52,7 @@ func (s *ControlPlaneServer) Tasks(TasksServer atlas.ControlPlane_TasksServer) e
 	defer log.Info("Tasks() - end")
 
 	if TasksHandler == nil {
-		return fmt.Errorf("no TasksHandler provided")
+		return HandlerUnavailable
 	}
 
 	metadata := fetchMetadata(TasksServer.Context())
@@ -60,7 +63,9 @@ func (s *ControlPlaneServer) Tasks(TasksServer atlas.ControlPlane_TasksServer) e
 }
 
 // DataChunksHandler is a user-provided handler for DataChunks call
-var DataChunksHandler func(atlas.ControlPlane_DataChunksServer, jwt.MapClaims) error
+var DataChunksHandler = func(atlas.ControlPlane_DataChunksServer, jwt.MapClaims) error {
+	return HandlerUnavailable
+}
 
 // DataChunks gRPC call
 func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_DataChunksServer) error {
@@ -68,7 +73,7 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 	defer log.Info("DataChunks() - end")
 
 	if DataChunksHandler == nil {
-		return fmt.Errorf("no DataChunks provided")
+		return HandlerUnavailable
 	}
 
 	metadata := fetchMetadata(DataChunksServer.Context())
@@ -76,7 +81,9 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 }
 
 // UploadObject is a user-provided handler for UploadObject call
-var UploadObjectHandler func(atlas.ControlPlane_UploadObjectServer, jwt.MapClaims) error
+var UploadObjectHandler = func(atlas.ControlPlane_UploadObjectServer, jwt.MapClaims) error {
+	return HandlerUnavailable
+}
 
 // UploadObject gRPC call
 func (s *ControlPlaneServer) UploadObject(UploadObjectServer atlas.ControlPlane_UploadObjectServer) error {
@@ -84,7 +91,7 @@ func (s *ControlPlaneServer) UploadObject(UploadObjectServer atlas.ControlPlane_
 	defer log.Info("UploadObject() - end")
 
 	if UploadObjectHandler == nil {
-		return fmt.Errorf("no UploadObject provided")
+		return HandlerUnavailable
 	}
 
 	metadata := fetchMetadata(UploadObjectServer.Context())
@@ -92,7 +99,9 @@ func (s *ControlPlaneServer) UploadObject(UploadObjectServer atlas.ControlPlane_
 }
 
 // StatusObjectHandler is a user-provided handler for StatusObject call
-var StatusObjectHandler func(*atlas.StatusRequest, jwt.MapClaims) (*atlas.Status, error)
+var StatusObjectHandler = func(*atlas.StatusRequest, jwt.MapClaims) (*atlas.Status, error) {
+	return nil, HandlerUnavailable
+}
 
 // StatusObject gRPC call
 func (s *ControlPlaneServer) StatusObject(ctx context.Context, req *atlas.StatusRequest) (*atlas.Status, error) {
@@ -100,7 +109,7 @@ func (s *ControlPlaneServer) StatusObject(ctx context.Context, req *atlas.Status
 	defer log.Info("StatusObject() - end")
 
 	if StatusObjectHandler == nil {
-		return nil, fmt.Errorf("no StatusObjectHandler provided")
+		return nil, HandlerUnavailable
 	}
 
 	metadata := fetchMetadata(ctx)
@@ -108,7 +117,9 @@ func (s *ControlPlaneServer) StatusObject(ctx context.Context, req *atlas.Status
 }
 
 // StatusObjectsHandler is a user-provided handler for StatusObjects call
-var StatusObjectsHandler func(*atlas.StatusRequestMulti, jwt.MapClaims) (*atlas.StatusMulti, error)
+var StatusObjectsHandler = func(*atlas.StatusRequestMulti, jwt.MapClaims) (*atlas.StatusMulti, error) {
+	return nil, HandlerUnavailable
+}
 
 // StatusObjects gRPC call
 func (s *ControlPlaneServer) StatusObjects(ctx context.Context, req *atlas.StatusRequestMulti) (*atlas.StatusMulti, error) {
@@ -116,7 +127,7 @@ func (s *ControlPlaneServer) StatusObjects(ctx context.Context, req *atlas.Statu
 	defer log.Info("StatusObjects() - end")
 
 	if StatusObjectsHandler == nil {
-		return nil, fmt.Errorf("no StatusObjectsHandler provided")
+		return nil, HandlerUnavailable
 	}
 
 	metadata := fetchMetadata(ctx)

@@ -95,7 +95,7 @@ services:
     # Mount pkg/trail dir from sources into docker container in order to have .sql file
     # with schema available inside the container. Thus we can create schema calling vlivkhouse-client within the container
     volumes:
-      - ../../pkg/trail:/trail
+      - ../../pkg/journal:/journal
 
   # /bin/sh -c "cat /trail/journal_clickhouse_schema.sql | /usr/bin/clickhouse-client --host=clickhouse-server --user=clickhouse_operator --password=clickhouse_operator_password --multiline --multiquery"
     #            # additional option --database=dbname

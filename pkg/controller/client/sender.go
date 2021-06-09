@@ -64,13 +64,13 @@ func SendReader(client atlas.ControlPlaneClient, r io.Reader, options *DataExcha
 	defer log.Info("SendReader() - end")
 
 	result := DataExchange(client, r, options)
-	if result.Err == nil {
+	if result.Error == nil {
 		log.Infof("DONE send %s size %d", "io.Reader", result.Send.Data.Len)
 	} else {
-		log.Warnf("FAILED send %s size %d err %v", "io.Reader", result.Send.Data.Len, result.Err)
+		log.Warnf("FAILED send %s size %d err %v", "io.Reader", result.Send.Data.Len, result.Error)
 	}
 
-	return result.Send.Data.Len, result.Err
+	return result.Send.Data.Len, result.Error
 }
 
 // SendBytes

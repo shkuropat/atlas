@@ -63,9 +63,9 @@ func DataExchange(
 
 	var DataChunksBiMultiClient atlas.ControlPlane_DataChunksClient
 
-	DataChunksBiMultiClient, result.Err = ControlPlaneClient.DataChunks(ctx)
-	if result.Err != nil {
-		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
+	DataChunksBiMultiClient, result.Error = ControlPlaneClient.DataChunks(ctx)
+	if result.Error != nil {
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Error)
 		return result
 	}
 
@@ -89,25 +89,25 @@ func DataExchange(
 			SetDecompress(options.GetDecompress()),
 	)
 	if err != nil {
-		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
-		result.Err = err
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Error)
+		result.Error = err
 		return result
 	}
 
 	if src != nil {
 		// We have something to send
-		result.Send.Data.Len, result.Err = f.ReadFrom(src)
-		if result.Err != nil {
-			log.Warnf("SendDataChunkFile() failed with err %v", result.Err)
+		result.Send.Data.Len, result.Error = f.ReadFrom(src)
+		if result.Error != nil {
+			log.Warnf("SendDataChunkFile() failed with err %v", result.Error)
 			return result
 		}
 	}
 
 	if options.GetWaitReply() {
 		// We should wait for reply
-		result.Recv.Data.Len, result.Recv.Data.Data, result.Err = f.WriteToBuf()
-		if result.Err != nil {
-			log.Warnf("RecvDataChunkFileIntoBuf() failed with err %v", result.Err)
+		result.Recv.Data.Len, result.Recv.Data.Data, result.Error = f.WriteToBuf()
+		if result.Error != nil {
+			log.Warnf("RecvDataChunkFileIntoBuf() failed with err %v", result.Error)
 			return result
 		}
 	}
@@ -132,9 +132,9 @@ func Upload(
 	defer cancel()
 
 	var DataChunksUpOneClient atlas.ControlPlane_UploadObjectClient
-	DataChunksUpOneClient, result.Err = ControlPlaneClient.UploadObject(ctx)
-	if result.Err != nil {
-		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
+	DataChunksUpOneClient, result.Error = ControlPlaneClient.UploadObject(ctx)
+	if result.Error != nil {
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Error)
 		return result
 	}
 
@@ -147,21 +147,41 @@ func Upload(
 			SetDecompress(options.GetDecompress()),
 	)
 	if err != nil {
-		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Err)
-		result.Err = err
+		log.Errorf("ControlPlaneClient.DataChunks() failed %v", result.Error)
+		result.Error = err
 		return result
 	}
 
 	if src != nil {
 		// We have something to send
-		result.Send.Data.Len, result.Err = f.ReadFrom(src)
-		if result.Err != nil {
-			log.Warnf("SendDataChunkFile() failed with err %v", result.Err)
+		result.Send.Data.Len, result.Error = f.ReadFrom(src)
+		if result.Error != nil {
+			log.Warnf("SendDataChunkFile() failed with err %v", result.Error)
 			return result
 		}
 	}
 
-	result.Recv.Status, result.Err = DataChunksUpOneClient.CloseAndRecv()
+	result.Recv.Status.Status, result.Error = DataChunksUpOneClient.CloseAndRecv()
+
+	return result
+}
+
+// Status requests status(es) of an object
+func Status(
+	ControlPlaneClient atlas.ControlPlaneClient,
+	meta *atlas.Metadata,
+) *DataExchangeResult {
+	log.Infof("Status() - start")
+	defer log.Infof("Status() - end")
+
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	request := atlas.NewStatusRequest()
+	request.Header = meta
+	result := NewDataExchangeResult()
+	result.Recv.Status.Status, result.Error = ControlPlaneClient.StatusObject(ctx, request)
 
 	return result
 }

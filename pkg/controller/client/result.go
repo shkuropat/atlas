@@ -23,7 +23,8 @@ import (
 // DataExchangeResult represents result of data exchange
 type DataExchangeResult struct {
 	// Err is an error
-	Err error
+	Error  error
+	Errors []error
 
 	// Send describes outgoing result
 	Send struct {
@@ -39,8 +40,14 @@ type DataExchangeResult struct {
 			Data     *bytes.Buffer
 			Metadata *atlas.Metadata
 		}
-		Status      *atlas.Status
-		StatusMulti *atlas.StatusMulti
+		Status struct {
+			Status      *atlas.Status
+			StatusMulti *atlas.StatusMulti
+		}
+		Report struct {
+			Report      *atlas.Report
+			ReportMulti *atlas.ReportMulti
+		}
 	}
 }
 
@@ -52,6 +59,6 @@ func NewDataExchangeResult() *DataExchangeResult {
 // NewDataExchangeResultError
 func NewDataExchangeResultError(err error) *DataExchangeResult {
 	res := NewDataExchangeResult()
-	res.Err = err
+	res.Error = err
 	return res
 }

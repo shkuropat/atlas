@@ -51,6 +51,32 @@ func (m *ReportMulti) AddReports(reports ...*Report) *ReportMulti {
 	return m
 }
 
+// Len
+func (m *ReportMulti) Len() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.Reports)
+}
+
+// First
+func (m *ReportMulti) First() *Report {
+	if m.Len() > 0 {
+		return m.Reports[0]
+	}
+	return nil
+}
+
+// Shift
+func (m *ReportMulti) Shift() *Report {
+	if m.Len() > 0 {
+		r := m.Reports[0]
+		m.Reports = m.Reports[1:]
+		return r
+	}
+	return nil
+}
+
 // String
 func (m *ReportMulti) String() string {
 	return "to be implemented"
