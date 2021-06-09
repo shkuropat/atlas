@@ -71,6 +71,23 @@ func (e *Enum) GetValue(what interface{}) (int32, bool) {
 	return 0, false
 }
 
+// Value
+func (e *Enum) Value(what interface{}) int32 {
+	if value, found := e.GetValue(what); found {
+		return value
+	} else {
+		return 0
+	}
+}
+
+// MustGetValue
+func (e *Enum) MustGetValue(what interface{}) int32 {
+	if v, ok := e.GetValue(what); ok {
+		return v
+	}
+	panic("MustGetValue")
+}
+
 // GetName
 func (e *Enum) GetName(what interface{}) (string, bool) {
 	switch typed := what.(type) {
@@ -86,12 +103,13 @@ func (e *Enum) GetName(what interface{}) (string, bool) {
 	return "", false
 }
 
-// MustGetValue
-func (e *Enum) MustGetValue(what interface{}) int32 {
-	if v, ok := e.GetValue(what); ok {
-		return v
+// name
+func (e *Enum) Name(what interface{}) string {
+	if name, found := e.GetName(what); found {
+		return name
+	} else {
+		return "unknown enum entry"
 	}
-	panic("MustGetValue")
 }
 
 // MustGetName
