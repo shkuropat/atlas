@@ -16,6 +16,7 @@ package clickhouse
 
 import (
 	"bytes"
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -237,6 +238,33 @@ func (ce *AdapterEntryClickHouse) AsUntypedSlice() []interface{} {
 		ce.status,
 		ce.error,
 	}
+}
+
+// Scan
+func (ce *AdapterEntryClickHouse) Scan(rows *sql.Rows) error {
+	if ce == nil {
+		return fmt.Errorf("unable to scan into nil")
+	}
+	return rows.Scan(
+		&ce.d,
+		&ce.endpointID,
+		&ce.endpointInstanceID,
+		&ce.sourceID,
+		&ce.contextID,
+		&ce.taskID,
+		&ce.typeID,
+		&ce.duration,
+		&ce._type,
+		&ce.size,
+		&ce.address,
+		&ce.domain,
+		&ce.name,
+		&ce.digest,
+		&ce.data,
+		&ce.result,
+		&ce.status,
+		&ce.error,
+	)
 }
 
 // AdapterEntryClickHouseSearch defines journal entry structure

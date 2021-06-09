@@ -133,23 +133,8 @@ func (j *AdapterClickHouse) FindAll(entry *journal.Entry) ([]*journal.Entry, err
 
 	var res []*journal.Entry
 	for rows.Next() {
-		var ce AdapterEntryClickHouse
-		if err := rows.Scan(
-			&ce.d,
-			&ce.endpointID,
-			&ce.sourceID,
-			&ce.contextID,
-			&ce.taskID,
-			&ce.typeID,
-			&ce.duration,
-			&ce._type,
-			&ce.size,
-			&ce.address,
-			&ce.name,
-			&ce.digest,
-			&ce.data,
-			&ce.error,
-		); err == nil {
+		ce := NewAdapterEntryClickHouse()
+		if err := ce.Scan(rows); err == nil {
 			res = append(res, ce.Export())
 		} else {
 			log.Errorf("unable to scan stmt. err: %v", err)
