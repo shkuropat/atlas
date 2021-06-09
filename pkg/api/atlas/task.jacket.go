@@ -79,7 +79,7 @@ func (m *Task) GetReferenceUUIDAsString() string {
 
 // SetReferenceUUID
 func (m *Task) SetReferenceUUID(uuid *UUID) *Task {
-	m.GetHeader().EnsureAddresses().Set(DomainReference, DomainUUID, uuid)
+	m.GetHeader().EnsureAddresses().Set(DomainReference, DomainUUID, NewAddress(uuid))
 	return m
 }
 
@@ -101,7 +101,7 @@ func (m *Task) GetContextUUIDAsString() string {
 
 // SetContextUUID
 func (m *Task) SetContextUUID(uuid *UUID) *Task {
-	m.GetHeader().EnsureAddresses().Set(DomainContext, DomainUUID, uuid)
+	m.GetHeader().EnsureAddresses().Set(DomainContext, DomainUUID, NewAddress(uuid))
 	return m
 }
 
