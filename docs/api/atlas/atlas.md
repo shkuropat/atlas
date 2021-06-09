@@ -211,7 +211,7 @@ Address describes general address
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| address_domain | [Domain](#atlas.Domain) |  | Domain where address is specified |
+| explicit_domain | [Domain](#atlas.Domain) |  | Domain where address is specified |
 | s3 | [S3Address](#atlas.S3Address) |  | S3 address option |
 | kafka | [KafkaAddress](#atlas.KafkaAddress) |  | Kafka address option |
 | digest | [Digest](#atlas.Digest) |  | Digest-based address option |

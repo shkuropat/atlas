@@ -104,10 +104,43 @@ func (m *Address) SetDomain(domain *Domain) *Address {
 	if m == nil {
 		return nil
 	}
-	addressDomain := new(Address_AddressDomain)
-	addressDomain.AddressDomain = domain
-	m.DomainOptional = addressDomain
+	explicitDomain := new(Address_ExplicitDomain)
+	explicitDomain.ExplicitDomain = domain
+	m.DomainOptional = explicitDomain
 	return m
+}
+
+// GetAddressDomain
+func (m *Address) GetAddressDomain() *Domain {
+	if m == nil {
+		return nil
+	}
+	if explicit := m.GetExplicitDomain(); explicit != nil {
+		return explicit
+	}
+
+	switch {
+	case m.GetS3() != nil:
+		return DomainS3
+	case m.GetKafka() != nil:
+		return DomainKafka
+	case m.GetDigest() != nil:
+		return DomainDigest
+	case m.GetUUID() != nil:
+		return DomainUUID
+	case m.GetUserId() != nil:
+		return DomainUserID
+	case m.GetDirname() != nil:
+		return DomainDirname
+	case m.GetFilename() != nil:
+		return DomainFilename
+	case m.GetUrl() != nil:
+		return DomainURL
+	case m.GetDomain() != nil:
+		return DomainDomain
+	default:
+		return DomainCustomString
+	}
 }
 
 // Set sets value of the Address
@@ -122,42 +155,52 @@ func (m *Address) Set(address interface{}) *Address {
 		i := new(Address_S3)
 		i.S3 = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainS3)
 	case *KafkaAddress:
 		i := new(Address_Kafka)
 		i.Kafka = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainKafka)
 	case *Digest:
 		i := new(Address_Digest)
 		i.Digest = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainDigest)
 	case *UUID:
 		i := new(Address_Uuid)
 		i.Uuid = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainUUID)
 	case *UserID:
 		i := new(Address_UserId)
 		i.UserId = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainUserID)
 	case *Dirname:
 		i := new(Address_Dirname)
 		i.Dirname = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainDirname)
 	case *Filename:
 		i := new(Address_Filename)
 		i.Filename = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainFilename)
 	case *URL:
 		i := new(Address_Url)
 		i.Url = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainURL)
 	case *Domain:
 		i := new(Address_Domain)
 		i.Domain = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainDomain)
 	case string:
 		i := new(Address_CustomString)
 		i.CustomString = typed
 		m.AddressOptional = i
+		m.SetDomain(DomainCustomString)
 	}
 	return m
 }
@@ -178,11 +221,11 @@ func (m *Address) String() string {
 	case m.GetKafka() != nil:
 		return m.GetKafka().String()
 	case m.GetDigest() != nil:
-		return "digest printable not implemented"
+		return m.GetDigest().String()
 	case m.GetUUID() != nil:
-		return "uuid printable not implemented"
+		return m.GetUUID().String()
 	case m.GetUserId() != nil:
-		return "userid printable not implemented"
+		return m.GetUserId().String()
 	case m.GetDirname() != nil:
 		return m.GetDirname().String()
 	case m.GetFilename() != nil:
@@ -190,7 +233,7 @@ func (m *Address) String() string {
 	case m.GetUrl() != nil:
 		return m.GetUrl().String()
 	case m.GetDomain() != nil:
-		return "domain printable not implemented"
+		return m.GetDomain().String()
 	default:
 		return m.GetCustomString()
 	}

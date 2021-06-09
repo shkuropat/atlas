@@ -34,7 +34,7 @@ import "uuid.proto";
 message Address {
     oneof domain_optional {
         // Domain where address is specified
-        Domain address_domain = 10;
+        Domain explicit_domain = 10;
     }
 
     oneof address_optional {
