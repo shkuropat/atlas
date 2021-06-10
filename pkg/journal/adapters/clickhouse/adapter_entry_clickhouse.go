@@ -102,7 +102,7 @@ func (ce *AdapterEntryClickHouse) Import(entry *journal.Entry) *AdapterEntryClic
 	// Object section
 	ce._type = entry.ObjectType
 	ce.size = entry.ObjectSize
-	ce.address = entry.ObjectAddress.String()
+	ce.address = entry.ObjectAddress.ToString()
 	ce.domain = entry.ObjectMetadata.GetDomain().GetName()
 	ce.name = entry.ObjectMetadata.GetFilename()
 	ce.digest = string(entry.ObjectMetadata.GetDigest().GetData())
@@ -135,7 +135,7 @@ func (ce *AdapterEntryClickHouse) Export() *journal.Entry {
 	// Object section
 	entry.ObjectType = ce._type
 	entry.ObjectSize = ce.size
-	entry.SetObjectAddress(atlas.NewAddressUUIDFromString(ce.address))
+	entry.SetObjectAddress(atlas.NewAddressFromString(ce.address))
 	entry.EnsureObjectMetadata().SetDomain(atlas.NewDomain().Set(ce.domain))
 	entry.EnsureObjectMetadata().SetFilename(ce.name)
 	entry.EnsureObjectMetadata().SetDigest(atlas.NewDigest().SetDataFromString(ce.digest))

@@ -14,6 +14,8 @@
 
 package atlas
 
+import "strings"
+
 // AddressType represents all types of domain-specific addresses in the system
 const (
 	// Due to first enum value has to be zero in proto3
@@ -89,6 +91,41 @@ func NewAddressUUIDRandom(domain ...interface{}) *Address {
 // NewAddressUUIDFromString creates new Address with specified Domain with UUID fetched from string
 func NewAddressUUIDFromString(str string, domain ...interface{}) *Address {
 	return NewAddress(domain...).Set(NewUUID().SetString(str))
+}
+
+// NewAddressFromString
+func NewAddressFromString(str string) *Address {
+	parts := strings.SplitN(str, separator, 2)
+	if len(parts) != 2 {
+		return nil
+	}
+	domain := DomainFromString(parts[0])
+	if domain == nil {
+		return nil
+	}
+	switch domain {
+	case DomainS3:
+		return NewAddress(NewS3AddressFromString(parts[1]))
+	case DomainKafka:
+		return nil
+	case DomainDigest:
+		return nil
+	case DomainUUID:
+		return NewAddress(NewUUIDFromString(parts[1]))
+	case DomainUserID:
+		return nil
+	case DomainDirname:
+		return nil
+	case DomainFilename:
+		return nil
+	case DomainURL:
+		return nil
+	case DomainDomain:
+		return nil
+	case DomainCustomString:
+		return nil
+	}
+	return nil
 }
 
 // Ensure returns new or existing Address
@@ -205,6 +242,8 @@ func (m *Address) Set(address interface{}) *Address {
 	return m
 }
 
+const separator = ":"
+
 // String
 func (m *Address) String() string {
 	if m == nil {
@@ -237,4 +276,13 @@ func (m *Address) String() string {
 	default:
 		return m.GetCustomString()
 	}
+}
+
+func (m *Address) ToString() string {
+	domain := m.GetAddressDomain()
+	str := m.String()
+	if domain == nil {
+		return ""
+	}
+	return domain.GetName() + separator + str
 }

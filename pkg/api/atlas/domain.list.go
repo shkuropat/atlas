@@ -35,4 +35,37 @@ var (
 	DomainURL          = NewDomain().Set("url")
 	DomainDomain       = NewDomain().Set("domain")
 	DomainCustomString = NewDomain().Set("custom string")
+
+	Domains = []*Domain{
+		// Most popular predefined root domains
+		DomainThis,
+		DomainSrc,
+		DomainDst,
+		DomainReference,
+		DomainContext,
+		DomainTask,
+		DomainParent,
+		DomainResult,
+		// Most popular predefined nested domains
+		DomainS3,
+		DomainKafka,
+		DomainDigest,
+		DomainUUID,
+		DomainUserID,
+		DomainDirname,
+		DomainFilename,
+		DomainURL,
+		DomainDomain,
+		DomainCustomString,
+	}
 )
+
+func DomainFromString(str string) *Domain {
+	d := NewDomain().Set(str)
+	for _, domain := range Domains {
+		if domain.Equals(d) {
+			return domain
+		}
+	}
+	return nil
+}

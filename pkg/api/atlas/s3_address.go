@@ -14,12 +14,25 @@
 
 package atlas
 
+import "strings"
+
 // NewS3Address
 func NewS3Address(bucket, object string) *S3Address {
 	return &S3Address{
 		Bucket: bucket,
 		Object: object,
 	}
+}
+
+// NewS3AddressFromString
+func NewS3AddressFromString(str string) *S3Address {
+	parts := strings.SplitN(str, "/", 2)
+	if len(parts) != 2 {
+		return nil
+	}
+	bucket := parts[0]
+	object := parts[1]
+	return NewS3Address(bucket, object)
 }
 
 // SetBucket
