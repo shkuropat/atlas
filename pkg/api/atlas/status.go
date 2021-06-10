@@ -36,6 +36,8 @@ const (
 	StatusMovedPermanently = 301
 	// Object not found
 	StatusNotFound = 404
+	// Object failed somehow
+	StatusFailed = 500
 )
 
 var StatusTypeEnum = NewEnum()
@@ -51,6 +53,7 @@ func init() {
 	StatusTypeEnum.MustRegister("StatusInProgress", StatusInProgress)
 	StatusTypeEnum.MustRegister("StatusMovedPermanently", StatusMovedPermanently)
 	StatusTypeEnum.MustRegister("StatusNotFound", StatusNotFound)
+	StatusTypeEnum.MustRegister("StatusFailed", StatusFailed)
 }
 
 // NewStatus
