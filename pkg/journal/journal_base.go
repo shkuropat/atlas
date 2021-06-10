@@ -213,7 +213,7 @@ func (j *BaseJournal) SaveTaskError(task *atlas.Task, callErr error) {
 
 // ProcessTask journals task processed successfully
 func (j *BaseJournal) ProcessTask(task *atlas.Task) {
-	e := j.NewEntry(EntryTypeProcessTask).SetTaskID(task.GetUUID())
+	e := j.NewEntry(EntryTypeProcessTask).SetTaskID(task.GetUUID()).SetObjectAddress(task.GetResult())
 	_ = j.Insert(e)
 }
 

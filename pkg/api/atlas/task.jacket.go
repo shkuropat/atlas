@@ -111,6 +111,17 @@ func (m *Task) SetContextUUIDFromString(id string) *Task {
 	return m
 }
 
+// GetResult
+func (m *Task) GetResult() *Address {
+	return m.GetHeader().GetAddresses().First(DomainResult)
+}
+
+// SetResult
+func (m *Task) SetResult(address *Address) *Task {
+	m.GetHeader().EnsureAddresses().Set(DomainResult, address.GetAddressDomain(), address)
+	return m
+}
+
 // GetDescription
 func (m *Task) GetDescription() string {
 	return m.GetHeader().GetDescription()
