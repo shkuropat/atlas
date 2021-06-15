@@ -15,6 +15,7 @@
 package minio
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"crypto/tls"
@@ -185,6 +186,28 @@ func (m *MinIO) Get(bucketName, objectName string) (io.Reader, error) {
 // GetA returns reader for specified object
 func (m *MinIO) GetA(addr *atlas.S3Address) (io.Reader, error) {
 	return m.Get(addr.Bucket, addr.Object)
+}
+
+// BufferGet downloads specified object into memory buffer
+func (m *MinIO) BufferGet(bucketName, objectName string) (*bytes.Buffer, error) {
+	// Obtain reader
+	r, err := m.Get(bucketName, objectName)
+	if err != nil {
+		return nil, err
+	}
+	// Download data into mem
+	buf := &bytes.Buffer{}
+	_, err = io.Copy(buf, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+// BufferGetA downloads specified object into memory buffer
+func (m *MinIO) BufferGetA(addr *atlas.S3Address) (*bytes.Buffer, error) {
+	return m.BufferGet(addr.Bucket, addr.Object)
 }
 
 // FGet downloads specified object into specified file
