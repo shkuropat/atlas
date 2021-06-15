@@ -36,8 +36,12 @@ const (
 	StatusMovedPermanently = 301
 	// Object not found
 	StatusNotFound = 404
+	// Object not ready
+	StatusNotReady = 405
+	// Object has failed due to internal error
+	StatusInternalError = 500
 	// Object failed somehow
-	StatusFailed = 500
+	StatusFailed = 550
 )
 
 var StatusTypeEnum = NewEnum()
@@ -53,6 +57,8 @@ func init() {
 	StatusTypeEnum.MustRegister("StatusInProgress", StatusInProgress)
 	StatusTypeEnum.MustRegister("StatusMovedPermanently", StatusMovedPermanently)
 	StatusTypeEnum.MustRegister("StatusNotFound", StatusNotFound)
+	StatusTypeEnum.MustRegister("StatusNotReady", StatusNotReady)
+	StatusTypeEnum.MustRegister("StatusInternalError", StatusInternalError)
 	StatusTypeEnum.MustRegister("StatusFailed", StatusFailed)
 }
 

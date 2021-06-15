@@ -93,6 +93,17 @@ func (m *Task) UnmarshalFrom(bytes []byte) error {
 	return proto.Unmarshal(bytes, m)
 }
 
+// EnsureHeader
+func (m *Task) EnsureHeader() *Metadata {
+	if m == nil {
+		return nil
+	}
+	if m.Header == nil {
+		m.Header = NewMetadata()
+	}
+	return m.Header
+}
+
 // SetBytes sets bytes as task's data. Provided bytes are not interpreted and used as-is.
 func (m *Task) SetBytes(bytes []byte) *Task {
 	m.Bytes = bytes

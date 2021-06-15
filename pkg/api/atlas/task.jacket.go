@@ -25,7 +25,7 @@ func (m *Task) GetType() int32 {
 
 // SetType
 func (m *Task) SetType(_type int32) *Task {
-	m.GetHeader().SetType(_type)
+	m.EnsureHeader().SetType(_type)
 	return m
 }
 
@@ -36,7 +36,18 @@ func (m *Task) GetName() string {
 
 // SetName
 func (m *Task) SetName(name string) *Task {
-	m.GetHeader().SetName(name)
+	m.EnsureHeader().SetName(name)
+	return m
+}
+
+// GetStatus gets task status
+func (m *Task) GetStatus() int32 {
+	return m.GetHeader().GetStatus()
+}
+
+// SetStatus sets task status
+func (m *Task) SetStatus(status int32) *Task {
+	m.EnsureHeader().SetStatus(status)
 	return m
 }
 
@@ -52,7 +63,7 @@ func (m *Task) GetUUIDAsString() string {
 
 // SetUUID
 func (m *Task) SetUUID(address *Address) *Task {
-	m.GetHeader().Set(DomainThis, DomainUUID, address)
+	m.EnsureHeader().Set(DomainThis, DomainUUID, address)
 	return m
 }
 
@@ -79,7 +90,7 @@ func (m *Task) GetReferenceUUIDAsString() string {
 
 // SetReferenceUUID
 func (m *Task) SetReferenceUUID(uuid *UUID) *Task {
-	m.GetHeader().EnsureAddresses().Set(DomainReference, DomainUUID, NewAddress(uuid))
+	m.EnsureHeader().EnsureAddresses().Set(DomainReference, DomainUUID, NewAddress(uuid))
 	return m
 }
 
@@ -101,7 +112,7 @@ func (m *Task) GetContextUUIDAsString() string {
 
 // SetContextUUID
 func (m *Task) SetContextUUID(uuid *UUID) *Task {
-	m.GetHeader().EnsureAddresses().Set(DomainContext, DomainUUID, NewAddress(uuid))
+	m.EnsureHeader().EnsureAddresses().Set(DomainContext, DomainUUID, NewAddress(uuid))
 	return m
 }
 
@@ -118,7 +129,7 @@ func (m *Task) GetResult() *Address {
 
 // SetResult
 func (m *Task) SetResult(address *Address) *Task {
-	m.GetHeader().EnsureAddresses().Set(DomainResult, address.GetAddressDomain(), address)
+	m.EnsureHeader().EnsureAddresses().Set(DomainResult, address.GetAddressDomain(), address)
 	return m
 }
 
@@ -129,6 +140,6 @@ func (m *Task) GetDescription() string {
 
 // SetDescription
 func (m *Task) SetDescription(description string) *Task {
-	m.GetHeader().SetDescription(description)
+	m.EnsureHeader().SetDescription(description)
 	return m
 }
