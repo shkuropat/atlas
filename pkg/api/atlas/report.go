@@ -51,6 +51,34 @@ func (m *Report) SetBytes(bytes []byte) *Report {
 	return m
 }
 
+// HasParts
+func (m *Report) HasParts() bool {
+	if m == nil {
+		return false
+	}
+	return len(m.Parts) > 0
+}
+
+// AddPart
+func (m *Report) AddPart(r *Report) *Report {
+	if m == nil {
+		return nil
+	}
+	m.Parts = append(m.Parts, r)
+	return m
+}
+
+// WalkParts
+func (m *Report) WalkParts(f func(i int, part *Report)) *Report {
+	if m == nil {
+		return nil
+	}
+	for i, part := range m.Parts {
+		f(i, part)
+	}
+	return m
+}
+
 // String
 func (m *Report) String() string {
 	return "to be implemented"

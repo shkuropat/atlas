@@ -26,4 +26,7 @@ message Report {
     // Bytes is the purpose of the whole report type
     // May contain any arbitrary sequence of bytes no longer than 2^32
     bytes bytes = 200;
+
+    // Report may contain nested parts
+    repeated Report parts = 300;
 }

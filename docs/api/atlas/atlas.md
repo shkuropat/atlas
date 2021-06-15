@@ -911,6 +911,7 @@ PresentationOptions describes presentation options of the object
 | ----- | ---- | ----- | ----------- |
 | header | [Metadata](#atlas.Metadata) |  |  |
 | bytes | [bytes](#bytes) |  | Bytes is the purpose of the whole report type May contain any arbitrary sequence of bytes no longer than 2^32 |
+| parts | [Report](#atlas.Report) | repeated | Report may contain nested parts |
 
 
 
