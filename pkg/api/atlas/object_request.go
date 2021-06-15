@@ -12,21 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * StatusReply represents status of object(s)
- */
-syntax = "proto3";
+package atlas
 
-package atlas;
+// NewObjectRequest
+func NewObjectRequest() *ObjectRequest {
+	return new(ObjectRequest)
+}
 
-import "metadata.proto";
-import "status.proto";
+// EnsureHeader
+func (m *ObjectRequest) EnsureHeader() *Metadata {
+	if m == nil {
+		return nil
+	}
+	if m.Header == nil {
+		m.Header = NewMetadata()
+	}
+	return m.Header
+}
 
-// StatusMulti represents status of multiple object(s)
-message StatusMulti {
-    oneof header_optional {
-        Metadata header = 100;
-    }
+// SetHeader
+func (m *ObjectRequest) SetHeader(header *Metadata) *ObjectRequest {
+	if m == nil {
+		return nil
+	}
+	m.Header = header
+	return m
+}
 
-    repeated Status statuses = 200;
+// String
+func (m *ObjectRequest) String() string {
+	return "to be implemented"
 }

@@ -12,16 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * StatusRequest represents status request of the object(s)
- */
 syntax = "proto3";
 
 package atlas;
 
-import "metadata.proto";
+import "domain.proto";
+import "request_mode.proto";
+import "object_request.proto";
 
-// StatusRequest represents status request of the object(s)
-message StatusRequest {
-    Metadata header = 100;
+message ObjectsRequest {
+    oneof domain_optional {
+        Domain domain = 100;
+    }
+
+    oneof request_mode_optional {
+        RequestMode request_mode = 200;
+    }
+
+    repeated ObjectRequest requests = 300;
 }

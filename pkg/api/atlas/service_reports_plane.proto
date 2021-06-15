@@ -16,10 +16,9 @@ syntax = "proto3";
 
 package atlas;
 
-import "report_request.proto";
-import "report_multi.proto";
+import "objects_request.proto";
+import "objects_list.proto";
 
 service ReportsPlane {
-    rpc Reports(stream ReportRequest) returns (stream ReportMulti) {}
-    rpc Report(ReportRequest) returns (ReportMulti) {}
+    rpc ObjectsReport(ObjectsRequest) returns (ObjectsList) {}
 }

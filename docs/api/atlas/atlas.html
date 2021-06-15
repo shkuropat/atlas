@@ -446,11 +446,11 @@
         
           
           <li>
-            <a href="#presentation_options.proto">presentation_options.proto</a>
+            <a href="#object_request.proto">object_request.proto</a>
             <ul>
               
                 <li>
-                  <a href="#atlas.PresentationOptions"><span class="badge">M</span>PresentationOptions</a>
+                  <a href="#atlas.ObjectRequest"><span class="badge">M</span>ObjectRequest</a>
                 </li>
               
               
@@ -461,11 +461,41 @@
         
           
           <li>
-            <a href="#report_multi.proto">report_multi.proto</a>
+            <a href="#objects_list.proto">objects_list.proto</a>
             <ul>
               
                 <li>
-                  <a href="#atlas.ReportMulti"><span class="badge">M</span>ReportMulti</a>
+                  <a href="#atlas.ObjectsList"><span class="badge">M</span>ObjectsList</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#objects_request.proto">objects_request.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.ObjectsRequest"><span class="badge">M</span>ObjectsRequest</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#presentation_options.proto">presentation_options.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.PresentationOptions"><span class="badge">M</span>PresentationOptions</a>
                 </li>
               
               
@@ -491,13 +521,13 @@
         
           
           <li>
-            <a href="#report_request.proto">report_request.proto</a>
+            <a href="#request_mode.proto">request_mode.proto</a>
             <ul>
               
-                <li>
-                  <a href="#atlas.ReportRequest"><span class="badge">M</span>ReportRequest</a>
-                </li>
               
+                <li>
+                  <a href="#atlas.RequestMode"><span class="badge">E</span>RequestMode</a>
+                </li>
               
               
               
@@ -551,71 +581,11 @@
         
           
           <li>
-            <a href="#status_multi.proto">status_multi.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#atlas.StatusMulti"><span class="badge">M</span>StatusMulti</a>
-                </li>
-              
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#status.proto">status.proto</a>
             <ul>
               
                 <li>
                   <a href="#atlas.Status"><span class="badge">M</span>Status</a>
-                </li>
-              
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
-            <a href="#status_request_mode.proto">status_request_mode.proto</a>
-            <ul>
-              
-              
-                <li>
-                  <a href="#atlas.StatusRequestMode"><span class="badge">E</span>StatusRequestMode</a>
-                </li>
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
-            <a href="#status_request_multi.proto">status_request_multi.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#atlas.StatusRequestMulti"><span class="badge">M</span>StatusRequestMulti</a>
-                </li>
-              
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
-            <a href="#status_request.proto">status_request.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#atlas.StatusRequest"><span class="badge">M</span>StatusRequest</a>
                 </li>
               
               
@@ -1783,6 +1753,155 @@ Object can be typed/identified either by type or by name. </p></td>
     
       
       <div class="file-heading">
+        <h2 id="object_request.proto">object_request.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>StatusRequest represents status request of the object(s)</p>
+
+      
+        <h3 id="atlas.ObjectRequest">ObjectRequest</h3>
+        <p>ObjectRequest represents request for the object(s)</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>header</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="objects_list.proto">objects_list.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="atlas.ObjectsList">ObjectsList</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>header</td>
+                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>reports</td>
+                  <td><a href="#atlas.Report">Report</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>tasks</td>
+                  <td><a href="#atlas.Task">Task</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>statuses</td>
+                  <td><a href="#atlas.Status">Status</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="objects_request.proto">objects_request.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="atlas.ObjectsRequest">ObjectsRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>domain</td>
+                  <td><a href="#atlas.Domain">Domain</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>request_mode</td>
+                  <td><a href="#atlas.RequestMode">RequestMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>requests</td>
+                  <td><a href="#atlas.ObjectRequest">ObjectRequest</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
         <h2 id="presentation_options.proto">presentation_options.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -1817,51 +1936,6 @@ Object can be typed/identified either by type or by name. </p></td>
                   <td><a href="#atlas.Digest">Digest</a></td>
                   <td></td>
                   <td><p>Optional. Digest represents digest of the object. </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="report_multi.proto">report_multi.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="atlas.ReportMulti">ReportMulti</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>reports</td>
-                  <td><a href="#atlas.Report">Report</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
                 </tr>
               
             </tbody>
@@ -1926,36 +2000,47 @@ May contain any arbitrary sequence of bytes no longer than 2^32 </p></td>
     
       
       <div class="file-heading">
-        <h2 id="report_request.proto">report_request.proto</h2><a href="#title">Top</a>
+        <h2 id="request_mode.proto">request_mode.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
 
       
-        <h3 id="atlas.ReportRequest">ReportRequest</h3>
-        <p></p>
 
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
       
-
+        <h3 id="atlas.RequestMode">RequestMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>RESERVED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>UNSPECIFIED</td>
+                <td>100</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ALL</td>
+                <td>200</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ANY</td>
+                <td>300</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
       
 
       
@@ -2054,7 +2139,7 @@ Some commands may be followed by data load. Be it logs, dumps, etc.</p></td>
               <tr>
                 <td>UploadObjects</td>
                 <td><a href="#atlas.DataChunk">DataChunk</a> stream</td>
-                <td><a href="#atlas.StatusMulti">StatusMulti</a></td>
+                <td><a href="#atlas.ObjectsList">ObjectsList</a></td>
                 <td><p></p></td>
               </tr>
             
@@ -2063,20 +2148,6 @@ Some commands may be followed by data load. Be it logs, dumps, etc.</p></td>
                 <td><a href="#atlas.Metric">Metric</a> stream</td>
                 <td><a href="#atlas.Metric">Metric</a></td>
                 <td><p>Uni-directional Metrics stream from client to server.</p></td>
-              </tr>
-            
-              <tr>
-                <td>StatusObject</td>
-                <td><a href="#atlas.StatusRequest">StatusRequest</a></td>
-                <td><a href="#atlas.Status">Status</a></td>
-                <td><p>ObjectStatus checks status of the object on the server.</p></td>
-              </tr>
-            
-              <tr>
-                <td>StatusObjects</td>
-                <td><a href="#atlas.StatusRequestMulti">StatusRequestMulti</a></td>
-                <td><a href="#atlas.StatusMulti">StatusMulti</a></td>
-                <td><p>ObjectStatusMulti checks status of the multiple objects on server.</p></td>
               </tr>
             
           </tbody>
@@ -2106,16 +2177,9 @@ Some commands may be followed by data load. Be it logs, dumps, etc.</p></td>
           <tbody>
             
               <tr>
-                <td>Reports</td>
-                <td><a href="#atlas.ReportRequest">ReportRequest</a> stream</td>
-                <td><a href="#atlas.ReportMulti">ReportMulti</a> stream</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>Report</td>
-                <td><a href="#atlas.ReportRequest">ReportRequest</a></td>
-                <td><a href="#atlas.ReportMulti">ReportMulti</a></td>
+                <td>ObjectsReport</td>
+                <td><a href="#atlas.ObjectsRequest">ObjectsRequest</a></td>
+                <td><a href="#atlas.ObjectsList">ObjectsList</a></td>
                 <td><p></p></td>
               </tr>
             
@@ -2123,51 +2187,6 @@ Some commands may be followed by data load. Be it logs, dumps, etc.</p></td>
         </table>
 
         
-    
-      
-      <div class="file-heading">
-        <h2 id="status_multi.proto">status_multi.proto</h2><a href="#title">Top</a>
-      </div>
-      <p>StatusReply represents status of object(s)</p>
-
-      
-        <h3 id="atlas.StatusMulti">StatusMulti</h3>
-        <p>StatusMulti represents status of multiple object(s)</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>statuses</td>
-                  <td><a href="#atlas.Status">Status</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-
-      
-
-      
     
       
       <div class="file-heading">
@@ -2178,151 +2197,6 @@ Some commands may be followed by data load. Be it logs, dumps, etc.</p></td>
       
         <h3 id="atlas.Status">Status</h3>
         <p>Status represents status of the object(s)</p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="status_request_mode.proto">status_request_mode.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-
-      
-        <h3 id="atlas.StatusRequestMode">StatusRequestMode</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>RESERVED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>UNSPECIFIED</td>
-                <td>100</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ALL</td>
-                <td>200</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>FIRST_FOUND</td>
-                <td>300</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>FIRST_NOT_FOUND</td>
-                <td>400</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="status_request_multi.proto">status_request_multi.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="atlas.StatusRequestMulti">StatusRequestMulti</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>domain</td>
-                  <td><a href="#atlas.Domain">Domain</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>mode</td>
-                  <td><a href="#atlas.StatusRequestMode">StatusRequestMode</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>entities</td>
-                  <td><a href="#atlas.StatusRequest">StatusRequest</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
-
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="status_request.proto">status_request.proto</h2><a href="#title">Top</a>
-      </div>
-      <p>StatusRequest represents status request of the object(s)</p>
-
-      
-        <h3 id="atlas.StatusRequest">StatusRequest</h3>
-        <p>StatusRequest represents status request of the object(s)</p>
 
         
           <table class="field-table">

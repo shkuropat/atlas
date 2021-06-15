@@ -40,14 +40,8 @@ type DataExchangeResult struct {
 			Data     *bytes.Buffer
 			Metadata *atlas.Metadata
 		}
-		Status struct {
-			Status      *atlas.Status
-			StatusMulti *atlas.StatusMulti
-		}
-		Report struct {
-			Report      *atlas.Report
-			ReportMulti *atlas.ReportMulti
-		}
+		Status      *atlas.Status
+		ObjectsList *atlas.ObjectsList
 	}
 }
 

@@ -42,8 +42,12 @@ fi
 # Setup folders
 PROTO_ROOT="${PKG_ROOT}/api"
 
-function generate_grpc_code() {
+#
+#
+#
+function generate_grpc_code_go() {
     PROTO_FILES_FOLDER="${1}"
+    RESULT_FILES_FOLDER="${1}"
 
     if [[ -z "${PROTO_FILES_FOLDER}" ]]; then
         echo "need to specify folder where to look for .proto files to generate code from "
@@ -56,13 +60,54 @@ function generate_grpc_code() {
     rm -f "${PROTO_FILES_FOLDER}"/*.pb.go
 
     echo "Compile .proto files in ${PROTO_FILES_FOLDER}"
+    # Specify the directory in which to search for imports. May be specified multiple times
+    IMPORTS_FOLDER="${PROTO_FILES_FOLDER}"
     # --go_out requires list of plugins to be used
     "${PROTOC}" \
-        -I "${PROTO_FILES_FOLDER}" \
-        --go_out=plugins=grpc:"${PROTO_FILES_FOLDER}" \
+        -I "${IMPORTS_FOLDER}" \
+        --go_out=plugins=grpc:"${RESULT_FILES_FOLDER}" \
         "${PROTO_FILES_FOLDER}"/*.proto
 
     #protoc -I "${PROTO_FILES_FOLDER}" --go_out=plugins=grpc:"${PROTO_FILES_FOLDER}" "${PROTO_FILES_FOLDER}"/*.proto
+}
+
+#
+#
+#
+function generate_grpc_code_js() {
+    PROTO_FILES_FOLDER="${1}"
+    RESULT_FILES_FOLDER="${1}"
+
+    if [[ -z "${PROTO_FILES_FOLDER}" ]]; then
+        echo "need to specify folder where to look for .proto files to generate code from "
+        exit 1
+    fi
+
+    echo "Generate code from .proto files in ${PROTO_FILES_FOLDER}"
+
+    echo "Clean previously generated files"
+    rm -f "${PROTO_FILES_FOLDER}"/*_pb.js
+
+    echo "Compile .proto files in ${PROTO_FILES_FOLDER}"
+    # Specify the directory in which to search for imports. May be specified multiple times
+    IMPORTS_FOLDER="${PROTO_FILES_FOLDER}"
+
+    # Generate Protobuf Messages and Service Client Stub
+    # To generate the protobuf message classes from our echo.proto, run the following command:
+    "${PROTOC}" \
+        -I "${IMPORTS_FOLDER}" \
+        --js_out=import_style=commonjs:"${RESULT_FILES_FOLDER}" \
+        "${PROTO_FILES_FOLDER}"/*.proto
+
+    # Generate the service client stub
+    "${PROTOC}" \
+        -I "${IMPORTS_FOLDER}" \
+        --grpc-web_out=import_style=commonjs,mode=grpcwebtext:"${RESULT_FILES_FOLDER}" \
+        "${PROTO_FILES_FOLDER}"/*.proto
+
+    # In the --grpc-web_out param above:
+    # import_style can be closure (default) or commonjs
+    # mode can be grpcwebtext (default) or grpcweb
 }
 
 # Delete String() function from generated *.pb.go files
@@ -90,6 +135,9 @@ function delete_string_function() {
     done
 }
 
+#
+#
+#
 function rename_uuid_function() {
     PROTO_FILES_FOLDER="${1}"
 
@@ -103,9 +151,11 @@ function rename_uuid_function() {
     done
 }
 
+#
+#
+#
 BUILD_DOCS_HTML="yes"
 BUILD_DOCS_MD="yes"
-
 function generate_docs() {
     AREA="${1}"
     PACKAGE_NAME="${2}"
@@ -137,8 +187,9 @@ function generate_docs() {
     fi
 }
 
-generate_grpc_code "${PROTO_ROOT}"/atlas
-generate_grpc_code "${PROTO_ROOT}"/health
+generate_grpc_code_go "${PROTO_ROOT}"/atlas
+generate_grpc_code_go "${PROTO_ROOT}"/health
+#generate_grpc_code_js "${PROTO_ROOT}"/health
 
 delete_string_function "${PROTO_ROOT}"/atlas
 rename_uuid_function "${PROTO_ROOT}"/atlas

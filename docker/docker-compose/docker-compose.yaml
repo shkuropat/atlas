@@ -3,7 +3,7 @@
 ## Do not forget to change volume paths when moving file along
 ##
 
-version: '2'
+version: '3.7'
 services:
 
   # Zookeeper is required by Kafka
@@ -140,3 +140,14 @@ services:
       AWS_SECRET_ACCESS_KEY: minioadmin
     depends_on:
       - minio
+
+  envoy:
+    image: envoy:dev
+    # Expose this port internally. This port will not be available from host-machine
+    # Expose this port externally. This port will be available from host-machine as
+    # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    # tcp        0      0 0.0.0.0:9092            0.0.0.0:*               LISTEN      79906/docker-proxy
+    ports:
+      - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

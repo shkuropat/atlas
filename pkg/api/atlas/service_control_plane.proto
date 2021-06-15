@@ -37,9 +37,7 @@ package atlas;
 
 import "data_chunk.proto";
 import "metric.proto";
-import "status_multi.proto";
-import "status_request.proto";
-import "status_request_multi.proto";
+import "objects_list.proto";
 import "status.proto";
 import "task.proto";
 
@@ -56,20 +54,10 @@ service ControlPlane {
 	 */
 	rpc DataChunks(stream DataChunk) returns (stream DataChunk) {}
 	rpc UploadObject(stream DataChunk) returns (Status) {}
-	rpc UploadObjects(stream DataChunk) returns (StatusMulti) {}
+	rpc UploadObjects(stream DataChunk) returns (ObjectsList) {}
 
 	/**
 	 * Uni-directional Metrics stream from client to server.
 	 */
 	rpc Metrics (stream Metric) returns (Metric) {}
-
-	/**
-	 * ObjectStatus checks status of the object on the server.
-	 */
-	rpc StatusObject(StatusRequest) returns (Status) {}
-
-	/**
-	 * ObjectStatusMulti checks status of the multiple objects on server.
-	 */
-	rpc StatusObjects(StatusRequestMulti) returns (StatusMulti) {}
 }

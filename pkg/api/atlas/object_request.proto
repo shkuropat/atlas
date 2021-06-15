@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * StatusRequest represents status request of the object(s)
+ */
 syntax = "proto3";
 
 package atlas;
 
-enum StatusRequestMode {
-    RESERVED = 0;
-    UNSPECIFIED = 100;
-    ALL = 200;
-    FIRST_FOUND = 300;
-    FIRST_NOT_FOUND = 400;
+import "metadata.proto";
+
+// ObjectRequest represents request for the object(s)
+message ObjectRequest {
+    Metadata header = 100;
 }

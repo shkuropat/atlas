@@ -12,25 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package atlas
+syntax = "proto3";
 
-// NewStatusRequest
-func NewStatusRequest() *StatusRequest {
-	return new(StatusRequest)
-}
+package atlas;
 
-// EnsureHeader
-func (m *StatusRequest) EnsureHeader() *Metadata {
-	if m == nil {
-		return nil
-	}
-	if m.Header == nil {
-		m.Header = NewMetadata()
-	}
-	return m.Header
-}
+import "metadata.proto";
+import "report.proto";
+import "task.proto";
+import "status.proto";
 
-// String
-func (m *StatusRequest) String() string {
-	return "to be implemented"
+message ObjectsList {
+    oneof header_optional {
+        Metadata header = 100;
+    }
+
+    repeated Report reports = 500;
+    repeated Task tasks = 600;
+    repeated Status statuses = 700;
 }

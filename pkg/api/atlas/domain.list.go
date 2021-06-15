@@ -21,7 +21,9 @@ var (
 	DomainDst       = NewDomain().Set("dst")
 	DomainReference = NewDomain().Set("reference")
 	DomainContext   = NewDomain().Set("context")
+	DomainReport    = NewDomain().Set("report")
 	DomainTask      = NewDomain().Set("task")
+	DomainStatus    = NewDomain().Set("status")
 	DomainParent    = NewDomain().Set("parent")
 	DomainResult    = NewDomain().Set("result")
 	// Most popular predefined nested domains
@@ -43,7 +45,9 @@ var (
 		DomainDst,
 		DomainReference,
 		DomainContext,
+		DomainReport,
 		DomainTask,
+		DomainStatus,
 		DomainParent,
 		DomainResult,
 		// Most popular predefined nested domains
@@ -60,6 +64,7 @@ var (
 	}
 )
 
+// DomainFromString
 func DomainFromString(str string) *Domain {
 	d := NewDomain().Set(str)
 	for _, domain := range Domains {

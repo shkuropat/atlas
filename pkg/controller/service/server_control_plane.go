@@ -15,7 +15,6 @@
 package controller_service
 
 import (
-	"context"
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 
@@ -96,40 +95,4 @@ func (s *ControlPlaneServer) UploadObject(UploadObjectServer atlas.ControlPlane_
 
 	metadata := fetchMetadata(UploadObjectServer.Context())
 	return UploadObjectHandler(UploadObjectServer, metadata)
-}
-
-// StatusObjectHandler is a user-provided handler for StatusObject call
-var StatusObjectHandler = func(*atlas.StatusRequest, jwt.MapClaims) (*atlas.Status, error) {
-	return nil, HandlerUnavailable
-}
-
-// StatusObject gRPC call
-func (s *ControlPlaneServer) StatusObject(ctx context.Context, req *atlas.StatusRequest) (*atlas.Status, error) {
-	log.Info("StatusObject() - start")
-	defer log.Info("StatusObject() - end")
-
-	if StatusObjectHandler == nil {
-		return nil, HandlerUnavailable
-	}
-
-	metadata := fetchMetadata(ctx)
-	return StatusObjectHandler(req, metadata)
-}
-
-// StatusObjectsHandler is a user-provided handler for StatusObjects call
-var StatusObjectsHandler = func(*atlas.StatusRequestMulti, jwt.MapClaims) (*atlas.StatusMulti, error) {
-	return nil, HandlerUnavailable
-}
-
-// StatusObjects gRPC call
-func (s *ControlPlaneServer) StatusObjects(ctx context.Context, req *atlas.StatusRequestMulti) (*atlas.StatusMulti, error) {
-	log.Info("StatusObjects() - start")
-	defer log.Info("StatusObjects() - end")
-
-	if StatusObjectsHandler == nil {
-		return nil, HandlerUnavailable
-	}
-
-	metadata := fetchMetadata(ctx)
-	return StatusObjectsHandler(req, metadata)
 }

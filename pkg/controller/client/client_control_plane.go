@@ -161,27 +161,7 @@ func Upload(
 		}
 	}
 
-	result.Recv.Status.Status, result.Error = DataChunksUpOneClient.CloseAndRecv()
-
-	return result
-}
-
-// Status requests status(es) of an object
-func Status(
-	ControlPlaneClient atlas.ControlPlaneClient,
-	meta *atlas.Metadata,
-) *DataExchangeResult {
-	log.Infof("Status() - start")
-	defer log.Infof("Status() - end")
-
-	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	request := atlas.NewStatusRequest()
-	request.Header = meta
-	result := NewDataExchangeResult()
-	result.Recv.Status.Status, result.Error = ControlPlaneClient.StatusObject(ctx, request)
+	result.Recv.Status, result.Error = DataChunksUpOneClient.CloseAndRecv()
 
 	return result
 }

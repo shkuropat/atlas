@@ -61,17 +61,23 @@
   
     - [MetricsType](#atlas.MetricsType)
   
+- [object_request.proto](#object_request.proto)
+    - [ObjectRequest](#atlas.ObjectRequest)
+  
+- [objects_list.proto](#objects_list.proto)
+    - [ObjectsList](#atlas.ObjectsList)
+  
+- [objects_request.proto](#objects_request.proto)
+    - [ObjectsRequest](#atlas.ObjectsRequest)
+  
 - [presentation_options.proto](#presentation_options.proto)
     - [PresentationOptions](#atlas.PresentationOptions)
-  
-- [report_multi.proto](#report_multi.proto)
-    - [ReportMulti](#atlas.ReportMulti)
   
 - [report.proto](#report.proto)
     - [Report](#atlas.Report)
   
-- [report_request.proto](#report_request.proto)
-    - [ReportRequest](#atlas.ReportRequest)
+- [request_mode.proto](#request_mode.proto)
+    - [RequestMode](#atlas.RequestMode)
   
 - [s3_address.proto](#s3_address.proto)
     - [S3Address](#atlas.S3Address)
@@ -82,20 +88,8 @@
 - [service_reports_plane.proto](#service_reports_plane.proto)
     - [ReportsPlane](#atlas.ReportsPlane)
   
-- [status_multi.proto](#status_multi.proto)
-    - [StatusMulti](#atlas.StatusMulti)
-  
 - [status.proto](#status.proto)
     - [Status](#atlas.Status)
-  
-- [status_request_mode.proto](#status_request_mode.proto)
-    - [StatusRequestMode](#atlas.StatusRequestMode)
-  
-- [status_request_multi.proto](#status_request_multi.proto)
-    - [StatusRequestMulti](#atlas.StatusRequestMulti)
-  
-- [status_request.proto](#status_request.proto)
-    - [StatusRequest](#atlas.StatusRequest)
   
 - [task.proto](#task.proto)
     - [Task](#atlas.Task)
@@ -769,6 +763,104 @@ MetricsType represents areas of metrics accumulation - such as resource utilizat
 
 
 
+<a name="object_request.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## object_request.proto
+StatusRequest represents status request of the object(s)
+
+
+<a name="atlas.ObjectRequest"></a>
+
+### ObjectRequest
+ObjectRequest represents request for the object(s)
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| header | [Metadata](#atlas.Metadata) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="objects_list.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## objects_list.proto
+
+
+
+<a name="atlas.ObjectsList"></a>
+
+### ObjectsList
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| header | [Metadata](#atlas.Metadata) |  |  |
+| reports | [Report](#atlas.Report) | repeated |  |
+| tasks | [Task](#atlas.Task) | repeated |  |
+| statuses | [Status](#atlas.Status) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="objects_request.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## objects_request.proto
+
+
+
+<a name="atlas.ObjectsRequest"></a>
+
+### ObjectsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [Domain](#atlas.Domain) |  |  |
+| request_mode | [RequestMode](#atlas.RequestMode) |  |  |
+| requests | [ObjectRequest](#atlas.ObjectRequest) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
 <a name="presentation_options.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -787,38 +879,6 @@ PresentationOptions describes presentation options of the object
 | encoding | [Encoding](#atlas.Encoding) |  | Optional. Encoding represents encoding of the object. |
 | compression | [Compression](#atlas.Compression) |  | Optional. Compression represents compression of the object. |
 | digest | [Digest](#atlas.Digest) |  | Optional. Digest represents digest of the object. |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="report_multi.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## report_multi.proto
-
-
-
-<a name="atlas.ReportMulti"></a>
-
-### ReportMulti
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  |  |
-| reports | [Report](#atlas.Report) | repeated |  |
 
 
 
@@ -866,28 +926,27 @@ PresentationOptions describes presentation options of the object
 
 
 
-<a name="report_request.proto"></a>
+<a name="request_mode.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## report_request.proto
-
-
-
-<a name="atlas.ReportRequest"></a>
-
-### ReportRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  |  |
-
-
-
+## request_mode.proto
 
 
  
+
+
+<a name="atlas.RequestMode"></a>
+
+### RequestMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| RESERVED | 0 |  |
+| UNSPECIFIED | 100 |  |
+| ALL | 200 |  |
+| ANY | 300 |  |
+
 
  
 
@@ -968,10 +1027,8 @@ Communication is logically structured into the following areas:
 | Tasks | [Task](#atlas.Task) stream | [Task](#atlas.Task) stream | Bi-directional Commands stream. Commands are sent from service to client and from client to server |
 | DataChunks | [DataChunk](#atlas.DataChunk) stream | [DataChunk](#atlas.DataChunk) stream | Bi-directional Data stream. Some commands may be followed by data load. Be it logs, dumps, etc. |
 | UploadObject | [DataChunk](#atlas.DataChunk) stream | [Status](#atlas.Status) |  |
-| UploadObjects | [DataChunk](#atlas.DataChunk) stream | [StatusMulti](#atlas.StatusMulti) |  |
+| UploadObjects | [DataChunk](#atlas.DataChunk) stream | [ObjectsList](#atlas.ObjectsList) |  |
 | Metrics | [Metric](#atlas.Metric) stream | [Metric](#atlas.Metric) | Uni-directional Metrics stream from client to server. |
-| StatusObject | [StatusRequest](#atlas.StatusRequest) | [Status](#atlas.Status) | ObjectStatus checks status of the object on the server. |
-| StatusObjects | [StatusRequestMulti](#atlas.StatusRequestMulti) | [StatusMulti](#atlas.StatusMulti) | ObjectStatusMulti checks status of the multiple objects on server. |
 
  
 
@@ -997,40 +1054,7 @@ Communication is logically structured into the following areas:
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| Reports | [ReportRequest](#atlas.ReportRequest) stream | [ReportMulti](#atlas.ReportMulti) stream |  |
-| Report | [ReportRequest](#atlas.ReportRequest) | [ReportMulti](#atlas.ReportMulti) |  |
-
- 
-
-
-
-<a name="status_multi.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## status_multi.proto
-StatusReply represents status of object(s)
-
-
-<a name="atlas.StatusMulti"></a>
-
-### StatusMulti
-StatusMulti represents status of multiple object(s)
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  |  |
-| statuses | [Status](#atlas.Status) | repeated |  |
-
-
-
-
-
- 
-
- 
-
- 
+| ObjectsReport | [ObjectsRequest](#atlas.ObjectsRequest) | [ObjectsList](#atlas.ObjectsList) |  |
 
  
 
@@ -1047,101 +1071,6 @@ StatusRequest represents status request of the object(s)
 
 ### Status
 Status represents status of the object(s)
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="status_request_mode.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## status_request_mode.proto
-
-
- 
-
-
-<a name="atlas.StatusRequestMode"></a>
-
-### StatusRequestMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| RESERVED | 0 |  |
-| UNSPECIFIED | 100 |  |
-| ALL | 200 |  |
-| FIRST_FOUND | 300 |  |
-| FIRST_NOT_FOUND | 400 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="status_request_multi.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## status_request_multi.proto
-
-
-
-<a name="atlas.StatusRequestMulti"></a>
-
-### StatusRequestMulti
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| domain | [Domain](#atlas.Domain) |  |  |
-| mode | [StatusRequestMode](#atlas.StatusRequestMode) |  |  |
-| entities | [StatusRequest](#atlas.StatusRequest) | repeated |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="status_request.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## status_request.proto
-StatusRequest represents status request of the object(s)
-
-
-<a name="atlas.StatusRequest"></a>
-
-### StatusRequest
-StatusRequest represents status request of the object(s)
 
 
 | Field | Type | Label | Description |

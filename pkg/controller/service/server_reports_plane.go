@@ -32,38 +32,20 @@ func NewReportsPlaneServer() *ReportsPlaneServer {
 	return &ReportsPlaneServer{}
 }
 
-// ReportsHandler is a user-provided handler for Reports call
-var ReportsHandler = func(atlas.ReportsPlane_ReportsServer, jwt.MapClaims) error {
-	return HandlerUnavailable
-}
-
-// Reports gRPC call
-func (s *ReportsPlaneServer) Reports(ReportsServer atlas.ReportsPlane_ReportsServer) error {
-	log.Info("Reports() - start")
-	defer log.Info("Reports() - end")
-
-	if ReportsHandler == nil {
-		return HandlerUnavailable
-	}
-
-	metadata := fetchMetadata(ReportsServer.Context())
-	return ReportsHandler(ReportsServer, metadata)
-}
-
-// ReportHandler is a user-provided handler for Report call
-var ReportHandler = func(context.Context, *atlas.ReportRequest, jwt.MapClaims) (*atlas.ReportMulti, error) {
+// ObjectsReportHandler is a user-provided handler for ObjectsReport call
+var ObjectsReportHandler = func(context.Context, *atlas.ObjectsRequest, jwt.MapClaims) (*atlas.ObjectsList, error) {
 	return nil, HandlerUnavailable
 }
 
-// Reports gRPC call
-func (s *ReportsPlaneServer) Report(ctx context.Context, req *atlas.ReportRequest) (*atlas.ReportMulti, error) {
-	log.Info("Report() - start")
-	defer log.Info("Report() - end")
+// ObjectsReport gRPC call
+func (s *ReportsPlaneServer) ObjectsReport(ctx context.Context, req *atlas.ObjectsRequest) (*atlas.ObjectsList, error) {
+	log.Info("ObjectsReport() - start")
+	defer log.Info("ObjectsReport() - end")
 
-	if ReportHandler == nil {
+	if ObjectsReportHandler == nil {
 		return nil, HandlerUnavailable
 	}
 
 	metadata := fetchMetadata(ctx)
-	return ReportHandler(ctx, req, metadata)
+	return ObjectsReportHandler(ctx, req, metadata)
 }

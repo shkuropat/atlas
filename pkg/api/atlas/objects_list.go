@@ -14,36 +14,27 @@
 
 package atlas
 
-// NewReportMulti
-func NewReportMulti() *ReportMulti {
-	return new(ReportMulti)
+// NewObjectsList
+func NewObjectsList() *ObjectsList {
+	return new(ObjectsList)
 }
 
 // EnsureHeader
-func (m *ReportMulti) EnsureHeader() *Metadata {
+func (m *ObjectsList) EnsureHeader() *Metadata {
 	if m == nil {
 		return nil
 	}
 	if m.HeaderOptional == nil {
-		m.HeaderOptional = new(ReportMulti_Header)
+		m.HeaderOptional = new(ObjectsList_Header)
 	}
-	if m.HeaderOptional.(*ReportMulti_Header).Header == nil {
-		m.HeaderOptional.(*ReportMulti_Header).Header = NewMetadata()
+	if m.HeaderOptional.(*ObjectsList_Header).Header == nil {
+		m.HeaderOptional.(*ObjectsList_Header).Header = NewMetadata()
 	}
 	return m.GetHeader()
 }
 
 // AddReport
-func (m *ReportMulti) AddReport(report *Report) *ReportMulti {
-	if m == nil {
-		return nil
-	}
-	m.Reports = append(m.Reports, report)
-	return m
-}
-
-// AddReports
-func (m *ReportMulti) AddReports(reports ...*Report) *ReportMulti {
+func (m *ObjectsList) AddReport(reports ...*Report) *ObjectsList {
 	if m == nil {
 		return nil
 	}
@@ -51,14 +42,49 @@ func (m *ReportMulti) AddReports(reports ...*Report) *ReportMulti {
 	return m
 }
 
-// Len
-func (m *ReportMulti) Len() int {
+// AddTask
+func (m *ObjectsList) AddTask(tasks ...*Task) *ObjectsList {
+	if m == nil {
+		return nil
+	}
+	m.Tasks = append(m.Tasks, tasks...)
+	return m
+}
+
+// AddStatus
+func (m *ObjectsList) AddStatus(statuses ...*Status) *ObjectsList {
+	if m == nil {
+		return nil
+	}
+	m.Statuses = append(m.Statuses, statuses...)
+	return m
+}
+
+// LenReports
+func (m *ObjectsList) LenReports() int {
 	if m == nil {
 		return 0
 	}
 	return len(m.Reports)
 }
 
+// LenTasks
+func (m *ObjectsList) LenTasks() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.Tasks)
+}
+
+// LenStatuses
+func (m *ObjectsList) LenStatuses() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.Statuses)
+}
+
+/*
 // First
 func (m *ReportMulti) First() *Report {
 	if m.Len() > 0 {
@@ -76,8 +102,9 @@ func (m *ReportMulti) Shift() *Report {
 	}
 	return nil
 }
+*/
 
 // String
-func (m *ReportMulti) String() string {
+func (m *ObjectsList) String() string {
 	return "to be implemented"
 }

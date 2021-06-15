@@ -21,10 +21,28 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-func Report(
-	ReportsPlaneClient atlas.ReportsPlaneClient,
-	meta *atlas.Metadata,
-) *DataExchangeResult {
+// Status requests status(es) of an object
+func Status(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
+	log.Infof("Status() - start")
+	defer log.Infof("Status() - end")
+
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	request := atlas.NewObjectsRequest().SetDomain(atlas.DomainStatus).Append(atlas.NewObjectRequest().SetHeader(meta))
+	result := NewDataExchangeResult()
+	list, err := ReportsPlaneClient.ObjectsReport(ctx, request)
+	if len(list.GetStatuses()) > 0 {
+		result.Recv.Status = list.GetStatuses()[0]
+	}
+	result.Error = err
+
+	return result
+}
+
+// Report
+func Report(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
 	log.Infof("Report() - start")
 	defer log.Infof("Report() - end")
 
@@ -32,10 +50,9 @@ func Report(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	request := atlas.NewReportRequest()
-	request.Header = meta
+	request := atlas.NewObjectsRequest().SetDomain(atlas.DomainReport).Append(atlas.NewObjectRequest().SetHeader(meta))
 	result := NewDataExchangeResult()
-	result.Recv.Report.ReportMulti, result.Error = ReportsPlaneClient.Report(ctx, request)
+	result.Recv.ObjectsList, result.Error = ReportsPlaneClient.ObjectsReport(ctx, request)
 
 	return result
 }
