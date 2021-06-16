@@ -170,6 +170,16 @@ func (m *Metadata) SetTaskUUID(uuid *UUID) *Metadata {
 	return m.Set(DomainTask, DomainUUID, NewAddress().SetDomain(DomainUUID).Set(uuid))
 }
 
+// GetResultDomain
+func (m *Metadata) GetResultDomain() *Domain {
+	return m.GetAddresses().First(DomainResult, DomainDomain).GetDomain()
+}
+
+// SetResultDomain
+func (m *Metadata) SetResultDomain(domain *Domain) *Metadata {
+	return m.Set(DomainResult, DomainDomain, NewAddress().SetDomain(DomainDomain).Set(domain))
+}
+
 //
 //
 // Wrap PresentationOptions

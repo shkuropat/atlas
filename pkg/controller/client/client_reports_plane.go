@@ -41,6 +41,22 @@ func Status(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *
 	return result
 }
 
+// Task
+func Task(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
+	log.Infof("Task() - start")
+	defer log.Infof("Task() - end")
+
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	request := atlas.NewObjectsRequest().SetDomain(atlas.DomainTask).Append(atlas.NewObjectRequest().SetHeader(meta))
+	result := NewDataExchangeResult()
+	result.Recv.ObjectsList, result.Error = ReportsPlaneClient.ObjectsReport(ctx, request)
+
+	return result
+}
+
 // Report
 func Report(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
 	log.Infof("Report() - start")

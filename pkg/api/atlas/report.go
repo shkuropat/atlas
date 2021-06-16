@@ -51,30 +51,30 @@ func (m *Report) SetBytes(bytes []byte) *Report {
 	return m
 }
 
-// HasParts
-func (m *Report) HasParts() bool {
+// HasSubReports
+func (m *Report) HasSubReports() bool {
 	if m == nil {
 		return false
 	}
-	return len(m.Parts) > 0
+	return len(m.Children) > 0
 }
 
-// AddPart
-func (m *Report) AddPart(r *Report) *Report {
+// AddSubReport
+func (m *Report) AddSubReport(r *Report) *Report {
 	if m == nil {
 		return nil
 	}
-	m.Parts = append(m.Parts, r)
+	m.Children = append(m.Children, r)
 	return m
 }
 
-// WalkParts
-func (m *Report) WalkParts(f func(i int, part *Report)) *Report {
+// WalkSubReports
+func (m *Report) WalkSubReports(f func(i int, subReport *Report)) *Report {
 	if m == nil {
 		return nil
 	}
-	for i, part := range m.Parts {
-		f(i, part)
+	for i, subReport := range m.Children {
+		f(i, subReport)
 	}
 	return m
 }
