@@ -19,51 +19,15 @@ func NewObjectsRequest() *ObjectsRequest {
 	return new(ObjectsRequest)
 }
 
-// EnsureDomain
-func (m *ObjectsRequest) EnsureDomain() *Domain {
-	if m == nil {
-		return nil
+// EnsureHeader
+func (m *ObjectsRequest) EnsureHeader() *Metadata {
+	if m.HeaderOptional == nil {
+		m.HeaderOptional = new(ObjectsRequest_Header)
 	}
-	if m.DomainOptional == nil {
-		m.DomainOptional = new(ObjectsRequest_Domain)
+	if m.HeaderOptional.(*ObjectsRequest_Header).Header == nil {
+		m.HeaderOptional.(*ObjectsRequest_Header).Header = new(Metadata)
 	}
-	if m.DomainOptional.(*ObjectsRequest_Domain).Domain == nil {
-		m.DomainOptional.(*ObjectsRequest_Domain).Domain = NewDomain()
-	}
-	return m.GetDomain()
-}
-
-// SetDomain
-func (m *ObjectsRequest) SetDomain(domain *Domain) *ObjectsRequest {
-	if m == nil {
-		return nil
-	}
-	if m.DomainOptional == nil {
-		m.DomainOptional = new(ObjectsRequest_Domain)
-	}
-	m.DomainOptional.(*ObjectsRequest_Domain).Domain = domain
-	return m
-}
-
-// EnsureMode
-func (m *ObjectsRequest) EnsureMode() RequestMode {
-	if m == nil {
-		return RequestMode_RESERVED
-	}
-	if m.RequestModeOptional == nil {
-		m.RequestModeOptional = new(ObjectsRequest_RequestMode)
-	}
-	return m.GetRequestMode()
-}
-
-// SetMode
-func (m *ObjectsRequest) SetMode(mode RequestMode) *ObjectsRequest {
-	if m == nil {
-		return nil
-	}
-	m.EnsureMode()
-	m.RequestModeOptional.(*ObjectsRequest_RequestMode).RequestMode = mode
-	return m
+	return m.HeaderOptional.(*ObjectsRequest_Header).Header
 }
 
 // GetRequestsNum

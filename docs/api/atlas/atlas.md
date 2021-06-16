@@ -76,9 +76,6 @@
 - [report.proto](#report.proto)
     - [Report](#atlas.Report)
   
-- [request_mode.proto](#request_mode.proto)
-    - [RequestMode](#atlas.RequestMode)
-  
 - [s3_address.proto](#s3_address.proto)
     - [S3Address](#atlas.S3Address)
   
@@ -843,8 +840,7 @@ ObjectRequest represents request for the object(s)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| domain | [Domain](#atlas.Domain) |  |  |
-| request_mode | [RequestMode](#atlas.RequestMode) |  |  |
+| header | [Metadata](#atlas.Metadata) |  |  |
 | requests | [ObjectRequest](#atlas.ObjectRequest) | repeated |  |
 
 
@@ -918,36 +914,6 @@ PresentationOptions describes presentation options of the object
 
 
  
-
- 
-
- 
-
- 
-
-
-
-<a name="request_mode.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## request_mode.proto
-
-
- 
-
-
-<a name="atlas.RequestMode"></a>
-
-### RequestMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| RESERVED | 0 |  |
-| UNSPECIFIED | 100 |  |
-| ALL | 200 |  |
-| ANY | 300 |  |
-
 
  
 

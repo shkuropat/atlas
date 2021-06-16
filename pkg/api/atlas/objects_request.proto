@@ -16,17 +16,12 @@ syntax = "proto3";
 
 package atlas;
 
-import "domain.proto";
-import "request_mode.proto";
+import "metadata.proto";
 import "object_request.proto";
 
 message ObjectsRequest {
-    oneof domain_optional {
-        Domain domain = 100;
-    }
-
-    oneof request_mode_optional {
-        RequestMode request_mode = 200;
+    oneof header_optional {
+        Metadata header = 100;
     }
 
     repeated ObjectRequest requests = 300;

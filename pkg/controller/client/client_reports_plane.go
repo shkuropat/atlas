@@ -30,8 +30,9 @@ func Status(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	request := atlas.NewObjectsRequest().SetDomain(atlas.DomainStatus).Append(atlas.NewObjectRequest().SetHeader(meta))
 	result := NewDataExchangeResult()
+	request := atlas.NewObjectsRequest().Append(atlas.NewObjectRequest().SetHeader(meta))
+	request.EnsureHeader().SetDomain(atlas.DomainTask).SetResultDomain(atlas.DomainStatus)
 	list, err := ReportsPlaneClient.ObjectsReport(ctx, request)
 	if len(list.GetStatuses()) > 0 {
 		result.Recv.Status = list.GetStatuses()[0]
@@ -50,8 +51,9 @@ func Task(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *Da
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	request := atlas.NewObjectsRequest().SetDomain(atlas.DomainTask).Append(atlas.NewObjectRequest().SetHeader(meta))
 	result := NewDataExchangeResult()
+	request := atlas.NewObjectsRequest().Append(atlas.NewObjectRequest().SetHeader(meta))
+	request.EnsureHeader().SetDomain(atlas.DomainTask).SetResultDomain(atlas.DomainTask)
 	result.Recv.ObjectsList, result.Error = ReportsPlaneClient.ObjectsReport(ctx, request)
 
 	return result
@@ -66,8 +68,9 @@ func Report(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	request := atlas.NewObjectsRequest().SetDomain(atlas.DomainReport).Append(atlas.NewObjectRequest().SetHeader(meta))
 	result := NewDataExchangeResult()
+	request := atlas.NewObjectsRequest().Append(atlas.NewObjectRequest().SetHeader(meta))
+	request.EnsureHeader().SetDomain(atlas.DomainReport).SetResultDomain(atlas.DomainReport)
 	result.Recv.ObjectsList, result.Error = ReportsPlaneClient.ObjectsReport(ctx, request)
 
 	return result

@@ -12,13 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+package atlas
 
-package atlas;
+// Mode represents all types of modes in the system
+const (
+	ModeReserved    int32 = 0
+	ModeUnspecified int32 = 100
+	ModeAll         int32 = 200
+	ModeAny         int32 = 300
+)
 
-enum RequestMode {
-    RESERVED = 0;
-    UNSPECIFIED = 100;
-    ALL = 200;
-    ANY = 300;
+var ModeEnum = NewEnum()
+
+func init() {
+	ModeEnum.MustRegister("ModeReserved", ModeReserved)
+	ModeEnum.MustRegister("ModeUnspecified", ModeUnspecified)
+	ModeEnum.MustRegister("ModeAll", ModeAll)
+	ModeEnum.MustRegister("ModeAny", ModeAny)
 }
