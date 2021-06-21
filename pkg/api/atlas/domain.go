@@ -14,9 +14,13 @@
 
 package atlas
 
-// NewDomain
-func NewDomain() *Domain {
-	return new(Domain)
+// NewDomain creates new Domain
+func NewDomain(name ...string) *Domain {
+	d := new(Domain)
+	if len(name) > 0 {
+		d.Set(name[0])
+	}
+	return d
 }
 
 // Ensure returns new or existing Domain
@@ -27,7 +31,7 @@ func (m *Domain) Ensure() *Domain {
 	return m
 }
 
-// Set
+// Set sets Domain name
 func (m *Domain) Set(name string) *Domain {
 	if m == nil {
 		return nil
@@ -36,7 +40,7 @@ func (m *Domain) Set(name string) *Domain {
 	return m
 }
 
-// Equals
+// Equals checks whether Domains are equal internally
 func (m *Domain) Equals(domain *Domain) bool {
 	if m == nil {
 		return false
@@ -47,7 +51,7 @@ func (m *Domain) Equals(domain *Domain) bool {
 	return m.GetName() == domain.GetName()
 }
 
-// String
+// String returns string representation of a Domain
 func (m *Domain) String() string {
 	if m == nil {
 		return ""

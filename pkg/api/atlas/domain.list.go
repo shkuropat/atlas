@@ -16,28 +16,29 @@ package atlas
 
 var (
 	// Most popular predefined root domains
-	DomainThis      = NewDomain().Set("this")
-	DomainSrc       = NewDomain().Set("src")
-	DomainDst       = NewDomain().Set("dst")
-	DomainReference = NewDomain().Set("reference")
-	DomainContext   = NewDomain().Set("context")
-	DomainReport    = NewDomain().Set("report")
-	DomainTask      = NewDomain().Set("task")
-	DomainStatus    = NewDomain().Set("status")
-	DomainParent    = NewDomain().Set("parent")
-	DomainResult    = NewDomain().Set("result")
+	DomainThis      = NewDomain("this")
+	DomainSrc       = NewDomain("src")
+	DomainDst       = NewDomain("dst")
+	DomainReference = NewDomain("reference")
+	DomainContext   = NewDomain("context")
+	DomainReport    = NewDomain("report")
+	DomainTask      = NewDomain("task")
+	DomainStatus    = NewDomain("status")
+	DomainParent    = NewDomain("parent")
+	DomainResult    = NewDomain("result")
 	// Most popular predefined nested domains
-	DomainS3           = NewDomain().Set("s3")
-	DomainKafka        = NewDomain().Set("kafka")
-	DomainDigest       = NewDomain().Set("digest")
-	DomainUUID         = NewDomain().Set("uuid")
-	DomainUserID       = NewDomain().Set("userid")
-	DomainDirname      = NewDomain().Set("dirname")
-	DomainFilename     = NewDomain().Set("filename")
-	DomainURL          = NewDomain().Set("url")
-	DomainDomain       = NewDomain().Set("domain")
-	DomainCustomString = NewDomain().Set("custom string")
+	DomainS3           = NewDomain("s3")
+	DomainKafka        = NewDomain("kafka")
+	DomainDigest       = NewDomain("digest")
+	DomainUUID         = NewDomain("uuid")
+	DomainUserID       = NewDomain("userid")
+	DomainDirname      = NewDomain("dirname")
+	DomainFilename     = NewDomain("filename")
+	DomainURL          = NewDomain("url")
+	DomainDomain       = NewDomain("domain")
+	DomainCustomString = NewDomain("custom string")
 
+	// List of all registered domains
 	Domains = []*Domain{
 		// Most popular predefined root domains
 		DomainThis,
@@ -64,7 +65,41 @@ var (
 	}
 )
 
-// DomainFromString
+// RegisterDomain tries to register specified Domain.
+// Domain must be non-equal to all registered domains.
+// Returns nil in case Domain can not be registered, say it is equal to previously registered domain
+func RegisterDomain(domain *Domain) *Domain {
+	if FindDomain(domain) != nil {
+		// Such a domain already exists
+		return nil
+	}
+	Domains = append(Domains, domain)
+	return domain
+}
+
+// MustRegisterDomain the same as RegisterDomain but with panic
+func MustRegisterDomain(domain *Domain) {
+	if RegisterDomain(domain) == nil {
+		panic("unable to register domain")
+	}
+}
+
+// FindDomain returns registered domain with the same string value as provided
+func FindDomain(domain *Domain) *Domain {
+	return DomainFromString(domain.Name)
+}
+
+// NormalizeDomain returns either registered domain with the same string value as provided domain or provided domain.
+func NormalizeDomain(domain *Domain) *Domain {
+	if f := FindDomain(domain); f != nil {
+		// Return registered domain
+		return f
+	}
+	// Unable to find registered domain, return provided domain
+	return domain
+}
+
+// DomainFromString tries to find registered domain with specified string value
 func DomainFromString(str string) *Domain {
 	d := NewDomain().Set(str)
 	for _, domain := range Domains {
