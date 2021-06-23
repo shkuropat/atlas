@@ -30,8 +30,10 @@ import (
 
 // Status specifies status of the DataProcessorTask
 type Status struct {
-	status int32
-	errors []string
+	// Status represents status code
+	Status int32
+	// Errors is a list of errors, if any
+	Errors []string
 }
 
 // Format specifies DataProcessorTask serialization formats
@@ -69,17 +71,17 @@ const (
 
 // DataProcessorTask specifies task to be launched as external process for data processing
 type DataProcessorTask struct {
-	// items contains named sections of various parameters. Each section is represented as a slice.
-	items map[string][]string `json:"items,omitempty" yaml:"items,omitempty"`
-	// status represents status of the data processor task
-	status Status `json:"status,omitempty" yaml:"status,omitempty"`
+	// Items contains named sections of various parameters. Each section is represented as a slice.
+	Items map[string][]string `json:"items,omitempty" yaml:"items,omitempty"`
+	// Status represents status of the data processor task
+	Status Status `json:"status,omitempty" yaml:"status,omitempty"`
 
-	// rootDir specifies name of the root directory in case dirs have nested structure
-	rootDir string `json:"root,omitempty" yaml:"root,omitempty"`
-	// taskFile specifies path/name where to/from serialize/un-serialize a task
-	taskFile string `json:"task,omitempty" yaml:"task,omitempty"`
-	// format specifies DataProcessorTask serialization formats
-	format Format `json:"-" yaml:"-"`
+	// RootDir specifies name of the root directory in case dirs have nested structure
+	RootDir string `json:"root,omitempty" yaml:"root,omitempty"`
+	// TaskFile specifies path/name where to/from serialize/un-serialize a task
+	TaskFile string `json:"task,omitempty" yaml:"task,omitempty"`
+	// Format specifies DataProcessorTask serialization formats
+	Format Format `json:"-" yaml:"-"`
 }
 
 // DataProcessorTaskFile defines what DataProcessorTask file should be used.
@@ -111,7 +113,7 @@ func ReadIn() {
 // New creates new task
 func New() *DataProcessorTask {
 	return &DataProcessorTask{
-		format: Unknown,
+		Format: Unknown,
 	}
 }
 
@@ -120,10 +122,10 @@ func (t *DataProcessorTask) ensureItems() map[string][]string {
 	if t == nil {
 		return nil
 	}
-	if t.items == nil {
-		t.items = make(map[string][]string)
+	if t.Items == nil {
+		t.Items = make(map[string][]string)
 	}
-	return t.items
+	return t.Items
 }
 
 // CreateTempDir
@@ -175,7 +177,7 @@ func (t *DataProcessorTask) GetRootDir() string {
 	if t == nil {
 		return ""
 	}
-	return t.rootDir
+	return t.RootDir
 }
 
 // SetRootDir
@@ -183,7 +185,7 @@ func (t *DataProcessorTask) SetRootDir(dir string) *DataProcessorTask {
 	if t == nil {
 		return nil
 	}
-	t.rootDir = dir
+	t.RootDir = dir
 	return t
 }
 
@@ -192,7 +194,7 @@ func (t *DataProcessorTask) GetTaskFile() string {
 	if t == nil {
 		return ""
 	}
-	return t.taskFile
+	return t.TaskFile
 }
 
 // SetTaskFile
@@ -200,7 +202,7 @@ func (t *DataProcessorTask) SetTaskFile(file string) *DataProcessorTask {
 	if t == nil {
 		return nil
 	}
-	t.taskFile = file
+	t.TaskFile = file
 	return t
 }
 
@@ -210,10 +212,10 @@ func (t *DataProcessorTask) Exists(section string) bool {
 	if t == nil {
 		return false
 	}
-	if t.items == nil {
+	if t.Items == nil {
 		return false
 	}
-	_, ok := t.items[section]
+	_, ok := t.Items[section]
 	return ok
 }
 
@@ -228,12 +230,12 @@ func (t *DataProcessorTask) Sections() []string {
 	if t == nil {
 		return nil
 	}
-	if t.items == nil {
+	if t.Items == nil {
 		return nil
 	}
 
 	var sections []string
-	for section := range t.items {
+	for section := range t.Items {
 		sections = append(sections, section)
 	}
 	return sections
@@ -250,7 +252,7 @@ func (t *DataProcessorTask) Walk(f func(section string, items []string) error) *
 // GetAll gets all entities of a section
 func (t *DataProcessorTask) GetAll(section string) []string {
 	if t.Exists(section) {
-		return t.items[section]
+		return t.Items[section]
 	}
 	return nil
 }
@@ -279,7 +281,7 @@ func (t *DataProcessorTask) Get(section string, defaultValue ...string) string {
 // Delete deletes a section
 func (t *DataProcessorTask) Delete(section string) *DataProcessorTask {
 	if t.Exists(section) {
-		delete(t.items, section)
+		delete(t.Items, section)
 	}
 	return t
 }
@@ -293,7 +295,7 @@ func (t *DataProcessorTask) Add(section string, items ...string) *DataProcessorT
 		return t
 	}
 	t.ensureItems()
-	t.items[section] = append(t.items[section], items...)
+	t.Items[section] = append(t.Items[section], items...)
 	return t
 }
 
@@ -466,12 +468,12 @@ func (t *DataProcessorTask) AddOutputTable(table ...string) *DataProcessorTask {
 
 // GetStatus gets status of the task
 func (t *DataProcessorTask) GetStatus() int32 {
-	return t.status.status
+	return t.Status.Status
 }
 
 // GetErrors gets slice of errors reported by the task
 func (t *DataProcessorTask) GetErrors() []string {
-	return t.status.errors
+	return t.Status.Errors
 }
 
 // GetFormat gets format to serialize DataProcessorTask to
@@ -479,7 +481,7 @@ func (t *DataProcessorTask) GetFormat() Format {
 	if t == nil {
 		return Unknown
 	}
-	return t.format
+	return t.Format
 }
 
 // SetFormat sets format to serialize DataProcessorTask to
@@ -487,7 +489,7 @@ func (t *DataProcessorTask) SetFormat(format Format) *DataProcessorTask {
 	if t == nil {
 		return nil
 	}
-	t.format = format
+	t.Format = format
 	return t
 }
 
@@ -507,7 +509,7 @@ func (t *DataProcessorTask) Marshal() (out []byte, err error) {
 	if t == nil {
 		return nil, fmt.Errorf("unable to marshal nil")
 	}
-	switch t.format {
+	switch t.Format {
 	case YAML:
 		return yaml.Marshal(t)
 	case JSON:
@@ -521,7 +523,7 @@ func (t *DataProcessorTask) Unmarshal(in []byte) (err error) {
 	if t == nil {
 		return fmt.Errorf("unable to unmarshal into nil")
 	}
-	switch t.format {
+	switch t.Format {
 	case YAML:
 		return yaml.Unmarshal(in, t)
 	case JSON:
@@ -580,7 +582,7 @@ func (t *DataProcessorTask) SaveTempTaskFile(dir, pattern string) error {
 	return nil
 }
 
-// ReadFrom reads DataProcessorTask from specified file
+// ReadFrom reads DataProcessorTask from specified file and tries to understand what is the format of the specified file
 func (t *DataProcessorTask) ReadFrom(file string) error {
 	if t == nil {
 		return nil
