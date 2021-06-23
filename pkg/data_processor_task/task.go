@@ -22,7 +22,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"gopkg.in/yaml.v2"
@@ -242,11 +241,32 @@ func (t *DataProcessorTask) Sections() []string {
 }
 
 // Walk walk over sections with a function
-func (t *DataProcessorTask) Walk(f func(section string, items []string) error) *DataProcessorTask {
+func (t *DataProcessorTask) Walk(f func(section string, items []string) bool) *DataProcessorTask {
 	for _, section := range t.Sections() {
-		_ = f(section, t.GetAll(section))
+		if !f(section, t.GetAll(section)) {
+			// Stop walking
+			break
+		}
 	}
 	return t
+}
+
+// WalkSection walk over all items in a section with a function
+func (t *DataProcessorTask) WalkSection(section string, f func(item string) bool) *DataProcessorTask {
+	return t.Walk(func(s string, items []string) bool {
+		if s == section {
+			// This is our section, walk all items
+			for _, itm := range items {
+				if !f(itm) {
+					// Stop walking
+					break
+				}
+			}
+			// Section found, no need to continue
+			return false
+		}
+		return true
+	})
 }
 
 // GetAll gets all entities of a section
@@ -304,166 +324,6 @@ func (t *DataProcessorTask) Set(section string, items ...string) *DataProcessorT
 	t.Delete(section)
 	t.Add(section, items...)
 	return t
-}
-
-// GetConfigFiles gets all config files
-func (t *DataProcessorTask) GetConfigFiles() []string {
-	return t.GetAll(ConfigFiles)
-}
-
-// HasConfigFiles checks whether there are config file(s)
-func (t *DataProcessorTask) HasConfigFiles() bool {
-	return t.Has(ConfigFiles)
-}
-
-// GetConfigFile gets the first config file
-func (t *DataProcessorTask) GetConfigFile(defaultValue ...string) string {
-	return t.Get(ConfigFiles, defaultValue...)
-}
-
-// AddConfigFile adds config file(s)
-func (t *DataProcessorTask) AddConfigFile(file ...string) *DataProcessorTask {
-	return t.Add(ConfigFiles, file...)
-}
-
-// GetConfigDirs gets all config dirs
-func (t *DataProcessorTask) GetConfigDirs() []string {
-	return t.GetAll(ConfigDirs)
-}
-
-// HasConfigDirs checks whether there are config dirs(s)
-func (t *DataProcessorTask) HasConfigDirs() bool {
-	return t.Has(ConfigDirs)
-}
-
-// GetConfigDir gets the first config dir
-func (t *DataProcessorTask) GetConfigDir(defaultValue ...string) string {
-	return t.Get(ConfigDirs, defaultValue...)
-}
-
-// AddConfigDir adds config dir(s)
-func (t *DataProcessorTask) AddConfigDir(dir ...string) *DataProcessorTask {
-	return t.Add(ConfigDirs, dir...)
-}
-
-// GetInputFiles gets all input files
-func (t *DataProcessorTask) GetInputFiles() []string {
-	return t.GetAll(InputFiles)
-}
-
-// HasInputFiles checks whether there are input file(s)
-func (t *DataProcessorTask) HasInputFiles() bool {
-	return t.Has(InputFiles)
-}
-
-// GetInputFile gets the first input file
-func (t *DataProcessorTask) GetInputFile(defaultValue ...string) string {
-	return t.Get(InputFiles, defaultValue...)
-}
-
-// AddInputFile adds input file(s)
-func (t *DataProcessorTask) AddInputFile(file ...string) *DataProcessorTask {
-	return t.Add(InputFiles, file...)
-}
-
-// GetInputDirs gets all input dirs
-func (t *DataProcessorTask) GetInputDirs() []string {
-	return t.GetAll(InputDirs)
-}
-
-// HasInputDirs checks whether there are input dires(s)
-func (t *DataProcessorTask) HasInputDirs() bool {
-	return t.Has(InputDirs)
-}
-
-// GetInputDir gets the first input dir
-func (t *DataProcessorTask) GetInputDir(defaultValue ...string) string {
-	return t.Get(InputDirs, defaultValue...)
-}
-
-// AddInputDir adds input dir(s)
-func (t *DataProcessorTask) AddInputDir(dir ...string) *DataProcessorTask {
-	return t.Add(InputDirs, dir...)
-}
-
-// GetOutputFiles gets all output files
-func (t *DataProcessorTask) GetOutputFiles() []string {
-	return t.GetAll(OutputFiles)
-}
-
-// HasOutputFiles checks whether there are output file(s)
-func (t *DataProcessorTask) HasOutputFiles() bool {
-	return t.Has(OutputFiles)
-}
-
-// GetOutputFile gets the first output file
-func (t *DataProcessorTask) GetOutputFile(defaultValue ...string) string {
-	return t.Get(OutputFiles, defaultValue...)
-}
-
-// AddOutputFile adds output file(s)
-func (t *DataProcessorTask) AddOutputFile(file ...string) *DataProcessorTask {
-	return t.Add(OutputFiles, file...)
-}
-
-// GetOutputDirs gets all output dirs
-func (t *DataProcessorTask) GetOutputDirs() []string {
-	return t.GetAll(OutputDirs)
-}
-
-// HasOutputDirs checks whether there are output dir(s)
-func (t *DataProcessorTask) HasOutputDirs() bool {
-	return t.Has(OutputDirs)
-}
-
-// GetOutputDir gets the first output dir
-func (t *DataProcessorTask) GetOutputDir(defaultValue ...string) string {
-	return t.Get(OutputDirs, defaultValue...)
-}
-
-// AddOutputDir adds output dir(s)
-func (t *DataProcessorTask) AddOutputDir(dir ...string) *DataProcessorTask {
-	return t.Add(OutputDirs, dir...)
-}
-
-// GetInputTables gets all input tables
-func (t *DataProcessorTask) GetInputTables() []string {
-	return t.GetAll(InputTables)
-}
-
-// HasInputTables checks whether there are input table(s)
-func (t *DataProcessorTask) HasInputTables() bool {
-	return t.Has(InputTables)
-}
-
-// GetInputTable gets the first input table
-func (t *DataProcessorTask) GetInputTable(defaultValue ...string) string {
-	return t.Get(InputTables, defaultValue...)
-}
-
-// AddInputTable adds input table(s)
-func (t *DataProcessorTask) AddInputTable(table ...string) *DataProcessorTask {
-	return t.Add(InputTables, table...)
-}
-
-// GetOutputTables gets all output tables
-func (t *DataProcessorTask) GetOutputTables() []string {
-	return t.GetAll(OutputTables)
-}
-
-// HasOutputTables checks whether there are output table(s)
-func (t *DataProcessorTask) HasOutputTables() bool {
-	return t.Has(OutputTables)
-}
-
-// GetOutputTable gets the first output table
-func (t *DataProcessorTask) GetOutputTable(defaultValue ...string) string {
-	return t.Get(OutputTables, defaultValue...)
-}
-
-// AddOutputTable adds output table(s)
-func (t *DataProcessorTask) AddOutputTable(table ...string) *DataProcessorTask {
-	return t.Add(OutputTables, table...)
 }
 
 // GetStatus gets status of the task
@@ -611,64 +471,19 @@ func (t *DataProcessorTask) ReadFrom(file string) error {
 	return t.Unmarshal(b)
 }
 
-// HasReportLevel
-func (t *DataProcessorTask) HasReportLevel() bool {
-	return t.Len(ReportLevel) > 0
-}
-
-// SetReportLevel
-func (t *DataProcessorTask) SetReportLevel(level int) *DataProcessorTask {
-	return t.Set(ReportLevel, strconv.Itoa(level))
-}
-
-// HasSummaryLevel
-func (t *DataProcessorTask) HasSummaryLevel() bool {
-	return t.Len(SummaryLevel) > 0
-}
-
-// SetSummaryLevel
-func (t *DataProcessorTask) SetSummaryLevel(level int) *DataProcessorTask {
-	return t.Set(SummaryLevel, strconv.Itoa(level))
-}
-
-// HasTraceLevel
-func (t *DataProcessorTask) HasTraceLevel() bool {
-	return t.Len(TraceLevel) > 0
-}
-
-// SetTraceLevel
-func (t *DataProcessorTask) SetTraceLevel(level int) *DataProcessorTask {
-	return t.Set(TraceLevel, strconv.Itoa(level))
-}
-
 // String
 func (t *DataProcessorTask) String() string {
 	if t == nil {
 		return ""
 	}
 	res := ""
-	t.Walk(func(section string, items []string) error {
+	t.Walk(func(section string, items []string) bool {
 		res += fmt.Sprintln(section+":", strings.Join(items, ":"))
-		return nil
+		return true
 	})
 	res += fmt.Sprintln("root:", t.GetRootDir())
 	res += fmt.Sprintln("task:", t.GetTaskFile())
 	res += fmt.Sprintln("status:", t.GetStatus())
 	res += fmt.Sprintln("errors:", strings.Join(t.GetErrors(), ","))
-	return res
-}
-
-// WalkOutputFiles runs a function over each output-specified files
-func (t *DataProcessorTask) WalkOutputFiles(f func(string) error) []error {
-	if t == nil {
-		return nil
-	}
-	var res []error
-	for _, file := range t.GetOutputFiles() {
-		err := f(file)
-		if err != nil {
-			res = append(res, err)
-		}
-	}
 	return res
 }
