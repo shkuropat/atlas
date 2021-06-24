@@ -17,41 +17,42 @@ package items
 import (
 	"bytes"
 	"fmt"
-	"strings"
 )
 
 // IMPORTANT
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
-type Command struct {
-	Command []string `mapstructure:"command"`
+type NamedCommands struct {
+	Commands map[string]*Command `mapstructure:"commands"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
 }
 
-// NewCommand
-func NewCommand() *Command {
-	return new(Command)
+// NewNamedCommands
+func NewNamedCommands() *NamedCommands {
+	return new(NamedCommands)
 }
 
-// GetCommand
-func (c *Command) GetCommand() []string {
+// GetLines
+func (c *NamedCommands) GetCommand(name string) *Command {
 	if c == nil {
 		return nil
 	}
-	return c.Command
+	return c.Commands[name]
 }
 
 // String
-func (c *Command) String() string {
+func (c *NamedCommands) String() string {
 	if c == nil {
 		return nilString
 	}
 
 	b := &bytes.Buffer{}
 
-	_, _ = fmt.Fprintf(b, strings.Join(c.Command, " "))
+	for name, command := range c.Commands {
+		_, _ = fmt.Fprintf(b, "%s:%s\n", name, command)
+	}
 
 	return b.String()
 }

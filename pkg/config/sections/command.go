@@ -47,7 +47,7 @@ func (c Command) CommandNormalize() Command {
 
 // GetCommandArgs
 func (c Command) GetCommandLines() []string {
-	return c.Command.GetLines()
+	return c.Command.GetCommand()
 }
 
 // GetCommand
@@ -55,7 +55,7 @@ func (c Command) GetCommand() string {
 	return strings.Join(c.GetCommandLines(), " ")
 }
 
-// ParseCommandArgs
+// ParseCommandLines
 func (c Command) ParseCommandLines(macro *macros.Expander) []string {
 	return macro.ExpandAll(c.GetCommandLines()...)
 }
