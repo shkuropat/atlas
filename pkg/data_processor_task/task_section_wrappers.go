@@ -42,6 +42,11 @@ func (t *DataProcessorTask) GetConfigFile(defaultValue ...string) string {
 	return t.Get(ConfigFiles, defaultValue...)
 }
 
+// SetConfigFile adds config file(s)
+func (t *DataProcessorTask) SetConfigFile(file ...string) *DataProcessorTask {
+	return t.Set(ConfigFiles, file...)
+}
+
 // AddConfigFile adds config file(s)
 func (t *DataProcessorTask) AddConfigFile(file ...string) *DataProcessorTask {
 	return t.Add(ConfigFiles, file...)
@@ -60,6 +65,11 @@ func (t *DataProcessorTask) HasConfigDirs() bool {
 // GetConfigDir gets the first config dir
 func (t *DataProcessorTask) GetConfigDir(defaultValue ...string) string {
 	return t.Get(ConfigDirs, defaultValue...)
+}
+
+// SetConfigDir sets config dir(s)
+func (t *DataProcessorTask) SetConfigDir(dir ...string) *DataProcessorTask {
+	return t.Set(ConfigDirs, dir...)
 }
 
 // AddConfigDir adds config dir(s)
@@ -82,6 +92,11 @@ func (t *DataProcessorTask) GetInputFile(defaultValue ...string) string {
 	return t.Get(InputFiles, defaultValue...)
 }
 
+// SetInputFile sets input file(s)
+func (t *DataProcessorTask) SetInputFile(file ...string) *DataProcessorTask {
+	return t.Set(InputFiles, file...)
+}
+
 // AddInputFile adds input file(s)
 func (t *DataProcessorTask) AddInputFile(file ...string) *DataProcessorTask {
 	return t.Add(InputFiles, file...)
@@ -100,6 +115,11 @@ func (t *DataProcessorTask) HasInputDirs() bool {
 // GetInputDir gets the first input dir
 func (t *DataProcessorTask) GetInputDir(defaultValue ...string) string {
 	return t.Get(InputDirs, defaultValue...)
+}
+
+// SetInputDir sets input dir(s)
+func (t *DataProcessorTask) SetInputDir(dir ...string) *DataProcessorTask {
+	return t.Set(InputDirs, dir...)
 }
 
 // AddInputDir adds input dir(s)
@@ -122,6 +142,11 @@ func (t *DataProcessorTask) GetOutputFile(defaultValue ...string) string {
 	return t.Get(OutputFiles, defaultValue...)
 }
 
+// SetOutputFile sets output file(s)
+func (t *DataProcessorTask) SetOutputFile(file ...string) *DataProcessorTask {
+	return t.Set(OutputFiles, file...)
+}
+
 // AddOutputFile adds output file(s)
 func (t *DataProcessorTask) AddOutputFile(file ...string) *DataProcessorTask {
 	return t.Add(OutputFiles, file...)
@@ -140,6 +165,11 @@ func (t *DataProcessorTask) HasOutputDirs() bool {
 // GetOutputDir gets the first output dir
 func (t *DataProcessorTask) GetOutputDir(defaultValue ...string) string {
 	return t.Get(OutputDirs, defaultValue...)
+}
+
+// SetOutputDir sets output dir(s)
+func (t *DataProcessorTask) SetOutputDir(dir ...string) *DataProcessorTask {
+	return t.Set(OutputDirs, dir...)
 }
 
 // AddOutputDir adds output dir(s)
@@ -162,6 +192,11 @@ func (t *DataProcessorTask) GetInputTable(defaultValue ...string) string {
 	return t.Get(InputTables, defaultValue...)
 }
 
+// SetInputTable sets input table(s)
+func (t *DataProcessorTask) SetInputTable(table ...string) *DataProcessorTask {
+	return t.Set(InputTables, table...)
+}
+
 // AddInputTable adds input table(s)
 func (t *DataProcessorTask) AddInputTable(table ...string) *DataProcessorTask {
 	return t.Add(InputTables, table...)
@@ -180,6 +215,11 @@ func (t *DataProcessorTask) HasOutputTables() bool {
 // GetOutputTable gets the first output table
 func (t *DataProcessorTask) GetOutputTable(defaultValue ...string) string {
 	return t.Get(OutputTables, defaultValue...)
+}
+
+// SetOutputTable sets output table(s)
+func (t *DataProcessorTask) SetOutputTable(table ...string) *DataProcessorTask {
+	return t.Set(OutputTables, table...)
 }
 
 // AddOutputTable adds output table(s)
