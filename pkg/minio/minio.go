@@ -25,6 +25,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/minio/minio-go/v6"
@@ -121,16 +122,16 @@ func (m *MinIO) PutA(addr *atlas.S3Address, reader io.Reader) (int64, error) {
 }
 
 // PutUUID creates object in specified bucket named by generated UUID from the reader
-func (m *MinIO) PutUUID(bucketName string, reader io.Reader) (string, int64, error) {
-	target, n, err := m.PutUUIDA(bucketName, reader)
+func (m *MinIO) PutUUID(bucketName string, path string, reader io.Reader) (string, int64, error) {
+	target, n, err := m.PutUUIDA(bucketName, path, reader)
 	return target.Object, n, err
 }
 
 // PutUUIDA creates object in specified bucket named by generated UUID from the reader
-func (m *MinIO) PutUUIDA(bucketName string, reader io.Reader) (*atlas.S3Address, int64, error) {
+func (m *MinIO) PutUUIDA(bucketName string, path string, reader io.Reader) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
-		Object: atlas.NewUUIDRandom().String(),
+		Object: filepath.ToSlash(filepath.Join(path, atlas.NewUUIDRandom().String())),
 	}
 	n, err := m.PutA(target, reader)
 	return target, n, err
@@ -156,16 +157,16 @@ func (m *MinIO) FPutA(addr *atlas.S3Address, fileName string) (int64, error) {
 }
 
 // FPutUUID creates object in specified bucket named by generated UUID from the file
-func (m *MinIO) FPutUUID(bucketName, fileName string) (string, int64, error) {
-	target, n, err := m.FPutUUIDA(bucketName, fileName)
+func (m *MinIO) FPutUUID(bucketName, path, fileName string) (string, int64, error) {
+	target, n, err := m.FPutUUIDA(bucketName, path, fileName)
 	return target.Object, n, err
 }
 
 // FPutUUIDA creates object in specified bucket named by generated UUID from the file
-func (m *MinIO) FPutUUIDA(bucketName, fileName string) (*atlas.S3Address, int64, error) {
+func (m *MinIO) FPutUUIDA(bucketName, path, fileName string) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
-		Object: atlas.NewUUIDRandom().String(),
+		Object: filepath.ToSlash(filepath.Join(path, atlas.NewUUIDRandom().String())),
 	}
 	n, err := m.FPutA(target, fileName)
 	return target, n, err
