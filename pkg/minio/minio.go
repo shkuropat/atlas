@@ -131,7 +131,7 @@ func (m *MinIO) PutUUID(bucketName string, path string, reader io.Reader) (strin
 func (m *MinIO) PutUUIDA(bucketName string, path string, reader io.Reader) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
-		Object: filepath.ToSlash(filepath.Join(path, atlas.NewUUIDRandom().String())),
+		Object: PathJoin(path, atlas.NewUUIDRandom().String()),
 	}
 	n, err := m.PutA(target, reader)
 	return target, n, err
@@ -166,7 +166,7 @@ func (m *MinIO) FPutUUID(bucketName, path, fileName string) (string, int64, erro
 func (m *MinIO) FPutUUIDA(bucketName, path, fileName string) (*atlas.S3Address, int64, error) {
 	target := &atlas.S3Address{
 		Bucket: bucketName,
-		Object: filepath.ToSlash(filepath.Join(path, atlas.NewUUIDRandom().String())),
+		Object: PathJoin(path, atlas.NewUUIDRandom().String()),
 	}
 	n, err := m.FPutA(target, fileName)
 	return target, n, err
@@ -389,4 +389,9 @@ func (m *MinIO) List(bucket, prefix string, n int) ([]minio.ObjectInfo, error) {
 	}
 
 	return res, nil
+}
+
+// PathJoin joins object path components
+func PathJoin(elem ...string) string {
+	return filepath.ToSlash(filepath.Join(elem...))
 }
