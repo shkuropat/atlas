@@ -45,21 +45,30 @@ PROTO_ROOT="${PKG_ROOT}/api"
 #
 #
 #
+function clean_grpc_code_go() {
+    CODE_FILES_FOLDER="${1}"
+
+    echo "Go code generator. Clean previously generated .pb.go files in ${CODE_FILES_FOLDER}"
+    rm -f "${PROTO_FILES_FOLDER}"/*.pb.go
+}
+
+#
+# Generate Go code from .proto files
+#
 function generate_grpc_code_go() {
     PROTO_FILES_FOLDER="${1}"
     RESULT_FILES_FOLDER="${1}"
 
+    echo "Go code generator. Generate code from .proto files in ${PROTO_FILES_FOLDER} into ${RESULT_FILES_FOLDER}"
+
     if [[ -z "${PROTO_FILES_FOLDER}" ]]; then
-        echo "need to specify folder where to look for .proto files to generate code from "
+        echo "Go code generator. Need to specify folder where to look for .proto files to generate code from "
         exit 1
     fi
 
-    echo "Generate code from .proto files in ${PROTO_FILES_FOLDER}"
+    clean_grpc_code_go "${PROTO_FILES_FOLDER}"
 
-    echo "Clean previously generated files"
-    rm -f "${PROTO_FILES_FOLDER}"/*.pb.go
-
-    echo "Compile .proto files in ${PROTO_FILES_FOLDER}"
+    echo "Go code generator. Compile .proto files in ${PROTO_FILES_FOLDER}"
     # Specify the directory in which to search for imports. May be specified multiple times
     IMPORTS_FOLDER="${PROTO_FILES_FOLDER}"
     # --go_out requires list of plugins to be used
@@ -74,25 +83,37 @@ function generate_grpc_code_go() {
 #
 #
 #
+function clean_grpc_code_js() {
+    CODE_FILES_FOLDER="${1}"
+
+    echo "JS code generator. Clean previously generated *_pb.js files in ${CODE_FILES_FOLDER}"
+    rm -f "${CODE_FILES_FOLDER}"/*_pb.js
+}
+
+
+#
+# Generate JS code from .proto files
+#
 function generate_grpc_code_js() {
     PROTO_FILES_FOLDER="${1}"
     RESULT_FILES_FOLDER="${1}"
 
+    echo "JS code generator. Generate code from .proto files in ${PROTO_FILES_FOLDER} into ${RESULT_FILES_FOLDER}"
+
     if [[ -z "${PROTO_FILES_FOLDER}" ]]; then
-        echo "need to specify folder where to look for .proto files to generate code from "
+        echo "JS code generator. Need to specify folder where to look for .proto files to generate code from "
         exit 1
     fi
 
-    echo "Generate code from .proto files in ${PROTO_FILES_FOLDER}"
+    clean_grpc_code_js "${PROTO_FILES_FOLDER}"
 
-    echo "Clean previously generated files"
-    rm -f "${PROTO_FILES_FOLDER}"/*_pb.js
-
-    echo "Compile .proto files in ${PROTO_FILES_FOLDER}"
+    echo "JS code generator. Compile .proto files in ${PROTO_FILES_FOLDER}"
     # Specify the directory in which to search for imports. May be specified multiple times
     IMPORTS_FOLDER="${PROTO_FILES_FOLDER}"
 
     # Generate Protobuf Messages and Service Client Stub
+    # with the help of protoc
+
     # To generate the protobuf message classes from our echo.proto, run the following command:
     "${PROTOC}" \
         -I "${IMPORTS_FOLDER}" \
@@ -100,14 +121,13 @@ function generate_grpc_code_js() {
         "${PROTO_FILES_FOLDER}"/*.proto
 
     # Generate the service client stub
+    # In the --grpc-web_out param:
+    # import_style can be closure (default) or commonjs
+    # mode can be grpcwebtext (default) or grpcweb
     "${PROTOC}" \
         -I "${IMPORTS_FOLDER}" \
         --grpc-web_out=import_style=commonjs,mode=grpcwebtext:"${RESULT_FILES_FOLDER}" \
         "${PROTO_FILES_FOLDER}"/*.proto
-
-    # In the --grpc-web_out param above:
-    # import_style can be closure (default) or commonjs
-    # mode can be grpcwebtext (default) or grpcweb
 }
 
 # Delete String() function from generated *.pb.go files
@@ -161,8 +181,10 @@ function generate_docs() {
     PACKAGE_NAME="${2}"
     PROTO_FILES_FOLDER="${3}"
 
+    echo "AutoDoc generator. Generate docs start."
+
     DOC_FILES_FOLDER="${DOCS_ROOT}/${AREA}/${PACKAGE_NAME}"
-    echo "Prepare folder for docs ${DOC_FILES_FOLDER}"
+    echo "AutoDoc generator. Prepare folder for docs ${DOC_FILES_FOLDER}"
     mkdir -p "${DOC_FILES_FOLDER}"
 
     if [[ "${BUILD_DOCS_HTML}" == "yes" ]]; then
@@ -189,7 +211,8 @@ function generate_docs() {
 
 generate_grpc_code_go "${PROTO_ROOT}"/atlas
 generate_grpc_code_go "${PROTO_ROOT}"/health
-#generate_grpc_code_js "${PROTO_ROOT}"/health
+generate_grpc_code_js "${PROTO_ROOT}"/health
+generate_grpc_code_js "${PROTO_ROOT}"/atlas
 
 delete_string_function "${PROTO_ROOT}"/atlas
 rename_uuid_function "${PROTO_ROOT}"/atlas
