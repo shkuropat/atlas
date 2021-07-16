@@ -14,9 +14,32 @@
 
 package atlas
 
+import "strings"
+
 // NewAddressList creates new AddressList
 func NewAddressList() *AddressList {
 	return &AddressList{}
+}
+
+// NewAddressListFromString creates new AddressList from string
+func NewAddressListFromString(str string) *AddressList {
+	parts := strings.Split(str, separatorAddressList)
+	if len(parts) == 0 {
+		return nil
+	}
+
+	list := NewAddressList()
+	for _, address := range parts {
+		if address := NewAddressFromString(address); address != nil {
+			list.Append(address)
+		}
+	}
+
+	if list.Len() > 0 {
+		return list
+	}
+
+	return nil
 }
 
 // Ensure returns new or existing AddressList
@@ -79,7 +102,7 @@ func (m *AddressList) Slice(a, b int) []*Address {
 	return addresses[a:b]
 }
 
-// Has checks whether AddressList has something or specified nested domain exists
+// Has checks whether AddressList has something (in case do domain specified) or specified nested domain exists
 func (m *AddressList) Has(domains ...*Domain) bool {
 	if len(domains) > 0 {
 		return m.HasDomain(domains[0])
@@ -215,7 +238,28 @@ func (m *AddressList) Replace(addresses ...*Address) *AddressList {
 	return nil
 }
 
+const separatorAddressList = ","
+
 // String
 func (m *AddressList) String() string {
-	return "no be implemented"
+	res := ""
+	for _, address := range m.GetAddresses() {
+		if len(res) > 0 {
+			res += separatorAddressList
+		}
+		res += address.String()
+	}
+	return res
+}
+
+// FullString
+func (m *AddressList) FullString() string {
+	res := ""
+	for _, address := range m.GetAddresses() {
+		if len(res) > 0 {
+			res += separatorAddressList
+		}
+		res += address.FullString()
+	}
+	return res
 }

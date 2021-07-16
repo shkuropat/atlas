@@ -95,7 +95,7 @@ func NewAddressUUIDFromString(str string, domain ...interface{}) *Address {
 
 // NewAddressFromString
 func NewAddressFromString(str string) *Address {
-	parts := strings.SplitN(str, separator, 2)
+	parts := strings.SplitN(str, separatorAddress, 2)
 	if len(parts) != 2 {
 		return nil
 	}
@@ -242,9 +242,7 @@ func (m *Address) Set(address interface{}) *Address {
 	return m
 }
 
-const separator = ":"
-
-// String
+// String return string address w/o domain prefix
 func (m *Address) String() string {
 	if m == nil {
 		return ""
@@ -278,11 +276,13 @@ func (m *Address) String() string {
 	}
 }
 
-func (m *Address) ToString() string {
+const separatorAddress = ":"
+
+// FullString returns string address with domain prefix
+func (m *Address) FullString() string {
 	domain := m.GetAddressDomain()
-	str := m.String()
 	if domain == nil {
 		return ""
 	}
-	return domain.GetName() + separator + str
+	return domain.GetName() + separatorAddress + m.String()
 }

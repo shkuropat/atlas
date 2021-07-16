@@ -52,6 +52,18 @@ func (m *AddressMap) GetLists() []*AddressList {
 	return nil
 }
 
+// Collapse collapses all lists from this map into one list
+func (m *AddressMap) Collapse() *AddressList {
+	lists := NewAddressList()
+	for _, list := range m.GetLists() {
+		lists.Append(list.GetAddresses()...)
+	}
+	if lists.Len() > 0 {
+		return lists
+	}
+	return nil
+}
+
 // EnsureList makes sure AddressList of specified domain exists.
 // It uses already existing domain AddressList or creates new if none found
 func (m *AddressMap) EnsureList(domain *Domain) *AddressList {

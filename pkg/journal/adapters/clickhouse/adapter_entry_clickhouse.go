@@ -102,7 +102,7 @@ func (ce *AdapterEntryClickHouse) Import(entry *journal.Entry) *AdapterEntryClic
 	// Object section
 	ce._type = entry.ObjectType
 	ce.size = entry.ObjectSize
-	ce.address = entry.ObjectAddress.ToString()
+	ce.address = entry.ObjectAddress.FullString()
 	ce.domain = entry.ObjectMetadata.GetDomain().GetName()
 	ce.name = entry.ObjectMetadata.GetFilename()
 	ce.digest = string(entry.ObjectMetadata.GetDigest().GetData())
