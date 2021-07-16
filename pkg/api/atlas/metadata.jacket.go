@@ -229,6 +229,11 @@ func (m *Metadata) HasLen() bool {
 	return m.GetDataChunkProperties().HasLen()
 }
 
+// GetLen
+func (m *Metadata) GetLen() int64 {
+	return m.GetDataChunkProperties().GetLen()
+}
+
 // SetLen
 func (m *Metadata) SetLen(len int64) *Metadata {
 	m.EnsureDataChunkProperties().SetLen(len)
