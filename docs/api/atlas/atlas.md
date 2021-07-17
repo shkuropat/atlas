@@ -212,7 +212,7 @@ Address describes general address
 | filename | [Filename](#atlas.Filename) |  | Filename/filepath-based address |
 | url | [URL](#atlas.URL) |  | URL address |
 | domain | [Domain](#atlas.Domain) |  | Domain address |
-| custom_string | [string](#string) |  | Custom string |
+| custom | [string](#string) |  | Custom string |
 
 
 

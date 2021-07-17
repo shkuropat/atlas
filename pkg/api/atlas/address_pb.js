@@ -94,7 +94,7 @@ proto.atlas.Address.AddressOptionalCase = {
   FILENAME: 700,
   URL: 800,
   DOMAIN: 900,
-  CUSTOM_STRING: 1000
+  CUSTOM: 1000
 };
 
 /**
@@ -145,7 +145,7 @@ proto.atlas.Address.toObject = function(includeInstance, msg) {
     filename: (f = msg.getFilename()) && filename_pb.Filename.toObject(includeInstance, f),
     url: (f = msg.getUrl()) && url_pb.URL.toObject(includeInstance, f),
     domain: (f = msg.getDomain()) && domain_pb.Domain.toObject(includeInstance, f),
-    customString: jspb.Message.getFieldWithDefault(msg, 1000, "")
+    custom: jspb.Message.getFieldWithDefault(msg, 1000, "")
   };
 
   if (includeInstance) {
@@ -234,7 +234,7 @@ proto.atlas.Address.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 1000:
       var value = /** @type {string} */ (reader.readString());
-      msg.setCustomString(value);
+      msg.setCustom(value);
       break;
     default:
       reader.skipField();
@@ -726,10 +726,10 @@ proto.atlas.Address.prototype.hasDomain = function() {
 
 
 /**
- * optional string custom_string = 1000;
+ * optional string custom = 1000;
  * @return {string}
  */
-proto.atlas.Address.prototype.getCustomString = function() {
+proto.atlas.Address.prototype.getCustom = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1000, ""));
 };
 
@@ -738,7 +738,7 @@ proto.atlas.Address.prototype.getCustomString = function() {
  * @param {string} value
  * @return {!proto.atlas.Address} returns this
  */
-proto.atlas.Address.prototype.setCustomString = function(value) {
+proto.atlas.Address.prototype.setCustom = function(value) {
   return jspb.Message.setOneofField(this, 1000, proto.atlas.Address.oneofGroups_[1], value);
 };
 
@@ -747,7 +747,7 @@ proto.atlas.Address.prototype.setCustomString = function(value) {
  * Clears the field making it undefined.
  * @return {!proto.atlas.Address} returns this
  */
-proto.atlas.Address.prototype.clearCustomString = function() {
+proto.atlas.Address.prototype.clearCustom = function() {
   return jspb.Message.setOneofField(this, 1000, proto.atlas.Address.oneofGroups_[1], undefined);
 };
 
@@ -756,7 +756,7 @@ proto.atlas.Address.prototype.clearCustomString = function() {
  * Returns whether this field is set.
  * @return {boolean}
  */
-proto.atlas.Address.prototype.hasCustomString = function() {
+proto.atlas.Address.prototype.hasCustom = function() {
   return jspb.Message.getField(this, 1000) != null;
 };
 

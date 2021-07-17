@@ -27,16 +27,17 @@ var (
 	DomainParent    = NewDomain("parent")
 	DomainResult    = NewDomain("result")
 	// Most popular predefined nested domains
-	DomainS3           = NewDomain("s3")
-	DomainKafka        = NewDomain("kafka")
-	DomainDigest       = NewDomain("digest")
-	DomainUUID         = NewDomain("uuid")
-	DomainUserID       = NewDomain("userid")
-	DomainDirname      = NewDomain("dirname")
-	DomainFilename     = NewDomain("filename")
-	DomainURL          = NewDomain("url")
-	DomainDomain       = NewDomain("domain")
-	DomainCustomString = NewDomain("custom string")
+	DomainS3       = NewDomain("s3")
+	DomainKafka    = NewDomain("kafka")
+	DomainDigest   = NewDomain("digest")
+	DomainUUID     = NewDomain("uuid")
+	DomainUserID   = NewDomain("userid")
+	DomainDirname  = NewDomain("dirname")
+	DomainFilename = NewDomain("filename")
+	DomainURL      = NewDomain("url")
+	DomainDomain   = NewDomain("domain")
+	DomainName     = NewDomain("name")
+	DomainCustom   = NewDomain("custom")
 
 	// List of all registered domains
 	Domains = []*Domain{
@@ -61,7 +62,8 @@ var (
 		DomainFilename,
 		DomainURL,
 		DomainDomain,
-		DomainCustomString,
+		DomainName,
+		DomainCustom,
 	}
 )
 

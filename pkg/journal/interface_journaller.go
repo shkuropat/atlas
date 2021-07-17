@@ -45,9 +45,9 @@ type Journaller interface {
 	//
 
 	SaveData(
-		dataAddress *atlas.Address,
-		dataSize int64,
-		dataMetadata *atlas.Metadata,
+		address *atlas.Address,
+		size int64,
+		metadata *atlas.Metadata,
 		data []byte,
 	)
 	SaveDataError(callErr error)
@@ -57,9 +57,9 @@ type Journaller interface {
 	//
 
 	ProcessData(
-		dataAddress *atlas.Address,
-		dataSize int64,
-		dataMetadata *atlas.Metadata,
+		address *atlas.Address,
+		size int64,
+		metadata *atlas.Metadata,
 	)
 	ProcessDataError(callErr error)
 

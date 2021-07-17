@@ -164,14 +164,14 @@ func (j *BaseJournal) RequestError(callErr error) {
 
 // SaveData journals data saved successfully
 func (j *BaseJournal) SaveData(
-	dataAddress *atlas.Address,
-	dataSize int64,
-	dataMetadata *atlas.Metadata,
+	address *atlas.Address,
+	size int64,
+	metadata *atlas.Metadata,
 	data []byte,
 ) {
 	e := j.NewEntry(EntryTypeSaveData).
-		SetSourceID(dataMetadata.GetUserID()).
-		SetObject(dataMetadata.GetType(), dataAddress, uint64(dataSize), dataMetadata, data)
+		SetSourceID(metadata.GetUserID()).
+		SetObject(metadata.GetType(), address, uint64(size), metadata, data)
 	_ = j.Insert(e)
 }
 
@@ -183,13 +183,13 @@ func (j *BaseJournal) SaveDataError(callErr error) {
 
 // ProcessData journals data processed successfully
 func (j *BaseJournal) ProcessData(
-	dataAddress *atlas.Address,
-	dataSize int64,
-	dataMetadata *atlas.Metadata,
+	address *atlas.Address,
+	size int64,
+	metadata *atlas.Metadata,
 ) {
 	e := j.NewEntry(EntryTypeProcessData).
-		SetSourceID(dataMetadata.GetUserID()).
-		SetObject(dataMetadata.GetType(), dataAddress, uint64(dataSize), dataMetadata, nil)
+		SetSourceID(metadata.GetUserID()).
+		SetObject(metadata.GetType(), address, uint64(size), metadata, nil)
 	_ = j.Insert(e)
 }
 

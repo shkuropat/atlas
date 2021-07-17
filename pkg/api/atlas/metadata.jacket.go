@@ -146,8 +146,8 @@ func (m *Metadata) GetDomain() *Domain {
 }
 
 // SetCustomString
-func (m *Metadata) SetCustomString(s string) *Metadata {
-	return m.Set(DomainThis, DomainCustomString, NewAddress().SetDomain(DomainCustomString).Set(s))
+func (m *Metadata) SetCustom(s string) *Metadata {
+	return m.Set(DomainThis, DomainCustom, NewAddress().SetDomain(DomainCustom).Set(s))
 }
 
 // GetContextUUID

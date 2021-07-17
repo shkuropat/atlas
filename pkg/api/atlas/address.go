@@ -39,7 +39,7 @@ const (
 	// Domain address
 	AddressDomain int32 = 900
 	// Custom string
-	AddressCustomString int32 = 1000
+	AddressCustom int32 = 1000
 )
 
 var AddressTypeEnum = NewEnum()
@@ -55,7 +55,7 @@ func init() {
 	AddressTypeEnum.MustRegister("AddressFilename", AddressFilename)
 	AddressTypeEnum.MustRegister("AddressURL", AddressURL)
 	AddressTypeEnum.MustRegister("AddressDomain", AddressDomain)
-	AddressTypeEnum.MustRegister("AddressCustomString", AddressCustomString)
+	AddressTypeEnum.MustRegister("AddressCustom", AddressCustom)
 }
 
 // NewAddress creates new Address with specified domain
@@ -122,7 +122,7 @@ func NewAddressFromString(str string) *Address {
 		return nil
 	case DomainDomain:
 		return nil
-	case DomainCustomString:
+	case DomainCustom:
 		return nil
 	}
 	return nil
@@ -176,7 +176,7 @@ func (m *Address) GetAddressDomain() *Domain {
 	case m.GetDomain() != nil:
 		return DomainDomain
 	default:
-		return DomainCustomString
+		return DomainCustom
 	}
 }
 
@@ -234,10 +234,10 @@ func (m *Address) Set(address interface{}) *Address {
 		m.AddressOptional = i
 		m.SetDomain(DomainDomain)
 	case string:
-		i := new(Address_CustomString)
-		i.CustomString = typed
+		i := new(Address_Custom)
+		i.Custom = typed
 		m.AddressOptional = i
-		m.SetDomain(DomainCustomString)
+		m.SetDomain(DomainCustom)
 	}
 	return m
 }
@@ -272,7 +272,7 @@ func (m *Address) String() string {
 	case m.GetDomain() != nil:
 		return m.GetDomain().String()
 	default:
-		return m.GetCustomString()
+		return m.GetCustom()
 	}
 }
 

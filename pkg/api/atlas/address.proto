@@ -57,6 +57,6 @@ message Address {
         // Domain address
         Domain domain = 900;
         // Custom string
-        string custom_string = 1000;
+        string custom = 1000;
     }
 }
