@@ -127,6 +127,17 @@ func (m *Task) GetResult() *Address {
 	return m.GetHeader().GetAddresses().First(DomainResult)
 }
 
+// GetResults
+func (m *Task) GetResults() []*Address {
+	return m.GetHeader().GetAddresses().All(DomainResult)
+}
+
+// AppendResult
+func (m *Task) AppendResult(address *Address) *Task {
+	m.EnsureHeader().EnsureAddresses().Append(DomainResult, address.GetAddressDomain(), address)
+	return m
+}
+
 // SetResult
 func (m *Task) SetResult(address *Address) *Task {
 	m.EnsureHeader().EnsureAddresses().Set(DomainResult, address.GetAddressDomain(), address)
