@@ -134,7 +134,7 @@ func (m *Task) GetResults() []*Address {
 
 // AppendResult
 func (m *Task) AppendResult(address *Address) *Task {
-	m.EnsureHeader().EnsureAddresses().Append(DomainResult, address.GetAddressDomain(), address)
+	m.EnsureHeader().EnsureAddresses().Append(DomainResult, address)
 	return m
 }
 
