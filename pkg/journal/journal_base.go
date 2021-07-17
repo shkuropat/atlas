@@ -199,6 +199,18 @@ func (j *BaseJournal) ProcessDataError(callErr error) {
 	_ = j.Insert(e)
 }
 
+// Result journals result
+func (j *BaseJournal) Result(
+	address *atlas.Address,
+	size int64,
+	metadata *atlas.Metadata,
+) {
+	e := j.NewEntry(EntryTypeResult).
+		SetSourceID(metadata.GetUserID()).
+		SetObject(metadata.GetType(), address, uint64(size), metadata, nil)
+	_ = j.Insert(e)
+}
+
 // SaveTask journals task saved successfully
 func (j *BaseJournal) SaveTask(task *atlas.Task) {
 	e := j.NewEntry(EntryTypeSaveTask).SetTaskID(task.GetUUID())

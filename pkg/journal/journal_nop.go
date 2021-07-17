@@ -81,9 +81,9 @@ func (j *NOPJournal) RequestError(callErr error) {
 
 // SaveData journals data saved successfully
 func (j *NOPJournal) SaveData(
-	dataAddress *atlas.Address,
-	dataSize int64,
-	dataMetadata *atlas.Metadata,
+	address *atlas.Address,
+	size int64,
+	metadata *atlas.Metadata,
 	data []byte,
 ) {
 }
@@ -94,14 +94,22 @@ func (j *NOPJournal) SaveDataError(callErr error) {
 
 // ProcessData journals data processed successfully
 func (j *NOPJournal) ProcessData(
-	dataAddress *atlas.Address,
-	dataSize int64,
-	dataMetadata *atlas.Metadata,
+	address *atlas.Address,
+	size int64,
+	metadata *atlas.Metadata,
 ) {
 }
 
 // ProcessDataError journals data not processed due to an error
 func (j *NOPJournal) ProcessDataError(callErr error) {
+}
+
+// Result journals result
+func (j *NOPJournal) Result(
+	address *atlas.Address,
+	size int64,
+	metadata *atlas.Metadata,
+) {
 }
 
 // SaveTask journals task saved successfully

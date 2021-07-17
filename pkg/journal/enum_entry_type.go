@@ -25,12 +25,13 @@ const (
 	EntryTypeSaveDataError    int32 = 101
 	EntryTypeProcessData      int32 = 200
 	EntryTypeProcessDataError int32 = 201
-	EntryTypeSaveTask         int32 = 300
-	EntryTypeSaveTaskError    int32 = 301
-	EntryTypeProcessTask      int32 = 400
-	EntryTypeProcessTaskError int32 = 401
-	EntryTypeLookup           int32 = 500
-	EntryTypeLookupError      int32 = 501
+	EntryTypeResult           int32 = 300
+	EntryTypeSaveTask         int32 = 400
+	EntryTypeSaveTaskError    int32 = 401
+	EntryTypeProcessTask      int32 = 500
+	EntryTypeProcessTaskError int32 = 501
+	EntryTypeLookup           int32 = 600
+	EntryTypeLookupError      int32 = 601
 	EntryTypeRequestCompleted int32 = 10000
 	EntryTypeRequestError     int32 = 10001
 )
@@ -46,6 +47,7 @@ func init() {
 	EntryTypeEnum.MustRegister("EntryTypeSaveDataError", EntryTypeSaveDataError)
 	EntryTypeEnum.MustRegister("EntryTypeProcessData", EntryTypeProcessData)
 	EntryTypeEnum.MustRegister("EntryTypeProcessDataError", EntryTypeProcessDataError)
+	EntryTypeEnum.MustRegister("EntryTypeResult", EntryTypeResult)
 	EntryTypeEnum.MustRegister("EntryTypeSaveTask", EntryTypeSaveTask)
 	EntryTypeEnum.MustRegister("EntryTypeSaveTaskError", EntryTypeSaveTaskError)
 	EntryTypeEnum.MustRegister("EntryTypeProcessTask", EntryTypeProcessTask)

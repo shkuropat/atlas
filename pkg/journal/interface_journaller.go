@@ -67,6 +67,16 @@ type Journaller interface {
 	//
 	//
 
+	Result(
+		address *atlas.Address,
+		size int64,
+		metadata *atlas.Metadata,
+	)
+
+	//
+	//
+	//
+
 	SaveTask(task *atlas.Task)
 	SaveTaskError(task *atlas.Task, callErr error)
 
