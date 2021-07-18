@@ -15,18 +15,19 @@
 package atlas
 
 var (
-	// Most popular predefined root domains
+	// General purpose domains
 	DomainThis      = NewDomain("this")
 	DomainSrc       = NewDomain("src")
 	DomainDst       = NewDomain("dst")
 	DomainReference = NewDomain("reference")
 	DomainContext   = NewDomain("context")
-	DomainReport    = NewDomain("report")
 	DomainTask      = NewDomain("task")
 	DomainStatus    = NewDomain("status")
 	DomainParent    = NewDomain("parent")
+	DomainReport    = NewDomain("report")
 	DomainResult    = NewDomain("result")
-	// Most popular predefined nested domains
+	DomainInterim   = NewDomain("interim")
+	// Predefined address domains
 	DomainS3       = NewDomain("s3")
 	DomainKafka    = NewDomain("kafka")
 	DomainDigest   = NewDomain("digest")
@@ -36,23 +37,23 @@ var (
 	DomainFilename = NewDomain("filename")
 	DomainURL      = NewDomain("url")
 	DomainDomain   = NewDomain("domain")
-	DomainName     = NewDomain("name")
 	DomainCustom   = NewDomain("custom")
 
 	// List of all registered domains
 	Domains = []*Domain{
-		// Most popular predefined root domains
+		// General purpose domains
 		DomainThis,
 		DomainSrc,
 		DomainDst,
 		DomainReference,
 		DomainContext,
-		DomainReport,
 		DomainTask,
 		DomainStatus,
 		DomainParent,
+		DomainReport,
 		DomainResult,
-		// Most popular predefined nested domains
+		DomainInterim,
+		// Predefined address domains
 		DomainS3,
 		DomainKafka,
 		DomainDigest,
@@ -62,7 +63,6 @@ var (
 		DomainFilename,
 		DomainURL,
 		DomainDomain,
-		DomainName,
 		DomainCustom,
 	}
 )
