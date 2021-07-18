@@ -42,6 +42,9 @@
 - [filename.proto](#filename.proto)
     - [Filename](#atlas.Filename)
   
+- [file.proto](#file.proto)
+    - [File](#atlas.File)
+  
 - [kafka_address.proto](#kafka_address.proto)
     - [KafkaAddress](#atlas.KafkaAddress)
   
@@ -539,6 +542,38 @@ Filename represents abstract filename.
 
 
 
+<a name="file.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## file.proto
+Domain represents abstract domain.
+
+
+<a name="atlas.File"></a>
+
+### File
+File represents abstract file.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| filename | [Filename](#atlas.Filename) |  | Filename |
+| data | [bytes](#bytes) |  | Data |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
 <a name="kafka_address.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -810,6 +845,7 @@ ObjectRequest represents request for the object(s)
 | reports | [Report](#atlas.Report) | repeated |  |
 | tasks | [Task](#atlas.Task) | repeated |  |
 | statuses | [Status](#atlas.Status) | repeated |  |
+| files | [File](#atlas.File) | repeated |  |
 
 
 

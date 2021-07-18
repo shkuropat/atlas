@@ -12,6 +12,8 @@ var jspb = require('google-protobuf');
 var goog = jspb;
 var global = Function('return this')();
 
+var file_pb = require('./file_pb.js');
+goog.object.extend(proto, file_pb);
 var metadata_pb = require('./metadata_pb.js');
 goog.object.extend(proto, metadata_pb);
 var report_pb = require('./report_pb.js');
@@ -49,7 +51,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.atlas.ObjectsList.repeatedFields_ = [500,600,700];
+proto.atlas.ObjectsList.repeatedFields_ = [500,600,700,800];
 
 /**
  * Oneof group definitions for this message. Each group defines the field
@@ -113,7 +115,9 @@ proto.atlas.ObjectsList.toObject = function(includeInstance, msg) {
     tasksList: jspb.Message.toObjectList(msg.getTasksList(),
     task_pb.Task.toObject, includeInstance),
     statusesList: jspb.Message.toObjectList(msg.getStatusesList(),
-    status_pb.Status.toObject, includeInstance)
+    status_pb.Status.toObject, includeInstance),
+    filesList: jspb.Message.toObjectList(msg.getFilesList(),
+    file_pb.File.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -169,6 +173,11 @@ proto.atlas.ObjectsList.deserializeBinaryFromReader = function(msg, reader) {
       var value = new status_pb.Status;
       reader.readMessage(value,status_pb.Status.deserializeBinaryFromReader);
       msg.addStatuses(value);
+      break;
+    case 800:
+      var value = new file_pb.File;
+      reader.readMessage(value,file_pb.File.deserializeBinaryFromReader);
+      msg.addFiles(value);
       break;
     default:
       reader.skipField();
@@ -229,6 +238,14 @@ proto.atlas.ObjectsList.serializeBinaryToWriter = function(message, writer) {
       700,
       f,
       status_pb.Status.serializeBinaryToWriter
+    );
+  }
+  f = message.getFilesList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      800,
+      f,
+      file_pb.File.serializeBinaryToWriter
     );
   }
 };
@@ -382,6 +399,44 @@ proto.atlas.ObjectsList.prototype.addStatuses = function(opt_value, opt_index) {
  */
 proto.atlas.ObjectsList.prototype.clearStatusesList = function() {
   return this.setStatusesList([]);
+};
+
+
+/**
+ * repeated File files = 800;
+ * @return {!Array<!proto.atlas.File>}
+ */
+proto.atlas.ObjectsList.prototype.getFilesList = function() {
+  return /** @type{!Array<!proto.atlas.File>} */ (
+    jspb.Message.getRepeatedWrapperField(this, file_pb.File, 800));
+};
+
+
+/**
+ * @param {!Array<!proto.atlas.File>} value
+ * @return {!proto.atlas.ObjectsList} returns this
+*/
+proto.atlas.ObjectsList.prototype.setFilesList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 800, value);
+};
+
+
+/**
+ * @param {!proto.atlas.File=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.atlas.File}
+ */
+proto.atlas.ObjectsList.prototype.addFiles = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 800, opt_value, proto.atlas.File, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.atlas.ObjectsList} returns this
+ */
+proto.atlas.ObjectsList.prototype.clearFilesList = function() {
+  return this.setFilesList([]);
 };
 
 

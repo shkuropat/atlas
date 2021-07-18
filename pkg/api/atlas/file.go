@@ -12,23 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+package atlas
 
-package atlas;
+import "fmt"
 
-import "file.proto";
-import "metadata.proto";
-import "report.proto";
-import "task.proto";
-import "status.proto";
+// NewFile
+func NewFile() *File {
+	return new(File)
+}
 
-message ObjectsList {
-    oneof header_optional {
-        Metadata header = 100;
-    }
+// Len
+func (m *File) Len() int {
+	if m != nil {
+		return len(m.Data)
+	}
+	return 0
+}
 
-    repeated Report reports = 500;
-    repeated Task tasks = 600;
-    repeated Status statuses = 700;
-    repeated File files = 800;
+// SetFilename
+func (m *File) SetFilename(filename string) *File {
+	if m == nil {
+		return nil
+	}
+	m.Filename = m.Filename.Ensure().Set(filename)
+	return m
+}
+
+// SetData
+func (m *File) SetData(data []byte) *File {
+	if m == nil {
+		return nil
+	}
+	m.Data = data
+	return m
+}
+
+// String
+func (m *File) String() string {
+	if m == nil {
+		return ""
+	}
+	return fmt.Sprintf("%s[%d]", m.Filename.String(), m.Len())
 }

@@ -363,6 +363,21 @@
         
           
           <li>
+            <a href="#file.proto">file.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#atlas.File"><span class="badge">M</span>File</a>
+                </li>
+              
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#kafka_address.proto">kafka_address.proto</a>
             <ul>
               
@@ -1316,6 +1331,51 @@ May contain any arbitrary sequence of bytes no longer than 2^32. </p></td>
     
       
       <div class="file-heading">
+        <h2 id="file.proto">file.proto</h2><a href="#title">Top</a>
+      </div>
+      <p>Domain represents abstract domain.</p>
+
+      
+        <h3 id="atlas.File">File</h3>
+        <p>File represents abstract file.</p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>filename</td>
+                  <td><a href="#atlas.Filename">Filename</a></td>
+                  <td></td>
+                  <td><p>Filename </p></td>
+                </tr>
+              
+                <tr>
+                  <td>data</td>
+                  <td><a href="#bytes">bytes</a></td>
+                  <td></td>
+                  <td><p>Data </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
         <h2 id="kafka_address.proto">kafka_address.proto</h2><a href="#title">Top</a>
       </div>
       <p>KafkaAddress represents Kafka address within Kafka endpoint (cluster access endpoint).</p><p>Full Kafka address would be KafkaEndpoint + KafkaAddress</p>
@@ -1815,6 +1875,13 @@ Object can be typed/identified either by type or by name. </p></td>
                 <tr>
                   <td>statuses</td>
                   <td><a href="#atlas.Status">Status</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>files</td>
+                  <td><a href="#atlas.File">File</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>

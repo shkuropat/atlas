@@ -23,6 +23,14 @@ func NewFilename(filename ...string) *Filename {
 	return f
 }
 
+// Ensure
+func (m *Filename) Ensure() *Filename {
+	if m != nil {
+		return m
+	}
+	return new(Filename)
+}
+
 // Set
 func (m *Filename) Set(filename string) *Filename {
 	if m == nil {
