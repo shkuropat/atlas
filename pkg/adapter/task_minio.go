@@ -49,6 +49,11 @@ func (a *TaskMinIO) GetInPath() string {
 	return minio.PathJoin(a.GetTaskPath(), "in")
 }
 
+// GetInPrefix
+func (a *TaskMinIO) GetInPrefix() string {
+	return a.GetInPath() + "/"
+}
+
 // GetInFile
 func (a *TaskMinIO) GetInFile(file string) string {
 	return minio.PathJoin(a.GetInPath(), file)
@@ -59,6 +64,11 @@ func (a *TaskMinIO) GetOutPath() string {
 	return minio.PathJoin(a.GetTaskPath(), "out")
 }
 
+// GetOutPrefix
+func (a *TaskMinIO) GetOutPrefix() string {
+	return a.GetOutPath() + "/"
+}
+
 // GetOutFile
 func (a *TaskMinIO) GetOutFile(file string) string {
 	return minio.PathJoin(a.GetOutPath(), file)
@@ -67,6 +77,11 @@ func (a *TaskMinIO) GetOutFile(file string) string {
 // GetResultPath
 func (a *TaskMinIO) GetResultPath() string {
 	return minio.PathJoin(a.GetTaskPath(), "result")
+}
+
+// GetResultPrefix
+func (a *TaskMinIO) GetResultPrefix() string {
+	return a.GetResultPath() + "/"
 }
 
 // GetResultFile
