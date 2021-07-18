@@ -75,3 +75,20 @@ func Report(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *
 
 	return result
 }
+
+// Files
+func Files(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
+	log.Infof("Files() - start")
+	defer log.Infof("Files() - end")
+
+	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	result := NewDataExchangeResult()
+	request := atlas.NewObjectsRequest().Append(atlas.NewObjectRequest().SetHeader(meta))
+	request.EnsureHeader().SetDomain(atlas.DomainInterim)
+	result.Recv.ObjectsList, result.Error = ReportsPlaneClient.ObjectsReport(ctx, request)
+
+	return result
+}
