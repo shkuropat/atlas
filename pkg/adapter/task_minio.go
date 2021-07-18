@@ -93,7 +93,7 @@ func (a *TaskMinIO) getFile(what, file string) string {
 }
 
 // walkFiles
-func (a *TaskMinIO) walkFiles(what string, f func(*minio.MinIO, *minio_go.ObjectInfo, *atlas.S3Address) bool) error {
+func (a *TaskMinIO) walkFiles(what string, f func(int, *minio.MinIO, *minio_go.ObjectInfo, *atlas.S3Address) bool) error {
 	mi, err := minio.NewMinIOFromConfig(a.Config)
 	if err != nil {
 		return err
@@ -107,7 +107,7 @@ func (a *TaskMinIO) walkFiles(what string, f func(*minio.MinIO, *minio_go.Object
 	for i := range list {
 		info := list[i]
 		s3address := atlas.NewS3Address(bucket, info.Key)
-		if !f(mi, &info, s3address) {
+		if !f(len(list), mi, &info, s3address) {
 			break
 		}
 	}
@@ -139,7 +139,7 @@ func (a *TaskMinIO) GetInFile(file string) string {
 }
 
 // WalkInFiles
-func (a *TaskMinIO) WalkInFiles(f func(*minio.MinIO, *minio_go.ObjectInfo, *atlas.S3Address) bool) error {
+func (a *TaskMinIO) WalkInFiles(f func(int, *minio.MinIO, *minio_go.ObjectInfo, *atlas.S3Address) bool) error {
 	return a.walkFiles(in, f)
 }
 
@@ -159,7 +159,7 @@ func (a *TaskMinIO) GetOutFile(file string) string {
 }
 
 // WalkOutFiles
-func (a *TaskMinIO) WalkOutFiles(f func(*minio.MinIO, *minio_go.ObjectInfo, *atlas.S3Address) bool) error {
+func (a *TaskMinIO) WalkOutFiles(f func(int, *minio.MinIO, *minio_go.ObjectInfo, *atlas.S3Address) bool) error {
 	return a.walkFiles(out, f)
 }
 
@@ -179,6 +179,6 @@ func (a *TaskMinIO) GetResultFile(file string) string {
 }
 
 // WalkResultFiles
-func (a *TaskMinIO) WalkResultFiles(f func(*minio.MinIO, *minio_go.ObjectInfo, *atlas.S3Address) bool) error {
+func (a *TaskMinIO) WalkResultFiles(f func(int, *minio.MinIO, *minio_go.ObjectInfo, *atlas.S3Address) bool) error {
 	return a.walkFiles(result, f)
 }
