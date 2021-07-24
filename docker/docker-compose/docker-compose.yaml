@@ -92,8 +92,8 @@ services:
       - /bin/sleep
     command:
       - infinity
-    # Mount pkg/trail dir from sources into docker container in order to have .sql file
-    # with schema available inside the container. Thus we can create schema calling vlivkhouse-client within the container
+    # Mount specified sources dir into docker container in order to have .sql file with schema (create statements)
+    # available inside the docker container. Thus we can create schema calling clickhouse-client within the container
     volumes:
       - ../../pkg/journal:/journal
 
