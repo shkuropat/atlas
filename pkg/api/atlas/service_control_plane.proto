@@ -38,7 +38,7 @@ package atlas;
 import "data_chunk.proto";
 import "metric.proto";
 import "objects_list.proto";
-import "status.proto";
+import "object_status.proto";
 import "task.proto";
 
 service ControlPlane {
@@ -53,7 +53,7 @@ service ControlPlane {
 	 * Some commands may be followed by data load. Be it logs, dumps, etc.
 	 */
 	rpc DataChunks(stream DataChunk) returns (stream DataChunk) {}
-	rpc UploadObject(stream DataChunk) returns (Status) {}
+	rpc UploadObject(stream DataChunk) returns (ObjectStatus) {}
 	rpc UploadObjects(stream DataChunk) returns (ObjectsList) {}
 
 	/**

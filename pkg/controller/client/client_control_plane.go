@@ -161,7 +161,7 @@ func Upload(
 		}
 	}
 
-	result.Recv.Status, result.Error = DataChunksUpOneClient.CloseAndRecv()
+	result.Recv.ObjectStatus, result.Error = DataChunksUpOneClient.CloseAndRecv()
 
 	return result
 }

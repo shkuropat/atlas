@@ -42,7 +42,7 @@ func Status(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *Data
 	// Unify call result
 	result := NewDataExchangeResult()
 	if len(list.GetStatuses()) > 0 {
-		result.Recv.Status = list.GetStatuses()[0]
+		result.Recv.ObjectStatus = atlas.NewObjectStatus().SetStatus(list.GetStatuses()[0])
 	}
 	result.Error = err
 

@@ -22,7 +22,7 @@ var metric_pb = require('./metric_pb.js')
 
 var objects_list_pb = require('./objects_list_pb.js')
 
-var status_pb = require('./status_pb.js')
+var object_status_pb = require('./object_status_pb.js')
 
 var task_pb = require('./task_pb.js')
 const proto = {};

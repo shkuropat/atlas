@@ -15,10 +15,10 @@
 package atlas
 
 // NewObjectStatus
-func NewObjectStatus(status ...int32) *ObjectStatus {
+func NewObjectStatus(status ...*Status) *ObjectStatus {
 	d := new(ObjectStatus)
 	if len(status) > 0 {
-		d.Status.SetStatus(status[0])
+		d.SetStatus(status[0])
 	}
 	return d
 }

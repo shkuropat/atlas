@@ -1067,7 +1067,7 @@ Communication is logically structured into the following areas:
 | ----------- | ------------ | ------------- | ------------|
 | Tasks | [Task](#atlas.Task) stream | [Task](#atlas.Task) stream | Bi-directional Commands stream. Commands are sent from service to client and from client to server |
 | DataChunks | [DataChunk](#atlas.DataChunk) stream | [DataChunk](#atlas.DataChunk) stream | Bi-directional Data stream. Some commands may be followed by data load. Be it logs, dumps, etc. |
-| UploadObject | [DataChunk](#atlas.DataChunk) stream | [Status](#atlas.Status) |  |
+| UploadObject | [DataChunk](#atlas.DataChunk) stream | [ObjectStatus](#atlas.ObjectStatus) |  |
 | UploadObjects | [DataChunk](#atlas.DataChunk) stream | [ObjectsList](#atlas.ObjectsList) |  |
 | Metrics | [Metric](#atlas.Metric) stream | [Metric](#atlas.Metric) | Uni-directional Metrics stream from client to server. |
 
