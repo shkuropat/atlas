@@ -21,8 +21,8 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-// Status requests status(es) of the task
-func Status(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataExchangeResult {
+// GetTaskStatus requests status(es) of the task
+func GetTaskStatus(ReportsPlaneClient atlas.ReportsPlaneClient, taskUUID *atlas.UUID) *DataExchangeResult {
 	log.Infof("Status() - start")
 	defer log.Infof("Status() - end")
 
@@ -31,8 +31,9 @@ func Status(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *Data
 	defer cancel()
 
 	// One object request
+	taskAddress := atlas.NewAddress(taskUUID)
 	objectRequest := atlas.NewObjectRequest()
-	objectRequest.SetAddress(atlas.NewAddress(uuid))
+	objectRequest.SetAddress(taskAddress)
 	// Multi-object request
 	request := atlas.NewObjectsRequest()
 	request.SetRequestDomain(atlas.DomainTask)
@@ -49,8 +50,8 @@ func Status(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *Data
 	return result
 }
 
-// Task requests task
-func Task(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataExchangeResult {
+// GetTask requests task
+func GetTask(ReportsPlaneClient atlas.ReportsPlaneClient, taskUUID *atlas.UUID) *DataExchangeResult {
 	log.Infof("Task() - start")
 	defer log.Infof("Task() - end")
 
@@ -60,7 +61,7 @@ func Task(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataEx
 
 	// One object request
 	objectRequest := atlas.NewObjectRequest()
-	objectRequest.SetAddress(atlas.NewAddress(uuid))
+	objectRequest.SetAddress(atlas.NewAddress(taskUUID))
 	// Multi-object request
 	request := atlas.NewObjectsRequest()
 	request.SetRequestDomain(atlas.DomainTask)
@@ -73,8 +74,8 @@ func Task(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataEx
 	return result
 }
 
-// Report requests report(es) of the task
-func Report(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataExchangeResult {
+// GetTaskReport requests report(es) of the task
+func GetTaskReport(ReportsPlaneClient atlas.ReportsPlaneClient, taskUUID *atlas.UUID) *DataExchangeResult {
 	log.Infof("Report() - start")
 	defer log.Infof("Report() - end")
 
@@ -84,7 +85,7 @@ func Report(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *Data
 
 	// One object request
 	objectRequest := atlas.NewObjectRequest()
-	objectRequest.SetAddress(atlas.NewAddress(uuid))
+	objectRequest.SetAddress(atlas.NewAddress(taskUUID))
 	// Multi-object request
 	request := atlas.NewObjectsRequest()
 	request.SetRequestDomain(atlas.DomainTask)
@@ -97,8 +98,8 @@ func Report(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *Data
 	return result
 }
 
-// Files requests file(es) of the task
-func Files(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataExchangeResult {
+// GetTaskFiles requests file(es) of the task
+func GetTaskFiles(ReportsPlaneClient atlas.ReportsPlaneClient, taskUUID *atlas.UUID) *DataExchangeResult {
 	log.Infof("Files() - start")
 	defer log.Infof("Files() - end")
 
@@ -108,7 +109,7 @@ func Files(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataE
 
 	// One object request
 	objectRequest := atlas.NewObjectRequest()
-	objectRequest.SetAddress(atlas.NewAddress(uuid))
+	objectRequest.SetAddress(atlas.NewAddress(taskUUID))
 	// Multi-object request
 	request := atlas.NewObjectsRequest()
 	request.SetRequestDomain(atlas.DomainTask)
