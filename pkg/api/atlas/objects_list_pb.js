@@ -14,8 +14,6 @@ var global = Function('return this')();
 
 var file_pb = require('./file_pb.js');
 goog.object.extend(proto, file_pb);
-var metadata_pb = require('./metadata_pb.js');
-goog.object.extend(proto, metadata_pb);
 var report_pb = require('./report_pb.js');
 goog.object.extend(proto, report_pb);
 var task_pb = require('./task_pb.js');

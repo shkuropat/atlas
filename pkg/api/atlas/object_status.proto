@@ -16,16 +16,12 @@ syntax = "proto3";
 
 package atlas;
 
-import "file.proto";
-import "report.proto";
-import "task.proto";
 import "status.proto";
+import "address.proto";
 
-message ObjectsList {
+message ObjectStatus {
     Status status = 100;
-
-    repeated Report reports = 500;
-    repeated Task tasks = 600;
-    repeated Status statuses = 700;
-    repeated File files = 800;
+    oneof address_optional {
+        Address address = 200;
+    }
 }

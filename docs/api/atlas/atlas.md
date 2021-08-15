@@ -73,6 +73,9 @@
 - [objects_request.proto](#objects_request.proto)
     - [ObjectsRequest](#atlas.ObjectsRequest)
   
+- [object_status.proto](#object_status.proto)
+    - [ObjectStatus](#atlas.ObjectStatus)
+  
 - [presentation_options.proto](#presentation_options.proto)
     - [PresentationOptions](#atlas.PresentationOptions)
   
@@ -881,6 +884,38 @@ ObjectRequest represents request for the object(s)
 | request_domain | [Domain](#atlas.Domain) |  | Request Domain - what type of entity the request is made about Ex.: atlas.DomainTask |
 | result_domain | [Domain](#atlas.Domain) |  | Result Domain - what type of entity is expected as a result. Ex.: atlas.DomainReport, atlas.DomainTask, atlas.DomainStatus, atlas.DomainFile |
 | requests | [ObjectRequest](#atlas.ObjectRequest) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="object_status.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## object_status.proto
+
+
+
+<a name="atlas.ObjectStatus"></a>
+
+### ObjectStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| status | [Status](#atlas.Status) |  |  |
+| address | [Address](#atlas.Address) |  |  |
 
 
 
