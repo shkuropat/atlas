@@ -18,7 +18,7 @@ package atlas
 func NewDomain(name ...string) *Domain {
 	d := new(Domain)
 	if len(name) > 0 {
-		d.Set(name[0])
+		d.SetName(name[0])
 	}
 	return d
 }
@@ -31,8 +31,8 @@ func (m *Domain) Ensure() *Domain {
 	return m
 }
 
-// Set sets Domain name
-func (m *Domain) Set(name string) *Domain {
+// SetName sets Domain name
+func (m *Domain) SetName(name string) *Domain {
 	if m == nil {
 		return nil
 	}

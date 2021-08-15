@@ -23,9 +23,7 @@ import "task.proto";
 import "status.proto";
 
 message ObjectsList {
-    oneof header_optional {
-        Metadata header = 100;
-    }
+    Status status = 100;
 
     repeated Report reports = 500;
     repeated Task tasks = 600;

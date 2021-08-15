@@ -150,4 +150,5 @@ services:
     ports:
       - "8080:8080"
     extra_hosts:
+      # add host.docker.internal DNS entry in /etc/hosts and map it to host IP
       - "host.docker.internal:host-gateway"

@@ -810,7 +810,9 @@ ObjectRequest represents request for the object(s)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  |  |
+| request_domain | [Domain](#atlas.Domain) |  | Request Domain - what type of entity the request is made about Ex.: atlas.DomainTask |
+| result_domain | [Domain](#atlas.Domain) |  | Result Domain - what type of entity is expected as a result. Ex.: atlas.DomainReport, atlas.DomainTask, atlas.DomainStatus, atlas.DomainFile |
+| address | [Address](#atlas.Address) |  | Address of the entity the request is made about |
 
 
 
@@ -841,7 +843,7 @@ ObjectRequest represents request for the object(s)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  |  |
+| status | [Status](#atlas.Status) |  |  |
 | reports | [Report](#atlas.Report) | repeated |  |
 | tasks | [Task](#atlas.Task) | repeated |  |
 | statuses | [Status](#atlas.Status) | repeated |  |
@@ -876,7 +878,8 @@ ObjectRequest represents request for the object(s)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  |  |
+| request_domain | [Domain](#atlas.Domain) |  | Request Domain - what type of entity the request is made about Ex.: atlas.DomainTask |
+| result_domain | [Domain](#atlas.Domain) |  | Result Domain - what type of entity is expected as a result. Ex.: atlas.DomainReport, atlas.DomainTask, atlas.DomainStatus, atlas.DomainFile |
 | requests | [ObjectRequest](#atlas.ObjectRequest) | repeated |  |
 
 
@@ -1078,7 +1081,7 @@ Status represents status of the object(s)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| header | [Metadata](#atlas.Metadata) |  |  |
+| status | [int32](#int32) |  |  |
 
 
 

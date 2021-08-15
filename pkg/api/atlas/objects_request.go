@@ -19,15 +19,22 @@ func NewObjectsRequest() *ObjectsRequest {
 	return new(ObjectsRequest)
 }
 
-// EnsureHeader
-func (m *ObjectsRequest) EnsureHeader() *Metadata {
-	if m.HeaderOptional == nil {
-		m.HeaderOptional = new(ObjectsRequest_Header)
+// SetRequestDomain
+func (m *ObjectsRequest) SetRequestDomain(domain *Domain) *ObjectsRequest {
+	if m.RequestDomainOptional == nil {
+		m.RequestDomainOptional = new(ObjectsRequest_RequestDomain)
 	}
-	if m.HeaderOptional.(*ObjectsRequest_Header).Header == nil {
-		m.HeaderOptional.(*ObjectsRequest_Header).Header = new(Metadata)
+	m.RequestDomainOptional.(*ObjectsRequest_RequestDomain).RequestDomain = domain
+	return m
+}
+
+// SetResultDomain
+func (m *ObjectsRequest) SetResultDomain(domain *Domain) *ObjectsRequest {
+	if m.ResultDomainOptional == nil {
+		m.ResultDomainOptional = new(ObjectsRequest_ResultDomain)
 	}
-	return m.HeaderOptional.(*ObjectsRequest_Header).Header
+	m.ResultDomainOptional.(*ObjectsRequest_ResultDomain).ResultDomain = domain
+	return m
 }
 
 // GetRequestsNum

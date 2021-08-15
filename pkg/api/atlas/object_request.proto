@@ -19,9 +19,22 @@ syntax = "proto3";
 
 package atlas;
 
-import "metadata.proto";
+import "domain.proto";
+import "address.proto";
 
 // ObjectRequest represents request for the object(s)
 message ObjectRequest {
-    Metadata header = 100;
+    oneof request_domain_optional {
+        // Request Domain - what type of entity the request is made about Ex.: atlas.DomainTask
+        Domain request_domain = 100;
+    }
+
+    oneof result_domain_optional {
+        // Result Domain - what type of entity is expected as a result.
+        // Ex.: atlas.DomainReport, atlas.DomainTask, atlas.DomainStatus, atlas.DomainFile
+        Domain result_domain = 200;
+    }
+
+    // Address of the entity the request is made about
+    Address address = 300;
 }

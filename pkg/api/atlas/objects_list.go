@@ -19,18 +19,13 @@ func NewObjectsList() *ObjectsList {
 	return new(ObjectsList)
 }
 
-// EnsureHeader
-func (m *ObjectsList) EnsureHeader() *Metadata {
+// SetStatus
+func (m *ObjectsList) SetStatus(status *Status) *ObjectsList {
 	if m == nil {
 		return nil
 	}
-	if m.HeaderOptional == nil {
-		m.HeaderOptional = new(ObjectsList_Header)
-	}
-	if m.HeaderOptional.(*ObjectsList_Header).Header == nil {
-		m.HeaderOptional.(*ObjectsList_Header).Header = NewMetadata()
-	}
-	return m.GetHeader()
+	m.Status = status
+	return m
 }
 
 // AddReport

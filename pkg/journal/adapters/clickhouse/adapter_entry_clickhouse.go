@@ -136,7 +136,7 @@ func (ce *AdapterEntryClickHouse) Export() *journal.Entry {
 	entry.ObjectType = ce._type
 	entry.ObjectSize = ce.size
 	entry.SetObjectAddress(atlas.NewAddressFromString(ce.address))
-	entry.EnsureObjectMetadata().SetDomain(atlas.NewDomain().Set(ce.domain))
+	entry.EnsureObjectMetadata().SetDomain(atlas.NewDomain().SetName(ce.domain))
 	entry.EnsureObjectMetadata().SetFilename(ce.name)
 	entry.EnsureObjectMetadata().SetDigest(atlas.NewDigest().SetDataFromString(ce.digest))
 	entry.ObjectData = []byte(ce.data)

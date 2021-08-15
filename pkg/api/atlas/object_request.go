@@ -19,23 +19,33 @@ func NewObjectRequest() *ObjectRequest {
 	return new(ObjectRequest)
 }
 
-// EnsureHeader
-func (m *ObjectRequest) EnsureHeader() *Metadata {
+// SetRequestDomain
+func (m *ObjectRequest) SetRequestDomain(domain *Domain) *ObjectRequest {
 	if m == nil {
 		return nil
 	}
-	if m.Header == nil {
-		m.Header = NewMetadata()
+	if m.RequestDomainOptional == nil {
+		m.RequestDomainOptional = new(ObjectRequest_RequestDomain)
 	}
-	return m.Header
+	m.RequestDomainOptional.(*ObjectRequest_RequestDomain).RequestDomain = domain
+	return m
 }
 
-// SetHeader
-func (m *ObjectRequest) SetHeader(header *Metadata) *ObjectRequest {
+// SetResultDomain
+func (m *ObjectRequest) SetResultDomain(domain *Domain) *ObjectRequest {
+	if m.ResultDomainOptional == nil {
+		m.ResultDomainOptional = new(ObjectRequest_ResultDomain)
+	}
+	m.ResultDomainOptional.(*ObjectRequest_ResultDomain).ResultDomain = domain
+	return m
+}
+
+// SetAddress
+func (m *ObjectRequest) SetAddress(address *Address) *ObjectRequest {
 	if m == nil {
 		return nil
 	}
-	m.Header = header
+	m.Address = address
 	return m
 }
 

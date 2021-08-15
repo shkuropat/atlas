@@ -63,19 +63,40 @@ func init() {
 }
 
 // NewStatus
-func NewStatus() *Status {
-	return new(Status)
+func NewStatus(status ...int32) *Status {
+	d := new(Status)
+	if len(status) > 0 {
+		d.SetStatus(status[0])
+	}
+	return d
 }
 
-// EnsureHeader
-func (m *Status) EnsureHeader() *Metadata {
+// Ensure returns new or existing Status
+func (m *Status) Ensure() *Status {
+	if m == nil {
+		return NewStatus()
+	}
+	return m
+}
+
+// SetStatus sets status
+func (m *Status) SetStatus(status int32) *Status {
 	if m == nil {
 		return nil
 	}
-	if m.Header == nil {
-		m.Header = NewMetadata()
+	m.Status = status
+	return m
+}
+
+// Equals checks whether two objects are equal internally
+func (m *Status) Equals(status *Status) bool {
+	if m == nil {
+		return false
 	}
-	return m.Header
+	if status == nil {
+		return false
+	}
+	return m.GetStatus() == status.GetStatus()
 }
 
 // String

@@ -1814,10 +1814,25 @@ Object can be typed/identified either by type or by name. </p></td>
             <tbody>
               
                 <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td>request_domain</td>
+                  <td><a href="#atlas.Domain">Domain</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>Request Domain - what type of entity the request is made about Ex.: atlas.DomainTask </p></td>
+                </tr>
+              
+                <tr>
+                  <td>result_domain</td>
+                  <td><a href="#atlas.Domain">Domain</a></td>
+                  <td></td>
+                  <td><p>Result Domain - what type of entity is expected as a result.
+Ex.: atlas.DomainReport, atlas.DomainTask, atlas.DomainStatus, atlas.DomainFile </p></td>
+                </tr>
+              
+                <tr>
+                  <td>address</td>
+                  <td><a href="#atlas.Address">Address</a></td>
+                  <td></td>
+                  <td><p>Address of the entity the request is made about </p></td>
                 </tr>
               
             </tbody>
@@ -1852,8 +1867,8 @@ Object can be typed/identified either by type or by name. </p></td>
             <tbody>
               
                 <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td>status</td>
+                  <td><a href="#atlas.Status">Status</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -1918,10 +1933,18 @@ Object can be typed/identified either by type or by name. </p></td>
             <tbody>
               
                 <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td>request_domain</td>
+                  <td><a href="#atlas.Domain">Domain</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>Request Domain - what type of entity the request is made about Ex.: atlas.DomainTask </p></td>
+                </tr>
+              
+                <tr>
+                  <td>result_domain</td>
+                  <td><a href="#atlas.Domain">Domain</a></td>
+                  <td></td>
+                  <td><p>Result Domain - what type of entity is expected as a result.
+Ex.: atlas.DomainReport, atlas.DomainTask, atlas.DomainStatus, atlas.DomainFile </p></td>
                 </tr>
               
                 <tr>
@@ -2209,8 +2232,8 @@ Some commands may be followed by data load. Be it logs, dumps, etc.</p></td>
             <tbody>
               
                 <tr>
-                  <td>header</td>
-                  <td><a href="#atlas.Metadata">Metadata</a></td>
+                  <td>status</td>
+                  <td><a href="#int32">int32</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>

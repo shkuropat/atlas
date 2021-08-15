@@ -1,0 +1,10 @@
+[options]
+  columns = "id,status,image,ports,IPs,cpu,mem,pids"
+  filterStr = ""
+  sortField = "state"
+
+[toggles]
+  allContainers = true
+  enableHeader = true
+  fullRowCursor = true
+  sortReversed = false

@@ -101,20 +101,21 @@ function generate_grpc_code_js() {
     echo "JS code generator. Generate code from .proto files in ${PROTO_FILES_FOLDER} into ${RESULT_FILES_FOLDER}"
 
     if [[ -z "${PROTO_FILES_FOLDER}" ]]; then
-        echo "JS code generator. Need to specify folder where to look for .proto files to generate code from "
+        echo "JS code generator. Need to specify folder where to look for .proto files to generate code from."
         exit 1
     fi
 
     clean_grpc_code_js "${PROTO_FILES_FOLDER}"
 
     echo "JS code generator. Compile .proto files in ${PROTO_FILES_FOLDER}"
+
     # Specify the directory in which to search for imports. May be specified multiple times
     IMPORTS_FOLDER="${PROTO_FILES_FOLDER}"
 
     # Generate Protobuf Messages and Service Client Stub
     # with the help of protoc
 
-    # To generate the protobuf message classes from our echo.proto, run the following command:
+    # Generate the protobuf message classes from .proto files
     "${PROTOC}" \
         -I "${IMPORTS_FOLDER}" \
         --js_out=import_style=commonjs:"${RESULT_FILES_FOLDER}" \
@@ -130,6 +131,7 @@ function generate_grpc_code_js() {
         "${PROTO_FILES_FOLDER}"/*.proto
 }
 
+#
 # Delete String() function from generated *.pb.go files
 # This function is not that human-friendly and it is better to introduce own function for each type
 function delete_string_function() {
@@ -156,7 +158,7 @@ function delete_string_function() {
 }
 
 #
-#
+# Rename GetUuid() function(s) into GetUUID
 #
 function rename_uuid_function() {
     PROTO_FILES_FOLDER="${1}"

@@ -19,9 +19,7 @@ syntax = "proto3";
 
 package atlas;
 
-import "metadata.proto";
-
 // Status represents status of the object(s)
 message Status {
-    Metadata header = 100;
+    int32 status = 100;
 }

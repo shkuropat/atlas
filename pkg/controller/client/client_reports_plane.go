@@ -21,8 +21,8 @@ import (
 	"github.com/binarly-io/atlas/pkg/api/atlas"
 )
 
-// Status requests status(es) of an object
-func Status(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
+// Status requests status(es) of the task
+func Status(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataExchangeResult {
 	log.Infof("Status() - start")
 	defer log.Infof("Status() - end")
 
@@ -30,10 +30,17 @@ func Status(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	result := NewDataExchangeResult()
-	request := atlas.NewObjectsRequest().Append(atlas.NewObjectRequest().SetHeader(meta))
-	request.EnsureHeader().SetDomain(atlas.DomainTask).SetResultDomain(atlas.DomainStatus)
+	// One object request
+	objectRequest := atlas.NewObjectRequest()
+	objectRequest.SetAddress(atlas.NewAddress(uuid))
+	// Multi-object request
+	request := atlas.NewObjectsRequest()
+	request.SetRequestDomain(atlas.DomainTask)
+	request.SetResultDomain(atlas.DomainStatus)
+	request.Append(objectRequest)
 	list, err := ReportsPlaneClient.ObjectsReport(ctx, request)
+	// Unify call result
+	result := NewDataExchangeResult()
 	if len(list.GetStatuses()) > 0 {
 		result.Recv.Status = list.GetStatuses()[0]
 	}
@@ -42,8 +49,8 @@ func Status(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *
 	return result
 }
 
-// Task
-func Task(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
+// Task requests task
+func Task(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataExchangeResult {
 	log.Infof("Task() - start")
 	defer log.Infof("Task() - end")
 
@@ -51,16 +58,23 @@ func Task(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *Da
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// One object request
+	objectRequest := atlas.NewObjectRequest()
+	objectRequest.SetAddress(atlas.NewAddress(uuid))
+	// Multi-object request
+	request := atlas.NewObjectsRequest()
+	request.SetRequestDomain(atlas.DomainTask)
+	request.SetResultDomain(atlas.DomainTask)
+	request.Append(objectRequest)
+	// Unify call result
 	result := NewDataExchangeResult()
-	request := atlas.NewObjectsRequest().Append(atlas.NewObjectRequest().SetHeader(meta))
-	request.EnsureHeader().SetDomain(atlas.DomainTask).SetResultDomain(atlas.DomainTask)
 	result.Recv.ObjectsList, result.Error = ReportsPlaneClient.ObjectsReport(ctx, request)
 
 	return result
 }
 
-// Report
-func Report(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
+// Report requests report(es) of the task
+func Report(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataExchangeResult {
 	log.Infof("Report() - start")
 	defer log.Infof("Report() - end")
 
@@ -68,16 +82,23 @@ func Report(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// One object request
+	objectRequest := atlas.NewObjectRequest()
+	objectRequest.SetAddress(atlas.NewAddress(uuid))
+	// Multi-object request
+	request := atlas.NewObjectsRequest()
+	request.SetRequestDomain(atlas.DomainTask)
+	request.SetResultDomain(atlas.DomainReport)
+	request.Append(objectRequest)
+	// Unify call result
 	result := NewDataExchangeResult()
-	request := atlas.NewObjectsRequest().Append(atlas.NewObjectRequest().SetHeader(meta))
-	request.EnsureHeader().SetDomain(atlas.DomainReport).SetResultDomain(atlas.DomainReport)
 	result.Recv.ObjectsList, result.Error = ReportsPlaneClient.ObjectsReport(ctx, request)
 
 	return result
 }
 
-// Files
-func Files(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *DataExchangeResult {
+// Files requests file(es) of the task
+func Files(ReportsPlaneClient atlas.ReportsPlaneClient, uuid *atlas.UUID) *DataExchangeResult {
 	log.Infof("Files() - start")
 	defer log.Infof("Files() - end")
 
@@ -85,9 +106,16 @@ func Files(ReportsPlaneClient atlas.ReportsPlaneClient, meta *atlas.Metadata) *D
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// One object request
+	objectRequest := atlas.NewObjectRequest()
+	objectRequest.SetAddress(atlas.NewAddress(uuid))
+	// Multi-object request
+	request := atlas.NewObjectsRequest()
+	request.SetRequestDomain(atlas.DomainTask)
+	request.SetResultDomain(atlas.DomainFile)
+	request.Append(objectRequest)
+	// Unify call result
 	result := NewDataExchangeResult()
-	request := atlas.NewObjectsRequest().Append(atlas.NewObjectRequest().SetHeader(meta))
-	request.EnsureHeader().SetDomain(atlas.DomainInterim)
 	result.Recv.ObjectsList, result.Error = ReportsPlaneClient.ObjectsReport(ctx, request)
 
 	return result

@@ -22,6 +22,7 @@ var (
 	DomainReference = NewDomain("reference")
 	DomainContext   = NewDomain("context")
 	DomainTask      = NewDomain("task")
+	DomainFile      = NewDomain("file")
 	DomainStatus    = NewDomain("status")
 	DomainParent    = NewDomain("parent")
 	DomainReport    = NewDomain("report")
@@ -48,6 +49,7 @@ var (
 		DomainReference,
 		DomainContext,
 		DomainTask,
+		DomainFile,
 		DomainStatus,
 		DomainParent,
 		DomainReport,
@@ -103,7 +105,7 @@ func NormalizeDomain(domain *Domain) *Domain {
 
 // DomainFromString tries to find registered domain with specified string value
 func DomainFromString(str string) *Domain {
-	d := NewDomain().Set(str)
+	d := NewDomain().SetName(str)
 	for _, domain := range Domains {
 		if domain.Equals(d) {
 			return domain
