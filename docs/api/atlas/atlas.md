@@ -915,6 +915,7 @@ ObjectRequest represents request for the object(s)
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | status | [Status](#atlas.Status) |  |  |
+| domain | [Domain](#atlas.Domain) |  |  |
 | address | [Address](#atlas.Address) |  |  |
 
 

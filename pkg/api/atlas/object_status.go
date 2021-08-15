@@ -40,6 +40,18 @@ func (m *ObjectStatus) SetStatus(status *Status) *ObjectStatus {
 	return m
 }
 
+// SetDomain sets address
+func (m *ObjectStatus) SetDomain(domain *Domain) *ObjectStatus {
+	if m == nil {
+		return nil
+	}
+	if m.DomainOptional == nil {
+		m.DomainOptional = new(ObjectStatus_Domain)
+	}
+	m.DomainOptional.(*ObjectStatus_Domain).Domain = domain
+	return m
+}
+
 // SetAddress sets address
 func (m *ObjectStatus) SetAddress(address *Address) *ObjectStatus {
 	if m == nil {

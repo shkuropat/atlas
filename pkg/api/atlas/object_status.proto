@@ -18,10 +18,14 @@ package atlas;
 
 import "status.proto";
 import "address.proto";
+import "domain.proto";
 
 message ObjectStatus {
     Status status = 100;
+    oneof domain_optional {
+        Domain domain = 200;
+    }
     oneof address_optional {
-        Address address = 200;
+        Address address = 300;
     }
 }
