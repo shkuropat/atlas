@@ -24,6 +24,8 @@ import (
 
 // NamedCommandsConfigurator
 type NamedCommandsConfigurator interface {
+	GetCommandWorkdir(name string) string
+	GetCommandEnv(name string) []string
 	GetCommandLines(name string) []string
 	GetCommand(name string) string
 	ParseCommandLines(name string, macro *macros.Expander) []string
@@ -44,6 +46,16 @@ func (c NamedCommands) NamedCommandsNormalize() NamedCommands {
 		c.Commands = items.NewNamedCommands()
 	}
 	return c
+}
+
+// GetCommandWorkdir
+func (c NamedCommands) GetCommandWorkdir(name string) string {
+	return c.Commands.GetCommand(name).GetWorkdir()
+}
+
+// GetCommandEnv
+func (c NamedCommands) GetCommandEnv(name string) []string {
+	return c.Commands.GetCommand(name).GetEnv()
 }
 
 // GetCommandLines
