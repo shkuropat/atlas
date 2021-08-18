@@ -30,6 +30,13 @@ type Runner struct {
 	name string
 	// args specifies arguments of the executable. Ex.: ["-f=filename", "-v"]
 	args []string
+	// workdir specifies working directory of the launched executable.
+	// In case workdir is empty, calling process's current directory is used.
+	workdir string
+	// env specifies environment to be called in.
+	// Each entry is of the form "key=value".
+	// In case env is nil, the new process uses the current process's environment.
+	env []string
 
 	cmd    *exe.Cmd
 	status exe.Status
@@ -70,6 +77,8 @@ func (r *Runner) Run(options *Options) exe.Status {
 		r.name,
 		r.args...,
 	)
+	r.cmd.Dir = r.workdir
+	r.cmd.Env = r.env
 	r.startTicker(options)
 	r.startTimeout(options)
 	log.Infof("wait for cmd to complete")
@@ -201,4 +210,22 @@ func (r *Runner) GetStderrReader() io.Reader {
 	}
 
 	return buf
+}
+
+// SetWorkdir
+func (r *Runner) SetWorkdir(workdir string) *Runner {
+	if r == nil {
+		return nil
+	}
+	r.workdir = workdir
+	return r
+}
+
+// SetEnv
+func (r *Runner) SetEnv(env []string) *Runner {
+	if r == nil {
+		return nil
+	}
+	r.env = env
+	return r
 }

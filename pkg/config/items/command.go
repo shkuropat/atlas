@@ -24,6 +24,8 @@ import (
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
 type Command struct {
+	Workdir string   `mapstructure:"workdir"`
+	Env     []string `mapstructure:"env"`
 	Command []string `mapstructure:"command"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
@@ -33,6 +35,22 @@ type Command struct {
 // NewCommand
 func NewCommand() *Command {
 	return new(Command)
+}
+
+// GetWorkdir
+func (c *Command) GetWorkdir() string {
+	if c == nil {
+		return ""
+	}
+	return c.Workdir
+}
+
+// GetEnv
+func (c *Command) GetEnv() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Env
 }
 
 // GetCommand

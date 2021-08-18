@@ -23,6 +23,8 @@ import (
 
 // CommandConfigurator
 type CommandConfigurator interface {
+	GetCommandWorkdir() string
+	GetCommandEnv() []string
 	GetCommandLines() []string
 	GetCommand() string
 	ParseCommandLines(*macros.Expander) []string
@@ -45,7 +47,17 @@ func (c Command) CommandNormalize() Command {
 	return c
 }
 
-// GetCommandArgs
+// GetCommandWorkdir
+func (c Command) GetCommandWorkdir() string {
+	return c.Command.GetWorkdir()
+}
+
+// GetCommandEnv
+func (c Command) GetCommandEnv() []string {
+	return c.Command.GetEnv()
+}
+
+// GetCommandLines
 func (c Command) GetCommandLines() []string {
 	return c.Command.GetCommand()
 }

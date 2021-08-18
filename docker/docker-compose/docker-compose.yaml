@@ -9,13 +9,25 @@ services:
   # Zookeeper is required by Kafka
   zookeeper:
     image: wurstmeister/zookeeper
+    restart: always
     # Expose this port internally. This port will not be available from host-machine
     expose:
       - "2181"
+    # Check volumes on dockerhub
+    # https://hub.docker.com/layers/wurstmeister/zookeeper/latest/images/sha256-3f43f72cb2832e7a5fbed7f7dbcd0c43004357974d8f32555d101bd53e81e74f?context=explore
+    # VOLUME [/opt/zookeeper-3.4.13/conf /opt/zookeeper-3.4.13/data]
+    volumes:
+      # config volume has to have config files presented. Include it only in case folder has config files
+      # ls /opt/zookeeper-3.4.13/conf
+      # configuration.xsl  log4j.properties  zoo.cfg
+      #- ./volumes/zookeeper/conf:/opt/zookeeper-3.4.13/conf
+      - ./volumes/zookeeper/data:/opt/zookeeper-3.4.13/data
+
 
   # Kafka is one of the core components of the system
   kafka:
     image: wurstmeister/kafka
+    restart: always
     # Expose this port externally. This port will be available from host-machine as
     # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
     # tcp        0      0 0.0.0.0:9092            0.0.0.0:*               LISTEN      79906/docker-proxy
@@ -24,6 +36,11 @@ services:
     # Expose this port internally. This port will not be available from host-machine
     expose:
       - "9093"
+    # Check volumes on dockerhub
+    # https://hub.docker.com/layers/wurstmeister/kafka/latest/images/sha256-4bad02cf8f07d0bf65d5cc73cce7aa75f9a90e32b585f867fce7c3fff229bd6d?context=explore
+    # VOLUME [/kafka]
+    volumes:
+      - ./volumes/kafka:/kafka
     environment:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
       # Listen OUTSIDE connection on host-machine 127.0.0.1:9092
@@ -72,6 +89,7 @@ services:
   # ClickHouse server is one of the core components of the system
   clickhouse-server:
     image: yandex/clickhouse-server
+    restart: always
     # Expose this port externally. This port will be available from host-machine as
     # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
     # tcp        0      0 0.0.0.0:8123            0.0.0.0:*               LISTEN      79906/docker-proxy
@@ -82,8 +100,11 @@ services:
       # native protocol
       - "9000:9000"
     # Map local dir with ClickHouse data inside image
-    #volumes:
-    #  - ./db:/var/lib/clickhouse
+    # Check volumes on dockerhub
+    # https://hub.docker.com/layers/yandex/clickhouse-server/latest/images/sha256-9db821a942b548b8d3f6813b30d41cc4439dbab260f99739c22d56bcad8895de?context=explore
+    # VOLUME [/var/lib/clickhouse]
+    volumes:
+      - ./volumes/clickhouse:/var/lib/clickhouse
 
   # clickhouse-client is used for maintenance purposes
   clickhouse-client:
@@ -94,8 +115,9 @@ services:
       - infinity
     # Mount specified sources dir into docker container in order to have .sql file with schema (create statements)
     # available inside the docker container. Thus we can create schema calling clickhouse-client within the container
+    # Mount as read-onlyfalse
     volumes:
-      - ../../pkg/journal:/journal
+      - ../../pkg/journal:/journal:ro
 
   # /bin/sh -c "cat /trail/journal_clickhouse_schema.sql | /usr/bin/clickhouse-client --host=clickhouse-server --user=clickhouse_operator --password=clickhouse_operator_password --multiline --multiquery"
     #            # additional option --database=dbname
@@ -104,16 +126,20 @@ services:
   # MinIO is one of the core components of the system
   minio:
     image: minio/minio
+    restart: always
     # Expose this port externally. This port will be available from host-machine as
     # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
     # tcp        0      0 0.0.0.0:10000            0.0.0.0:*               LISTEN      79906/docker-proxy
     ports:
       - "10000:9000"
+    # Check volumes on dockerhub
+    # https://hub.docker.com/layers/minio/minio/latest/images/sha256-dccf1d8f3f558397442a8816627f6fc5fcdddea197ddae0886eadb4b26ceb917?context=explore
+    # VOLUME [/data]
+    volumes:
+      - ./volumes/minio:/data
     environment:
       MINIO_ACCESS_KEY: minio1
       MINIO_SECRET_KEY: minio123
-    #volumes:
-    #  - ./storage/minio:/data
     #command: server --address 0.0.0.0:8000 /data
     command: server /data
 
@@ -143,6 +169,7 @@ services:
 
   envoy:
     image: envoy:dev
+    restart: always
     # Expose this port internally. This port will not be available from host-machine
     # Expose this port externally. This port will be available from host-machine as
     # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
