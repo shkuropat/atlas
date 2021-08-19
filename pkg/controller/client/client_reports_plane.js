@@ -12,6 +12,8 @@ grpc.web = require('grpc-web');
 
 var reportsPlaneClient = new ReportsPlaneClient('http://localhost:8080', null, null);
 
+var globalObjectStatus = [];
+
 // gets status of specified task
 function GetTaskStatus(ReportsPlaneClient, taskUUID) {
     // One object request
@@ -40,17 +42,20 @@ function GetTaskStatus(ReportsPlaneClient, taskUUID) {
                 console.log('Error code: '+err.code+' "'+err.message+'"');
             } else {
                 console.log('Call completed');
-                var statuses = response.getStatusesList();
+                var statuses = response.getObjectStatusesList();
                 for (var i = 0; i < statuses.length; i++) {
-                    console.log('get status object: ' + i);
                     var status = statuses[i];
-                    console.log('status: ' + status.getStatus());
-                    if (status.getStatus() == 200) {
-                        console.log('success');
-                        result = true;
-                    } else {
-                        console.log('status error');
-                    }
+                    var newlen = globalObjectStatus.push(status);
+                    var code = status.getStatus().getCode();
+                    var uuid_uint8array = status.getAddress().getUuid().getData_asU8();
+                    var uuid_text = new TextDecoder("utf-8").decode(uuid_uint8array);
+                    console.log(i + ' : ' +  'object status: ' + code + " : " + uuid_text);
+                    //if (status.getStatus() == 200) {
+                    //    console.log('success');
+                    //    result = true;
+                    //} else {
+                    //    console.log('status error');
+                    //}
                 }
             }
         });
@@ -132,6 +137,16 @@ if (GetTaskStatus(reportsPlaneClient, null)) {
     console.log("GetTaskStatus returned true");
 } else {
     console.log("GetTaskStatus returned false");
+}
+
+//
+// Wait for globalObjectStatus to be filled
+//
+
+console.log('globalObjectStatus.length = ' + globalObjectStatus.length);
+for (var i = 0; i < globalObjectStatus.length; i++) {
+    var report = reports[i];
+    console.log("global " + i);
 }
 
 /*
