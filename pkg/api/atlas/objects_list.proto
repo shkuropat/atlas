@@ -20,6 +20,7 @@ import "file.proto";
 import "report.proto";
 import "task.proto";
 import "status.proto";
+import "object_status.proto";
 
 message ObjectsList {
     Status status = 100;
@@ -27,5 +28,6 @@ message ObjectsList {
     repeated Report reports = 500;
     repeated Task tasks = 600;
     repeated Status statuses = 700;
-    repeated File files = 800;
+    repeated ObjectStatus object_statuses = 800;
+    repeated File files = 900;
 }

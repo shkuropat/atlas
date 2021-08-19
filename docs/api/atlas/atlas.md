@@ -850,6 +850,7 @@ ObjectRequest represents request for the object(s)
 | reports | [Report](#atlas.Report) | repeated |  |
 | tasks | [Task](#atlas.Task) | repeated |  |
 | statuses | [Status](#atlas.Status) | repeated |  |
+| object_statuses | [ObjectStatus](#atlas.ObjectStatus) | repeated |  |
 | files | [File](#atlas.File) | repeated |  |
 
 
@@ -1117,7 +1118,7 @@ Status represents status of the object(s)
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| status | [int32](#int32) |  |  |
+| code | [int32](#int32) |  | code represents code of the status |
 
 
 

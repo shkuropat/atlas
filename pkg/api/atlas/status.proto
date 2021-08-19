@@ -21,5 +21,6 @@ package atlas;
 
 // Status represents status of the object(s)
 message Status {
-    int32 status = 100;
+    // code represents code of the status
+    int32 code = 100;
 }

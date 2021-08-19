@@ -127,8 +127,8 @@ var bytesTaskUUID = new TextEncoder("utf-8").encode(strTaskUUID);
 var taskUUID = new UUID();
 taskUUID.setData(bytesTaskUUID);
 
-//if (GetTaskStatus(reportsPlaneClient, null)) {
-if (GetTaskStatus(reportsPlaneClient, taskUUID)) {
+if (GetTaskStatus(reportsPlaneClient, null)) {
+//if (GetTaskStatus(reportsPlaneClient, taskUUID)) {
     console.log("GetTaskStatus returned true");
 } else {
     console.log("GetTaskStatus returned false");

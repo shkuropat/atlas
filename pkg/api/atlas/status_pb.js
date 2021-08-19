@@ -66,7 +66,7 @@ proto.atlas.Status.prototype.toObject = function(opt_includeInstance) {
  */
 proto.atlas.Status.toObject = function(includeInstance, msg) {
   var f, obj = {
-    status: jspb.Message.getFieldWithDefault(msg, 100, 0)
+    code: jspb.Message.getFieldWithDefault(msg, 100, 0)
   };
 
   if (includeInstance) {
@@ -105,7 +105,7 @@ proto.atlas.Status.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 100:
       var value = /** @type {number} */ (reader.readInt32());
-      msg.setStatus(value);
+      msg.setCode(value);
       break;
     default:
       reader.skipField();
@@ -136,7 +136,7 @@ proto.atlas.Status.prototype.serializeBinary = function() {
  */
 proto.atlas.Status.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getStatus();
+  f = message.getCode();
   if (f !== 0) {
     writer.writeInt32(
       100,
@@ -147,10 +147,10 @@ proto.atlas.Status.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional int32 status = 100;
+ * optional int32 code = 100;
  * @return {number}
  */
-proto.atlas.Status.prototype.getStatus = function() {
+proto.atlas.Status.prototype.getCode = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 100, 0));
 };
 
@@ -159,7 +159,7 @@ proto.atlas.Status.prototype.getStatus = function() {
  * @param {number} value
  * @return {!proto.atlas.Status} returns this
  */
-proto.atlas.Status.prototype.setStatus = function(value) {
+proto.atlas.Status.prototype.setCode = function(value) {
   return jspb.Message.setProto3IntField(this, 100, value);
 };
 

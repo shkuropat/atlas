@@ -55,6 +55,15 @@ func (m *ObjectsList) AddStatus(statuses ...*Status) *ObjectsList {
 	return m
 }
 
+// AddObjectStatus
+func (m *ObjectsList) AddObjectStatus(statuses ...*ObjectStatus) *ObjectsList {
+	if m == nil {
+		return nil
+	}
+	m.ObjectStatuses = append(m.ObjectStatuses, statuses...)
+	return m
+}
+
 // AddFile
 func (m *ObjectsList) AddFile(files ...*File) *ObjectsList {
 	if m == nil {
@@ -86,6 +95,14 @@ func (m *ObjectsList) LenStatuses() int {
 		return 0
 	}
 	return len(m.Statuses)
+}
+
+// LenObjectStatuses
+func (m *ObjectsList) LenObjectStatuses() int {
+	if m == nil {
+		return 0
+	}
+	return len(m.ObjectStatuses)
 }
 
 // LenFiles
