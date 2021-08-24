@@ -1,159 +1,164 @@
 
-const {ReportsPlaneClient} = require('../../api/atlas/service_reports_plane_grpc_web_pb');
-const {ObjectRequest} = require('../../api/atlas/object_request_pb');
-const {ObjectsRequest} = require('../../api/atlas/objects_request_pb');
-const {Address} = require('../../api/atlas/address_pb');
-const {Domain} = require('../../api/atlas/domain_pb');
-const {UUID} = require('../../api/atlas/uuid_pb');
-const {Status} = require('../../api/atlas/status_pb');
-const {Report} = require('../../api/atlas/report_pb');
-const grpc = {};
-grpc.web = require('grpc-web');
+const { ReportsPlaneClient } = require('../../api/atlas/service_reports_plane_grpc_web_pb')
+const { ObjectRequest } = require('../../api/atlas/object_request_pb')
+const { ObjectsRequest } = require('../../api/atlas/objects_request_pb')
+const { Address } = require('../../api/atlas/address_pb')
+const { Domain } = require('../../api/atlas/domain_pb')
+const { UUID } = require('../../api/atlas/uuid_pb')
+const { Status } = require('../../api/atlas/status_pb')
+const { Report } = require('../../api/atlas/report_pb')
+const { callbackTask, callbackTaskFiles, callbackTaskReport, callbackTaskStatus } = require('./callbacks')
+const grpc = {}
+grpc.web = require('grpc-web')
 
-var reportsPlaneClient = new ReportsPlaneClient('http://localhost:8080', null, null);
+const reportsPlaneClient = new ReportsPlaneClient('http://localhost:8080/', null, null)
+const strTaskUUID = "89ec7e42-8290-45b2-b20b-3f106d821390"
 
-var globalObjectStatus = [];
+class ClientReportsPlane {
+    constructor(uuid) {
+        this.globalObjectStatus = []
+        this.bytesTaskUUID = null
+        this.taskUUID = new UUID()
+        this.passUUID(uuid)
+    }
 
-// gets status of specified task
-function GetTaskStatus(ReportsPlaneClient, taskUUID) {
-    // One object request
-    var taskAddress = new Address();
-    taskAddress.setUuid(taskUUID);
-    var objectRequest = new ObjectRequest();
-    objectRequest.setAddress(taskAddress);
-    // Multi-object request
-    var requestDomain = new Domain();
-    requestDomain.setName("task");
-    var resultDomain = new Domain();
-    resultDomain.setName("status");
+    // Gets status of specified task
+    async getTaskStatus(ReportsPlaneClient, taskUUID) {
+        // One object request
+        const taskAddress = new Address()
+        taskAddress.setUuid(taskUUID)
+        const objectRequest = new ObjectRequest()
+        objectRequest.setAddress(taskAddress)
 
-    var request = new ObjectsRequest();
-    request.setRequestDomain(requestDomain);
-    request.setResultDomain(resultDomain);
-    request.addRequests(objectRequest);
+        // Multi-object request
+        const requestDomain = new Domain()
+        requestDomain.setName("task")
+        const resultDomain = new Domain()
+        resultDomain.setName("status")
 
-    var result = false;
+        const request = new ObjectsRequest()
+        request.setRequestDomain(requestDomain)
+        request.setResultDomain(resultDomain)
+        request.addRequests(objectRequest)
 
-    var call = reportsPlaneClient.objectsReport(
-        request,
-        {"custom-header-1": "value1"},
-        function(err, response) {
-            if (err) {
-                console.log('Error code: '+err.code+' "'+err.message+'"');
-            } else {
-                console.log('Call completed');
-                var statuses = response.getObjectStatusesList();
-                for (var i = 0; i < statuses.length; i++) {
-                    var status = statuses[i];
-                    var newlen = globalObjectStatus.push(status);
-                    var code = status.getStatus().getCode();
-                    var uuid_uint8array = status.getAddress().getUuid().getData_asU8();
-                    var uuid_text = new TextDecoder("utf-8").decode(uuid_uint8array);
-                    console.log(i + ' : ' +  'object status: ' + code + " : " + uuid_text);
-                    //if (status.getStatus() == 200) {
-                    //    console.log('success');
-                    //    result = true;
-                    //} else {
-                    //    console.log('status error');
-                    //}
-                }
+        let result = false
+
+        const call = await reportsPlaneClient.objectsReport(
+            request, 
+            { "custom-header-1": "value1" }, 
+            (err, response) => { callbackTaskStatus(err, response) }
+        )
+
+        call.on('status', function(status) { if (status.metadata) console.log(status.metadata) })
+
+        return result
+    }
+
+    // Gets report of specified task
+    async getTaskReport(ReportsPlaneClient, taskUUID) {
+        // One object request
+        const taskAddress = new Address()
+        taskAddress.setUuid(taskUUID)
+        const objectRequest = new ObjectRequest()
+        objectRequest.setAddress(taskAddress)
+
+        // Multi-object request
+        const requestDomain = new Domain()
+        requestDomain.setName("task")
+        const resultDomain = new Domain()
+        resultDomain.setName("report")
+
+        const request = new ObjectsRequest()
+        request.setRequestDomain(requestDomain)
+        request.setResultDomain(resultDomain)
+        request.addRequests(objectRequest)
+
+        let result = false
+
+        const call = await reportsPlaneClient.objectsReport(
+            request,
+            { "custom-header-1": "value1" },
+            (err, response) => { callbackTaskReport(err, response) }
+        )
+
+        call.on('status', function(status) {
+            if (status.metadata) {
+                console.log("Received metadata")
+                console.log(status.metadata)
             }
-        });
+        })
 
-    call.on('status', function(status) {
-        if (status.metadata) {
-            console.log("Received metadata");
-            console.log(status.metadata);
-        }
-    });
+        return result
+    }
 
-    return result;
+    // GetTask requests task
+    async getTask(ReportsPlaneClient, taskUUID) {
+        // One object request
+        const taskAddress = new Address()
+        taskAddress.setUuid(taskUUID)
+        const objectRequest = new ObjectRequest()
+        objectRequest.setAddress(taskAddress)
+  
+        // Multi-object request
+        const requestDomain = new Domain()
+        requestDomain.setName("task")
+        const resultDomain = new Domain()
+        resultDomain.setName("task")
+  
+        const request = new ObjectsRequest()
+        request.setRequestDomain(requestDomain)
+        request.setResultDomain(resultDomain)
+        request.addRequests(objectRequest)
+  
+        let result = false
+
+        const call = await reportsPlaneClient.objectsReport(
+            request,
+            { "custom-header-1": "value1" },
+            (err, response) => { callbackTask(err, response) }
+        )
+
+    }
+
+    // GetTaskFiles requests file(es) of the task
+    async getTaskFiles(ReportsPlaneClient, taskUUID) {
+        // One object request
+        const taskAddress = new Address()
+        taskAddress.setUuid(taskUUID)
+        const objectRequest = new ObjectRequest()
+        objectRequest.setAddress(taskAddress)
+
+        // Multi-object request
+        const requestDomain = new Domain()
+        requestDomain.setName("task")
+        const resultDomain = new Domain()
+        resultDomain.setName("file")
+
+        const request = new ObjectsRequest()
+        request.setRequestDomain(requestDomain)
+        request.setResultDomain(resultDomain)
+        request.addRequests(objectRequest)
+
+        let result = false
+
+        const call = await reportsPlaneClient.objectsReport(
+            request,
+            { "custom-header-1": "value1" },
+            (err, response) => { callbackTaskFiles(err, response) }
+        )
+        
+    }
+
+    // pass uuid into taskUUID data
+    passUUID(uuid) {
+        this.bytesTaskUUID = new TextEncoder("utf-8").encode(uuid) //strTaskUUID
+        this.taskUUID.setData(this.bytesTaskUUID)
+    }
+
 }
 
-// gets report of specified task
-function GetTaskReport(ReportsPlaneClient, taskUUID) {
-    // One object request
-    var taskAddress = new Address();
-    taskAddress.setUuid(taskUUID);
-    var objectRequest = new ObjectRequest();
-    objectRequest.setAddress(taskAddress);
-    // Multi-object request
-    var requestDomain = new Domain();
-    requestDomain.setName("task");
-    var resultDomain = new Domain();
-    resultDomain.setName("report");
-
-    var request = new ObjectsRequest();
-    request.setRequestDomain(requestDomain);
-    request.setResultDomain(resultDomain);
-    request.addRequests(objectRequest);
-
-    var result = false;
-
-    var call = reportsPlaneClient.objectsReport(
-        request,
-        {"custom-header-1": "value1"},
-        function(err, response) {
-            if (err) {
-                console.log('Error code: '+err.code+' "'+err.message+'"');
-            } else {
-                console.log('Call completed');
-                var reports = response.getReportsList();
-                for (var i = 0; i < reports.length; i++) {
-                    console.log('get report object: ' + i);
-                    var report = reports[i];
-                    console.log('report: ');
-                    var children = report.getChildrenList()
-                    for (var j = 0; j < children.length; j++) {
-                        console.log('get child report object: ' + j);
-                        var childReport = children[j];
-                        // Extract report text from child report
-                        var uint8array = childReport.getBytes_asU8()
-                        var reportText = new TextDecoder("utf-8").decode(uint8array);
-                        console.log('child report: ' + reportText);
-                    }
-                }
-            }
-        });
-
-    call.on('status', function(status) {
-        if (status.metadata) {
-            console.log("Received metadata");
-            console.log(status.metadata);
-        }
-    });
-
-    return result;
-}
-
-var strTaskUUID = "89ec7e42-8290-45b2-b20b-3f106d821390";
-var bytesTaskUUID = new TextEncoder("utf-8").encode(strTaskUUID);
-
-var taskUUID = new UUID();
-taskUUID.setData(bytesTaskUUID);
-
-if (GetTaskStatus(reportsPlaneClient, null)) {
-//if (GetTaskStatus(reportsPlaneClient, taskUUID)) {
-    console.log("GetTaskStatus returned true");
-} else {
-    console.log("GetTaskStatus returned false");
-}
-
-//
-// Wait for globalObjectStatus to be filled
-//
-
-console.log('globalObjectStatus.length = ' + globalObjectStatus.length);
-for (var i = 0; i < globalObjectStatus.length; i++) {
-    var report = reports[i];
-    console.log("global " + i);
-}
-
-/*
-if (GetTaskReport(reportsPlaneClient, taskUUID)) {
-    console.log("GetTaskReport returned true");
-} else {
-    console.log("GetTaskReport returned false");
-}
-
-*/
+const clientReportsPlane = new ClientReportsPlane(strTaskUUID)
+clientReportsPlane.getTaskStatus(reportsPlaneClient, null)
+clientReportsPlane.getTaskReport(reportsPlaneClient, null)
+clientReportsPlane.getTask(reportsPlaneClient, null)
+clientReportsPlane.getTaskFiles(reportsPlaneClient, null)
