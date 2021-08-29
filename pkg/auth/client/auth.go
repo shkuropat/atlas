@@ -29,7 +29,7 @@ import (
 func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, error) {
 	log.Infof("Setup OAuth params:\nClientID:%s\nClientSecret:%s\nTokenURL:%s\n", clientID, clientSecret, tokenURL)
 
-	// client credential access
+	// Client credential access
 	config := &cc.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
@@ -37,28 +37,32 @@ func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, err
 		Scopes:       []string{"profile"},
 	}
 
-	// you can modify the client (for example ignoring bad certs or otherwise)
+	// Client can be modified (for example ignoring bad certs or otherwise)
 	// by modifying the context
 	ctx := context.Background()
-	if token, err := config.Token(ctx); err == nil {
-		log.Infof("Token received============\nAccessToken:\n%s\nTokenType:\n%s\nRefreshToken:\n%s\nExpiry:\n%s",
-			token.AccessToken,
-			token.TokenType,
-			token.RefreshToken,
-			token.Expiry,
-		)
-		return token, nil
-	} else {
+	// Fetch token from token URL
+	token, err := config.Token(ctx)
+	if err != nil {
 		log.Infof("Error token request %v", err)
 		return nil, err
 	}
+	log.Infof("Token received============\nAccessToken:\n%s\nTokenType:\n%s\nRefreshToken:\n%s\nExpiry:\n%s",
+		token.AccessToken,
+		token.TokenType,
+		token.RefreshToken,
+		token.Expiry,
+	)
+	return token, nil
 }
 
-// fetchToken
-func fetchToken(clientID, clientSecret, tokenURL string) *oauth2.Token {
+// prepareToken prepares oauth2.Token
+func prepareToken(clientID, clientSecret, tokenURL string) *oauth2.Token {
+	// Token can be fetched from external party - such as Identity Server or other token provider.
+	// External party is charge of token provision is expected to be accessible by tokenURL
 	token, _ := getOAuthClient(clientID, clientSecret, tokenURL)
 	return token
 
+	// Token can be prepared locally (for example for test purposes)
 	//	return &oauth2.Token{
 	//		AccessToken: "my-secret-token",
 	//	}
@@ -66,7 +70,7 @@ func fetchToken(clientID, clientSecret, tokenURL string) *oauth2.Token {
 
 // SetupOAuth
 func SetupOAuth(clientID, clientSecret, tokenURL string) ([]grpc.DialOption, error) {
-	perRPCCredentials := oauth.NewOauthAccess(fetchToken(clientID, clientSecret, tokenURL))
+	perRPCCredentials := oauth.NewOauthAccess(prepareToken(clientID, clientSecret, tokenURL))
 
 	// Set token once per connection
 	// It will be sent by gRPC on each call, without need to do it manually

@@ -24,23 +24,28 @@ import (
 )
 
 // SetupOAuth
+// jwtRSAPublicKeyFile specifies path to RSA Public Key file to be used for JWT parsing
 func SetupOAuth(jwtRSAPublicKeyFile string) ([]grpc.ServerOption, error) {
+	// Prepare RSA public key to be used for JWT parsing
+	pem, err := ioutil.ReadFile(jwtRSAPublicKeyFile)
+	if err != nil {
+		return nil, fmt.Errorf("unable to access Public Key file '%s'", pem)
+	}
+
+	// TODO refactor global var usage
+	jwtVerificationRSAPublicKey, err = parseRSAPublicKey(pem)
+	if err != nil {
+		return nil, fmt.Errorf("file '%s' pase error %v", jwtRSAPublicKeyFile, err)
+	}
+
+	// As we have public key to parse JWT,
+	//we can setup interceptors to perform server-side authorization
 	opts := []grpc.ServerOption{
 		// Add an interceptor for all unary RPCs.
 		grpc.UnaryInterceptor(unaryInterceptor),
 
 		// Add an interceptor for all stream RPCs.
 		grpc.StreamInterceptor(streamInterceptor),
-	}
-
-	pem, err := ioutil.ReadFile(jwtRSAPublicKeyFile)
-	if err != nil {
-		return nil, fmt.Errorf("unable to access Public Key file '%s'", pem)
-	}
-
-	jwtRSAPublicKey, err = parseRSAPublicKey(pem)
-	if err != nil {
-		return nil, fmt.Errorf("file '%s' pase error %v", jwtRSAPublicKeyFile, err)
 	}
 
 	return opts, nil
