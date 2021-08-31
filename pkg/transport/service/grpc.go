@@ -22,27 +22,32 @@ import (
 	"github.com/binarly-io/atlas/pkg/auth/service"
 )
 
+type TLSOAuthConfigurator interface {
+	sections.TLSConfigurator
+	sections.OAuthConfigurator
+}
+
 // GetGRPCServerOptions builds gRPC server options
-func GetGRPCServerOptions(tlsConfig sections.TLSConfigurator, oauthConfig sections.OAuthConfigurator) []grpc.ServerOption {
+func GetGRPCServerOptions(config TLSOAuthConfigurator) []grpc.ServerOption {
 	var opts []grpc.ServerOption
 
-	if tlsConfig.GetTLSEnabled() {
+	if config.GetTLSEnabled() {
 		log.Infof("TLS requested")
 
-		if transportOpts, err := setupTLS(tlsConfig); err == nil {
+		if transportOpts, err := setupTLS(config); err == nil {
 			opts = append(opts, transportOpts...)
 		} else {
 			log.Fatalf("%s", err.Error())
 		}
 	}
 
-	if oauthConfig.GetOAuthEnabled() {
+	if config.GetOAuthEnabled() {
 		log.Infof("OAuth2 requested")
-		if !tlsConfig.GetTLSEnabled() {
+		if !config.GetTLSEnabled() {
 			log.Fatalf("Need TLS to be enabled")
 		}
 
-		if oAuthOpts, err := service_auth.SetupOAuth(oauthConfig); err == nil {
+		if oAuthOpts, err := service_auth.SetupOAuth(config); err == nil {
 			opts = append(opts, oAuthOpts...)
 		} else {
 			log.Fatalf("%s", err.Error())
