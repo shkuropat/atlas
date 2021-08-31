@@ -15,22 +15,25 @@
 package client_transport
 
 import (
+	"github.com/binarly-io/atlas/pkg/config/sections"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
 	"github.com/binarly-io/atlas/pkg/auth/client"
 )
 
+type TLSOAuthConfigurator interface {
+	sections.TLSConfigurator
+	sections.OAuthConfigurator
+}
+
 // GetGRPCClientOptions  builds gRPC dial options
-func GetGRPCClientOptions(
-	tls, auth bool, caFile, serverHostOverride string,
-	clientID, clientSecret, tokenURL string,
-) []grpc.DialOption {
+func GetGRPCClientOptions(config TLSOAuthConfigurator) []grpc.DialOption {
 	var opts []grpc.DialOption
 
-	if tls {
+	if config.GetTLSEnabled() {
 		log.Infof("TLS requested")
-		if transportOpts, err := setupTLS(caFile, serverHostOverride); err == nil {
+		if transportOpts, err := setupTLS(config); err == nil {
 			opts = append(opts, transportOpts...)
 		} else {
 			log.Fatalf("%s", err.Error())
@@ -39,13 +42,13 @@ func GetGRPCClientOptions(
 		opts = append(opts, grpc.WithInsecure())
 	}
 
-	if auth {
+	if config.GetOAuthEnabled() {
 		log.Infof("OAuth2 requested")
-		if !tls {
+		if !config.GetTLSEnabled() {
 			log.Fatalf("Need TLS to be enabled")
 		}
 
-		if oAuthOpts, err := client_auth.SetupOAuth(clientID, clientSecret, tokenURL); err == nil {
+		if oAuthOpts, err := client_auth.SetupOAuth(config); err == nil {
 			opts = append(opts, oAuthOpts...)
 		} else {
 			log.Fatalf("%s", err.Error())

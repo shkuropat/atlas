@@ -21,12 +21,13 @@ import (
 	"google.golang.org/grpc/testdata"
 )
 
-func setupTLS(caFile, serverHostOverride string) ([]grpc.DialOption, error) {
+func setupTLS(config TLSOAuthConfigurator) ([]grpc.DialOption, error) {
+	caFile := config.GetTLSCAFile()
 	if caFile == "" {
 		caFile = testdata.Path("ca.pem")
 	}
 
-	transportCredentials, err := credentials.NewClientTLSFromFile(caFile, serverHostOverride)
+	transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerHostOverride())
 	if err != nil {
 		log.Fatalf("failed to create TLS credentials %v", err)
 	}

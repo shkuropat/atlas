@@ -23,6 +23,8 @@ import (
 	cc "golang.org/x/oauth2/clientcredentials"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/oauth"
+
+	"github.com/binarly-io/atlas/pkg/config/sections"
 )
 
 // getOAuthClient
@@ -56,10 +58,10 @@ func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, err
 }
 
 // prepareToken prepares oauth2.Token
-func prepareToken(clientID, clientSecret, tokenURL string) *oauth2.Token {
+func prepareToken(config sections.OAuthConfigurator) *oauth2.Token {
 	// Token can be fetched from external party - such as Identity Server or other token provider.
 	// External party is charge of token provision is expected to be accessible by tokenURL
-	token, _ := getOAuthClient(clientID, clientSecret, tokenURL)
+	token, _ := getOAuthClient(config.GetOAuthClientID(), config.GetOAuthClientSecret(), config.GetOAuthTokenURL())
 	return token
 
 	// Token can be prepared locally (for example for test purposes)
@@ -69,8 +71,8 @@ func prepareToken(clientID, clientSecret, tokenURL string) *oauth2.Token {
 }
 
 // SetupOAuth
-func SetupOAuth(clientID, clientSecret, tokenURL string) ([]grpc.DialOption, error) {
-	perRPCCredentials := oauth.NewOauthAccess(prepareToken(clientID, clientSecret, tokenURL))
+func SetupOAuth(config sections.OAuthConfigurator) ([]grpc.DialOption, error) {
+	perRPCCredentials := oauth.NewOauthAccess(prepareToken(config))
 
 	// Set token once per connection
 	// It will be sent by gRPC on each call, without need to do it manually
