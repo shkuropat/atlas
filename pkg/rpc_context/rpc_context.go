@@ -24,7 +24,7 @@ import (
 // RPCContext
 type RPCContext struct {
 	metadata *atlas.Metadata
-	claims   jwt.MapClaims
+	claims   jwt.Claims
 	journal  journal.Journaller
 }
 
@@ -35,8 +35,16 @@ func New() *RPCContext {
 	}
 }
 
+// GetClaims
+func (c *RPCContext) GetClaims() jwt.Claims {
+	if c == nil {
+		return nil
+	}
+	return c.claims
+}
+
 // SetClaims
-func (c *RPCContext) SetClaims(claims jwt.MapClaims) *RPCContext {
+func (c *RPCContext) SetClaims(claims jwt.Claims) *RPCContext {
 	if c == nil {
 		return nil
 	}
@@ -61,15 +69,6 @@ func (c *RPCContext) SetJournal(j journal.Journaller) *RPCContext {
 	return c
 }
 
-// SetType
-func (c *RPCContext) SetType(_type int32) *RPCContext {
-	if c == nil {
-		return nil
-	}
-	c.metadata.SetType(_type)
-	return c
-}
-
 // GetType
 func (c *RPCContext) GetType() int32 {
 	if c == nil {
@@ -78,12 +77,12 @@ func (c *RPCContext) GetType() int32 {
 	return c.metadata.GetType()
 }
 
-// SetName
-func (c *RPCContext) SetName(name string) *RPCContext {
+// SetType
+func (c *RPCContext) SetType(_type int32) *RPCContext {
 	if c == nil {
 		return nil
 	}
-	c.metadata.SetName(name)
+	c.metadata.SetType(_type)
 	return c
 }
 
@@ -95,21 +94,12 @@ func (c *RPCContext) GetName() string {
 	return c.metadata.GetName()
 }
 
-// SetUUID
-func (c *RPCContext) SetUUID(id *atlas.UUID) *RPCContext {
+// SetName
+func (c *RPCContext) SetName(name string) *RPCContext {
 	if c == nil {
 		return nil
 	}
-	c.metadata.SetUUID(id)
-	return c
-}
-
-// SetCallUUIDFromString
-func (c *RPCContext) SetCallUUIDFromString(id string) *RPCContext {
-	if c == nil {
-		return nil
-	}
-	c.metadata.SetUUIDFromString(id)
+	c.metadata.SetName(name)
 	return c
 }
 
@@ -121,10 +111,28 @@ func (c *RPCContext) GetUUID() *atlas.UUID {
 	return c.metadata.GetUUID()
 }
 
+// SetUUID
+func (c *RPCContext) SetUUID(id *atlas.UUID) *RPCContext {
+	if c == nil {
+		return nil
+	}
+	c.metadata.SetUUID(id)
+	return c
+}
+
 // GetUUIDAsString
 func (c *RPCContext) GetUUIDAsString() string {
 	if c == nil {
 		return ""
 	}
 	return c.metadata.GetUUID().String()
+}
+
+// SetCallUUIDFromString
+func (c *RPCContext) SetCallUUIDFromString(id string) *RPCContext {
+	if c == nil {
+		return nil
+	}
+	c.metadata.SetUUIDFromString(id)
+	return c
 }
