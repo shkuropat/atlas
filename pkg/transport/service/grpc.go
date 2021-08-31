@@ -23,26 +23,26 @@ import (
 )
 
 // GetGRPCServerOptions builds gRPC server options
-func GetGRPCServerOptions(tls, auth bool, tlsCertFile, tlsKeyFile string, config sections.OAuthConfigurator) []grpc.ServerOption {
+func GetGRPCServerOptions(tlsConfig sections.TLSConfigurator, oauthConfig sections.OAuthConfigurator) []grpc.ServerOption {
 	var opts []grpc.ServerOption
 
-	if tls {
+	if tlsConfig.GetTLSEnabled() {
 		log.Infof("TLS requested")
 
-		if transportOpts, err := setupTLS(tlsCertFile, tlsKeyFile); err == nil {
+		if transportOpts, err := setupTLS(tlsConfig); err == nil {
 			opts = append(opts, transportOpts...)
 		} else {
 			log.Fatalf("%s", err.Error())
 		}
 	}
 
-	if auth {
+	if oauthConfig.GetOAuthEnabled() {
 		log.Infof("OAuth2 requested")
-		if !tls {
+		if !tlsConfig.GetTLSEnabled() {
 			log.Fatalf("Need TLS to be enabled")
 		}
 
-		if oAuthOpts, err := service_auth.SetupOAuth(config); err == nil {
+		if oAuthOpts, err := service_auth.SetupOAuth(oauthConfig); err == nil {
 			opts = append(opts, oAuthOpts...)
 		} else {
 			log.Fatalf("%s", err.Error())

@@ -23,6 +23,7 @@ import (
 type TLSConfigurator interface {
 	GetTLSEnabled() bool
 	GetTLSCAFile() string
+	GetTLSKeyFile() string
 	GetTLSServerHostOverride() string
 }
 
@@ -50,6 +51,11 @@ func (c TLS) GetTLSEnabled() bool {
 // GetTLSCAFile
 func (c TLS) GetTLSCAFile() string {
 	return c.TLS.GetCAFile()
+}
+
+// GetTLSKeyFile
+func (c TLS) GetTLSKeyFile() string {
+	return c.TLS.GetKeyFile()
 }
 
 // GetTLSServerHostOverride

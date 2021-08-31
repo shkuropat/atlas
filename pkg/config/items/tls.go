@@ -25,6 +25,7 @@ import (
 type TLS struct {
 	Enabled            bool   `mapstructure:"enabled"`
 	CAFile             string `mapstructure:"ca-file"`
+	KeyFile            string `mapstructure:"key-file"`
 	ServerHostOverride string `mapstructure:"server-host-override"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
@@ -52,6 +53,14 @@ func (t *TLS) GetCAFile() string {
 	return t.CAFile
 }
 
+// GetKeyFile
+func (t *TLS) GetKeyFile() string {
+	if t == nil {
+		return ""
+	}
+	return t.KeyFile
+}
+
 // GetServerHostOverride
 func (t *TLS) GetServerHostOverride() string {
 	if t == nil {
@@ -70,6 +79,7 @@ func (t *TLS) String() string {
 
 	_, _ = fmt.Fprintf(b, "Enabled: %v\n", t.Enabled)
 	_, _ = fmt.Fprintf(b, "CAFile: %v\n", t.CAFile)
+	_, _ = fmt.Fprintf(b, "KeyFile: %v\n", t.KeyFile)
 	_, _ = fmt.Fprintf(b, "ServerHostOverride: %v\n", t.ServerHostOverride)
 
 	return b.String()
