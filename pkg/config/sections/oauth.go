@@ -17,6 +17,7 @@ package sections
 import (
 	"fmt"
 	"github.com/binarly-io/atlas/pkg/config/items"
+	"net/url"
 )
 
 // OAuthConfigurator
@@ -25,6 +26,7 @@ type OAuthConfigurator interface {
 	GetOAuthClientID() string
 	GetOAuthClientSecret() string
 	GetOAuthTokenURL() string
+	GetOAuthEndpointParams() url.Values
 	GetOAuthRegisterURL() string
 	GetOAuthInitialAccessToken() string
 	GetOAuthJWT() *items.JWT
@@ -64,6 +66,11 @@ func (c OAuth) GetOAuthClientSecret() string {
 // GetOAuthTokenURL
 func (c OAuth) GetOAuthTokenURL() string {
 	return c.OAuth.GetTokenURL()
+}
+
+// GetOAuthEndpointParams
+func (c OAuth) GetOAuthEndpointParams() url.Values {
+	return c.OAuth.GetEndpointParams()
 }
 
 // GetOAuthRegisterURL

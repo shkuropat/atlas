@@ -27,23 +27,23 @@ import (
 	"github.com/binarly-io/atlas/pkg/config/sections"
 )
 
-// getOAuthClient
-func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, error) {
-	log.Infof("Setup OAuth params:\nClientID:%s\nClientSecret:%s\nTokenURL:%s\n", clientID, clientSecret, tokenURL)
+// requestOAuthToken
+func requestOAuthToken(config sections.OAuthConfigurator) (*oauth2.Token, error) {
+	log.Infof("Setup OAuth params:\nClientID:%s\nTokenURL:%s\n", config.GetOAuthClientID(), config.GetOAuthTokenURL())
 
 	// Client credential access
-	config := &cc.Config{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		TokenURL:     tokenURL,
-		Scopes:       []string{"profile"},
+	request := &cc.Config{
+		ClientID:       config.GetOAuthClientID(),
+		ClientSecret:   config.GetOAuthClientSecret(),
+		TokenURL:       config.GetOAuthTokenURL(),
+		EndpointParams: config.GetOAuthEndpointParams(),
 	}
 
 	// Client can be modified (for example ignoring bad certs or otherwise)
 	// by modifying the context
 	ctx := context.Background()
 	// Fetch token from token URL
-	token, err := config.Token(ctx)
+	token, err := request.Token(ctx)
 	if err != nil {
 		log.Infof("Error token request %v", err)
 		return nil, err
@@ -61,7 +61,7 @@ func getOAuthClient(clientID, clientSecret, tokenURL string) (*oauth2.Token, err
 func prepareToken(config sections.OAuthConfigurator) *oauth2.Token {
 	// Token can be fetched from external party - such as Identity Server or other token provider.
 	// External party is charge of token provision is expected to be accessible by tokenURL
-	token, _ := getOAuthClient(config.GetOAuthClientID(), config.GetOAuthClientSecret(), config.GetOAuthTokenURL())
+	token, _ := requestOAuthToken(config)
 	return token
 
 	// Token can be prepared locally (for example for test purposes)

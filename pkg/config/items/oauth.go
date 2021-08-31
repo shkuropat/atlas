@@ -17,6 +17,7 @@ package items
 import (
 	"bytes"
 	"fmt"
+	"net/url"
 )
 
 // IMPORTANT
@@ -28,6 +29,9 @@ type OAuth struct {
 	ClientID     string `mapstructure:"client-id"`
 	ClientSecret string `mapstructure:"client-secret"`
 	TokenURL     string `mapstructure:"token-url"`
+	// EndpointParams specifies additional parameters for requests to the token endpoint.
+	EndpointParams url.Values `mapstructure:"endpoint-params"`
+
 	// OAuth Register
 	RegisterURL        string `mapstructure:"register-url"`
 	InitialAccessToken string `mapstructure:"initial-access-token"`
@@ -74,6 +78,13 @@ func (o *OAuth) GetTokenURL() string {
 		return ""
 	}
 	return o.TokenURL
+}
+
+func (o *OAuth) GetEndpointParams() url.Values {
+	if o == nil {
+		return nil
+	}
+	return o.EndpointParams
 }
 
 // GetRegisterURL
