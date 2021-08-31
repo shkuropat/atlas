@@ -23,11 +23,11 @@ import (
 )
 
 func setupTLS(config sections.TLSConfigurator) ([]grpc.ServerOption, error) {
-	caFile := config.GetTLSCAFile()
-	if caFile == "" {
-		caFile = testdata.Path("server1.pem")
+	certFile := config.GetTLSPublicCertFile()
+	if certFile == "" {
+		certFile = testdata.Path("server1.pem")
 	}
-	keyFile := config.GetTLSKeyFile()
+	keyFile := config.GetTLSPrivateKeyFile()
 	if keyFile == "" {
 		keyFile = testdata.Path("server1.key")
 	}
@@ -37,7 +37,7 @@ func setupTLS(config sections.TLSConfigurator) ([]grpc.ServerOption, error) {
 	// 2. Or through intermediate Certificate
 
 	// Create TransportCredentials directly from files
-	transportCredentials, err := credentials.NewServerTLSFromFile(caFile, keyFile)
+	transportCredentials, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 	// Create TransportCredentials through intermediate Certificate
 	// needs "crypto/tls"
 	// cert, err := tls.LoadX509KeyPair(testdata.Path("server1.pem"), testdata.Path("server1.key"))

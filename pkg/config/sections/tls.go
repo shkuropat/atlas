@@ -23,8 +23,9 @@ import (
 type TLSConfigurator interface {
 	GetTLSEnabled() bool
 	GetTLSCAFile() string
-	GetTLSKeyFile() string
 	GetTLSServerHostOverride() string
+	GetTLSPrivateKeyFile() string
+	GetTLSPublicCertFile() string
 }
 
 // Interface compatibility
@@ -53,14 +54,19 @@ func (c TLS) GetTLSCAFile() string {
 	return c.TLS.GetCAFile()
 }
 
-// GetTLSKeyFile
-func (c TLS) GetTLSKeyFile() string {
-	return c.TLS.GetKeyFile()
-}
-
 // GetTLSServerHostOverride
 func (c TLS) GetTLSServerHostOverride() string {
 	return c.TLS.GetServerHostOverride()
+}
+
+// GetTLSPrivateKeyFile
+func (c TLS) GetTLSPrivateKeyFile() string {
+	return c.TLS.GetPrivateKeyFile()
+}
+
+// GetTLSPublicCertFile
+func (c TLS) GetTLSPublicCertFile() string {
+	return c.TLS.GetPublicCertFile()
 }
 
 // String

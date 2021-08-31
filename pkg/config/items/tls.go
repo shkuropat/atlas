@@ -23,10 +23,15 @@ import (
 // IMPORTANT Do not forget to update String() function
 // IMPORTANT
 type TLS struct {
-	Enabled            bool   `mapstructure:"enabled"`
+	Enabled bool `mapstructure:"enabled"`
+
+	// Client-side
 	CAFile             string `mapstructure:"ca-file"`
-	KeyFile            string `mapstructure:"key-file"`
 	ServerHostOverride string `mapstructure:"server-host-override"`
+
+	// Server-side
+	PrivateKeyFile string `mapstructure:"private-key-file"`
+	PublicCertFile string `mapstructure:"public-cert-file"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
@@ -53,20 +58,28 @@ func (t *TLS) GetCAFile() string {
 	return t.CAFile
 }
 
-// GetKeyFile
-func (t *TLS) GetKeyFile() string {
-	if t == nil {
-		return ""
-	}
-	return t.KeyFile
-}
-
 // GetServerHostOverride
 func (t *TLS) GetServerHostOverride() string {
 	if t == nil {
 		return ""
 	}
 	return t.ServerHostOverride
+}
+
+// GetPrivateKeyFile
+func (t *TLS) GetPrivateKeyFile() string {
+	if t == nil {
+		return ""
+	}
+	return t.PrivateKeyFile
+}
+
+// GetPublicCertFile
+func (t *TLS) GetPublicCertFile() string {
+	if t == nil {
+		return ""
+	}
+	return t.PublicCertFile
 }
 
 // String
@@ -79,8 +92,9 @@ func (t *TLS) String() string {
 
 	_, _ = fmt.Fprintf(b, "Enabled: %v\n", t.Enabled)
 	_, _ = fmt.Fprintf(b, "CAFile: %v\n", t.CAFile)
-	_, _ = fmt.Fprintf(b, "KeyFile: %v\n", t.KeyFile)
 	_, _ = fmt.Fprintf(b, "ServerHostOverride: %v\n", t.ServerHostOverride)
+	_, _ = fmt.Fprintf(b, "PrivateKeyFile: %v\n", t.PrivateKeyFile)
+	_, _ = fmt.Fprintf(b, "PublicCertFile: %v\n", t.PublicCertFile)
 
 	return b.String()
 }
