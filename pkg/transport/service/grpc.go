@@ -15,6 +15,7 @@
 package service_transport
 
 import (
+	"github.com/binarly-io/atlas/pkg/config/sections"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
@@ -22,7 +23,7 @@ import (
 )
 
 // GetGRPCServerOptions builds gRPC server options
-func GetGRPCServerOptions(tls, auth bool, tlsCertFile, tlsKeyFile, jwtPublicKeyFile string) []grpc.ServerOption {
+func GetGRPCServerOptions(tls, auth bool, tlsCertFile, tlsKeyFile string, config sections.OAuthConfigurator) []grpc.ServerOption {
 	var opts []grpc.ServerOption
 
 	if tls {
@@ -41,7 +42,7 @@ func GetGRPCServerOptions(tls, auth bool, tlsCertFile, tlsKeyFile, jwtPublicKeyF
 			log.Fatalf("Need TLS to be enabled")
 		}
 
-		if oAuthOpts, err := service_auth.SetupOAuth(jwtPublicKeyFile); err == nil {
+		if oAuthOpts, err := service_auth.SetupOAuth(config); err == nil {
 			opts = append(opts, oAuthOpts...)
 		} else {
 			log.Fatalf("%s", err.Error())

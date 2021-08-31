@@ -31,6 +31,9 @@ type OAuth struct {
 	// OAuth Register
 	RegisterURL        string `mapstructure:"register-url"`
 	InitialAccessToken string `mapstructure:"initial-access-token"`
+
+	// JWT section
+	JWT *JWT `mapstructure:"jwt"`
 	// IMPORTANT
 	// IMPORTANT Do not forget to update String() function
 	// IMPORTANT
@@ -89,6 +92,13 @@ func (o *OAuth) GetInitialAccessToken() string {
 	return o.InitialAccessToken
 }
 
+func (o *OAuth) GetJWT() *JWT {
+	if o == nil {
+		return nil
+	}
+	return o.JWT
+}
+
 // String
 func (o *OAuth) String() string {
 	if o == nil {
@@ -103,6 +113,7 @@ func (o *OAuth) String() string {
 	_, _ = fmt.Fprintf(b, "TokenURL: %v\n", o.TokenURL)
 	_, _ = fmt.Fprintf(b, "RegisterURL: %v\n", o.RegisterURL)
 	_, _ = fmt.Fprintf(b, "InitialAccessToken: %v\n", o.InitialAccessToken)
+	_, _ = fmt.Fprintf(b, "JWT: %v\n", o.JWT)
 
 	return b.String()
 }

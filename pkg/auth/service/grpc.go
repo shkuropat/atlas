@@ -16,27 +16,18 @@ package service_auth
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+
+	"github.com/binarly-io/atlas/pkg/config/sections"
 )
 
 // SetupOAuth
-// jwtRSAPublicKeyFile specifies path to RSA Public Key file to be used for JWT parsing
-func SetupOAuth(jwtRSAPublicKeyFile string) ([]grpc.ServerOption, error) {
-	// Prepare RSA public key to be used for JWT parsing
-	pem, err := ioutil.ReadFile(jwtRSAPublicKeyFile)
-	if err != nil {
-		return nil, fmt.Errorf("unable to access Public Key file '%s'", pem)
-	}
-
+func SetupOAuth(config sections.OAuthConfigurator) ([]grpc.ServerOption, error) {
 	// TODO refactor global var usage
-	jwtVerificationRSAPublicKey, err = parseRSAPublicKey(pem)
-	if err != nil {
-		return nil, fmt.Errorf("file '%s' pase error %v", jwtRSAPublicKeyFile, err)
-	}
+	// Prepare RSA public key to be used for JWT parsing
+	jwks = config.GetOAuthJWT().GetJWKS().ReadIn()
 
 	// As we have public key to parse JWT,
 	//we can setup interceptors to perform server-side authorization

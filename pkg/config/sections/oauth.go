@@ -27,6 +27,7 @@ type OAuthConfigurator interface {
 	GetOAuthTokenURL() string
 	GetOAuthRegisterURL() string
 	GetOAuthInitialAccessToken() string
+	GetOAuthJWT() *items.JWT
 }
 
 // Interface compatibility
@@ -73,6 +74,11 @@ func (c OAuth) GetOAuthRegisterURL() string {
 // GetOAuthInitialAccessToken
 func (c OAuth) GetOAuthInitialAccessToken() string {
 	return c.OAuth.GetInitialAccessToken()
+}
+
+// GetOAuthJWT
+func (c OAuth) GetOAuthJWT() *items.JWT {
+	return c.OAuth.GetJWT()
 }
 
 // String

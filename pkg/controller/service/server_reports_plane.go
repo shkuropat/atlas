@@ -33,7 +33,7 @@ func NewReportsPlaneServer() *ReportsPlaneServer {
 }
 
 // ObjectsReportHandler is a user-provided handler for ObjectsReport call
-var ObjectsReportHandler = func(context.Context, *atlas.ObjectsRequest, jwt.MapClaims) (*atlas.ObjectsList, error) {
+var ObjectsReportHandler = func(context.Context, *atlas.ObjectsRequest, jwt.Claims) (*atlas.ObjectsList, error) {
 	return nil, HandlerUnavailable
 }
 
@@ -46,6 +46,9 @@ func (s *ReportsPlaneServer) ObjectsReport(ctx context.Context, req *atlas.Objec
 		return nil, HandlerUnavailable
 	}
 
-	metadata := fetchMetadata(ctx)
-	return ObjectsReportHandler(ctx, req, metadata)
+	var claims jwt.Claims
+	if ClaimsExtractor != nil {
+		claims = ClaimsExtractor(ctx)
+	}
+	return ObjectsReportHandler(ctx, req, claims)
 }

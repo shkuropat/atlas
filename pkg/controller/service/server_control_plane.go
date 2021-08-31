@@ -41,7 +41,7 @@ func NewControlPlaneServer() *ControlPlaneServer {
 }
 
 // TasksHandler is a user-provided handler for Tasks call
-var TasksHandler = func(atlas.ControlPlane_TasksServer, jwt.MapClaims) error {
+var TasksHandler = func(atlas.ControlPlane_TasksServer, jwt.Claims) error {
 	return HandlerUnavailable
 }
 
@@ -54,15 +54,18 @@ func (s *ControlPlaneServer) Tasks(TasksServer atlas.ControlPlane_TasksServer) e
 		return HandlerUnavailable
 	}
 
-	metadata := fetchMetadata(TasksServer.Context())
-	return TasksHandler(TasksServer, metadata)
+	var claims jwt.Claims
+	if ClaimsExtractor != nil {
+		claims = ClaimsExtractor(TasksServer.Context())
+	}
+	return TasksHandler(TasksServer, claims)
 
 	// controller.CommandsExchangeEndlessLoop(CommandsServer)
 	// return nil
 }
 
 // DataChunksHandler is a user-provided handler for DataChunks call
-var DataChunksHandler = func(atlas.ControlPlane_DataChunksServer, jwt.MapClaims) error {
+var DataChunksHandler = func(atlas.ControlPlane_DataChunksServer, jwt.Claims) error {
 	return HandlerUnavailable
 }
 
@@ -75,12 +78,15 @@ func (s *ControlPlaneServer) DataChunks(DataChunksServer atlas.ControlPlane_Data
 		return HandlerUnavailable
 	}
 
-	metadata := fetchMetadata(DataChunksServer.Context())
-	return DataChunksHandler(DataChunksServer, metadata)
+	var claims jwt.Claims
+	if ClaimsExtractor != nil {
+		claims = ClaimsExtractor(DataChunksServer.Context())
+	}
+	return DataChunksHandler(DataChunksServer, claims)
 }
 
 // UploadObject is a user-provided handler for UploadObject call
-var UploadObjectHandler = func(atlas.ControlPlane_UploadObjectServer, jwt.MapClaims) error {
+var UploadObjectHandler = func(atlas.ControlPlane_UploadObjectServer, jwt.Claims) error {
 	return HandlerUnavailable
 }
 
@@ -93,6 +99,9 @@ func (s *ControlPlaneServer) UploadObject(UploadObjectServer atlas.ControlPlane_
 		return HandlerUnavailable
 	}
 
-	metadata := fetchMetadata(UploadObjectServer.Context())
-	return UploadObjectHandler(UploadObjectServer, metadata)
+	var claims jwt.Claims
+	if ClaimsExtractor != nil {
+		claims = ClaimsExtractor(UploadObjectServer.Context())
+	}
+	return UploadObjectHandler(UploadObjectServer, claims)
 }
