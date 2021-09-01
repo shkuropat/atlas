@@ -108,26 +108,31 @@ func (c Paths) GetPaths(name string, opts *PathsOpts) []string {
 		}
 	}
 
+	// Variable "paths" should not be modified cause it points into somebody's mem
+	// Make special result var
+	var res []string
+
 	// Rebase
-	for i := range paths {
+	for _, path := range paths {
 		switch {
 		case opts.Base == nil:
 			// No rebase
+			res = append(res, path)
 		case *opts.Base == "":
 			// Rebase on top CWD
 			base, err := os.Getwd()
 			if err != nil {
 				base = "/"
 			}
-			paths[i] = filepath.Clean(filepath.Join(base, paths[i]))
+			res = append(res, filepath.Clean(filepath.Join(base, path)))
 		default:
 			// Rebase on top of explicitly specified path
 			base := *opts.Base
-			paths[i] = filepath.Clean(filepath.Join(base, paths[i]))
+			res = append(res, filepath.Clean(filepath.Join(base, path)))
 		}
 	}
 
-	return paths
+	return res
 }
 
 // GetPathsOne
