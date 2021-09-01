@@ -22,17 +22,23 @@ import (
 )
 
 func setupTLS(config TLSOAuthConfigurator) ([]grpc.DialOption, error) {
-	caFile := config.GetTLSCAFile()
-	if caFile == "" {
-		caFile = testdata.Path("ca.pem")
+	//caFile := config.GetTLSCAFile()
+	//if caFile == "" {
+	//	caFile = testdata.Path("ca.pem")
+	//}
+	certFile := config.GetTLSPublicCertFile()
+	if certFile == "" {
+		certFile = testdata.Path("server1.pem")
 	}
 
-	transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerHostOverride())
+	//transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerHostOverride())
+	transportCredentials, err := credentials.NewClientTLSFromFile(certFile, config.GetTLSServerHostOverride())
 	if err != nil {
 		log.Fatalf("failed to create TLS credentials %v", err)
 	}
 
-	log.Infof("enabling TLS with ca=%s", caFile)
+	//log.Infof("enabling TLS with ca=%s", caFile)
+	log.Infof("enabling TLS with cert=%s", certFile)
 
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(transportCredentials),
