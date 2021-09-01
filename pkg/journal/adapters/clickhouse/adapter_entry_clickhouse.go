@@ -114,9 +114,6 @@ func (ce *AdapterEntryClickHouse) Import(entry *journal.Entry) *AdapterEntryClic
 		ce.error = entry.Error.Error()
 	}
 
-	fmt.Println(fmt.Sprintf("importing:%s", entry))
-	fmt.Println(fmt.Sprintf("imported:%s", ce))
-
 	return ce
 }
 

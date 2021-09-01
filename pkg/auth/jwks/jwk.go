@@ -105,17 +105,60 @@ func (jwk *JWK) ReadIn() *JWK {
 	}
 	if jwk.File != "" {
 		if new, err := NewJWKFromFile(jwk.File); (new != nil) && (err == nil) {
+			new.FillNonEmptyFrom(jwk)
 			return new
 		}
 	}
 	if jwk.Data != "" {
 		if new, err := NewJWKFromString(jwk.Data); (new != nil) && (err == nil) {
+			new.FillNonEmptyFrom(jwk)
 			return new
 		}
 	}
 	return jwk
 }
 
+// FillNonEmptyFrom
+func (jwk *JWK) FillNonEmptyFrom(src *JWK) *JWK {
+	if (jwk.Alg == "") && (src.Alg != "") {
+		jwk.Alg = src.Alg
+	}
+	if (jwk.Kty == "") && (src.Kty != "") {
+		jwk.Kty = src.Kty
+	}
+	if (jwk.Use == "") && (src.Use != "") {
+		jwk.Use = src.Use
+	}
+	if (jwk.N == "") && (src.N != "") {
+		jwk.N = src.N
+	}
+	if (jwk.E == "") && (src.E != "") {
+		jwk.E = src.E
+	}
+	if (jwk.Kid == "") && (src.Kid != "") {
+		jwk.Kid = src.Kid
+	}
+	if (jwk.X5t == "") && (src.X5t != "") {
+		jwk.X5t = src.X5t
+	}
+	if (jwk.X5c == nil) && (src.X5c != nil) {
+		jwk.X5c = src.X5c
+	}
+
+	if (jwk.File == "") && (src.File != "") {
+		jwk.File = src.File
+	}
+	if (jwk.Data == "") && (src.Data != "") {
+		jwk.Data = src.Data
+	}
+
+	if (jwk.PublicKey == nil) && (src.PublicKey != nil) {
+		jwk.PublicKey = src.PublicKey
+	}
+	return jwk
+}
+
+// String
 func (jwk *JWK) String() string {
 	return "jwk string rep"
 }

@@ -79,7 +79,6 @@ func (j *AdapterClickHouse) Insert(entry *journal.Entry) error {
 		e.Fields(),
 		e.StmtParamsPlaceholder(),
 	)
-	fmt.Println(fmt.Sprintf("sql=%s", sql))
 
 	tx, err := j.connect.Begin()
 	if err != nil {
