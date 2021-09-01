@@ -18,15 +18,23 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"errors"
+	"github.com/binarly-io/atlas/pkg/config/sections"
 	"github.com/binarly-io/atlas/pkg/devcerts"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
+type TLSPathsConfigurator interface {
+	sections.PathsConfigurator
+	sections.TLSConfigurator
+}
+
 // setupTLS
-func setupTLS(config TLSOAuthConfigurator) ([]grpc.DialOption, error) {
+func setupTLS(config TLSPathsConfigurator) ([]grpc.DialOption, error) {
 	var transportCredentials credentials.TransportCredentials
 	var err error
 	switch {
@@ -52,10 +60,19 @@ func setupTLS(config TLSOAuthConfigurator) ([]grpc.DialOption, error) {
 }
 
 // transportCredentialsFromServerCertFile
-func transportCredentialsFromServerCertFile(config TLSOAuthConfigurator) (credentials.TransportCredentials, error) {
+func transportCredentialsFromServerCertFile(config TLSPathsConfigurator) (credentials.TransportCredentials, error) {
 	certFile := config.GetTLSPublicCertFile()
 	if certFile == "" {
 		certFile = devcerts.Path("service.pem")
+		if _, err := os.Stat(certFile); err != nil {
+			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
+			certFile = filepath.Join(path, "service.pem")
+		}
+	} else {
+		if _, err := os.Stat(certFile); err != nil {
+			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
+			certFile = filepath.Join(path, certFile)
+		}
 	}
 
 	//transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerHostOverride())
@@ -70,11 +87,21 @@ func transportCredentialsFromServerCertFile(config TLSOAuthConfigurator) (creden
 }
 
 // transportCredentialsFromServerCAFile
-func transportCredentialsFromServerCAFile(config TLSOAuthConfigurator) (credentials.TransportCredentials, error) {
+func transportCredentialsFromServerCAFile(config TLSPathsConfigurator) (credentials.TransportCredentials, error) {
 	caFile := config.GetTLSCAFile()
 	if caFile == "" {
-		caFile = devcerts.Path("service.pem")
+		caFile = devcerts.Path("ca.cert")
+		if _, err := os.Stat(caFile); err != nil {
+			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
+			caFile = filepath.Join(path, "ca.cert")
+		}
+	} else {
+		if _, err := os.Stat(caFile); err != nil {
+			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
+			caFile = filepath.Join(path, caFile)
+		}
 	}
+
 	b, err := ioutil.ReadFile(caFile)
 	if err != nil {
 		return nil, err
@@ -95,7 +122,7 @@ func transportCredentialsFromServerCAFile(config TLSOAuthConfigurator) (credenti
 }
 
 // transportCredentialsFromSystemCertPool
-func transportCredentialsFromSystemCertPool(config TLSOAuthConfigurator) (credentials.TransportCredentials, error) {
+func transportCredentialsFromSystemCertPool(config TLSPathsConfigurator) (credentials.TransportCredentials, error) {
 	/*
 		we can specify System cert pool explicitly
 		certPool, err := x509.SystemCertPool()

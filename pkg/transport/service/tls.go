@@ -37,6 +37,11 @@ func setupTLS(config TLSPathsConfigurator) ([]grpc.ServerOption, error) {
 			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
 			certFile = filepath.Join(path, "service.pem")
 		}
+	} else {
+		if _, err := os.Stat(certFile); err != nil {
+			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
+			certFile = filepath.Join(path, certFile)
+		}
 	}
 	keyFile := config.GetTLSPrivateKeyFile()
 	if keyFile == "" {
@@ -44,6 +49,11 @@ func setupTLS(config TLSPathsConfigurator) ([]grpc.ServerOption, error) {
 		if _, err := os.Stat(keyFile); err != nil {
 			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
 			keyFile = filepath.Join(path, "service.key")
+		}
+	} else {
+		if _, err := os.Stat(keyFile); err != nil {
+			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
+			keyFile = filepath.Join(path, keyFile)
 		}
 	}
 

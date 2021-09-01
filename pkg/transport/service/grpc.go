@@ -22,14 +22,14 @@ import (
 	"github.com/binarly-io/atlas/pkg/auth/service"
 )
 
-type TLSOAuthConfigurator interface {
+type PathsTLSOAuthConfigurator interface {
 	sections.PathsConfigurator
 	sections.TLSConfigurator
 	sections.OAuthConfigurator
 }
 
 // GetGRPCServerOptions builds gRPC server options
-func GetGRPCServerOptions(config TLSOAuthConfigurator) []grpc.ServerOption {
+func GetGRPCServerOptions(config PathsTLSOAuthConfigurator) []grpc.ServerOption {
 	var opts []grpc.ServerOption
 
 	if config.GetTLSEnabled() {
