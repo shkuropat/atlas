@@ -23,6 +23,7 @@ import (
 )
 
 type TLSOAuthConfigurator interface {
+	sections.PathsConfigurator
 	sections.TLSConfigurator
 	sections.OAuthConfigurator
 }

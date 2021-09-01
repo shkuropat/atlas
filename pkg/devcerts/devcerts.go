@@ -35,6 +35,5 @@ func Path(path string) string {
 		return path
 	}
 
-	// navigate to ../../certs
 	return filepath.Join(dir, path)
 }

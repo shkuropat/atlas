@@ -20,16 +20,31 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"os"
+	"path/filepath"
 )
 
-func setupTLS(config sections.TLSConfigurator) ([]grpc.ServerOption, error) {
+type TLSPathsConfigurator interface {
+	sections.PathsConfigurator
+	sections.TLSConfigurator
+}
+
+func setupTLS(config TLSPathsConfigurator) ([]grpc.ServerOption, error) {
 	certFile := config.GetTLSPublicCertFile()
 	if certFile == "" {
 		certFile = devcerts.Path("service.pem")
+		if _, err := os.Stat(certFile); err != nil {
+			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
+			certFile = filepath.Join(path, "service.pem")
+		}
 	}
 	keyFile := config.GetTLSPrivateKeyFile()
 	if keyFile == "" {
 		keyFile = devcerts.Path("service.key")
+		if _, err := os.Stat(keyFile); err != nil {
+			path := config.GetPathsOne("tls", sections.PathsOptsRebaseOnCWD)
+			keyFile = filepath.Join(path, "service.key")
+		}
 	}
 
 	// TransportCredentials can be created by two ways
