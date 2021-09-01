@@ -15,10 +15,10 @@
 package client_transport
 
 import (
+	"github.com/binarly-io/atlas/pkg/devcerts"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
 )
 
 func setupTLS(config TLSOAuthConfigurator) ([]grpc.DialOption, error) {
@@ -28,7 +28,7 @@ func setupTLS(config TLSOAuthConfigurator) ([]grpc.DialOption, error) {
 	//}
 	certFile := config.GetTLSPublicCertFile()
 	if certFile == "" {
-		certFile = testdata.Path("server1.pem")
+		certFile = devcerts.Path("service.pem")
 	}
 
 	//transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerHostOverride())

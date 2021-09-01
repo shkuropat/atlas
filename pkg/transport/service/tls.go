@@ -16,20 +16,20 @@ package service_transport
 
 import (
 	"github.com/binarly-io/atlas/pkg/config/sections"
+	"github.com/binarly-io/atlas/pkg/devcerts"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
 )
 
 func setupTLS(config sections.TLSConfigurator) ([]grpc.ServerOption, error) {
 	certFile := config.GetTLSPublicCertFile()
 	if certFile == "" {
-		certFile = testdata.Path("server1.pem")
+		certFile = devcerts.Path("service.pem")
 	}
 	keyFile := config.GetTLSPrivateKeyFile()
 	if keyFile == "" {
-		keyFile = testdata.Path("server1.key")
+		keyFile = devcerts.Path("service.key")
 	}
 
 	// TransportCredentials can be created by two ways
@@ -46,6 +46,9 @@ func setupTLS(config sections.TLSConfigurator) ([]grpc.ServerOption, error) {
 	if err != nil {
 		log.Fatalf("failed to generate credentials %v", err)
 	}
+
+	log.Infof("enabling TLS with cert=%s", certFile)
+	log.Infof("enabling TLS with key =%s", keyFile)
 
 	opts := []grpc.ServerOption{
 		// Enable TLS transport for connections
