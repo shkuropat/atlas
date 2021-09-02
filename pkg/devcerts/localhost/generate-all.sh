@@ -3,7 +3,7 @@
 # Create Root signing Key
 openssl genrsa -out ca.key 4096
 # Generate self-signed Root certificate
-openssl req -new -x509 -key ca.key -sha256 -subj "/C=US/ST=NJ/O=CA, Inc." -days 365 -out ca.cert
+openssl req -new -x509 -key ca.key -sha256 -subj "/C=US/ST=NJ/O=CA, Inc." -days 3650 -out ca.cert
 
 # Create a Key certificate for the Server
 openssl genrsa -out service.key 4096

@@ -16,14 +16,11 @@ package client_transport
 
 import (
 	"crypto/tls"
-	"crypto/x509"
-	"errors"
 	"github.com/binarly-io/atlas/pkg/config/sections"
 	"github.com/binarly-io/atlas/pkg/devcerts"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -102,22 +99,30 @@ func transportCredentialsFromServerCAFile(config TLSPathsConfigurator) (credenti
 		}
 	}
 
-	b, err := ioutil.ReadFile(caFile)
+	/*
+		b, err := ioutil.ReadFile(caFile)
+		if err != nil {
+			return nil, err
+		}
+		cp := x509.NewCertPool()
+		if !cp.AppendCertsFromPEM(b) {
+			return nil, errors.New("credentials: failed to append certificates")
+		}
+
+		conf := &tls.Config{
+			InsecureSkipVerify: false,
+			RootCAs:            cp,
+		}
+			log.Infof("enabling TLS with ca=%s", caFile)
+			transportCredentials := credentials.NewTLS(conf)
+	*/
+
+	transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerHostOverride())
 	if err != nil {
+		log.Fatalf("failed to create TLS credentials %v", err)
 		return nil, err
 	}
-	cp := x509.NewCertPool()
-	if !cp.AppendCertsFromPEM(b) {
-		return nil, errors.New("credentials: failed to append certificates")
-	}
-
-	conf := &tls.Config{
-		InsecureSkipVerify: false,
-		RootCAs:            cp,
-	}
-
 	log.Infof("enabling TLS with ca=%s", caFile)
-	transportCredentials := credentials.NewTLS(conf)
 	return transportCredentials, nil
 }
 
