@@ -27,7 +27,7 @@ type TLS struct {
 
 	// Client-side
 	CAFile             string `mapstructure:"ca-file"`
-	ServerHostOverride string `mapstructure:"server-host-override"`
+	ServerNameOverride string `mapstructure:"server-name-override"`
 
 	// Server-side
 	PrivateKeyFile string `mapstructure:"private-key-file"`
@@ -58,12 +58,12 @@ func (t *TLS) GetCAFile() string {
 	return t.CAFile
 }
 
-// GetServerHostOverride
-func (t *TLS) GetServerHostOverride() string {
+// GetServerNameOverride
+func (t *TLS) GetServerNameOverride() string {
 	if t == nil {
 		return ""
 	}
-	return t.ServerHostOverride
+	return t.ServerNameOverride
 }
 
 // GetPrivateKeyFile
@@ -92,7 +92,7 @@ func (t *TLS) String() string {
 
 	_, _ = fmt.Fprintf(b, "Enabled: %v\n", t.Enabled)
 	_, _ = fmt.Fprintf(b, "CAFile: %v\n", t.CAFile)
-	_, _ = fmt.Fprintf(b, "ServerHostOverride: %v\n", t.ServerHostOverride)
+	_, _ = fmt.Fprintf(b, "ServerNameOverride: %v\n", t.ServerNameOverride)
 	_, _ = fmt.Fprintf(b, "PrivateKeyFile: %v\n", t.PrivateKeyFile)
 	_, _ = fmt.Fprintf(b, "PublicCertFile: %v\n", t.PublicCertFile)
 

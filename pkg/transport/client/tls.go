@@ -73,7 +73,7 @@ func transportCredentialsFromServerCertFile(config TLSPathsConfigurator) (creden
 	}
 
 	//transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerHostOverride())
-	transportCredentials, err := credentials.NewClientTLSFromFile(certFile, config.GetTLSServerHostOverride())
+	transportCredentials, err := credentials.NewClientTLSFromFile(certFile, config.GetTLSServerNameOverride())
 	if err != nil {
 		log.Fatalf("failed to create TLS credentials %v", err)
 		return nil, err
@@ -117,7 +117,7 @@ func transportCredentialsFromServerCAFile(config TLSPathsConfigurator) (credenti
 			transportCredentials := credentials.NewTLS(conf)
 	*/
 
-	transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerHostOverride())
+	transportCredentials, err := credentials.NewClientTLSFromFile(caFile, config.GetTLSServerNameOverride())
 	if err != nil {
 		log.Fatalf("failed to create TLS credentials %v", err)
 		return nil, err
