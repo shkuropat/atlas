@@ -42,8 +42,8 @@ func GetTaskStatus(ReportsPlaneClient atlas.ReportsPlaneClient, taskUUID *atlas.
 	list, err := ReportsPlaneClient.ObjectsReport(ctx, request)
 	// Unify call result
 	result := NewDataExchangeResult()
-	if len(list.GetStatuses()) > 0 {
-		result.Recv.ObjectStatus = atlas.NewObjectStatus().SetStatus(list.GetStatuses()[0])
+	if len(list.GetObjectStatuses()) > 0 {
+		result.Recv.ObjectStatus = atlas.NewObjectStatus().SetStatus(list.GetObjectStatuses()[0].GetStatus())
 	}
 	result.Error = err
 
