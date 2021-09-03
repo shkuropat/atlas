@@ -1,3 +1,8 @@
+import {UuidFromString} from "./uuid";
+
+const { UuidToString } = require('./uuid')
+
+
 export function callbackTaskStatus(err, response) {
     try {
         const statuses = response.getObjectStatusesList()
@@ -7,11 +12,9 @@ export function callbackTaskStatus(err, response) {
 
         for (let i = 0; i < statuses.length; i++) {
             const status = statuses[i]
-            const newlen = objectStatus.push(status) // globalObjectStatus
             const code = status.getStatus().getCode()
-            const uuid_uint8array = status.getAddress().getUuid().getData_asU8()
-            const uuid_text = new TextDecoder("utf-8").decode(uuid_uint8array)
-            // console.log(i + ' : ' +  'object status: ' + code + " : " + uuid_text)
+            const uuid = UuidToString(status.getAddress().getUuid())
+            console.log(i + ' : ' +  'object status: ' + code + " : " +  uuid)
         }
     } catch (error) {
         console.log(`Error code: ${err.code} ${err.message}`)

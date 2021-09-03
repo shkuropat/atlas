@@ -8,22 +8,14 @@ const { UUID } = require('../../api/atlas/uuid_pb')
 const { Status } = require('../../api/atlas/status_pb')
 const { Report } = require('../../api/atlas/report_pb')
 const { callbackTask, callbackTaskFiles, callbackTaskReport, callbackTaskStatus } = require('./callbacks')
+const { UuidFromString } = require('./uuid')
 const grpc = {}
 grpc.web = require('grpc-web')
 
 const reportsPlaneClient = new ReportsPlaneClient('http://localhost:8080/', null, null)
-const strTaskUUID = "89ec7e42-8290-45b2-b20b-3f106d821390"
-
-class ClientReportsPlane {
-    constructor(uuid) {
-        this.globalObjectStatus = []
-        this.bytesTaskUUID = null
-        this.taskUUID = new UUID()
-        this.passUUID(uuid)
-    }
 
     // Gets status of specified task
-    async getTaskStatus(ReportsPlaneClient, taskUUID) {
+    function getTaskStatus(taskUUID) {
         // One object request
         const taskAddress = new Address()
         taskAddress.setUuid(taskUUID)
@@ -43,7 +35,7 @@ class ClientReportsPlane {
 
         let result = false
 
-        const call = await reportsPlaneClient.objectsReport(
+        const call = reportsPlaneClient.objectsReport(
             request, 
             { "custom-header-1": "value1" }, 
             (err, response) => { callbackTaskStatus(err, response) }
@@ -55,7 +47,7 @@ class ClientReportsPlane {
     }
 
     // Gets report of specified task
-    async getTaskReport(ReportsPlaneClient, taskUUID) {
+    function getTaskReport(taskUUID) {
         // One object request
         const taskAddress = new Address()
         taskAddress.setUuid(taskUUID)
@@ -75,7 +67,7 @@ class ClientReportsPlane {
 
         let result = false
 
-        const call = await reportsPlaneClient.objectsReport(
+        const call = reportsPlaneClient.objectsReport(
             request,
             { "custom-header-1": "value1" },
             (err, response) => { callbackTaskReport(err, response) }
@@ -92,7 +84,7 @@ class ClientReportsPlane {
     }
 
     // GetTask requests task
-    async getTask(ReportsPlaneClient, taskUUID) {
+    function getTask(taskUUID) {
         // One object request
         const taskAddress = new Address()
         taskAddress.setUuid(taskUUID)
@@ -112,7 +104,7 @@ class ClientReportsPlane {
   
         let result = false
 
-        const call = await reportsPlaneClient.objectsReport(
+        const call = reportsPlaneClient.objectsReport(
             request,
             { "custom-header-1": "value1" },
             (err, response) => { callbackTask(err, response) }
@@ -121,7 +113,7 @@ class ClientReportsPlane {
     }
 
     // GetTaskFiles requests file(es) of the task
-    async getTaskFiles(ReportsPlaneClient, taskUUID) {
+    function getTaskFiles(taskUUID) {
         // One object request
         const taskAddress = new Address()
         taskAddress.setUuid(taskUUID)
@@ -141,7 +133,7 @@ class ClientReportsPlane {
 
         let result = false
 
-        const call = await reportsPlaneClient.objectsReport(
+        const call = reportsPlaneClient.objectsReport(
             request,
             { "custom-header-1": "value1" },
             (err, response) => { callbackTaskFiles(err, response) }
@@ -149,16 +141,10 @@ class ClientReportsPlane {
         
     }
 
-    // pass uuid into taskUUID data
-    passUUID(uuid) {
-        this.bytesTaskUUID = new TextEncoder("utf-8").encode(uuid) //strTaskUUID
-        this.taskUUID.setData(this.bytesTaskUUID)
-    }
 
-}
-
-const clientReportsPlane = new ClientReportsPlane(strTaskUUID)
-clientReportsPlane.getTaskStatus(reportsPlaneClient, null)
-clientReportsPlane.getTaskReport(reportsPlaneClient, null)
-clientReportsPlane.getTask(reportsPlaneClient, null)
-clientReportsPlane.getTaskFiles(reportsPlaneClient, null)
+console.log('starting at:' + Date.now())
+getTaskStatus(UuidFromString("40fa8055-4fa9-438c-9bf1-bb5639173bc4"))
+//reporter.getTaskReport(taskUUID)
+//reporter.getTask(taskUUID)
+//reporter.getTaskFiles(taskUUID)
+// Promise returned from getTaskFiles is ignored
