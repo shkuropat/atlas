@@ -2,7 +2,7 @@ const { UUID } = require('../../api/atlas/uuid_pb')
 
 // accepts uuid object returns string
 export function UuidToString(uuid) {
-    const uuid_uint8array = uuid().getData_asU8();
+    const uuid_uint8array = uuid.getData_asU8();
     const uuid_string = new TextDecoder("utf-8").decode(uuid_uint8array);
     return uuid_string
 }
