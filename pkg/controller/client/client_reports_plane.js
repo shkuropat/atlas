@@ -12,8 +12,6 @@ const { UuidFromString } = require('./uuid')
 const grpc = {}
 grpc.web = require('grpc-web')
 
-const reportsPlaneClient = new ReportsPlaneClient('http://localhost:8080/', null, null)
-
     // Gets status of specified task
     function getTaskStatus(taskUUID) {
         // One object request
@@ -34,6 +32,8 @@ const reportsPlaneClient = new ReportsPlaneClient('http://localhost:8080/', null
         request.addRequests(objectRequest)
 
         let result = false
+
+        const reportsPlaneClient = new ReportsPlaneClient('http://localhost:8080/', null, null)
 
         const call = reportsPlaneClient.objectsReport(
             request, 

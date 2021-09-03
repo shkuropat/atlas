@@ -175,7 +175,10 @@ services:
     # Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
     # tcp        0      0 0.0.0.0:9092            0.0.0.0:*               LISTEN      79906/docker-proxy
     ports:
+      # Expose port for browser connections
       - "8080:8080"
+      # Expose admin access port
+      #- "9901:9901"
     extra_hosts:
       # add host.docker.internal DNS entry in /etc/hosts and map it to host IP
       - "host.docker.internal:host-gateway"
