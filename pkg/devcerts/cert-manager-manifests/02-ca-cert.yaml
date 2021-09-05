@@ -1,0 +1,56 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ca-cert
+  namespace: sandbox
+spec:
+  # IsCA will mark this Certificate as valid for certificate signing. This will automatically add the "cert sign" usage to the list of "usages".
+  isCA: true
+  commonName: CA certificate
+  secretName: ca-secret
+  # be sure to set a Subject for SelfSigned certs. 
+  # This can be done by setting the spec.subject on a cert-manager Certificate object which will be issued by a SelfSigned issuer
+  # see more
+  # https://cert-manager.io/docs/configuration/selfsigned/#certificate-validity
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    #algorithm: RSA
+    #size: 4096
+  issuerRef:
+    name: selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+  subject:
+    organizations:
+      - My CA org
+    countries:
+      - US
+    #organizationalUnits:
+    #  - unit 1
+    #localities:
+    #  - city 1
+    #provinces:
+    #  - Province 1
+    #streetAddresses:
+    #  - street name
+    #  - house number
+    #postalCodes:
+    #  - "12345"
+  # The requested ‘duration’ (i.e. lifetime) of the Certificate
+  # Value must be in units accepted by Go time.ParseDuration https://golang.org/pkg/time/#ParseDuration
+  # Ex.: 1h10m10s
+  # Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". 
+  # 1 day   = 24h
+  # 1 month = 30*24 = 720h
+  # 1 year  = 24 * 365 = 8760h
+  duration: 87600h
+  # When should renew the certificate. The default is 2⁄3 of the issued certificate’s duration
+  # Value must be in units accepted by Go time.ParseDuration https://golang.org/pkg/time/#ParseDuration
+  # Ex.: 1h10m10s
+  # Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". 
+  # 1 day   = 24h
+  # 1 month = 30*24 = 720h
+  # 1 year  = 24 * 365 = 8760h
+  renewBefore: 87000h
+

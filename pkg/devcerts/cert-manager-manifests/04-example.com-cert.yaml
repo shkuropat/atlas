@@ -1,0 +1,59 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: example.com-cert
+  namespace: sandbox
+spec:
+  commonName: example.com
+  # DNSNames is a list of DNS subjectAltNames to be set on the Certificate.
+  dnsNames:
+    - example.com
+    - foo.example.com
+  # IPAddresses is a list of IP address subjectAltNames to be set on the Certificate.
+  #ipAddresses:
+  #  - 127.0.0.1
+  # SecretName is the name of the secret resource that will be automatically created and managed by this Certificate resource. It will be populated with a private key and certificate, signed by the denoted issuer.
+  secretName: example.com-secret
+  privateKey:
+    #algorithm: ECDSA
+    #size: 256
+    algorithm: RSA
+    size: 4096
+  # IssuerRef is a reference to the issuer for this certificate
+  issuerRef:
+    name: ca-issuer
+    kind: Issuer
+    group: cert-manager.io
+  subject:
+    organizations:
+      - My example.com owner Organization
+    countries:
+      - US
+    #organizationalUnits:
+    #  - unit 1
+    #localities:
+    #  - city 1
+    #provinces:
+    #  - Province 1
+    #streetAddresses:
+    #  - street name
+    #  - house number
+    #postalCodes:
+    #  - "12345"
+  # The requested ‘duration’ (i.e. lifetime) of the Certificate
+  # Value must be in units accepted by Go time.ParseDuration https://golang.org/pkg/time/#ParseDuration
+  # Ex.: 1h10m10s
+  # Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". 
+  # 1 day   = 24h
+  # 1 month = 30*24 = 720h
+  # 1 year  = 24 * 365 = 8760h
+  duration: 8760h
+  # When should renew the certificate. The default is 2⁄3 of the issued certificate’s duration
+  # Value must be in units accepted by Go time.ParseDuration https://golang.org/pkg/time/#ParseDuration
+  # Ex.: 1h10m10s
+  # Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". 
+  # 1 day   = 24h
+  # 1 month = 30*24 = 720h
+  # 1 year  = 24 * 365 = 8760h
+  renewBefore: 8000h
+
