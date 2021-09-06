@@ -21,14 +21,15 @@ import (
 	"path/filepath"
 )
 
+// PathsOpts specifies paths options, such as base dir for rebase and fallbakc dir
 type PathsOpts struct {
 	// Base specifies the base on top of which to rebase relative paths.
-	// In case base == nil no rebase
+	// In case base == nil no rebase required
 	// In case *base == "" use CWD as a base
-	// Otherwise rebase on top of *base
+	// Otherwise rebase on top of *base, in case path is a relative one
 	Base *string
-	// Fallback specifies path which to fallback to in case nothing found
-	// In case fallback == nil no fallback
+	// Fallback specifies path which to fallback to in case specified paths name not found
+	// In case fallback == nil no fallback required
 	// In case *fallback == "" use CWD as a fallback
 	// Otherwise fallback on *fallback
 	Fallback *string
@@ -86,33 +87,45 @@ func (c Paths) GetPaths(name string, opts *PathsOpts) []string {
 	if opts == nil {
 		opts = PathsOptsDefault
 	}
+
+	// Get paths by specified name
 	paths := c.Paths.GetPaths(name)
 
-	// Fallback
+	// However, there may be no paths found by specified name,
+	// so, let's check fallback options to fallback to in case no paths found
 	if len(paths) < 1 {
+		// There is no paths found. Need to fallback to possibly specified fallback paths
 		switch {
 		case opts.Fallback == nil:
-			// No fallback
+			// No fallback path specified
 		case *opts.Fallback == "":
 			// Fallback to CWD
 			if cwd, err := os.Getwd(); err == nil {
 				// CWD found, all is fine
-				paths = []string{cwd}
+				paths = []string{
+					cwd,
+				}
 			} else {
-				// Unable to get CWD, fallback to root
-				paths = []string{"/"}
+				// Unable to get CWD, fallback to root, instead of CWD
+				paths = []string{
+					"/",
+				}
 			}
 		default:
 			// Fallback to explicitly specified path
-			paths = []string{*opts.Fallback}
+			paths = []string{
+				*opts.Fallback,
+			}
 		}
 	}
 
 	// Variable "paths" should not be modified cause it points into somebody's mem
-	// Make special result var
+	// Make special result var to copy paths into
 	var res []string
 
-	// Rebase
+	// As we have possibly found paths, some of them may be relative and may require
+	// to be rebased on top of some dir.
+	// However, only relative paths should be rebased.
 	for _, path := range paths {
 		switch {
 		case opts.Base == nil:
@@ -120,15 +133,27 @@ func (c Paths) GetPaths(name string, opts *PathsOpts) []string {
 			res = append(res, path)
 		case *opts.Base == "":
 			// Rebase on top CWD
-			base, err := os.Getwd()
-			if err != nil {
-				base = "/"
+			if filepath.IsAbs(path) {
+				// Absolute path is not rebased and used as is
+				res = append(res, path)
+			} else {
+				// Rebase relative path
+				base, err := os.Getwd()
+				if err != nil {
+					// Unable to get CWD, fallback to root, instead of CWD
+					base = "/"
+				}
+				res = append(res, filepath.Clean(filepath.Join(base, path)))
 			}
-			res = append(res, filepath.Clean(filepath.Join(base, path)))
 		default:
 			// Rebase on top of explicitly specified path
-			base := *opts.Base
-			res = append(res, filepath.Clean(filepath.Join(base, path)))
+			if filepath.IsAbs(path) {
+				// Absolute path is not rebased and used as is
+				res = append(res, path)
+			} else {
+				base := *opts.Base
+				res = append(res, filepath.Clean(filepath.Join(base, path)))
+			}
 		}
 	}
 
